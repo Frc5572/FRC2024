@@ -1,0 +1,81 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the action will run.
+on:
+  # Triggers the workflow on push
+  push:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  linting:
+    name: Linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3 # v2 minimum required
+      - name: Run check style
+        uses: nikitasavinov/checkstyle-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: 'github-check'
+          tool_name: 'testtool'
+          fail_on_error: true
+          filter_mode: nofilter
+          level: error
+          checkstyle_config: checks.xml
+          checkstyle_version: '9.2.1'
+  spell_check:
+    name: Spell Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3 # v2 minimum required
+      - name: Run Spell Check
+        uses: codespell-project/actions-codespell@master
+        with:
+          check_filenames: true
+  merge_conflict_job:
+    runs-on: ubuntu-latest
+    name: Find merge conflicts
+    steps:
+      # Checkout the source code so there are some files to look at.
+      - uses: actions/checkout@v3
+      # Run the actual merge conflict finder
+      - name: Merge Conflict finder
+        uses: olivernybroe/action-conflict-finder@v4.0
+  javadoc:
+    name: Test Javadocs Generation
+    # The type of runner that the job will run on
+    runs-on: ubuntu-22.04
+    # This grabs the WPILib docker container
+    container: wpilib/roborio-cross-ubuntu:2024-22.04
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v3
+    # Grant execute permission for gradlew
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    # Runs a single command using the runners shell
+    - name: Create Javadocs
+      run: ./gradlew javadoc
+  build:
+    name: Build
+    # The type of runner that the job will run on
+    runs-on: ubuntu-22.04
+    # This grabs the WPILib docker container
+    container: wpilib/roborio-cross-ubuntu:2023-22.04
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v3
+    # Grant execute permission for gradlew
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    # Runs a single command using the runners shell
+    - name: Compile and run tests on robot code
+      run: ./gradlew build
