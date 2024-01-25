@@ -11,17 +11,18 @@ public class Shooter extends SubsystemBase {
         this.io = io;
     }
 
-    public void periodic(){
+    public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs("Shooter", inputs);
     }
 
     public void setTopMotor(double power) {
-        Logger.recordOutput("Top Shooter/Voltage",power);
+        Logger.recordOutput("Top Shooter/Voltage", power);
         io.setTopMotor(power);
     }
+
     public void setBottomMotor(double power) {
-        Logger.recordOutput("Bottom Shooter/Voltage",power);
+        Logger.recordOutput("Bottom Shooter/Voltage", power);
         io.setBottomMotor(power);
     }
 }
