@@ -1,5 +1,8 @@
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix6.hardware.TalonFX;
+
 /**
  * Constants file.
  */
@@ -27,6 +30,13 @@ public final class Constants {
      * Pneumatics CAN id constants.
      */
     public static final class Pneumatics {
+    }
+    public static final class Shooter {
+        public static final int shooterTopId = 0;
+        public static final int shooterBottomId = 0;
+        public static final double kP = 0;
+        public static final double kI = 0;
+        public static final double kD = 0;
     }
 
 
