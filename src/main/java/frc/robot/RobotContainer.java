@@ -1,5 +1,9 @@
 package frc.robot;
 
+import java.util.List;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathPlannerPath;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -9,9 +13,16 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot.RobotRunType;
-import frc.robot.subsystems.drive.Drivetrain;
-import frc.robot.subsystems.drive.DrivetrainIO;
-import frc.robot.subsystems.drive.DrivetrainVictorSP;
+import frc.robot.commands.TeleopSwerve;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOFalcon;
+import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterIO;
+import frc.robot.subsystems.shooter.ShooterVortex;
+import frc.robot.subsystems.swerve.Swerve;
+import frc.robot.subsystems.swerve.SwerveIO;
+import frc.robot.subsystems.swerve.SwerveReal;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -28,24 +39,36 @@ public class RobotContainer {
     private final SendableChooser<String> autoChooser = new SendableChooser<>();
 
     /* Subsystems */
-    private Drivetrain drivetrain;
+    private Swerve s_Swerve;
+    private Shooter shooter;
+    private Intake intake;
 
     /**
-     * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer(RobotRunType runtimeType) {
         SmartDashboard.putData("Choose Auto: ", autoChooser);
         autoChooser.setDefaultOption("Wait 1 Second", "wait");
         switch (runtimeType) {
             case kReal:
-                drivetrain = new Drivetrain(new DrivetrainVictorSP());
+                // drivetrain = new Drivetrain(new DrivetrainVictorSP());
+                s_Swerve = new Swerve(new SwerveReal());
+                shooter = new Shooter(new ShooterVortex());
+                intake = new Intake(new IntakeIOFalcon());
                 break;
             case kSimulation:
                 // drivetrain = new Drivetrain(new DrivetrainSim() {});
+                // s_Swerve = new Swerve(new SwerveIO() {});
                 break;
             default:
-                drivetrain = new Drivetrain(new DrivetrainIO() {});
+                // drivetrain = new Drivetrain(new DrivetrainIO() {});
+                s_Swerve = new Swerve(new SwerveIO() {});
+                shooter = new Shooter(new ShooterIO() {});
+                intake = new Intake(new IntakeIO() {});
         }
+        s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, driver,
+            Constants.Swerve.isFieldRelative, Constants.Swerve.isOpenLoop));
+        // autoChooser.addOption(resnickAuto, new ResnickAuto(s_Swerve));
+        SmartDashboard.putData("Choose Auto: ", autoChooser);
         // Configure the button bindings
         configureButtonBindings();
     }
@@ -56,7 +79,11 @@ public class RobotContainer {
      * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a
      * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
-    private void configureButtonBindings() {}
+    private void configureButtonBindings() { /* Driver Buttons */
+        /* Driver Buttons */
+        driver.y().onTrue(new InstantCommand(() -> s_Swerve.resetFieldRelativeOffset()));
+        operator.a().whileTrue(intake.runIntakeMotor());
+    }
 
     /**
      * Gets the user's selected autonomous command.
@@ -67,11 +94,16 @@ public class RobotContainer {
         Command autocommand;
         String stuff = autoChooser.getSelected();
         switch (stuff) {
-            case "wait":
-                autocommand = new WaitCommand(1.0);
+            case "Test Auto":
+                List<PathPlannerPath> paths = PathPlannerAuto.getPathGroupFromAutoFile("New Auto");
+                Pose2d initialState = paths.get(0).getPreviewStartingHolonomicPose();
+                s_Swerve.resetOdometry(initialState);
+                autocommand = new InstantCommand(() -> s_Swerve.resetOdometry(initialState))
+                    .andThen(new PathPlannerAuto("New Auto"));
+
                 break;
             default:
-                autocommand = new InstantCommand();
+                autocommand = new WaitCommand(1.0);
         }
         return autocommand;
     }
