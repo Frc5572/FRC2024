@@ -16,6 +16,8 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOFalcon;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterIO;
+import frc.robot.subsystems.shooter.ShooterVortex;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -45,6 +47,7 @@ public class RobotContainer {
         switch (runtimeType) {
             case kReal:
                 drivetrain = new Drivetrain(new DrivetrainVictorSP());
+                shooter = new Shooter(new ShooterVortex());
                 intake = new Intake(new IntakeIOFalcon());
                 break;
             case kSimulation:
@@ -52,6 +55,7 @@ public class RobotContainer {
                 break;
             default:
                 drivetrain = new Drivetrain(new DrivetrainIO() {});
+                shooter = new Shooter(new ShooterIO() {});
                 intake = new Intake(new IntakeIO() {});
         }
         // Configure the button bindings
