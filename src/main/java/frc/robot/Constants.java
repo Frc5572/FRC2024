@@ -7,7 +7,10 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -59,6 +62,22 @@ public final class Constants {
             public static final int INTAKE_MOTOR_ID = -1;
             public static final int INDEXER_MOTOR_ID = -1;
         }
+    }
+
+    /**
+     * Camera offset constants.
+     */
+    public static class CameraConstants {
+
+        public static final double ROLL = -Math.PI / 2;
+        public static final double PITCH = 0.0;
+        public static final double YAW = 0.0;
+        public static final Transform3d KCAMERA_TO_ROBOT =
+            new Transform3d(new Translation3d(Units.inchesToMeters(0), Units.inchesToMeters(8),
+                Units.inchesToMeters(22.125)), new Rotation3d(ROLL, PITCH, YAW)).inverse();
+
+        public static final String CAMERA_NAME = "pv2";
+        public static final double LARGEST_DISTANCE = 0.1;
     }
 
     /**

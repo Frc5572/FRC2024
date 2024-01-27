@@ -14,8 +14,10 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.util.PhotonCameraWrapper;
 import frc.lib.util.swerve.SwerveModule;
 import frc.robot.Constants;
 
@@ -25,10 +27,14 @@ import frc.robot.Constants;
 public class Swerve extends SubsystemBase {
     public SwerveDriveOdometry swerveOdometry;
     public SwerveModule[] swerveMods;
+    public PhotonCameraWrapper cam = new PhotonCameraWrapper(Constants.CameraConstants.CAMERA_NAME,
+        Constants.CameraConstants.KCAMERA_TO_ROBOT.inverse());
+    private final Field2d field = new Field2d();
     public AHRS gyro = new AHRS(Constants.Swerve.navXID);
     private double fieldOffset = gyro.getYaw();
     private SwerveInputsAutoLogged inputs = new SwerveInputsAutoLogged();
     private SwerveIO swerveIO;
+    private boolean hasInitialized = false;
 
     /**
      * Swerve Subsystem
@@ -205,6 +211,7 @@ public class Swerve extends SubsystemBase {
         swerveOdometry.update(getGyroYaw(), getModulePositions());
         swerveIO.updateInputs(inputs);
         Logger.processInputs("Swerve", inputs);
+        SmartDashboard.putBoolean("photonGood", cam.latency() < 0.6);
         for (SwerveModule mod : swerveMods) {
             mod.periodic();
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " CANcoder",
