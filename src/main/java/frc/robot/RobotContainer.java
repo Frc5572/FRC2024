@@ -12,6 +12,9 @@ import frc.robot.Robot.RobotRunType;
 import frc.robot.subsystems.drive.Drivetrain;
 import frc.robot.subsystems.drive.DrivetrainIO;
 import frc.robot.subsystems.drive.DrivetrainVictorSP;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOFalcon;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -29,6 +32,7 @@ public class RobotContainer {
 
     /* Subsystems */
     private Drivetrain drivetrain;
+    private Intake intake;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -39,12 +43,14 @@ public class RobotContainer {
         switch (runtimeType) {
             case kReal:
                 drivetrain = new Drivetrain(new DrivetrainVictorSP());
+                intake = new Intake(new IntakeIOFalcon());
                 break;
             case kSimulation:
                 // drivetrain = new Drivetrain(new DrivetrainSim() {});
                 break;
             default:
                 drivetrain = new Drivetrain(new DrivetrainIO() {});
+                intake = new Intake(new IntakeIO() {});
         }
         // Configure the button bindings
         configureButtonBindings();
@@ -56,7 +62,9 @@ public class RobotContainer {
      * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a
      * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
-    private void configureButtonBindings() {}
+    private void configureButtonBindings() {
+        operator.a().whileTrue(intake.runIntakeMotor());
+    }
 
     /**
      * Gets the user's selected autonomous command.
