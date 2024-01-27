@@ -9,8 +9,10 @@ import frc.robot.Constants;
  */
 public class IntakeIOFalcon implements IntakeIO {
 
-    private final TalonFX intakeMotor = new TalonFX(Constants.Intake.INTAKE_MOTOR_ID, "canivore");
-    private final TalonFX indexerMotor = new TalonFX(Constants.Intake.INDEXER_MOTOR_ID, "canivore");
+    private final TalonFX intakeMotor =
+        new TalonFX(Constants.Motors.Intake.INTAKE_MOTOR_ID, "canivore");
+    private final TalonFX indexerMotor =
+        new TalonFX(Constants.Motors.Intake.INDEXER_MOTOR_ID, "canivore");
 
     private final DutyCycleOut intakeDutyCycleOut = new DutyCycleOut(0);
     private final DutyCycleOut indexerDutyCycleOut = new DutyCycleOut(0);

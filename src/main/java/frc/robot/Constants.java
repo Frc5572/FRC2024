@@ -30,7 +30,7 @@ public final class Constants {
         }
 
         /**
-         * Intake Constnats
+         * Intake and indexer motor constants
          */
         public static final class Intake {
             public static final int INTAKE_MOTOR_ID = -1;
