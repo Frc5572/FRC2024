@@ -11,7 +11,9 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.lib.math.Conversions;
 import frc.robot.Constants;
 
-
+/**
+ * Swerve Module Subsystem
+ */
 public class SwerveModule {
     public int moduleNumber;
     private Rotation2d angleOffset;
@@ -82,8 +84,8 @@ public class SwerveModule {
             io.setDriveMotor(driveDutyCycle);
             inputs.driveMotorSelectedSensorVelocity = driveDutyCycle.Output;
         } else {
-            driveVelocity.Velocity = Conversions.MPSToRPS(desiredState.speedMetersPerSecond,
-                Constants.Swerve.wheelCircumference);
+            driveVelocity.Velocity = Conversions.metersPerSecondToRotationPerSecond(
+                desiredState.speedMetersPerSecond, Constants.Swerve.wheelCircumference);
             driveVelocity.FeedForward =
                 driveFeedForward.calculate(desiredState.speedMetersPerSecond);
             io.setDriveMotor(driveVelocity);
@@ -116,7 +118,7 @@ public class SwerveModule {
      */
     public SwerveModuleState getState() {
         return new SwerveModuleState(
-            Conversions.RPSToMPS(inputs.driveMotorSelectedSensorVelocity,
+            Conversions.rotationPerSecondToMetersPerSecond(inputs.driveMotorSelectedSensorVelocity,
                 Constants.Swerve.wheelCircumference),
             Rotation2d.fromRotations(inputs.angleMotorSelectedPosition));
     }

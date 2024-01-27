@@ -17,6 +17,7 @@ public interface SwerveIO {
 
     public default void updateInputs(SwerveInputs inputs) {}
 
+    /** Instantiating SwerveModules */
     public default SwerveModule createSwerveModule(int moduleNumber, int driveMotorID,
         int angleMotorID, int cancoderID, Rotation2d angleOffset) {
         return new SwerveModule(moduleNumber, driveMotorID, angleMotorID, cancoderID, angleOffset,

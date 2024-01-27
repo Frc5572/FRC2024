@@ -8,6 +8,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.Constants;
 
+/**
+ * Swerve Module IO
+ */
 public class SwerveModuleReal implements SwerveModuleIO {
 
     private TalonFX mAngleMotor;
@@ -17,6 +20,7 @@ public class SwerveModuleReal implements SwerveModuleIO {
     private TalonFXConfiguration swerveDriveFXConfig = new TalonFXConfiguration();
     private CANcoderConfiguration swerveCANcoderConfig = new CANcoderConfiguration();
 
+    /** Instantiating motors and Encoders */
     public SwerveModuleReal(int moduleNumber, int driveMotorID, int angleMotorID, int cancoderID,
         Rotation2d angleOffset) {
 
