@@ -60,6 +60,8 @@ public class ElevatorWristReal implements ElevatorWristIO {
         inputs.wristAbsoluteEncRawValue = wristAbsoluteEnc.getPosition();
         inputs.elevatorMotorSupplyVoltage = elevatorMotor.getSupplyVoltage();
         inputs.elevatorMotorMotorVoltage = elevatorMotor.getMotorVoltage();
+        inputs.wristMotorVoltage = wristMotor.getBusVoltage();
+        inputs.wristMotorAmp = wristMotor.getOutputCurrent();
 
 
     }
