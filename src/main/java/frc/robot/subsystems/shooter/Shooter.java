@@ -37,4 +37,11 @@ public class Shooter extends SubsystemBase {
         io.setBottomMotor(power);
     }
 
+    public double getTopVelocity() {
+        return inputs.topshooterVelocityRotPerSecond;
+    }
+
+    public double getBottomVelocity() {
+        return inputs.bottomshooterVelocityRotPerSecond;
+    }
 }
