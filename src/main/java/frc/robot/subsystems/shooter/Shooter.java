@@ -42,7 +42,7 @@ public class Shooter extends SubsystemBase {
 
     /**
      * Command for the shooter motors to run
-     * 
+     *
      * @return {@link Command} running the motor of the shooter
      */
     public Command runShooterMotor() {
