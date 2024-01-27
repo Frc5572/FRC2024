@@ -33,7 +33,7 @@ public class RobotContainer {
     private final SendableChooser<String> autoChooser = new SendableChooser<>();
 
     /* Subsystems */
-    private final Swerve s_Swerve;
+    private Swerve s_Swerve;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -48,7 +48,7 @@ public class RobotContainer {
                 break;
             case kSimulation:
                 // drivetrain = new Drivetrain(new DrivetrainSim() {});
-                s_Swerve = new Swerve(new SwerveIO() {});
+                // s_Swerve = new Swerve(new SwerveIO() {});
                 break;
             default:
                 // drivetrain = new Drivetrain(new DrivetrainIO() {});
@@ -71,7 +71,7 @@ public class RobotContainer {
      */
     private void configureButtonBindings() { /* Driver Buttons */
         /* Driver Buttons */
-        driver.y().whileTrue(new InstantCommand(() -> s_Swerve.resetFieldRelativeOffset()));
+        driver.y().onTrue(new InstantCommand(() -> s_Swerve.resetFieldRelativeOffset()));
     }
 
     /**
