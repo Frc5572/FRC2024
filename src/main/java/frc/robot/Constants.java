@@ -21,12 +21,18 @@ public final class Constants {
      * Motor CAN id's.
      */
     public static final class Motors {
+        /**
+         * Class for elevator and wrist motor constants
+         */
         public static final class ElevatorWrist {
             public static final int TALON_ID = -1;
             public static final int NEO_ID = -1;
         }
     }
 
+    /**
+     * Class for elevator and wrist constants
+     */
     public static final class ElevatorWristConstants {
         public static final int ELEVATOR_ENC_CHANNEL_A = -1;
         public static final int ELEVATOR_ENC_CHANNEL_B = -1;
