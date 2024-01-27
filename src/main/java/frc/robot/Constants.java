@@ -39,6 +39,14 @@ public final class Constants {
             public static final int TALON_ID = -1;
             public static final int NEO_ID = -1;
         }
+
+        /**
+         * Intake and indexer motor constants
+         */
+        public static final class Intake {
+            public static final int INTAKE_MOTOR_ID = -1;
+            public static final int INDEXER_MOTOR_ID = -1;
+        }
     }
 
     /**
@@ -84,6 +92,4 @@ public final class Constants {
         public static final double kI = 0;
         public static final double kD = 0;
     }
-
-
 }
