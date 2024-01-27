@@ -50,8 +50,8 @@ public class Shooter extends SubsystemBase {
             setTopMotor(0.5);
             setBottomMotor(0.5);
         }, () -> {
-            setTopMotor(0.5);
-            setBottomMotor(0.5);
+            setTopMotor(0);
+            setBottomMotor(0);
         }, this);
     }
 }
