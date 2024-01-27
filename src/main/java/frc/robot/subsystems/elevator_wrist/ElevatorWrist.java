@@ -7,7 +7,6 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
-import frc.robot.subsystems.elevatorWrist.ElevatorWristInputsAutoLogged;
 
 /**
  * Elevator and Wrist Subsystem
