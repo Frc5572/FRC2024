@@ -34,7 +34,7 @@ public class Swerve extends SubsystemBase {
     public Swerve(SwerveIO swerveIO) {
         this.swerveIO = swerveIO;
         swerveIO.updateInputs(inputs);
-        fieldOffset = inputs.yaw;
+        fieldOffset = getGyroYaw().getDegrees();
         swerveMods = new SwerveModule[] {
             swerveIO.createSwerveModule(0, Constants.Swerve.Mod0.DRIVE_MOTOR_ID,
                 Constants.Swerve.Mod0.ANGLE_MOTOR_ID, Constants.Swerve.Mod0.CAN_CODER_ID,
