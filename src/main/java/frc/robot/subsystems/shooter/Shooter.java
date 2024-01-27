@@ -27,10 +27,6 @@ public class Shooter extends SubsystemBase {
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs("Shooter", inputs);
-        // double topVoltageOutput = pid.calculate(inputs.topshooterVelocityRotPerSecond);
-        // double bottomVoltageOutput = pid.calculate(inputs.bottomshooterVelocityRotPerSecond);
-        // io.setTopMotor(topVoltageOutput);
-        // io.setBottomMotor(bottomVoltageOutput);
     }
 
     public void setTopMotor(double power) {
