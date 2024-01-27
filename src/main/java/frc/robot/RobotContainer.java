@@ -50,17 +50,14 @@ public class RobotContainer {
         autoChooser.setDefaultOption("Wait 1 Second", "wait");
         switch (runtimeType) {
             case kReal:
-                // drivetrain = new Drivetrain(new DrivetrainVictorSP());
                 s_Swerve = new Swerve(new SwerveReal());
                 shooter = new Shooter(new ShooterVortex());
                 intake = new Intake(new IntakeIOFalcon());
                 break;
             case kSimulation:
-                // drivetrain = new Drivetrain(new DrivetrainSim() {});
                 // s_Swerve = new Swerve(new SwerveIO() {});
                 break;
             default:
-                // drivetrain = new Drivetrain(new DrivetrainIO() {});
                 s_Swerve = new Swerve(new SwerveIO() {});
                 shooter = new Shooter(new ShooterIO() {});
                 intake = new Intake(new IntakeIO() {});
