@@ -2,7 +2,6 @@ package frc.robot.subsystems.swerve;
 
 import java.util.Optional;
 import org.littletonrobotics.junction.Logger;
-import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -25,8 +24,7 @@ import frc.robot.Constants;
 public class Swerve extends SubsystemBase {
     public SwerveDriveOdometry swerveOdometry;
     public SwerveModule[] swerveMods;
-    public AHRS gyro = new AHRS(Constants.Swerve.navXID);
-    private double fieldOffset = gyro.getYaw();
+    private double fieldOffset;
     private SwerveInputsAutoLogged inputs = new SwerveInputsAutoLogged();
     private SwerveIO swerveIO;
 
@@ -36,6 +34,7 @@ public class Swerve extends SubsystemBase {
     public Swerve(SwerveIO swerveIO) {
         this.swerveIO = swerveIO;
         swerveIO.updateInputs(inputs);
+        fieldOffset = getGyroYaw().getDegrees();
         swerveMods = new SwerveModule[] {
             swerveIO.createSwerveModule(0, Constants.Swerve.Mod0.DRIVE_MOTOR_ID,
                 Constants.Swerve.Mod0.ANGLE_MOTOR_ID, Constants.Swerve.Mod0.CAN_CODER_ID,
@@ -169,7 +168,7 @@ public class Swerve extends SubsystemBase {
      * @return Current rotation/yaw of gyro as {@link Rotation2d}
      */
     public Rotation2d getGyroYaw() {
-        float yaw = gyro.getYaw();
+        float yaw = inputs.yaw;
         return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(-yaw)
             : Rotation2d.fromDegrees(yaw);
     }
