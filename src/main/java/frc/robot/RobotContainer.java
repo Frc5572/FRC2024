@@ -12,6 +12,7 @@ import frc.robot.Robot.RobotRunType;
 import frc.robot.subsystems.drive.Drivetrain;
 import frc.robot.subsystems.drive.DrivetrainIO;
 import frc.robot.subsystems.drive.DrivetrainVictorSP;
+import frc.robot.subsystems.shooter.Shooter;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -29,6 +30,7 @@ public class RobotContainer {
 
     /* Subsystems */
     private Drivetrain drivetrain;
+    private Shooter shooter;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
