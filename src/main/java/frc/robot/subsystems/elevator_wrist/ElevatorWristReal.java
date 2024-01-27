@@ -1,6 +1,7 @@
 package frc.robot.subsystems.elevator_wrist;
 
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -18,17 +19,17 @@ import frc.robot.Constants;
  */
 public class ElevatorWristReal implements ElevatorWristIO {
     public final TalonFX elevatorMotor = new TalonFX(Constants.Motors.ElevatorWrist.TALON_ID);
-
-    public final Encoder elevatorRelativeEnc =
-        new Encoder(Constants.ElevatorWristConstants.ELEVATOR_ENC_CHANNEL_A,
-            Constants.ElevatorWristConstants.ELEVATOR_ENC_CHANNEL_B);
+    private final TalonFXConfiguration elevatorMotorConfig = new TalonFXConfiguration();
+    public final Encoder elevatorRelativeEnc = new Encoder(
+        Constants.ElevatorWristConstants.ElevatorWristElectronics.ELEVATOR_ENC_CHANNEL_A,
+        Constants.ElevatorWristConstants.ElevatorWristElectronics.ELEVATOR_ENC_CHANNEL_B);
 
     public final CANSparkMax wristMotor =
         new CANSparkMax(Constants.Motors.ElevatorWrist.NEO_ID, MotorType.kBrushless);
-    public final DigitalInput topLimitSwitch =
-        new DigitalInput(Constants.ElevatorWristConstants.TOP_LIMIT_SWITCH_PORT);
-    public final DigitalInput bottomLimitSwitch =
-        new DigitalInput(Constants.ElevatorWristConstants.BOTTOM_LIMIT_SWITCH_PORT);
+    public final DigitalInput topLimitSwitch = new DigitalInput(
+        Constants.ElevatorWristConstants.ElevatorWristElectronics.TOP_LIMIT_SWITCH_PORT);
+    public final DigitalInput bottomLimitSwitch = new DigitalInput(
+        Constants.ElevatorWristConstants.ElevatorWristElectronics.BOTTOM_LIMIT_SWITCH_PORT);
 
     public final AbsoluteEncoder wristAbsoluteEnc;
 
@@ -39,12 +40,14 @@ public class ElevatorWristReal implements ElevatorWristIO {
      */
     public ElevatorWristReal() {
         wristAbsoluteEnc = wristMotor.getAbsoluteEncoder(Type.kDutyCycle);
-
+        elevatorMotorConfig.Feedback.SensorToMechanismRatio = 25;
+        elevatorMotor.getConfigurator().apply(elevatorMotorConfig);
         elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
         elevatorMotor.setInverted(false);
 
         wristMotor.setIdleMode(IdleMode.kBrake);
         wristMotor.setInverted(false);
+
 
     }
 
@@ -55,6 +58,10 @@ public class ElevatorWristReal implements ElevatorWristIO {
         inputs.bottomLimitSwitch = bottomLimitSwitch.get();
         inputs.elevatorRelativeEncRawValue = elevatorRelativeEnc.get();
         inputs.wristAbsoluteEncRawValue = wristAbsoluteEnc.getPosition();
+        inputs.elevatorMotorSupplyVoltage = elevatorMotor.getSupplyVoltage();
+        inputs.elevatorMotorMotorVoltage = elevatorMotor.getMotorVoltage();
+
+
     }
 
     @Override

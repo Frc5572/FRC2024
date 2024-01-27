@@ -1,6 +1,7 @@
 package frc.robot.subsystems.elevator_wrist;
 
 import org.littletonrobotics.junction.AutoLog;
+import com.ctre.phoenix6.StatusSignal;
 
 /**
  * Elevator and wrist IO class
@@ -15,6 +16,11 @@ public interface ElevatorWristIO {
         public boolean topLimitSwitch;
         public boolean bottomLimitSwitch;
         public double wristAbsoluteEncRawValue;
+        public StatusSignal<Double> elevatorMotorSupplyVoltage;
+        public StatusSignal<Double> elevatorMotorMotorVoltage;
+        public double elevatorMotorAmp;
+        public double wristMotorVoltage;
+        public double wristMotorAmp;
     }
 
     public default void updateInputs(ElevatorWristInputs inputs) {}

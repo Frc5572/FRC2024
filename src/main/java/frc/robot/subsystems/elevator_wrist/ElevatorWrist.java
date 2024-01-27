@@ -1,10 +1,15 @@
 package frc.robot.subsystems.elevator_wrist;
 
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
 
@@ -16,26 +21,32 @@ public class ElevatorWrist implements Subsystem {
     public ElevatorWristInputsAutoLogged inputs = new ElevatorWristInputsAutoLogged();
 
 
-    ProfiledPIDController elevatorPIDController = new ProfiledPIDController(
-        Constants.ElevatorWristConstants.ELEVATOR_KP, Constants.ElevatorWristConstants.ELEVATOR_KI,
-        Constants.ElevatorWristConstants.ELEVATOR_KD,
-        new TrapezoidProfile.Constraints(Constants.ElevatorWristConstants.ELEVATOR_MAX_VELOCITY,
-            Constants.ElevatorWristConstants.ELEVATOR_MAX_ACCELERATION));
+    ProfiledPIDController elevatorPIDController =
+        new ProfiledPIDController(Constants.ElevatorWristConstants.ElevatorWristPID.ELEVATOR_KP,
+            Constants.ElevatorWristConstants.ElevatorWristPID.ELEVATOR_KI,
+            Constants.ElevatorWristConstants.ElevatorWristPID.ELEVATOR_KD,
+            new TrapezoidProfile.Constraints(
+                Constants.ElevatorWristConstants.ElevatorWristPID.ELEVATOR_MAX_VELOCITY,
+                Constants.ElevatorWristConstants.ElevatorWristPID.ELEVATOR_MAX_ACCELERATION));
 
     ProfiledPIDController wristPIDController =
-        new ProfiledPIDController(Constants.ElevatorWristConstants.WRIST_KP,
-            Constants.ElevatorWristConstants.WRIST_KI, Constants.ElevatorWristConstants.WRIST_KD,
-            new TrapezoidProfile.Constraints(Constants.ElevatorWristConstants.WRIST_MAX_VELOCITY,
-                Constants.ElevatorWristConstants.WRIST_MAX_ACCELERATION));
+        new ProfiledPIDController(Constants.ElevatorWristConstants.ElevatorWristPID.WRIST_KP,
+            Constants.ElevatorWristConstants.ElevatorWristPID.WRIST_KI,
+            Constants.ElevatorWristConstants.ElevatorWristPID.WRIST_KD,
+            new TrapezoidProfile.Constraints(
+                Constants.ElevatorWristConstants.ElevatorWristPID.WRIST_MAX_VELOCITY,
+                Constants.ElevatorWristConstants.ElevatorWristPID.WRIST_MAX_ACCELERATION));
 
 
-    private ElevatorFeedforward elevatorFeedForward = new ElevatorFeedforward(
-        Constants.ElevatorWristConstants.ELEVATOR_KS, Constants.ElevatorWristConstants.ELEVATOR_KG,
-        Constants.ElevatorWristConstants.ELEVATOR_KV);
+    private ElevatorFeedforward elevatorFeedForward =
+        new ElevatorFeedforward(Constants.ElevatorWristConstants.ElevatorWristPID.ELEVATOR_KS,
+            Constants.ElevatorWristConstants.ElevatorWristPID.ELEVATOR_KG,
+            Constants.ElevatorWristConstants.ElevatorWristPID.ELEVATOR_KV);
 
     private ArmFeedforward wristFeedForward =
-        new ArmFeedforward(Constants.ElevatorWristConstants.WRIST_KS,
-            Constants.ElevatorWristConstants.WRIST_KG, Constants.ElevatorWristConstants.WRIST_KV);
+        new ArmFeedforward(Constants.ElevatorWristConstants.ElevatorWristPID.WRIST_KS,
+            Constants.ElevatorWristConstants.ElevatorWristPID.WRIST_KG,
+            Constants.ElevatorWristConstants.ElevatorWristPID.WRIST_KV);
 
     public ElevatorWrist(ElevatorWristIO io) {
         this.io = io;
@@ -47,8 +58,7 @@ public class ElevatorWrist implements Subsystem {
         io.updateInputs(inputs);
         Logger.processInputs("ElevatorWrist", inputs);
 
-        double elevatorPIDValue =
-            elevatorPIDController.calculate(inputs.elevatorRelativeEncRawValue);
+        double elevatorPIDValue = elevatorPIDController.calculate(elevatorDistanceTraveled());
         double wristPIDValue = wristPIDController.calculate(inputs.wristAbsoluteEncRawValue);
 
         double elevatorFeedForwardValue =
@@ -59,5 +69,37 @@ public class ElevatorWrist implements Subsystem {
 
         io.setElevatorVoltage(elevatorFeedForwardValue + elevatorPIDValue);
         io.setWristVoltage(wristFeedForwardValue + wristPIDValue);
+
+        Logger.recordOutput("/ElevatorWrist/Elevator/VoltageFromPID", elevatorPIDValue);
+        Logger.recordOutput("/ElevatorWrist/Elevator/VoltageFromFeedForward",
+            elevatorFeedForwardValue);
+        Logger.recordOutput("/ElevatorWrist/Elevator/TotalVoltage",
+            elevatorPIDValue + elevatorFeedForwardValue);
+
+        Logger.recordOutput("/ElevatorWrist/Wrist/VoltageFromPID", wristPIDValue);
+        Logger.recordOutput("/ElevatorWrist/Wrist/VoltageFromFeedForward", wristFeedForwardValue);
+        Logger.recordOutput("/ElevatorWrist/Wrist/VoltageFromFeedForward",
+            wristFeedForwardValue + wristPIDValue);
+
+    }
+
+
+    public Command goToPosition(double height, Rotation2d angle) {
+        return Commands.runOnce(() -> {
+            elevatorPIDController.setGoal(height);
+            wristPIDController.setGoal(angle.getRotations());
+        }).andThen(Commands
+            .waitUntil(() -> wristPIDController.atGoal() && elevatorPIDController.atGoal()));
+    }
+
+    public Command followPosition(DoubleSupplier height, Supplier<Rotation2d> angle) {
+        return Commands.run(() -> {
+            elevatorPIDController.setGoal(height.getAsDouble());
+            wristPIDController.setGoal(angle.get().getRotations());
+        });
+    }
+
+    public double elevatorDistanceTraveled() {
+        return inputs.elevatorRelativeEncRawValue * 0.111715034761762;
     }
 }
