@@ -6,10 +6,11 @@ import org.littletonrobotics.junction.AutoLog;
  * Elevator and wrist IO class
  */
 public interface ElevatorWristIO {
-    @AutoLog
     /**
      * Elevator and wrist inputs
      */
+    @AutoLog
+
     public static class ElevatorWristInputs {
         public double elevatorRelativeEncRawValue;
         public boolean topLimitSwitch;
