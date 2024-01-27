@@ -175,7 +175,10 @@ public final class Constants {
                 // Drive base radius (distance from center to furthest module)
                 maxSpeed, MOD0_MODOFFSET.getNorm(), new ReplanningConfig());
     }
-    /** Auto constants */
+
+    /**
+     * Auto constants
+     */
     public static final class AutoConstants {
         public static final double kMaxSpeedMetersPerSecond = 3;
         public static final double kMaxAccelerationMetersPerSecondSquared = 3;
