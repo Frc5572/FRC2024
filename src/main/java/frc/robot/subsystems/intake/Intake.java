@@ -24,10 +24,12 @@ public class Intake extends SubsystemBase {
     }
 
     public void setIntakeMotor(double percentage) {
+        Logger.recordOutput("/Intake/IntakePercentage", percentage);
         io.setIntakeMotorPercentage(percentage);
     }
 
     public void setIndexerMotor(double percentage) {
+        Logger.recordOutput("/Intake/IndexerPercentage", percentage);
         io.setIndexerMotorPercentage(percentage);
     }
 

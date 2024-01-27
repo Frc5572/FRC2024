@@ -22,9 +22,15 @@ public class IntakeIOFalcon implements IntakeIO {
 
     @Override
     public void updateInputs(IntakeInputs inputs) {
+        inputs.intakeSupplyVoltage = intakeMotor.getSupplyVoltage().getValueAsDouble();
+        inputs.intakeMotorVoltage = intakeMotor.getMotorVoltage().getValueAsDouble();
+        inputs.intakeAmps = intakeMotor.getStatorCurrent().getValueAsDouble();
+        inputs.intakeRPM = intakeMotor.getVelocity().getValueAsDouble();
+        inputs.indexerSupplyVoltage = indexerMotor.getSupplyVoltage().getValueAsDouble();
+        inputs.indexerMotorVoltage = indexerMotor.getMotorVoltage().getValueAsDouble();
+        inputs.indexerAmps = indexerMotor.getStatorCurrent().getValueAsDouble();
+        inputs.indexerRPM = indexerMotor.getVelocity().getValueAsDouble();
         inputs.sensorStatus = false;
-        inputs.intakePercent = intakeDutyCycleOut.Output;
-        inputs.indexerPercent = indexerDutyCycleOut.Output;
     }
 
     @Override
