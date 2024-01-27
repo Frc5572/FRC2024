@@ -40,6 +40,11 @@ public class Shooter extends SubsystemBase {
         io.setBottomMotor(power);
     }
 
+    /**
+     * Command for the shooter motors to run
+     * 
+     * @return {@link Command} running the motor of the shooter
+     */
     public Command runShooterMotor() {
         return Commands.startEnd(() -> {
             setTopMotor(0.5);
