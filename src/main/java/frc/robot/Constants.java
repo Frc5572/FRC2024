@@ -4,14 +4,17 @@ package frc.robot;
  * Constants file.
  */
 public final class Constants {
+
     /**
      * Stick Deadband
      */
     public static final double STICK_DEADBAND = 0.1;
+
     /**
      * Driver ID
      */
     public static final int DRIVER_ID = 0;
+
     /**
      * Operator ID
      */
@@ -21,10 +24,14 @@ public final class Constants {
      * Motor CAN id's.
      */
     public static final class Motors {
+        /**
+         * Shooter Id's
+         */
         public static final class Shooter {
             public static final int shooterTopId = 0;
             public static final int shooterBottomId = 0;
         }
+
         /**
          * Class for elevator and wrist motor constants
          */
@@ -69,6 +76,9 @@ public final class Constants {
     public static final class Pneumatics {
     }
 
+    /**
+     * Constants of Shooters
+     */
     public static final class ShooterConstants {
         public static final double kP = 0;
         public static final double kI = 0;

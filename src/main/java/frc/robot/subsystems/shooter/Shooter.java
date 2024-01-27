@@ -5,6 +5,9 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
+/**
+ * Class for Shooter
+ */
 public class Shooter extends SubsystemBase {
     private ShooterIO io;
     private PIDController pid = new PIDController(Constants.ShooterConstants.kP,

@@ -5,6 +5,9 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import frc.robot.Constants;
 
+/**
+ * Class for ShooterVortex
+ */
 public class ShooterVortex implements ShooterIO {
     public final CANSparkFlex shooterTopMotor =
         new CANSparkFlex(Constants.Motors.Shooter.shooterTopId, MotorType.kBrushless);
