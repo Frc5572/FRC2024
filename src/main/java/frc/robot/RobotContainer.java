@@ -14,6 +14,9 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot.RobotRunType;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOFalcon;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.SwerveIO;
 import frc.robot.subsystems.swerve.SwerveReal;
@@ -34,9 +37,9 @@ public class RobotContainer {
 
     /* Subsystems */
     private Swerve s_Swerve;
+    private Intake intake;
 
     /**
-     * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer(RobotRunType runtimeType) {
         SmartDashboard.putData("Choose Auto: ", autoChooser);
@@ -45,6 +48,7 @@ public class RobotContainer {
             case kReal:
                 // drivetrain = new Drivetrain(new DrivetrainVictorSP());
                 s_Swerve = new Swerve(new SwerveReal());
+                intake = new Intake(new IntakeIOFalcon());
                 break;
             case kSimulation:
                 // drivetrain = new Drivetrain(new DrivetrainSim() {});
@@ -53,7 +57,7 @@ public class RobotContainer {
             default:
                 // drivetrain = new Drivetrain(new DrivetrainIO() {});
                 s_Swerve = new Swerve(new SwerveIO() {});
-
+                intake = new Intake(new IntakeIO() {});
         }
         s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, driver,
             Constants.Swerve.isFieldRelative, Constants.Swerve.isOpenLoop));
@@ -72,6 +76,7 @@ public class RobotContainer {
     private void configureButtonBindings() { /* Driver Buttons */
         /* Driver Buttons */
         driver.y().onTrue(new InstantCommand(() -> s_Swerve.resetFieldRelativeOffset()));
+        operator.a().whileTrue(intake.runIntakeMotor());
     }
 
     /**
