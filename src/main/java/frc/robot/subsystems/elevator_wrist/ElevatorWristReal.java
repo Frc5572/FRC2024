@@ -13,6 +13,9 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import frc.robot.Constants;
 
+/**
+ * Elevator and wrist real robot class
+ */
 public class ElevatorWristReal implements ElevatorWristIO {
     public final TalonFX elevatorMotor = new TalonFX(Constants.Motors.ElevatorWrist.TALON_ID);
 
@@ -31,6 +34,9 @@ public class ElevatorWristReal implements ElevatorWristIO {
 
     private VoltageOut voltage = new VoltageOut(0);
 
+    /**
+     * Constructor for elevator wrist real class
+     */
     public ElevatorWristReal() {
         wristAbsoluteEnc = wristMotor.getAbsoluteEncoder(Type.kDutyCycle);
 
