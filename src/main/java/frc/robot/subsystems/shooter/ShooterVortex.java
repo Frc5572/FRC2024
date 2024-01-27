@@ -7,9 +7,9 @@ import frc.robot.Constants;
 
 public class ShooterVortex implements ShooterIO {
     public final CANSparkFlex shooterTopMotor =
-        new CANSparkFlex(Constants.Shooter.shooterTopId, MotorType.kBrushless);
+        new CANSparkFlex(Constants.Motors.Shooter.shooterTopId, MotorType.kBrushless);
     public final CANSparkFlex shooterBottomMotor =
-        new CANSparkFlex(Constants.Shooter.shooterBottomId, MotorType.kBrushless);
+        new CANSparkFlex(Constants.Motors.Shooter.shooterBottomId, MotorType.kBrushless);
     private RelativeEncoder topEncoder;
     private RelativeEncoder bottomEncoder;
 
@@ -27,7 +27,7 @@ public class ShooterVortex implements ShooterIO {
     }
 
     public void updateInputs(ShooterIOInputs inputs) {
-        inputs.topshooterVelocityRotPerSecond = topEncoder.getPosition();
-        inputs.bottomshooterVelocityRotPerSecond = bottomEncoder.getPosition();
+        inputs.topshooterVelocityRotPerSecond = topEncoder.getVelocity();
+        inputs.bottomshooterVelocityRotPerSecond = bottomEncoder.getVelocity();
     }
 }

@@ -7,20 +7,22 @@ import frc.robot.Constants;
 
 public class Shooter extends SubsystemBase {
     private ShooterIO io;
-    private PIDController pid =
-        new PIDController(Constants.Shooter.kP, Constants.Shooter.kI, Constants.Shooter.kD);
+    private PIDController pid = new PIDController(Constants.ShooterConstants.kP,
+        Constants.ShooterConstants.kI, Constants.ShooterConstants.kD);
     private ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
     public Shooter(ShooterIO io) {
         this.io = io;
     }
 
+    @Override
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs("Shooter", inputs);
-        double VoltageOutput = pid.calculate(inputs.shooterVelocityRotPerSecond);
-        io.setTopMotor(VoltageOutput);
-        io.setBottomMotor(VoltageOutput);
+        double topVoltageOutput = pid.calculate(inputs.topshooterVelocityRotPerSecond);
+        double bottomVoltageOutput = pid.calculate(inputs.bottomshooterVelocityRotPerSecond);
+        io.setTopMotor(topVoltageOutput);
+        io.setBottomMotor(bottomVoltageOutput);
     }
 
     public void setTopMotor(double power) {

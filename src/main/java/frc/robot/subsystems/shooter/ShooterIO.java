@@ -6,22 +6,15 @@ public interface ShooterIO {
 
     @AutoLog
     public static class ShooterIOInputs {
-        public double shooterVelocityRotPerSecond;
-
-
+        public double topshooterVelocityRotPerSecond;
+        public double bottomshooterVelocityRotPerSecond;
     }
 
-    public default void setTopMotor(double power) {
+    public default void setTopMotor(double power) {}
 
-    }
+    public default void setBottomMotor(double power) {}
 
-    public default void setBottomMotor(double power) {
-
-    }
-
-    public default void updateInputs(ShooterIOInputsAutoLogged inputs) {
-
-    }
+    public default void updateInputs(ShooterIOInputsAutoLogged inputs) {}
 }
 
 

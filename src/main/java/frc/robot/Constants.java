@@ -1,7 +1,5 @@
 package frc.robot;
 
-
-
 /**
  * Constants file.
  */
@@ -23,6 +21,10 @@ public final class Constants {
      * Motor CAN id's.
      */
     public static final class Motors {
+        public static final class Shooter {
+            public static final int shooterTopId = 0;
+            public static final int shooterBottomId = 0;
+        }
     }
 
     /**
@@ -30,9 +32,8 @@ public final class Constants {
      */
     public static final class Pneumatics {
     }
-    public static final class Shooter {
-        public static final int shooterTopId = 0;
-        public static final int shooterBottomId = 0;
+
+    public static final class ShooterConstants {
         public static final double kP = 0;
         public static final double kI = 0;
         public static final double kD = 0;
