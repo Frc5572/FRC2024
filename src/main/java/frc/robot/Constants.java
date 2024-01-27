@@ -36,6 +36,14 @@ public final class Constants {
             public static final int INTAKE_MOTOR_ID = -1;
             public static final int INDEXER_MOTOR_ID = -1;
         }
+
+        /**
+         * Climber motor constants
+         */
+        public static final class Climber {
+            public static final int CLIMBER_MOTOR_ID = -1;
+            public static final int CLIMBER_MOTOR_ID2 = -1;
+        }
     }
 
     /**
@@ -65,6 +73,20 @@ public final class Constants {
         public static final double WRIST_KS = 0;
         public static final double WRIST_KG = 0;
         public static final double WRIST_KV = 0;
+    }
+
+    /**
+     * Climber constants
+     */
+    public static final class ClimberConstants {
+        public static final double CLIMBER_KP = 0;
+        public static final double CLIMBER_KI = 0;
+        public static final double CLIMBER_KD = 0;
+        public static final double CLIMBER_MAX_VELOCITY = 0;
+        public static final double CLIMBER_MAX_ACCELERATION = 0;
+        public static final double CLIMBER_KS = 0;
+        public static final double CLIMBER_KG = 0;
+        public static final double CLIMBER_KV = 0;
     }
 
     /**
