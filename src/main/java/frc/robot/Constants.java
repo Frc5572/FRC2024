@@ -28,6 +28,14 @@ public final class Constants {
             public static final int TALON_ID = -1;
             public static final int NEO_ID = -1;
         }
+
+        /**
+         * Intake Constnats
+         */
+        public static final class Intake {
+            public static final int INTAKE_MOTOR_ID = -1;
+            public static final int INDEXER_MOTOR_ID = -1;
+        }
     }
 
     /**
@@ -64,14 +72,4 @@ public final class Constants {
      */
     public static final class Pneumatics {
     }
-
-    /**
-     * Intake Constnats
-     */
-    public static final class Intake {
-        public static final int INTAKE_MOTOR_ID = 0;
-        public static final int INDEXER_MOTOR_ID = 1;
-    }
-
-
 }
