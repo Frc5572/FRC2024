@@ -32,11 +32,13 @@ public class Intake extends SubsystemBase {
         return intakeAutoLogged.sensorStatus;
     }
 
-    public Command runIntakeMotor = Commands.startEnd(() -> {
-        setIntakeMotor(0.5);
-        setIndexerMotor(0.5);
-    }, () -> {
-        setIntakeMotor(0);
-        setIndexerMotor(0);
-    }, this).until(() -> getSensorStatus()).unless(() -> getSensorStatus());
+    public Command runIntakeMotor() {
+        return Commands.startEnd(() -> {
+            setIntakeMotor(0.5);
+            setIndexerMotor(0.5);
+        }, () -> {
+            setIntakeMotor(0);
+            setIndexerMotor(0);
+        }, this).until(() -> getSensorStatus()).unless(() -> getSensorStatus());
+    }
 }
