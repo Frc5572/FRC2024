@@ -14,6 +14,11 @@ public interface ShooterIO {
     public static class ShooterIOInputs {
         public double topshooterVelocityRotPerSecond;
         public double bottomshooterVelocityRotPerSecond;
+        public double topshooterSupplyVoltage;
+        public double bottomshooterSupplyVoltage;
+        public double topshooterAmps;
+        public double bottomshooterAmps;
+
     }
 
     public default void setTopMotor(double power) {}

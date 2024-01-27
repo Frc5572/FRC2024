@@ -29,12 +29,12 @@ public class Shooter extends SubsystemBase {
     }
 
     public void setTopMotor(double power) {
-        Logger.recordOutput("Top Shooter/Voltage", power);
+        Logger.recordOutput("Shooter/Top Voltage", power);
         io.setTopMotor(power);
     }
 
     public void setBottomMotor(double power) {
-        Logger.recordOutput("Bottom Shooter/Voltage", power);
+        Logger.recordOutput("Shooter/Bottom Voltage", power);
         io.setBottomMotor(power);
     }
 }

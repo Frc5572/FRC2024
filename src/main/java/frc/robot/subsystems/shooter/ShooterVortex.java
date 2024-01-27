@@ -32,5 +32,9 @@ public class ShooterVortex implements ShooterIO {
     public void updateInputs(ShooterIOInputs inputs) {
         inputs.topshooterVelocityRotPerSecond = topEncoder.getVelocity();
         inputs.bottomshooterVelocityRotPerSecond = bottomEncoder.getVelocity();
+        inputs.topshooterSupplyVoltage = shooterTopMotor.getBusVoltage();
+        inputs.bottomshooterSupplyVoltage = shooterBottomMotor.getBusVoltage();
+        inputs.topshooterAmps = shooterTopMotor.getOutputCurrent();
+        inputs.bottomshooterAmps = shooterBottomMotor.getOutputCurrent();
     }
 }
