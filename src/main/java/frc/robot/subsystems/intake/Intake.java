@@ -5,6 +5,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/**
+ * Intake Subsystem
+ */
 public class Intake extends SubsystemBase {
     private IntakeIO io;
     private IntakeInputsAutoLogged intakeAutoLogged = new IntakeInputsAutoLogged();
@@ -32,6 +35,11 @@ public class Intake extends SubsystemBase {
         return intakeAutoLogged.sensorStatus;
     }
 
+    /**
+     * Command to run the intake motor and indexer until the sensor trips
+     *
+     * @return {@link Command} to run the intake and indexer motors
+     */
     public Command runIntakeMotor() {
         return Commands.startEnd(() -> {
             setIntakeMotor(0.5);

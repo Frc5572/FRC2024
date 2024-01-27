@@ -4,6 +4,9 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import frc.robot.Constants;
 
+/**
+ * Intake IO Layer with real motors and sensors
+ */
 public class IntakeIOFalcon implements IntakeIO {
 
     private final TalonFX intakeMotor = new TalonFX(Constants.Intake.INTAKE_MOTOR_ID, "canivore");
@@ -12,9 +15,10 @@ public class IntakeIOFalcon implements IntakeIO {
     private final DutyCycleOut intakeDutyCycleOut = new DutyCycleOut(0);
     private final DutyCycleOut indexerDutyCycleOut = new DutyCycleOut(0);
 
-    public IntakeIOFalcon() {
-
-    }
+    /**
+     * Intake IO Layer with real motors and sensors
+     */
+    public IntakeIOFalcon() {}
 
     @Override
     public void updateInputs(IntakeInputs inputs) {
