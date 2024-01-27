@@ -2,6 +2,8 @@ package frc.robot.subsystems.shooter;
 
 import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -36,5 +38,15 @@ public class Shooter extends SubsystemBase {
     public void setBottomMotor(double power) {
         Logger.recordOutput("Shooter/Bottom Voltage", power);
         io.setBottomMotor(power);
+    }
+
+    public Command runShooterMotor() {
+        return Commands.startEnd(() -> {
+            setTopMotor(0.5);
+            setBottomMotor(0.5);
+        }, () -> {
+            setTopMotor(0.5);
+            setBottomMotor(0.5);
+        }, this);
     }
 }
