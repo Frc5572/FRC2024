@@ -24,8 +24,8 @@ import frc.robot.subsystems.intake.IntakeIOFalcon;
  */
 public class RobotContainer {
     /* Controllers */
-    private final CommandXboxController driver = new CommandXboxController(Constants.driverID);
-    private final CommandXboxController operator = new CommandXboxController(Constants.operatorID);
+    private final CommandXboxController driver = new CommandXboxController(Constants.DRIVER_ID);
+    private final CommandXboxController operator = new CommandXboxController(Constants.OPERATOR_ID);
 
     // Initialize AutoChooser Sendable
     private final SendableChooser<String> autoChooser = new SendableChooser<>();
