@@ -102,7 +102,8 @@ public class ElevatorWrist implements Subsystem {
      * Command to continuously move the Elevator and Wrist to an ever changing position
      *
      * @param height A {@link DoubleSupplier} to provide the height of the elevator in meters
-     * @param angle A {@link Supplier<Rotation2d>} of angle of the wrist in {@link Rotation2d}
+     * @param angle A {@link Supplier} of {@link Rotation2d} of angle of the wrist in
+     *        {@link Rotation2d}
      *
      * @return A {@link Command}
      */
