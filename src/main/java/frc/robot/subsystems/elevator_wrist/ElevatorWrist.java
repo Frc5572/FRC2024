@@ -22,31 +22,31 @@ public class ElevatorWrist implements Subsystem {
 
 
     ProfiledPIDController elevatorPIDController =
-        new ProfiledPIDController(Constants.ElevatorWristConstants.ElevatorWristPID.ELEVATOR_KP,
-            Constants.ElevatorWristConstants.ElevatorWristPID.ELEVATOR_KI,
-            Constants.ElevatorWristConstants.ElevatorWristPID.ELEVATOR_KD,
+        new ProfiledPIDController(Constants.ElevatorWristConstants.PID.ELEVATOR_KP,
+            Constants.ElevatorWristConstants.PID.ELEVATOR_KI,
+            Constants.ElevatorWristConstants.PID.ELEVATOR_KD,
             new TrapezoidProfile.Constraints(
-                Constants.ElevatorWristConstants.ElevatorWristPID.ELEVATOR_MAX_VELOCITY,
-                Constants.ElevatorWristConstants.ElevatorWristPID.ELEVATOR_MAX_ACCELERATION));
+                Constants.ElevatorWristConstants.PID.ELEVATOR_MAX_VELOCITY,
+                Constants.ElevatorWristConstants.PID.ELEVATOR_MAX_ACCELERATION));
 
     ProfiledPIDController wristPIDController =
-        new ProfiledPIDController(Constants.ElevatorWristConstants.ElevatorWristPID.WRIST_KP,
-            Constants.ElevatorWristConstants.ElevatorWristPID.WRIST_KI,
-            Constants.ElevatorWristConstants.ElevatorWristPID.WRIST_KD,
+        new ProfiledPIDController(Constants.ElevatorWristConstants.PID.WRIST_KP,
+            Constants.ElevatorWristConstants.PID.WRIST_KI,
+            Constants.ElevatorWristConstants.PID.WRIST_KD,
             new TrapezoidProfile.Constraints(
-                Constants.ElevatorWristConstants.ElevatorWristPID.WRIST_MAX_VELOCITY,
-                Constants.ElevatorWristConstants.ElevatorWristPID.WRIST_MAX_ACCELERATION));
+                Constants.ElevatorWristConstants.PID.WRIST_MAX_VELOCITY,
+                Constants.ElevatorWristConstants.PID.WRIST_MAX_ACCELERATION));
 
 
     private ElevatorFeedforward elevatorFeedForward =
-        new ElevatorFeedforward(Constants.ElevatorWristConstants.ElevatorWristPID.ELEVATOR_KS,
-            Constants.ElevatorWristConstants.ElevatorWristPID.ELEVATOR_KG,
-            Constants.ElevatorWristConstants.ElevatorWristPID.ELEVATOR_KV);
+        new ElevatorFeedforward(Constants.ElevatorWristConstants.PID.ELEVATOR_KS,
+            Constants.ElevatorWristConstants.PID.ELEVATOR_KG,
+            Constants.ElevatorWristConstants.PID.ELEVATOR_KV);
 
     private ArmFeedforward wristFeedForward =
-        new ArmFeedforward(Constants.ElevatorWristConstants.ElevatorWristPID.WRIST_KS,
-            Constants.ElevatorWristConstants.ElevatorWristPID.WRIST_KG,
-            Constants.ElevatorWristConstants.ElevatorWristPID.WRIST_KV);
+        new ArmFeedforward(Constants.ElevatorWristConstants.PID.WRIST_KS,
+            Constants.ElevatorWristConstants.PID.WRIST_KG,
+            Constants.ElevatorWristConstants.PID.WRIST_KV);
 
     public ElevatorWrist(ElevatorWristIO io) {
         this.io = io;

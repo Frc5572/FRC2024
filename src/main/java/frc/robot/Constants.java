@@ -220,9 +220,9 @@ public final class Constants {
     public static final class ElevatorWristConstants {
 
         /**
-         * ELectronic constants for elevator and wrist
+         * Sensor Constants
          */
-        public static final class ElevatorWristElectronics {
+        public static final class Sensors {
 
             public static final int ELEVATOR_ENC_CHANNEL_A = -1;
             public static final int ELEVATOR_ENC_CHANNEL_B = -1;
@@ -231,9 +231,9 @@ public final class Constants {
         }
 
         /**
-         * PID constants for elevator and wrist
+         * PID constants
          */
-        public static final class ElevatorWristPID {
+        public static final class PID {
 
             public static final double ELEVATOR_KP = 0;
             public static final double ELEVATOR_KI = 0;
@@ -257,7 +257,7 @@ public final class Constants {
         /**
          * Set points constants for elevator and wrist
          */
-        public static final class ElevatorWristSetPoints {
+        public static final class SetPoints {
 
             public static final double HOME_HEIGHT = 0;
             public static final double HOME_ANGLE = 0;

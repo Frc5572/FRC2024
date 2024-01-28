@@ -20,16 +20,16 @@ import frc.robot.Constants;
 public class ElevatorWristReal implements ElevatorWristIO {
     public final TalonFX elevatorMotor = new TalonFX(Constants.Motors.ElevatorWrist.TALON_ID);
     private final TalonFXConfiguration elevatorMotorConfig = new TalonFXConfiguration();
-    public final Encoder elevatorRelativeEnc = new Encoder(
-        Constants.ElevatorWristConstants.ElevatorWristElectronics.ELEVATOR_ENC_CHANNEL_A,
-        Constants.ElevatorWristConstants.ElevatorWristElectronics.ELEVATOR_ENC_CHANNEL_B);
+    public final Encoder elevatorRelativeEnc =
+        new Encoder(Constants.ElevatorWristConstants.Sensors.ELEVATOR_ENC_CHANNEL_A,
+            Constants.ElevatorWristConstants.Sensors.ELEVATOR_ENC_CHANNEL_B);
 
     public final CANSparkMax wristMotor =
         new CANSparkMax(Constants.Motors.ElevatorWrist.NEO_ID, MotorType.kBrushless);
-    public final DigitalInput topLimitSwitch = new DigitalInput(
-        Constants.ElevatorWristConstants.ElevatorWristElectronics.TOP_LIMIT_SWITCH_PORT);
-    public final DigitalInput bottomLimitSwitch = new DigitalInput(
-        Constants.ElevatorWristConstants.ElevatorWristElectronics.BOTTOM_LIMIT_SWITCH_PORT);
+    public final DigitalInput topLimitSwitch =
+        new DigitalInput(Constants.ElevatorWristConstants.Sensors.TOP_LIMIT_SWITCH_PORT);
+    public final DigitalInput bottomLimitSwitch =
+        new DigitalInput(Constants.ElevatorWristConstants.Sensors.BOTTOM_LIMIT_SWITCH_PORT);
 
     public final AbsoluteEncoder wristAbsoluteEnc;
 
