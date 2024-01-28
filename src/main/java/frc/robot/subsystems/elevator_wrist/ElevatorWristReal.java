@@ -40,6 +40,8 @@ public class ElevatorWristReal implements ElevatorWristIO {
      */
     public ElevatorWristReal() {
         wristAbsoluteEnc = wristMotor.getAbsoluteEncoder(Type.kDutyCycle);
+        wristAbsoluteEnc.setPositionConversionFactor(1); // Need to update with Gear ratio
+
         elevatorMotorConfig.Feedback.SensorToMechanismRatio = 25;
         elevatorMotor.getConfigurator().apply(elevatorMotorConfig);
         elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
