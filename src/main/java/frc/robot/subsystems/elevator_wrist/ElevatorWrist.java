@@ -54,7 +54,6 @@ public class ElevatorWrist implements Subsystem {
 
     @Override
     public void periodic() {
-
         io.updateInputs(inputs);
         Logger.processInputs("ElevatorWrist", inputs);
 
@@ -83,7 +82,14 @@ public class ElevatorWrist implements Subsystem {
 
     }
 
-
+    /**
+     * Command to move Elevator and Wrist to set positions
+     *
+     * @param height The height of the elevator in meters
+     * @param angle The angle of the wrist in {@link Rotation2d}
+     *
+     * @return A {@link Command}
+     */
     public Command goToPosition(double height, Rotation2d angle) {
         return Commands.runOnce(() -> {
             elevatorPIDController.setGoal(height);
@@ -92,6 +98,14 @@ public class ElevatorWrist implements Subsystem {
             .waitUntil(() -> wristPIDController.atGoal() && elevatorPIDController.atGoal()));
     }
 
+    /**
+     * Command to continuously move the Elevator and Wrist to an ever changing position
+     *
+     * @param height A {@link DoubleSupplier} to provide the height of the elevator in meters
+     * @param angle A {@link Supplier<Rotation2d>} of angle of the wrist in {@link Rotation2d}
+     *
+     * @return A {@link Command}
+     */
     public Command followPosition(DoubleSupplier height, Supplier<Rotation2d> angle) {
         return Commands.run(() -> {
             elevatorPIDController.setGoal(height.getAsDouble());
@@ -99,6 +113,11 @@ public class ElevatorWrist implements Subsystem {
         });
     }
 
+    /**
+     * Get the height in meters of the elevator based on the rotations of the motor
+     *
+     * @return Height of elevator in meters
+     */
     public double elevatorDistanceTraveled() {
         return inputs.elevatorRelativeEncRawValue * 0.111715034761762;
     }
