@@ -60,6 +60,7 @@ repositories {
         }
     }
     mavenLocal()
+    maven { url 'https://jitpack.io' }
 }
 
 configurations.all {
@@ -92,6 +93,7 @@ dependencies {
     nativeRelease wpi.java.vendor.jniRelease(wpi.platforms.desktop)
     simulationRelease wpi.sim.enableRelease()
 
+    annotationProcessor 'com.github.Frc5572:RobotTools:v1.1.0'
 }
 
 // Simulation configuration (e.g. environment variables).
