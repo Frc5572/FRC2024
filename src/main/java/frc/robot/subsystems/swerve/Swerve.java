@@ -1,5 +1,6 @@
 package frc.robot.subsystems.swerve;
 
+import java.util.Map;
 import java.util.Optional;
 import org.littletonrobotics.junction.Logger;
 import com.kauailabs.navx.frc.AHRS;
@@ -12,14 +13,17 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.PhotonCameraWrapper;
 import frc.lib.util.swerve.SwerveModule;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 
 /**
  * Swerve Subsystem
@@ -35,6 +39,10 @@ public class Swerve extends SubsystemBase {
     private SwerveInputsAutoLogged inputs = new SwerveInputsAutoLogged();
     private SwerveIO swerveIO;
     private boolean hasInitialized = false;
+    private GenericEntry aprilTagTarget = RobotContainer.autoTab
+        .add("Currently Seeing April Tag", false).withWidget(BuiltInWidgets.kBooleanBox)
+        .withProperties(Map.of("Color when true", "green", "Color when false", "red"))
+        .withPosition(8, 4).withSize(2, 2).getEntry();
 
     /**
      * Swerve Subsystem
@@ -62,6 +70,10 @@ public class Swerve extends SubsystemBase {
         AutoBuilder.configureHolonomic(this::getPose, this::resetOdometry, this::getChassisSpeeds,
             this::setModuleStates, Constants.Swerve.pathFollowerConfig, () -> shouldFlipPath(),
             this);
+
+        RobotContainer.autoTab.add("Field Pos", field).withWidget(BuiltInWidgets.kField)
+            .withSize(8, 6) // make the widget 2x1
+            .withPosition(0, 0); // place it in the top-left corner
     }
 
     /**
@@ -212,6 +224,40 @@ public class Swerve extends SubsystemBase {
         swerveIO.updateInputs(inputs);
         Logger.processInputs("Swerve", inputs);
         SmartDashboard.putBoolean("photonGood", cam.latency() < 0.6);
+        Rotation2d yaw = Rotation2d.fromDegrees(inputs.yaw);
+        swerveOdometry.update(yaw, getPositions());
+        SmartDashboard.putBoolean("photonGood", cam.latency() < 0.6);
+        if (!hasInitialized /* || DriverStation.isDisabled() */) {
+            var robotPose = cam.getInitialPose();
+            if (robotPose.isPresent()) {
+                swerveOdometry.resetPosition(getYaw(), getPositions(), robotPose.get());
+                hasInitialized = true;
+            }
+        } else {
+            var result = cam.getEstimatedGlobalPose(swerveOdometry.getEstimatedPosition());
+            if (result.isPresent()) {
+                var camPose = result.get();
+                if (camPose.targetsUsed.get(0).getArea() > 0.7) {
+                    swerveOdometry.addVisionMeasurement(camPose.estimatedPose.toPose2d(),
+                        camPose.timestampSeconds);
+                }
+                field.getObject("Cam Est Pose").setPose(camPose.estimatedPose.toPose2d());
+            } else {
+                field.getObject("Cam Est Pose").setPose(new Pose2d(-100, -100, new Rotation2d()));
+            }
+        }
+
+        field.setRobotPose(getPose());
+        aprilTagTarget.setBoolean(cam.seesTarget());
+
+        SmartDashboard.putBoolean("Has Initialized", hasInitialized);
+        SmartDashboard.putNumber("Robot X", getPose().getX());
+        SmartDashboard.putNumber("Robot Y", getPose().getY());
+        SmartDashboard.putNumber("Robot Rotation", getPose().getRotation().getDegrees());
+        SmartDashboard.putNumber("Gyro Yaw", yaw.getDegrees());
+        SmartDashboard.putNumber("Field Offset", fieldOffset);
+        SmartDashboard.putNumber("Gyro Yaw - Offset", getFieldRelativeHeading().getDegrees());
+        SmartDashboard.putNumber("Gyro roll", getRoll());
         for (SwerveModule mod : swerveMods) {
             mod.periodic();
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " CANcoder",
