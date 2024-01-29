@@ -93,7 +93,7 @@ dependencies {
     nativeRelease wpi.java.vendor.jniRelease(wpi.platforms.desktop)
     simulationRelease wpi.sim.enableRelease()
 
-    annotationProcessor 'com.github.Frc5572:RobotTools:791ea0e020'
+    annotationProcessor 'com.github.Frc5572:RobotTools:v1.1.0'
 }
 
 // Simulation configuration (e.g. environment variables).
