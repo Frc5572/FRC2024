@@ -11,10 +11,10 @@ import frc.robot.Constants;
  */
 public class Shooter extends SubsystemBase {
     private ShooterIO io;
-    private PIDController pid = new PIDController(Constants.ShooterConstants.kP,
-        Constants.ShooterConstants.kI, Constants.ShooterConstants.kD);
+    private PIDController pid = new PIDController(Constants.ShooterConstants.KP,
+        Constants.ShooterConstants.KI, Constants.ShooterConstants.KD);
     private SimpleMotorFeedforward shooterFeed =
-        new SimpleMotorFeedforward(Constants.ShooterConstants.kS, Constants.ShooterConstants.kV);
+        new SimpleMotorFeedforward(Constants.ShooterConstants.KS, Constants.ShooterConstants.KV);
     private ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
     public Shooter(ShooterIO io) {

@@ -40,8 +40,8 @@ public final class Constants {
          * Shooter Id's
          */
         public static final class Shooter {
-            public static final int shooterTopId = 0;
-            public static final int shooterBottomId = 0;
+            public static final int SHOOTER_TOP_ID = 0;
+            public static final int SHOOTER_BOTTOM_ID = 0;
         }
 
         /**
@@ -260,13 +260,20 @@ public final class Constants {
         public static final class SetPoints {
 
             public static final double HOME_HEIGHT = 0;
-            public static final double HOME_ANGLE = 0;
-            public static final double AMP_HEIGHT = 0;
-            public static final double AMP_ANGLE = 0;
-            public static final double TRAP_HEIGHT = 0;
-            public static final double TRAP_ANGLE = 0;
-            public static final double CLIMBING_HEIGHT = 0;
-            public static final double CLIMBING_ANGLE = 0;
+            public static final Rotation2d HOME_ANGLE = Rotation2d.fromDegrees(40);
+            public static final double AMP_HEIGHT = Units.inchesToMeters(34);
+            public static final Rotation2d AMP_ANGLE = Rotation2d.fromDegrees(-10);
+            public static final double TRAP_HEIGHT = Units.inchesToMeters(40);
+            public static final Rotation2d TRAP_ANGLE = Rotation2d.fromDegrees(30);
+
+            public static final double CLIMBING_HEIGHT = Units.inchesToMeters(0);
+            public static final Rotation2d CLIMBING_ANGLE = Rotation2d.fromDegrees(0);
+
+            public static final double MAX_EXTENSION = Units.inchesToMeters(48);
+            public static final Rotation2d MAX_ANGLE_UP_HOME = Rotation2d.fromDegrees(85);
+            public static final Rotation2d MAX_ANGLE_DOWN_HOME = Rotation2d.fromDegrees(-15);
+            public static final Rotation2d MAX_ANGLE_UP_EXTENDED = Rotation2d.fromDegrees(85);
+            public static final Rotation2d MAX_ANGLE_DOWN_EXTENDED = Rotation2d.fromDegrees(-15);
         }
 
 
@@ -284,10 +291,23 @@ public final class Constants {
      * Constants of Shooters
      */
     public static final class ShooterConstants {
-        public static final double kP = 0;
-        public static final double kI = 0;
-        public static final double kD = 0;
-        public static final double kS = 0;
-        public static final double kV = 0;
+        public static final double KP = 0;
+        public static final double KI = 0;
+        public static final double KD = 0;
+        public static final double KS = 0;
+        public static final double KV = 0;
+    }
+
+    /**
+     * Constants for intake
+     */
+    public static final class IntakeConstants {
+        public static final double INTAKE_MOTOR_FORWARD = 0;
+        public static final double INTAKE_MOTOR_BACKWARD = -0;
+        public static final double INTAKE_MOTOR_STOP = 0;
+        public static final double INDEX_MOTOR_FORWARD = 0;
+        public static final double INDEX_MOTOR_BACKWARD = -0;
+        public static final double INDEX_MOTOR_STOP = 0;
+
     }
 }
