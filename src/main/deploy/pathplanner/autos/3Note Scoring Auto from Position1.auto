@@ -1,0 +1,49 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.7239035452472226,
+      "y": 7.0
+    },
+    "rotation": 180.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "GetOut&Score"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Pickup&ScoreN1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Pickup and Score Note2 from Note1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Pickup note 7"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score Notes 7,8,9"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

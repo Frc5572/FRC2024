@@ -99,6 +99,15 @@ public class RobotContainer {
                     .andThen(new PathPlannerAuto("New Auto"));
 
                 break;
+            case "2 Note Score":
+                List<PathPlannerPath> path2 =
+                    PathPlannerAuto.getPathGroupFromAutoFile("N2Note Scoring Auto From Position 1");
+                Pose2d initialState2 = path2.get(0).getPreviewStartingHolonomicPose();
+                s_Swerve.resetOdometry(initialState2);
+                autocommand = new InstantCommand(() -> s_Swerve.resetOdometry(initialState2))
+                    .andThen(new PathPlannerAuto("2Note Scoring Auto From Position 1"));
+
+                break;
             default:
                 autocommand = new WaitCommand(1.0);
         }
