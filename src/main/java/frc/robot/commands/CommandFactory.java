@@ -6,9 +6,12 @@ import frc.robot.Constants;
 import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
 import frc.robot.subsystems.intake.Intake;
 
+/**
+ * File to create commands using factories
+ */
 public class CommandFactory {
 
-    public static Command RunIntake(Intake intake, ElevatorWrist elevatorWrist) {
+    public static Command runIntake(Intake intake, ElevatorWrist elevatorWrist) {
         BooleanSupplier sensor = () -> intake.getSensorStatus();
         Command moveElevatorWrist =
             elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
