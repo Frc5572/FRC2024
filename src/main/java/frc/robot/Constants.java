@@ -69,15 +69,54 @@ public final class Constants {
      */
     public static class CameraConstants {
 
-        public static final double ROLL = -Math.PI / 2;
-        public static final double PITCH = 0.0;
-        public static final double YAW = 0.0;
-        public static final Transform3d KCAMERA_TO_ROBOT =
-            new Transform3d(new Translation3d(Units.inchesToMeters(0), Units.inchesToMeters(8),
-                Units.inchesToMeters(22.125)), new Rotation3d(ROLL, PITCH, YAW)).inverse();
+        public static class FrontLeftFacingCamera {
+            public static final double ROLL = -Math.PI / 2;
+            public static final double PITCH = 0.0;
+            public static final double YAW = 0.0;
+            public static final Transform3d KCAMERA_TO_ROBOT =
+                new Transform3d(new Translation3d(Units.inchesToMeters(0), Units.inchesToMeters(8),
+                    Units.inchesToMeters(22.125)), new Rotation3d(ROLL, PITCH, YAW)).inverse();
 
-        public static final String CAMERA_NAME = "pv2";
-        public static final double LARGEST_DISTANCE = 0.1;
+            public static final String CAMERA_NAME = "pv2";
+            public static final double LARGEST_DISTANCE = 0.1;
+        }
+
+        public static class FrontRightFacingCamera {
+            public static final double ROLL = -Math.PI / 2;
+            public static final double PITCH = 0.0;
+            public static final double YAW = 0.0;
+            public static final Transform3d KCAMERA_TO_ROBOT =
+                new Transform3d(new Translation3d(Units.inchesToMeters(0), Units.inchesToMeters(8),
+                    Units.inchesToMeters(22.125)), new Rotation3d(ROLL, PITCH, YAW)).inverse();
+
+            public static final String CAMERA_NAME = "pv2";
+            public static final double LARGEST_DISTANCE = 0.1;
+        }
+
+        public static class BackLeftFacingCamera {
+            public static final double ROLL = -Math.PI / 2;
+            public static final double PITCH = 0.0;
+            public static final double YAW = 0.0;
+            public static final Transform3d KCAMERA_TO_ROBOT =
+                new Transform3d(new Translation3d(Units.inchesToMeters(0), Units.inchesToMeters(8),
+                    Units.inchesToMeters(22.125)), new Rotation3d(ROLL, PITCH, YAW)).inverse();
+
+            public static final String CAMERA_NAME = "pv2";
+            public static final double LARGEST_DISTANCE = 0.1;
+        }
+
+        public static class BackRightFacingCamera {
+            public static final double ROLL = -Math.PI / 2;
+            public static final double PITCH = 0.0;
+            public static final double YAW = 0.0;
+            public static final Transform3d KCAMERA_TO_ROBOT =
+                new Transform3d(new Translation3d(Units.inchesToMeters(0), Units.inchesToMeters(8),
+                    Units.inchesToMeters(22.125)), new Rotation3d(ROLL, PITCH, YAW)).inverse();
+
+            public static final String CAMERA_NAME = "pv2";
+            public static final double LARGEST_DISTANCE = 0.1;
+        }
+
     }
 
     /**
@@ -237,29 +276,58 @@ public final class Constants {
      * Class for elevator and wrist constants
      */
     public static final class ElevatorWristConstants {
-        public static final int ELEVATOR_ENC_CHANNEL_A = -1;
-        public static final int ELEVATOR_ENC_CHANNEL_B = -1;
-        public static final int TOP_LIMIT_SWITCH_PORT = -1;
-        public static final int BOTTOM_LIMIT_SWITCH_PORT = -1;
 
-        public static final double ELEVATOR_KP = 0;
-        public static final double ELEVATOR_KI = 0;
-        public static final double ELEVATOR_KD = 0;
-        public static final double ELEVATOR_MAX_VELOCITY = 0;
-        public static final double ELEVATOR_MAX_ACCELERATION = 0;
-        public static final double ELEVATOR_KS = 0;
-        public static final double ELEVATOR_KG = 0;
-        public static final double ELEVATOR_KV = 0;
+        /**
+         * Sensor Constants
+         */
+        public static final class Sensors {
+
+            public static final int ELEVATOR_ENC_CHANNEL_A = -1;
+            public static final int ELEVATOR_ENC_CHANNEL_B = -1;
+            public static final int TOP_LIMIT_SWITCH_PORT = -1;
+            public static final int BOTTOM_LIMIT_SWITCH_PORT = -1;
+        }
+
+        /**
+         * PID constants
+         */
+        public static final class PID {
+
+            public static final double ELEVATOR_KP = 0;
+            public static final double ELEVATOR_KI = 0;
+            public static final double ELEVATOR_KD = 0;
+            public static final double ELEVATOR_MAX_VELOCITY = 0;
+            public static final double ELEVATOR_MAX_ACCELERATION = 0;
+            public static final double ELEVATOR_KS = 0;
+            public static final double ELEVATOR_KG = 0;
+            public static final double ELEVATOR_KV = 0;
+
+            public static final double WRIST_KP = 0;
+            public static final double WRIST_KI = 0;
+            public static final double WRIST_KD = 0;
+            public static final double WRIST_MAX_VELOCITY = 0;
+            public static final double WRIST_MAX_ACCELERATION = 0;
+            public static final double WRIST_KS = 0;
+            public static final double WRIST_KG = 0;
+            public static final double WRIST_KV = 0;
+        }
+
+        /**
+         * Set points constants for elevator and wrist
+         */
+        public static final class SetPoints {
+
+            public static final double HOME_HEIGHT = 0;
+            public static final double HOME_ANGLE = 0;
+            public static final double AMP_HEIGHT = 0;
+            public static final double AMP_ANGLE = 0;
+            public static final double TRAP_HEIGHT = 0;
+            public static final double TRAP_ANGLE = 0;
+            public static final double CLIMBING_HEIGHT = 0;
+            public static final double CLIMBING_ANGLE = 0;
+        }
 
 
-        public static final double WRIST_KP = 0;
-        public static final double WRIST_KI = 0;
-        public static final double WRIST_KD = 0;
-        public static final double WRIST_MAX_VELOCITY = 0;
-        public static final double WRIST_MAX_ACCELERATION = 0;
-        public static final double WRIST_KS = 0;
-        public static final double WRIST_KG = 0;
-        public static final double WRIST_KV = 0;
     }
     /**
      * Pneumatics CAN id constants.

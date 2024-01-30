@@ -19,6 +19,15 @@ public class SwerveReal implements SwerveIO {
     @Override
     public void updateInputs(SwerveInputs inputs) {
         inputs.yaw = gyro.getYaw();
+        inputs.roll = gyro.getRoll();
+        inputs.frontLeftCameraLatency;
+        inputs.frontRightCameraLatency;
+        inputs.backLeftCameraLatency;
+        inputs.backRightCameraLatency;
+        inputs.frontLeftPhotonResult;
+        inputs.frontRightPhotonResult;
+        inputs.backLeftPhotonResult;
+        inputs.backRightPhotonResult;
     }
 
     @Override
