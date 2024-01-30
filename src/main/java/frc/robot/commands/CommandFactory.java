@@ -6,7 +6,7 @@ import frc.robot.Constants;
 import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
 import frc.robot.subsystems.intake.Intake;
 
-public class ATonOfCommands {
+public class CommandFactory {
 
     public static Command RunIntake(Intake intake, ElevatorWrist elevatorWrist) {
         BooleanSupplier sensor = () -> intake.getSensorStatus();
