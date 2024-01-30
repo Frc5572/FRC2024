@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import frc.lib.util.FieldConstants;
 
 /**
  * Constants file.
@@ -289,5 +290,8 @@ public final class Constants {
         public static final double kD = 0;
         public static final double kS = 0;
         public static final double kV = 0;
+        public static final double HEIGHT_FROM_LOWEST_POS = Units.inchesToMeters(32.0);
+        public static final double HEIGHT_FROM_AMP =
+            FieldConstants.Speaker.centerSpeakerOpening.getY() - HEIGHT_FROM_LOWEST_POS;
     }
 }
