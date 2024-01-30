@@ -22,6 +22,7 @@ public class Shooter extends SubsystemBase {
         new SimpleMotorFeedforward(Constants.ShooterConstants.KS, Constants.ShooterConstants.KV);
     private ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
+
     public Shooter(ShooterIO io) {
         this.io = io;
     }
