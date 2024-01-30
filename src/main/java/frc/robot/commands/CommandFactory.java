@@ -11,6 +11,13 @@ import frc.robot.subsystems.intake.Intake;
  */
 public class CommandFactory {
 
+    /**
+     * Checks to make sure all preconditions are met before running the intake
+     * 
+     * @param intake
+     * @param elevatorWrist
+     * @return
+     */
     public static Command runIntake(Intake intake, ElevatorWrist elevatorWrist) {
         BooleanSupplier sensor = () -> intake.getSensorStatus();
         Command moveElevatorWrist =
