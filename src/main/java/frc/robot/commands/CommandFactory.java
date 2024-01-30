@@ -13,7 +13,7 @@ public class CommandFactory {
 
     /**
      * Checks to make sure all preconditions are met before running the intake
-     * 
+     *
      * @param intake Intake subsystem
      * @param elevatorWrist Elevator and Wrist subsystem
      * @return Returns a command
