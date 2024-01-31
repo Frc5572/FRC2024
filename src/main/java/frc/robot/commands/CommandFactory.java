@@ -32,15 +32,23 @@ public class CommandFactory {
         return moveElevatorWrist.andThen(runIntakeIndexer).unless(sensor);
     }
 
+    /**
+     * Wrist follows the speaker until it is met, then it shoots
+     * 
+     * @param shooter Shooter subsystem
+     * @param elevatorWrist Elevator and Wrist subsystem
+     * @param swerve Swerve subsystem
+     * @return Returns a command
+     */
     public static Command shootSpeaker(Shooter shooter, ElevatorWrist elevatorWrist,
         Swerve swerve) {
         double angle = Math.atan2(Constants.ShooterConstants.HEIGHT_FROM_SPEAKER,
-            swerve.DISTANCE_FROM_SPEAKER(swerve::getPose));
+            swerve.distanceFromSpeaker(swerve::getPose));
         Command moveElevatorWrist =
             elevatorWrist.followPosition(() -> Constants.ShooterConstants.HEIGHT_FROM_LOWEST_POS,
                 () -> Rotation2d.fromRadians(angle));
         Command shoot =
-            shooter.shootWithDistance(() -> swerve.DISTANCE_FROM_SPEAKER(swerve::getPose));
+            shooter.shootWithDistance(() -> swerve.distanceFromSpeaker(swerve::getPose));
         Command waitForElevator = Commands.waitUntil(() -> elevatorWrist.atGoal());
         return moveElevatorWrist.alongWith(waitForElevator.andThen(shoot));
     }

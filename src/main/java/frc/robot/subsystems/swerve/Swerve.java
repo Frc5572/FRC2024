@@ -253,7 +253,7 @@ public class Swerve extends SubsystemBase {
         return false;
     }
 
-    public final double DISTANCE_FROM_SPEAKER(Supplier<Pose2d> pose2d) {
+    public final double distanceFromSpeaker(Supplier<Pose2d> pose2d) {
         return Math.abs(FieldConstants.Speaker.centerSpeakerOpening.getX() - pose2d.get().getX());
     }
 }
