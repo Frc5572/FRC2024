@@ -34,7 +34,7 @@ public class Climber extends SubsystemBase {
     /**
      * Sets voltage for climber system
      *
-     * @param power
+     * @param power Sets power for climbing motors.
      */
     public void setClimberVoltage(double power) {
         Logger.recordOutput("/Climber/Voltage", power);
