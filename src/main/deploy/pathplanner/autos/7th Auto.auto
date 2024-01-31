@@ -1,0 +1,49 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.8878062347371597,
+      "y": 3.660745091927839
+    },
+    "rotation": 180.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Pickup Note 3 from position 2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "pickup N2 from N3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Pickup N1 from N2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Pickup note 7,8"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score Notes 7,8,9"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.8878062347371597,
-      "y": 3.660745091927839
+      "x": 0.7233010829658023,
+      "y": 2.2855427529036882
     },
     "rotation": 180.0
   },
@@ -14,13 +14,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Pickup Note 3 from position 2"
+            "pathName": "pickup N3 from Pos3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Score and pickup Note 2 from starting position 2"
+            "pathName": "pickup N2 from N3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Pickup N1 from N2"
           }
         }
       ]
