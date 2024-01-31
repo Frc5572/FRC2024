@@ -227,10 +227,10 @@ public class Swerve extends SubsystemBase {
         Rotation2d yaw = Rotation2d.fromDegrees(inputs.yaw);
         swerveOdometry.update(yaw, getSwerveModulePositions());
         if (!hasInitialized /* || DriverStation.isDisabled() */) {
-            var robotPose = inputs.frontLeftPhotonResult.get.getInitialPose();
+            var robotPose = inputs.frontLeftCameraInitialPose;
             if (robotPose.isPresent()) {
-                swerveOdometry.resetPosition(inputs.yaw, getSwerveModulePositions(),
-                    robotPose.get());
+                swerveOdometry.resetPosition(Rotation2d.fromDegrees(inputs.yaw),
+                    getSwerveModulePositions(), robotPose.get());
                 hasInitialized = true;
             }
         } else {

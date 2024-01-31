@@ -26,15 +26,14 @@ public class SwerveReal implements SwerveIO {
             Constants.CameraConstants.BackRightFacingCamera.KCAMERA_TO_ROBOT.inverse());
 
     /** Real Swerve Initializer */
-    public SwerveReal() {
-
-    }
+    public SwerveReal() {}
 
     @Override
     public void updateInputs(SwerveInputs inputs) {
         inputs.yaw = gyro.getYaw();
         inputs.roll = gyro.getRoll();
         inputs.frontLeftCameraLatency = frontLeftCam.latency();
+        inputs.frontLeftCameraInitialPose = frontLeftCam.getInitialPose().get();
         inputs.frontRightCameraLatency = frontRightCam.latency();
         inputs.backLeftCameraLatency = backLeftCam.latency();
         inputs.backRightCameraLatency = backRightCam.latency();
