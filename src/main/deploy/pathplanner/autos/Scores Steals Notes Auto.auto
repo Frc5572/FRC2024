@@ -14,6 +14,12 @@
         {
           "type": "path",
           "data": {
+            "pathName": "Scores startingN in position 3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
             "pathName": "Pick up N11"
           }
         },
