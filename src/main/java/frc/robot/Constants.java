@@ -64,8 +64,8 @@ public final class Constants {
          * Climber motor constants
          */
         public static final class Climber {
-            public static final int CLIMBER_MOTOR_ID = -1;
-            public static final int CLIMBER_MOTOR_ID2 = -1;
+            public static final int LEFT_MOTOR_ID = -1;
+            public static final int RIGHT_MOTOR_ID = -1;
         }
     }
 
@@ -287,15 +287,8 @@ public final class Constants {
             public static final Rotation2d AMP_ANGLE = Rotation2d.fromDegrees(-10);
             public static final double TRAP_HEIGHT = Units.inchesToMeters(40);
             public static final Rotation2d TRAP_ANGLE = Rotation2d.fromDegrees(30);
-
-            public static final double CLIMBING_HEIGHT = Units.inchesToMeters(0);
-            public static final Rotation2d CLIMBING_ANGLE = Rotation2d.fromDegrees(0);
-
+            public static final double CLIMBING_HEIGHT = Units.inchesToMeters(15);
             public static final double MAX_EXTENSION = Units.inchesToMeters(48);
-            public static final Rotation2d MAX_ANGLE_UP_HOME = Rotation2d.fromDegrees(85);
-            public static final Rotation2d MAX_ANGLE_DOWN_HOME = Rotation2d.fromDegrees(-15);
-            public static final Rotation2d MAX_ANGLE_UP_EXTENDED = Rotation2d.fromDegrees(85);
-            public static final Rotation2d MAX_ANGLE_DOWN_EXTENDED = Rotation2d.fromDegrees(-15);
         }
 
 

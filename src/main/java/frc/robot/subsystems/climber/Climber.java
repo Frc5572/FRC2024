@@ -24,16 +24,18 @@ public class Climber extends SubsystemBase {
 
     @Override
     public void periodic() {
-        io.updateInputs(inputs);
         Logger.processInputs("Climber", inputs);
+        io.updateInputs(inputs);
     }
 
     // would have to calculate pid values based on distance off of ground. minimum distance 23
     // inches, max 50 inches. measure value using relative encoder ticks
 
     // revolutions -> distance = (revolutions / gear ratio) * circumference or pi*diameter
-    public void setClimberVoltage() {
-        io.setClimberVoltage(climberPID.calculate());
+    public void setClimberVoltage(double power) {
+        Logger.recordOutput("/Climber/Voltage", power);
+        io.setClimberVoltage(power);
+
     }
 
 

@@ -5,22 +5,25 @@ import com.revrobotics.CANSparkMax;
 import frc.robot.Constants;
 
 public class ClimberNEO implements ClimberIO {
-    public final CANSparkMax climber1 =
-        new CANSparkMax(Constants.Motors.Climber.CLIMBER_MOTOR_ID, MotorType.kBrushless);
-    public final CANSparkMax climber2 =
-        new CANSparkMax(Constants.Motors.Climber.CLIMBER_MOTOR_ID2, MotorType.kBrushless);
+    public final CANSparkMax leftMotor =
+        new CANSparkMax(Constants.Motors.Climber.LEFT_MOTOR_ID, MotorType.kBrushless);
+    public final CANSparkMax rightMotor =
+        new CANSparkMax(Constants.Motors.Climber.RIGHT_MOTOR_ID, MotorType.kBrushless);
 
     public ClimberNEO() {
-        climber2.follow(climber1);
+        rightMotor.follow(leftMotor);
     }
 
     @Override
     public void updateInputs(ClimberInputs inputs) {
-
+        inputs.climberLeftMotorVoltage = leftMotor.get();
+        inputs.climberLeftMotorAmp = leftMotor.getOutputCurrent();
+        inputs.climberRightMotorVoltage = rightMotor.get();
+        inputs.climberRightMotorAmp = rightMotor.getOutputCurrent();
     }
 
     @Override
     public void setClimberVoltage(double voltage) {
-        climber1.setVoltage(voltage);
+        leftMotor.setVoltage(voltage);
     }
 }

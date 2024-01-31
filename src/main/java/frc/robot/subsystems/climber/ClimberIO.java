@@ -5,6 +5,10 @@ import org.littletonrobotics.junction.AutoLog;
 public interface ClimberIO {
     @AutoLog
     public static class ClimberInputs {
+        public double climberLeftMotorVoltage;
+        public double climberLeftMotorAmp;
+        public double climberRightMotorVoltage;
+        public double climberRightMotorAmp;
 
     }
 
