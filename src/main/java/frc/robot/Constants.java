@@ -1,20 +1,17 @@
 package frc.robot;
 
-import java.util.function.Supplier;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import frc.lib.util.FieldConstants;
-import frc.robot.Constants.Motors.Intake;
 
 /**
  * Constants file.
@@ -304,11 +301,6 @@ public final class Constants {
         public static final double HEIGHT_FROM_SPEAKER =
             FieldConstants.centerSpeaker - HEIGHT_FROM_LOWEST_POS;
 
-        public static final double DISTANCE_FROM_SPEAKER(Supplier<Pose2d> pose2d) {
-            return Math
-                .abs(FieldConstants.Speaker.centerSpeakerOpening.getX() - pose2d.get().getX());
-        }
-
     }
 
     /**
@@ -326,4 +318,3 @@ public final class Constants {
 }
 
 
-        

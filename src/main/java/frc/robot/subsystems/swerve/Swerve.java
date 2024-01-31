@@ -1,6 +1,7 @@
 package frc.robot.subsystems.swerve;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -15,6 +16,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.util.FieldConstants;
 import frc.lib.util.swerve.SwerveModule;
 import frc.robot.Constants;
 
@@ -249,5 +251,9 @@ public class Swerve extends SubsystemBase {
             return ally.get() == Alliance.Red;
         }
         return false;
+    }
+
+    public final double DISTANCE_FROM_SPEAKER(Supplier<Pose2d> pose2d) {
+        return Math.abs(FieldConstants.Speaker.centerSpeakerOpening.getX() - pose2d.get().getX());
     }
 }

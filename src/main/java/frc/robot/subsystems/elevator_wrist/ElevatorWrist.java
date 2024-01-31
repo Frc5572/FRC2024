@@ -123,4 +123,8 @@ public class ElevatorWrist implements Subsystem {
         return inputs.elevatorRelativeEncRawValue * 0.111715034761762;
     }
 
+    public Boolean atGoal() {
+        return elevatorPIDController.atGoal();
+    }
+
 }

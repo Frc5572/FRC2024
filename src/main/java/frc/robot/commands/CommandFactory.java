@@ -1,10 +1,14 @@
 package frc.robot.commands;
 
 import java.util.function.BooleanSupplier;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.swerve.Swerve;
 
 /**
  * File to create commands using factories
@@ -26,5 +30,18 @@ public class CommandFactory {
         Command runIntakeIndexer =
             intake.runIntakeMotor(Constants.IntakeConstants.INDEX_MOTOR_FORWARD);
         return moveElevatorWrist.andThen(runIntakeIndexer).unless(sensor);
+    }
+
+    public static Command shootSpeaker(Shooter shooter, ElevatorWrist elevatorWrist,
+        Swerve swerve) {
+        double angle = Math.atan2(Constants.ShooterConstants.HEIGHT_FROM_SPEAKER,
+            swerve.DISTANCE_FROM_SPEAKER(swerve::getPose));
+        Command moveElevatorWrist =
+            elevatorWrist.followPosition(() -> Constants.ShooterConstants.HEIGHT_FROM_LOWEST_POS,
+                () -> Rotation2d.fromRadians(angle));
+        Command shoot =
+            shooter.shootWithDistance(() -> swerve.DISTANCE_FROM_SPEAKER(swerve::getPose));
+        Command waitForElevator = Commands.waitUntil(() -> elevatorWrist.atGoal());
+        return moveElevatorWrist.alongWith(waitForElevator.andThen(shoot));
     }
 }

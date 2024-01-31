@@ -14,7 +14,9 @@ import frc.robot.Constants;
  */
 public class Shooter extends SubsystemBase {
     private ShooterIO io;
-    private PIDController pid = new PIDController(Constants.ShooterConstants.KP,
+    private PIDController frontpid = new PIDController(Constants.ShooterConstants.KP,
+        Constants.ShooterConstants.KI, Constants.ShooterConstants.KD);
+    private PIDController backpid = new PIDController(Constants.ShooterConstants.KP,
         Constants.ShooterConstants.KI, Constants.ShooterConstants.KD);
     private SimpleMotorFeedforward shooterFeed =
         new SimpleMotorFeedforward(Constants.ShooterConstants.KS, Constants.ShooterConstants.KV);
@@ -30,21 +32,21 @@ public class Shooter extends SubsystemBase {
         Logger.processInputs("Shooter", inputs);
     }
 
-    public void setTopMotor(double power) {
+    public void setFrontMotor(double power) {
         Logger.recordOutput("Shooter/Top Voltage", power);
         io.setTopMotor(power);
     }
 
-    public void setBottomMotor(double power) {
+    public void setBackMotor(double power) {
         Logger.recordOutput("Shooter/Bottom Voltage", power);
         io.setBottomMotor(power);
     }
 
-    public double getTopVelocity() {
+    public double getFrontVelocity() {
         return inputs.topshooterVelocityRotPerSecond;
     }
 
-    public double getBottomVelocity() {
+    public double getBackVelocity() {
         return inputs.bottomshooterVelocityRotPerSecond;
     }
 
@@ -55,8 +57,8 @@ public class Shooter extends SubsystemBase {
     public Command shootWithDistance(DoubleSupplier distance) {
         return Commands.run(() -> {
             double velocity = distanceToVelocity(distance.getAsDouble());
-            setTopMotor(velocity);
-            setBottomMotor(velocity);
+            setFrontMotor(frontpid.calculate(getFrontVelocity()) + shooterFeed.calculate(velocity));
+            setBackMotor(backpid.calculate(getBackVelocity()) + shooterFeed.calculate(velocity));
         }, this);
     }
 }
