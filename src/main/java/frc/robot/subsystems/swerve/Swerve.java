@@ -219,17 +219,15 @@ public class Swerve extends SubsystemBase {
     @Override
     public void periodic() {
         swerveOdometry.update(getGyroYaw(), getModulePositions());
-        Logger.recordOutput("Swerve Odometry", swerveOdometry);
         swerveIO.updateInputs(inputs);
         Logger.processInputs("Swerve", inputs);
         SmartDashboard.putBoolean("photonGood",
-            frontLeftCam.latency() < 0.6 && frontRightCam.latency() < 0.6
-                && backLeftCam.latency() < 0.6 && backRightCam.latency() < 0.6);
+            inputs.frontLeftCameraLatency < 0.6 && inputs.frontRightCameraLatency < 0.6
+                && inputs.backLeftCameraLatency < 0.6 && inputs.backRightCameraLatency < 0.6);
         Rotation2d yaw = Rotation2d.fromDegrees(inputs.yaw);
         swerveOdometry.update(yaw, getSwerveModulePositions());
-        SmartDashboard.putBoolean("photonGood", cam.latency() < 0.6);
         if (!hasInitialized /* || DriverStation.isDisabled() */) {
-            var robotPose = cam.getInitialPose();
+            var robotPose = inputs.frontLeftPhotonResult.get.getInitialPose();
             if (robotPose.isPresent()) {
                 swerveOdometry.resetPosition(inputs.yaw, getSwerveModulePositions(),
                     robotPose.get());
