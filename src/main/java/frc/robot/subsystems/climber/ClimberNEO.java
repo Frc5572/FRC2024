@@ -14,14 +14,14 @@ public class ClimberNEO implements ClimberIO {
     public final CANSparkMax rightMotor =
         new CANSparkMax(Constants.Motors.Climber.RIGHT_MOTOR_ID, MotorType.kBrushless);
     public final RelativeEncoder leftRelativeEncoder = leftMotor.getEncoder();
-    public final RelativeEncoder RightRelativeEncoder = leftMotor.getEncoder();
+    public final RelativeEncoder rightRelativeEncoder = leftMotor.getEncoder();
 
 
 
     public ClimberNEO() {
         rightMotor.follow(leftMotor, true);
         leftRelativeEncoder.setPositionConversionFactor(25);
-        RightRelativeEncoder.setPositionConversionFactor(25);
+        rightRelativeEncoder.setPositionConversionFactor(25);
     }
 
     @Override
@@ -31,7 +31,7 @@ public class ClimberNEO implements ClimberIO {
         inputs.climberRightMotorVoltage = rightMotor.getBusVoltage();
         inputs.climberRightMotorAmp = rightMotor.getOutputCurrent();
         inputs.leftMotorEncoderValue = leftRelativeEncoder.getPosition();
-        inputs.rightMotorEncoderValue = RightRelativeEncoder.getPosition();
+        inputs.rightMotorEncoderValue = rightRelativeEncoder.getPosition();
 
     }
 
