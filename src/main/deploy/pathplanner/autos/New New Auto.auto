@@ -1,0 +1,31 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.8878062347371597,
+      "y": 3.660745091927839
+    },
+    "rotation": 180.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Pickup Note 3 from position 2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score and pickup Note 2 from starting position 2"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
