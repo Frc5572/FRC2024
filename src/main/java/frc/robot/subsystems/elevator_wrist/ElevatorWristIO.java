@@ -15,6 +15,11 @@ public interface ElevatorWristIO {
         public boolean topLimitSwitch;
         public boolean bottomLimitSwitch;
         public double wristAbsoluteEncRawValue;
+        public double elevatorMotorSupplyVoltage;
+        public double elevatorMotorMotorVoltage;
+        public double elevatorMotorAmp;
+        public double wristMotorVoltage;
+        public double wristMotorAmp;
     }
 
     public default void updateInputs(ElevatorWristInputs inputs) {}
