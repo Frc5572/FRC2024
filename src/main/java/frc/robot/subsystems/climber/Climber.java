@@ -23,7 +23,7 @@ public class Climber extends SubsystemBase {
         new PIDController(Constants.ClimberConstants.CLIMBER_KP,
             Constants.ClimberConstants.CLIMBER_KI, Constants.ClimberConstants.CLIMBER_KD);
 
-    private ElevatorFeedforward ClimberFeedforward =
+    private ElevatorFeedforward climberFeedforward =
         new ElevatorFeedforward(Constants.ClimberConstants.CLIMBER_KS,
             Constants.ClimberConstants.CLIMBER_KG, Constants.ClimberConstants.CLIMBER_KV);
 
@@ -37,7 +37,7 @@ public class Climber extends SubsystemBase {
         io.updateInputs(inputs);
         Logger.processInputs("Climber", inputs);
         double ClimberFeedForwardValue =
-            ClimberFeedforward.calculate(0, 0, leftClimberPIDController.getPeriod());
+            climberFeedforward.calculate(0, 0, leftClimberPIDController.getPeriod());
 
         Logger.recordOutput("/Climber/VoltageFromFeedForward/LeftClimber", ClimberFeedForwardValue);
     }
