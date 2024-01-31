@@ -234,7 +234,7 @@ public class Swerve extends SubsystemBase {
                 hasInitialized = true;
             }
         } else {
-            var result = cam.getEstimatedGlobalPose(swerveOdometry.getEstimatedPosition());
+            var frontLeftResult = inputs.frontLeftPhotonResult.get getEstimatedGlobalPose(swerveOdometry.getEstimatedPosition());
             if (result.isPresent()) {
                 var camPose = result.get();
                 if (camPose.targetsUsed.get(0).getArea() > 0.7) {
