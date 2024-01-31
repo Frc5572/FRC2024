@@ -36,7 +36,7 @@ public class Climber extends SubsystemBase {
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs("Climber", inputs);
-        double ClimberFeedForwardValue =
+        double climberFeedForwardValue =
             climberFeedforward.calculate(0, 0, leftClimberPIDController.getPeriod());
 
         Logger.recordOutput("/Climber/VoltageFromFeedForward/LeftClimber", ClimberFeedForwardValue);
