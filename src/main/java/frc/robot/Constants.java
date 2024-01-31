@@ -207,14 +207,26 @@ public final class Constants {
      * Climber constants
      */
     public static final class ClimberConstants {
-        public static final double CLIMBER_KP = 0;
-        public static final double CLIMBER_KI = 0;
-        public static final double CLIMBER_KD = 0;
-        public static final double CLIMBER_MAX_VELOCITY = 0;
-        public static final double CLIMBER_MAX_ACCELERATION = 0;
-        public static final double CLIMBER_KS = 0;
-        public static final double CLIMBER_KG = 0;
-        public static final double CLIMBER_KV = 0;
+        public static final double LEFT_CLIMBER_KP = 0;
+        public static final double LEFT_CLIMBER_KI = 0;
+        public static final double LEFT_CLIMBER_KD = 0;
+        public static final double LEFT_CLIMBER_MAX_VELOCITY = 0;
+        public static final double LEFT_CLIMBER_MAX_ACCELERATION = 0;
+        public static final double LEFT_CLIMBER_KS = 0;
+        public static final double LEFT_CLIMBER_KG = 0;
+        public static final double LEFT_CLIMBER_KV = 0;
+
+        public static final double RIGHT_CLIMBER_KP = 0;
+        public static final double RIGHT_CLIMBER_KI = 0;
+        public static final double RIGHT_CLIMBER_KD = 0;
+        public static final double RIGHT_CLIMBER_MAX_VELOCITY = 0;
+        public static final double RIGHT_CLIMBER_MAX_ACCELERATION = 0;
+        public static final double RIGHT_CLIMBER_KS = 0;
+        public static final double RIGHT_CLIMBER_KG = 0;
+        public static final double RIGHT_CLIMBER_KV = 0;
+
+        public static final double CLIMBING_DISTANCE = Units.inchesToMeters(15);
+        public static final double MAX_CLIMBING_DISTANCE = Units.inchesToMeters(15);
     }
 
     /**
@@ -287,7 +299,6 @@ public final class Constants {
             public static final Rotation2d AMP_ANGLE = Rotation2d.fromDegrees(-10);
             public static final double TRAP_HEIGHT = Units.inchesToMeters(40);
             public static final Rotation2d TRAP_ANGLE = Rotation2d.fromDegrees(30);
-            public static final double CLIMBING_HEIGHT = Units.inchesToMeters(15);
             public static final double MAX_EXTENSION = Units.inchesToMeters(48);
         }
 
