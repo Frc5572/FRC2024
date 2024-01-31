@@ -5,7 +5,7 @@ import com.revrobotics.CANSparkMax;
 import frc.robot.Constants;
 
 /**
- * Subsystem for physcial climber.
+ * Subsystem for physical climber.
  */
 public class ClimberNEO implements ClimberIO {
     public final CANSparkMax leftMotor =
