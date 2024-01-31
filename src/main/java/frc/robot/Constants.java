@@ -226,7 +226,7 @@ public final class Constants {
         public static final double RIGHT_CLIMBER_KV = 0;
 
         public static final double CLIMBING_DISTANCE = Units.inchesToMeters(15);
-        public static final double MAX_CLIMBING_DISTANCE = Units.inchesToMeters(15);
+        public static final double MAX_CLIMBING_DISTANCE = Units.inchesToMeters(21);
     }
 
     /**
@@ -300,6 +300,9 @@ public final class Constants {
             public static final double TRAP_HEIGHT = Units.inchesToMeters(40);
             public static final Rotation2d TRAP_ANGLE = Rotation2d.fromDegrees(30);
             public static final double MAX_EXTENSION = Units.inchesToMeters(48);
+            public static final double CLIMBING_HEIGHT = Units.inchesToMeters(15);
+            public static final Rotation2d CLIMBING_ANGLE = Rotation2d.fromDegrees(0);
+
         }
 
 

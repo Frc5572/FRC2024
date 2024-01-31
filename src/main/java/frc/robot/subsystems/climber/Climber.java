@@ -76,7 +76,7 @@ public class Climber extends SubsystemBase {
      * @param distance Distance to climb
      * @return Returns a useable command
      */
-    public Command climbToPosition(double distance) {
+    public Command getToPosition(double distance) {
         return Commands.runOnce(() -> {
             leftClimberPIDController.setSetpoint(distance);
             rightClimberPIDController.setSetpoint(distance);
