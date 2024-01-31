@@ -2,6 +2,9 @@ package frc.robot.subsystems.climber;
 
 import org.littletonrobotics.junction.AutoLog;
 
+/**
+ * Susbsytem for climber IO
+ */
 public interface ClimberIO {
     @AutoLog
     public static class ClimberInputs {

@@ -6,6 +6,9 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
+/**
+ * Climber subsystem.
+ */
 public class Climber extends SubsystemBase {
     public ClimberIO io;
     public ClimberInputsAutoLogged inputs = new ClimberInputsAutoLogged();

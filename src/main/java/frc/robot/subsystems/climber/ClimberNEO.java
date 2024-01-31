@@ -4,6 +4,9 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import frc.robot.Constants;
 
+/**
+ * Subsystem for physcial climber.
+ */
 public class ClimberNEO implements ClimberIO {
     public final CANSparkMax leftMotor =
         new CANSparkMax(Constants.Motors.Climber.LEFT_MOTOR_ID, MotorType.kBrushless);
