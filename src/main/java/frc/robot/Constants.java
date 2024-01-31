@@ -207,26 +207,20 @@ public final class Constants {
      * Climber constants
      */
     public static final class ClimberConstants {
-        public static final double LEFT_CLIMBER_KP = 0;
-        public static final double LEFT_CLIMBER_KI = 0;
-        public static final double LEFT_CLIMBER_KD = 0;
-        public static final double LEFT_CLIMBER_MAX_VELOCITY = 0;
-        public static final double LEFT_CLIMBER_MAX_ACCELERATION = 0;
-        public static final double LEFT_CLIMBER_KS = 0;
-        public static final double LEFT_CLIMBER_KG = 0;
-        public static final double LEFT_CLIMBER_KV = 0;
-
-        public static final double RIGHT_CLIMBER_KP = 0;
-        public static final double RIGHT_CLIMBER_KI = 0;
-        public static final double RIGHT_CLIMBER_KD = 0;
-        public static final double RIGHT_CLIMBER_MAX_VELOCITY = 0;
-        public static final double RIGHT_CLIMBER_MAX_ACCELERATION = 0;
-        public static final double RIGHT_CLIMBER_KS = 0;
-        public static final double RIGHT_CLIMBER_KG = 0;
-        public static final double RIGHT_CLIMBER_KV = 0;
+        public static final double CLIMBER_KP = 0;
+        public static final double CLIMBER_KI = 0;
+        public static final double CLIMBER_KD = 0;
+        public static final double CLIMBER_MAX_VELOCITY = 0;
+        public static final double CLIMBER_MAX_ACCELERATION = 0;
+        public static final double CLIMBER_KS = 0;
+        public static final double CLIMBER_KG = 0;
+        public static final double CLIMBER_KV = 0;
 
         public static final double CLIMBING_DISTANCE = Units.inchesToMeters(15);
         public static final double MAX_CLIMBING_DISTANCE = Units.inchesToMeters(21);
+
+        // 2pi * radius
+        public static final double LINEAR_DISTANCE = Units.inchesToMeters(2 * Math.PI * 1);
     }
 
     /**
@@ -302,6 +296,8 @@ public final class Constants {
             public static final double MAX_EXTENSION = Units.inchesToMeters(48);
             public static final double CLIMBING_HEIGHT = Units.inchesToMeters(15);
             public static final Rotation2d CLIMBING_ANGLE = Rotation2d.fromDegrees(0);
+
+            public static final double LINEAR_DISTANCE = Units.inchesToMeters(2 * Math.PI * 659);
 
         }
 

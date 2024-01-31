@@ -1,5 +1,6 @@
 package frc.robot.subsystems.climber;
 
+import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
@@ -16,18 +17,15 @@ public class Climber extends SubsystemBase {
     public ClimberInputsAutoLogged inputs = new ClimberInputsAutoLogged();
 
     PIDController leftClimberPIDController =
-        new PIDController(Constants.ClimberConstants.LEFT_CLIMBER_KP,
-            Constants.ClimberConstants.LEFT_CLIMBER_KI, Constants.ClimberConstants.LEFT_CLIMBER_KD);
-    PIDController rightClimberPIDController = new PIDController(
-        Constants.ClimberConstants.RIGHT_CLIMBER_KP, Constants.ClimberConstants.RIGHT_CLIMBER_KI,
-        Constants.ClimberConstants.RIGHT_CLIMBER_KD);
+        new PIDController(Constants.ClimberConstants.CLIMBER_KP,
+            Constants.ClimberConstants.CLIMBER_KI, Constants.ClimberConstants.CLIMBER_KD);
+    PIDController rightClimberPIDController =
+        new PIDController(Constants.ClimberConstants.CLIMBER_KP,
+            Constants.ClimberConstants.CLIMBER_KI, Constants.ClimberConstants.CLIMBER_KD);
 
-    private ElevatorFeedforward leftClimberFeedforward =
-        new ElevatorFeedforward(Constants.ClimberConstants.LEFT_CLIMBER_KS,
-            Constants.ClimberConstants.LEFT_CLIMBER_KG, Constants.ClimberConstants.LEFT_CLIMBER_KV);
-    private ElevatorFeedforward rightClimberFeedforward = new ElevatorFeedforward(
-        Constants.ClimberConstants.RIGHT_CLIMBER_KS, Constants.ClimberConstants.RIGHT_CLIMBER_KG,
-        Constants.ClimberConstants.RIGHT_CLIMBER_KV);
+    private ElevatorFeedforward ClimberFeedforward =
+        new ElevatorFeedforward(Constants.ClimberConstants.CLIMBER_KS,
+            Constants.ClimberConstants.CLIMBER_KG, Constants.ClimberConstants.CLIMBER_KV);
 
     public Climber(ClimberIO io) {
         this.io = io;
@@ -38,25 +36,10 @@ public class Climber extends SubsystemBase {
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs("Climber", inputs);
+        double ClimberFeedForwardValue =
+            ClimberFeedforward.calculate(0, 0, leftClimberPIDController.getPeriod());
 
-        // Dont know where to put it rn
-
-        // double leftClimberPIDValue =
-        // leftClimberPIDController.calculate(leftClimberDistanceTraveled());
-        // double rightClimberPIDValue =
-        // rightClimberPIDController.calculate(rightClimberDistanceTraveled());
-        // Logger.recordOutput("/Climber/VoltageFromPID/LeftClimber", leftClimberPIDValue);
-        // Logger.recordOutput("/Climber/VoltageFromPID/RightClimber", rightClimberPIDValue);
-
-        double leftClimberFeedForwardValue =
-            leftClimberFeedforward.calculate(0, 0, leftClimberPIDController.getPeriod());
-        double rightClimberFeedForwardValue =
-            rightClimberFeedforward.calculate(0, 0, rightClimberPIDController.getPeriod());
-
-        Logger.recordOutput("/Climber/VoltageFromFeedForward/LeftClimber",
-            leftClimberFeedForwardValue);
-        Logger.recordOutput("/Climber/VoltageFromFeedForward/RightClimber",
-            rightClimberFeedForwardValue);
+        Logger.recordOutput("/Climber/VoltageFromFeedForward/LeftClimber", ClimberFeedForwardValue);
     }
 
     /**
@@ -77,11 +60,22 @@ public class Climber extends SubsystemBase {
      * @return Returns a usable command
      */
     public Command getToPosition(double distance) {
+        BooleanSupplier end =
+            () -> leftClimberPIDController.atSetpoint() && rightClimberPIDController.atSetpoint();
         return Commands.runOnce(() -> {
             leftClimberPIDController.setSetpoint(distance);
             rightClimberPIDController.setSetpoint(distance);
-        }).andThen(Commands.waitUntil(
-            () -> leftClimberPIDController.atSetpoint() && rightClimberPIDController.atSetpoint()));
+        }).andThen(Commands.run(() -> {
+            leftClimberPIDController.calculate(leftClimberDistanceTraveled());
+            rightClimberPIDController.calculate(leftClimberDistanceTraveled());
+            double leftClimberPIDValue =
+                leftClimberPIDController.calculate(leftClimberDistanceTraveled());
+            double rightClimberPIDValue =
+                rightClimberPIDController.calculate(rightClimberDistanceTraveled());
+            Logger.recordOutput("/Climber/VoltageFromPID/LeftClimber", leftClimberPIDValue);
+            Logger.recordOutput("/Climber/VoltageFromPID/RightClimber", rightClimberPIDValue);
+        }).until(end));
+
     }
 
     /**
@@ -90,7 +84,7 @@ public class Climber extends SubsystemBase {
      * @return Height of elevator in meters
      */
     public double leftClimberDistanceTraveled() {
-        return inputs.leftMotorEncoderValue;
+        return inputs.leftMotorEncoderValue * Constants.ClimberConstants.LINEAR_DISTANCE;
     }
 
     /**
@@ -99,7 +93,7 @@ public class Climber extends SubsystemBase {
      * @return Height of elevator in meters
      */
     public double rightClimberDistanceTraveled() {
-        return inputs.rightMotorEncoderValue;
+        return inputs.rightMotorEncoderValue * Constants.ClimberConstants.LINEAR_DISTANCE;
     }
 
 
