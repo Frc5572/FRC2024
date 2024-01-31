@@ -29,6 +29,13 @@ public class CommandFactory {
         return moveElevatorWrist.andThen(runIntakeIndexer).unless(sensor);
     }
 
+    /**
+     * Command to climb robot, then set up position to score.
+     *
+     * @param climber Climber subsystem
+     * @param elevatorWrist Elevator and Wrist subsytem
+     * @return Returns auto climb command
+     */
     public static Command autoClimb(Climber climber, ElevatorWrist elevatorWrist) {
         Command initialExtension = elevatorWrist
             .goToPosition(Constants.ElevatorWristConstants.SetPoints.CLIMBING_HEIGHT, null);

@@ -74,7 +74,7 @@ public class Climber extends SubsystemBase {
      * Climbs to designated position.
      *
      * @param distance Distance to climb
-     * @return Returns a useable command
+     * @return Returns a usable command
      */
     public Command getToPosition(double distance) {
         return Commands.runOnce(() -> {
