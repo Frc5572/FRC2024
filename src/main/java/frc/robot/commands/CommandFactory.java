@@ -33,7 +33,7 @@ public class CommandFactory {
      * Command to climb robot, then set up position to score.
      *
      * @param climber Climber subsystem
-     * @param elevatorWrist Elevator and Wrist subsytem
+     * @param elevatorWrist Elevator and Wrist subsystem
      * @return Returns auto climb command
      */
     public static Command autoClimb(Climber climber, ElevatorWrist elevatorWrist) {
