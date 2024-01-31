@@ -17,7 +17,9 @@ public class ClimberNEO implements ClimberIO {
     public final RelativeEncoder rightRelativeEncoder = leftMotor.getEncoder();
 
 
-
+    /**
+     * Constructor for climberNEO subsystem.
+     */
     public ClimberNEO() {
         rightMotor.follow(leftMotor, true);
         leftRelativeEncoder.setPositionConversionFactor(25);
