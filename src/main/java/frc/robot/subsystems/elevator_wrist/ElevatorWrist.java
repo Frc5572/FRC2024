@@ -61,7 +61,7 @@ public class ElevatorWrist implements Subsystem {
         double wristPIDValue = wristPIDController.calculate(inputs.wristAbsoluteEncRawValue);
 
         double elevatorFeedForwardValue =
-            elevatorFeedForward.calculate(0, 0, wristPIDController.getPeriod());
+            elevatorFeedForward.calculate(0, 0, elevatorPIDController.getPeriod());
 
         double wristFeedForwardValue =
             wristFeedForward.calculate(0, 0, wristPIDController.getPeriod());

@@ -16,6 +16,8 @@ public interface ClimberIO {
         public double climberLeftMotorAmp;
         public double climberRightMotorVoltage;
         public double climberRightMotorAmp;
+        public double leftMotorEncoderValue;
+        public double rightMotorEncoderValue;
 
     }
 

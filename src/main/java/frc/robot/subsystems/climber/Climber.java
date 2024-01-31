@@ -16,7 +16,7 @@ public class Climber extends SubsystemBase {
     PIDController climberPID = new PIDController(Constants.ClimberConstants.CLIMBER_KP,
         Constants.ClimberConstants.CLIMBER_KI, Constants.ClimberConstants.CLIMBER_KD);
 
-    private ElevatorFeedforward climbFeedforward =
+    private ElevatorFeedforward climberFeedforward =
         new ElevatorFeedforward(Constants.ClimberConstants.CLIMBER_KS,
             Constants.ClimberConstants.CLIMBER_KG, Constants.ClimberConstants.CLIMBER_KV);
 
@@ -27,8 +27,16 @@ public class Climber extends SubsystemBase {
 
     @Override
     public void periodic() {
-        Logger.processInputs("Climber", inputs);
         io.updateInputs(inputs);
+        Logger.processInputs("Climber", inputs);
+
+        double climberPIDValue =
+            climberPID.calculate(leftClimberDistanceTraveled() + rightClimberDistanceTraveled());
+        double climberFeedForwardValue = climberFeedforward.calculate(0, 0, climberPID.getPeriod());
+
+        Logger.recordOutput("/Climber/VoltageFromPID", climberPIDValue);
+        Logger.recordOutput("/Climber/VoltageFromFeedForward", climberFeedForwardValue);
+        Logger.recordOutput("/Climber/TotalVoltage", climberPIDValue + climberFeedForwardValue);
     }
 
     /**
@@ -40,6 +48,24 @@ public class Climber extends SubsystemBase {
         Logger.recordOutput("/Climber/Voltage", power);
         io.setClimberVoltage(power);
 
+    }
+
+    /**
+     * Get the height in meters of the elevator based on the rotations of the motor
+     *
+     * @return Height of elevator in meters
+     */
+    public double leftClimberDistanceTraveled() {
+        return inputs.leftMotorEncoderValue;
+    }
+
+    /**
+     * Get the height in meters of the elevator based on the rotations of the motor
+     *
+     * @return Height of elevator in meters
+     */
+    public double rightClimberDistanceTraveled() {
+        return inputs.rightMotorEncoderValue;
     }
 
 
