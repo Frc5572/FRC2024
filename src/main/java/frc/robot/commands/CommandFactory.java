@@ -37,10 +37,12 @@ public class CommandFactory {
      * @return Returns auto climb command
      */
     public static Command autoClimb(Climber climber, ElevatorWrist elevatorWrist) {
-        Command initialExtension = elevatorWrist
-            .goToPosition(Constants.ElevatorWristConstants.SetPoints.CLIMBING_HEIGHT, null);
-        Command hooksAttach = elevatorWrist
-            .goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT, null);
+        Command initialExtension =
+            elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.CLIMBING_HEIGHT,
+                Constants.ElevatorWristConstants.SetPoints.HOME_ANGLE);
+        Command hooksAttach =
+            elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
+                Constants.ElevatorWristConstants.SetPoints.HOME_ANGLE);
         Command climb = climber.getToPosition(Constants.ClimberConstants.CLIMBING_DISTANCE);
         Command extendToTrap =
             elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.TRAP_HEIGHT,
