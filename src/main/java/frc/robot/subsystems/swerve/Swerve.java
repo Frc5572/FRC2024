@@ -1,12 +1,9 @@
 package frc.robot.subsystems.swerve;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
-import org.photonvision.targeting.PhotonPipelineResult;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -35,8 +32,7 @@ public class Swerve extends SubsystemBase {
     private SwerveInputsAutoLogged inputs = new SwerveInputsAutoLogged();
     private SwerveIO swerveIO;
     private boolean hasInitialized = false;
-
-    private PhotonPipelineResult[] bob;
+    private boolean latencyGood = false;
 
     // private GenericEntry aprilTagTarget =
     // RobotContainer.autoTab.add("Currently Seeing At Least One April Tag", false)
@@ -49,7 +45,7 @@ public class Swerve extends SubsystemBase {
      */
     public Swerve(SwerveIO swerveIO) {
         this.swerveIO = swerveIO;
-        swerveIO.updateInputs(inputs);
+        swerveIO.updateInputs(inputs, swerveOdometry.getEstimatedPosition());
         fieldOffset = getGyroYaw().getDegrees();
         swerveMods = new SwerveModule[] {
             swerveIO.createSwerveModule(0, Constants.Swerve.Mod0.DRIVE_MOTOR_ID,
@@ -227,38 +223,22 @@ public class Swerve extends SubsystemBase {
     public void periodic() {
         swerveOdometry.update(getGyroYaw(), getModulePositions());
         swerveIO.updateInputs(inputs, swerveOdometry.getEstimatedPosition());
-        bob = new PhotonPipelineResult[] {inputs.backLeftPhotonResult, inputs.frontLeftPhotonResult,
-            inputs.backRightPhotonResult, inputs.frontRightPhotonResult};
         Logger.processInputs("Swerve", inputs);
-        SmartDashboard.putBoolean("photonGood",
-            inputs.frontLeftCameraLatency < 0.6 && inputs.frontRightCameraLatency < 0.6
-                && inputs.backLeftCameraLatency < 0.6 && inputs.backRightCameraLatency < 0.6);
+        for (double latency : inputs.latencies) {
+            latencyGood = latency < 0.6 ? true : false;
+        }
+        SmartDashboard.putBoolean("photonGood", latencyGood);
         Rotation2d yaw = Rotation2d.fromDegrees(inputs.yaw);
         swerveOdometry.update(yaw, getSwerveModulePositions());
         if (!hasInitialized /* || DriverStation.isDisabled() */) {
-            var robotPose = inputs.frontLeftCameraInitialPose;
+            var robotPose = inputs.positions[0];
             if (robotPose.isPresent()) {
                 swerveOdometry.resetPosition(Rotation2d.fromDegrees(inputs.yaw),
-                    getSwerveModulePositions(), robotPose.get());
+                    getSwerveModulePositions(), robotPose.get().toPose2d());
                 hasInitialized = true;
             }
         } else {
-
-            for (PhotonPipelineResult a : bob) {
-
-            }
-            List<Optional<EstimatedRobotPose>> estimatedRobotPoses =
-                new ArrayList<Optional<EstimatedRobotPose>>();
-            estimatedRobotPoses.add(getEstimatedGlobalPose(swerveOdometry.getEstimatedPosition(),
-                inputs.frontLeftPhotonResult));
-            estimatedRobotPoses.add(getEstimatedGlobalPose(swerveOdometry.getEstimatedPosition(),
-                inputs.frontRightPhotonResult));
-            estimatedRobotPoses.add(getEstimatedGlobalPose(swerveOdometry.getEstimatedPosition(),
-                inputs.backLeftPhotonResult));
-            estimatedRobotPoses.add(getEstimatedGlobalPose(swerveOdometry.getEstimatedPosition(),
-                inputs.backRightPhotonResult));
-
-            for (Optional<EstimatedRobotPose> estimatedPose : estimatedRobotPoses) {
+            for (Optional<EstimatedRobotPose> estimatedPose : inputs.estimatedRobotPose) {
                 if (estimatedPose.isPresent()) {
                     var camPose = estimatedPose.get();
                     if (camPose.targetsUsed.get(0).getArea() > 0.7) {
@@ -274,12 +254,15 @@ public class Swerve extends SubsystemBase {
         }
 
         field.setRobotPose(getPose());
-        // aprilTagTarget.setBoolean(inputs.frontLeftCamSeesTarget || inputs.frontRightCamSeesTarget
-        // || inputs.backLeftCamSeesTarget || inputs.backRightCamSeesTarget);
-        SmartDashboard.putBoolean("Currently Seeing At Least One April Tag",
-            inputs.frontLeftCamSeesTarget || inputs.frontRightCamSeesTarget
-                || inputs.backLeftCamSeesTarget || inputs.backRightCamSeesTarget);
 
+        boolean targetSeen = false;
+        for (boolean seen : inputs.seesTarget) {
+            if (seen) {
+                targetSeen = seen;
+                break;
+            }
+        }
+        SmartDashboard.putBoolean("Currently Seeing At Least One April Tag", targetSeen);
         SmartDashboard.putBoolean("Has Initialized", hasInitialized);
         SmartDashboard.putNumber("Robot X", getPose().getX());
         SmartDashboard.putNumber("Robot Y", getPose().getY());
@@ -341,25 +324,6 @@ public class Swerve extends SubsystemBase {
             return ally.get() == Alliance.Red;
         }
         return false;
-    }
-
-    /**
-     * @param prevEstimatedRobotPose The current best guess at robot pose
-     *
-     * @return an EstimatedRobotPose with an estimated pose, the timestamp, and targets used to
-     *         create the estimate
-     */
-    public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose,
-        PhotonPipelineResult result, ) {
-        var res = result;
-        SmartDashboard.putNumber("photonLatency",
-            Timer.getFPGATimestamp() - res.getTimestampSeconds());
-        if (Timer.getFPGATimestamp() - res.getTimestampSeconds() > 0.4) {
-            return Optional.empty();
-        }
-   
-        photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
-        return photonPoseEstimator.update();
     }
 
 }

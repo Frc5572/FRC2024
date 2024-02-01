@@ -22,6 +22,7 @@ public interface SwerveIO {
         public PhotonPipelineResult[] results;
         public Optional<Pose3d>[] positions;
         public boolean[] seesTarget;
+        public Optional<EstimatedRobotPose>[] estimatedRobotPose;
     }
 
     public default void updateInputs(SwerveInputs inputs, Pose2d previousPose) {}

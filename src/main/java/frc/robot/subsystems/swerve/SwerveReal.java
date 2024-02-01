@@ -5,7 +5,6 @@ import org.photonvision.EstimatedRobotPose;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.Timer;
 import frc.lib.util.PhotonCameraWrapper;
 import frc.lib.util.swerve.SwerveModule;
 import frc.lib.util.swerve.SwerveModuleReal;
@@ -16,6 +15,9 @@ public class SwerveReal implements SwerveIO {
 
     private AHRS gyro = new AHRS(Constants.Swerve.navXID);
 
+    /*
+     * Camera Order: 0 - Front Left 1 - Front RIght 2 - Back Left 3 - Back Right
+     */
     private PhotonCameraWrapper[] cameras = {
         new PhotonCameraWrapper(Constants.CameraConstants.FrontLeftFacingCamera.CAMERA_NAME,
             Constants.CameraConstants.FrontLeftFacingCamera.KCAMERA_TO_ROBOT.inverse()),
@@ -40,42 +42,14 @@ public class SwerveReal implements SwerveIO {
                 cameras[i].getEstimatedGlobalPose(previousPose).map((x) -> x.estimatedPose);
             inputs.results[i] = cameras[i].photonCamera.getLatestResult();
             inputs.seesTarget[i] = cameras[i].seesTarget();
+            inputs.estimatedRobotPose[i] = cameras[i].getEstimatedGlobalPose(previousPose);
         }
 
     }
 
-    private Optional<EstimatedRobotPose> getEstimatedGlobalPose(int i,
+    public Optional<EstimatedRobotPose> getEstimatedGlobalPose(int i,
         Pose2d prevEstimatedRobotPose) {
         return this.cameras[i].getEstimatedGlobalPose(prevEstimatedRobotPose);
-    }
-
-    // /**
-    // * @param prevEstimatedRobotPose The current best guess at robot pose
-    // *
-    // * @return an EstimatedRobotPose with an estimated pose, the timestamp, and targets used to
-    // * create the estimate
-    // */
-    // @Override
-    // private Optional<EstimatedRobotPose> getFrontLeftEstimatedGlobalPose(
-    // Pose2d prevEstimatedRobotPose, PhotonPipelineResult result) {
-    // var res = frontLeftCam.photonCamera.getLatestResult();
-    // if (Timer.getFPGATimestamp() - res.getTimestampSeconds() > 0.4) {
-    // return Optional.empty();
-    // }
-
-    // photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
-    // return photonPoseEstimator.update();
-    // }
-
-    @Override
-    public Optional<EstimatedRobotPose> getFrontLeftEstimatedGlobalPose() {
-        var res = frontLeftCam.photonCamera.getLatestResult();
-        if (Timer.getFPGATimestamp() - res.getTimestampSeconds() > 0.4) {
-            return Optional.empty();
-        }
-
-        photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
-        return photonPoseEstimator.update();
     }
 
     @Override
