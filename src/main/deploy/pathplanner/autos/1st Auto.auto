@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7239035452472226,
-      "y": 7.0
+      "x": 0.997074694397118,
+      "y": 6.829530422066625
     },
-    "rotation": 180.0
+    "rotation": -132.22978420279978
   },
   "command": {
     "type": "sequential",
@@ -18,9 +18,27 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Shoot Command"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Pickup&ScoreN1"
+            "pathName": "Pickup N1 from N2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake Command"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot Command"
           }
         }
       ]
