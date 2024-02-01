@@ -14,7 +14,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot.RobotRunType;
+import frc.robot.commands.CommandFactory;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOFalcon;
@@ -24,6 +26,7 @@ import frc.robot.subsystems.shooter.ShooterVortex;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.SwerveIO;
 import frc.robot.subsystems.swerve.SwerveReal;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -43,6 +46,7 @@ public class RobotContainer {
     private Swerve s_Swerve;
     private Shooter shooter;
     private Intake intake;
+    private ElevatorWrist elevatorWrist;
 
     /**
      */
@@ -89,7 +93,9 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         Command autocommand;
-        NamedCommands.registerCommand("Shoot Command", autocommand);
+        NamedCommands.registerCommand("Intake Command",
+            CommandFactory.runIntake(intake, elevatorWrist));
+        // NamedComands.registerCommand("Shoot Command", shooterCommand when done )
         String stuff = autoChooser.getSelected();
         switch (stuff) {
             case "P1 2Ns Scoring Close":
