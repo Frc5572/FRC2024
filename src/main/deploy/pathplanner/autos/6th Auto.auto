@@ -38,13 +38,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Pickup note 7,8"
+            "pathName": "PickupN7 from N1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Score Notes 7,8,9"
+            "pathName": "ScoreN7"
           }
         }
       ]
