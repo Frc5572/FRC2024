@@ -66,13 +66,16 @@ public class ElevatorWrist implements Subsystem {
         double wristFeedForwardValue =
             wristFeedForward.calculate(0, 0, wristPIDController.getPeriod());
 
-        io.setElevatorVoltage(elevatorFeedForwardValue + elevatorPIDValue);
-        io.setWristVoltage(wristFeedForwardValue + wristPIDValue);
-
-        if (inputs.bottomLimitSwitch || inputs.topLimitSwitch == true) {
-            elevatorPIDController.setGoal(elevatorPIDValue);
+        if (inputs.topLimitSwitch && elevatorPIDValue > 0) {
+            elevatorPIDValue = 0;
         }
 
+        if (inputs.bottomLimitSwitch && elevatorPIDValue < 0) {
+            elevatorPIDValue = 0;
+        }
+
+        io.setElevatorVoltage(elevatorFeedForwardValue + elevatorPIDValue);
+        io.setWristVoltage(wristFeedForwardValue + wristPIDValue);
 
         Logger.recordOutput("/ElevatorWrist/Elevator/VoltageFromPID", elevatorPIDValue);
         Logger.recordOutput("/ElevatorWrist/Elevator/VoltageFromFeedForward",
