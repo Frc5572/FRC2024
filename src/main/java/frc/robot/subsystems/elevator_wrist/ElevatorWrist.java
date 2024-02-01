@@ -69,6 +69,11 @@ public class ElevatorWrist implements Subsystem {
         io.setElevatorVoltage(elevatorFeedForwardValue + elevatorPIDValue);
         io.setWristVoltage(wristFeedForwardValue + wristPIDValue);
 
+        if (inputs.bottomLimitSwitch || inputs.topLimitSwitch == true) {
+            elevatorPIDController.setGoal(elevatorPIDValue);
+        }
+
+
         Logger.recordOutput("/ElevatorWrist/Elevator/VoltageFromPID", elevatorPIDValue);
         Logger.recordOutput("/ElevatorWrist/Elevator/VoltageFromFeedForward",
             elevatorFeedForwardValue);
