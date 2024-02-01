@@ -61,7 +61,7 @@ public class ElevatorWrist implements Subsystem {
         double wristPIDValue = wristPIDController.calculate(inputs.wristAbsoluteEncRawValue);
 
         double elevatorFeedForwardValue =
-            elevatorFeedForward.calculate(0, 0, wristPIDController.getPeriod());
+            elevatorFeedForward.calculate(0, 0, elevatorPIDController.getPeriod());
 
         double wristFeedForwardValue =
             wristFeedForward.calculate(0, 0, wristPIDController.getPeriod());
@@ -125,6 +125,7 @@ public class ElevatorWrist implements Subsystem {
      * @return Height of elevator in meters
      */
     public double elevatorDistanceTraveled() {
-        return inputs.elevatorRelativeEncRawValue * 0.111715034761762;
+        return inputs.elevatorRelativeEncRawValue
+            * Constants.ElevatorWristConstants.SetPoints.LINEAR_DISTANCE;
     }
 }
