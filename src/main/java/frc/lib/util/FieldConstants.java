@@ -3,12 +3,15 @@ package frc.lib.util;
 
 import static edu.wpi.first.apriltag.AprilTagFields.k2024Crescendo;
 import java.io.IOException;
+import java.util.Optional;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 /**
  * Contains various field dimensions and useful reference points. Dimensions are in meters, and sets
@@ -92,6 +95,28 @@ public class FieldConstants {
             aprilTags = AprilTagFieldLayout.loadFromResource(k2024Crescendo.m_resourceFile);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Flips a pose to the correct side of the field based on the current alliance color. By
+     * default, all translations and poses in {@link FieldConstants} are stored with the origin at
+     * the rightmost point on the BLUE ALLIANCE wall.
+     *
+     * @param pose Initial Pose
+     * @return Pose2d flipped to Red Alliance
+     */
+    public static Pose2d allianceFlip(Pose2d pose) {
+        Optional<Alliance> ally = DriverStation.getAlliance();
+        if (ally.isPresent()) {
+            if (ally.get() == Alliance.Red) {
+                return new Pose2d(fieldLength - pose.getX(), pose.getY(),
+                    new Rotation2d(-pose.getRotation().getCos(), pose.getRotation().getSin()));
+            } else {
+                return pose;
+            }
+        } else {
+            return pose;
         }
     }
 }
