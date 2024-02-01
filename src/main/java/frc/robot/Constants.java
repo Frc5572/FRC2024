@@ -296,6 +296,10 @@ public final class Constants {
             public static final double MAX_EXTENSION = Units.inchesToMeters(48);
             public static final double CLIMBING_HEIGHT = Units.inchesToMeters(15);
             public static final Rotation2d CLIMBING_ANGLE = Rotation2d.fromDegrees(0);
+            public static final Rotation2d MAX_ANGLE_UP_HOME = Rotation2d.fromDegrees(75);
+            public static final Rotation2d MAX_ANGLE_DOWN_HOME = Rotation2d.fromDegrees(0);
+            public static final Rotation2d MAX_ANGLE_UP_EXTENDED = Rotation2d.fromDegrees(75);
+            public static final Rotation2d MAX_ANGLE_DOWN_EXTENDED = Rotation2d.fromDegrees(-15);
 
             public static final double LINEAR_DISTANCE = Units.inchesToMeters(2 * Math.PI * 659);
 
