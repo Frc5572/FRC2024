@@ -94,8 +94,7 @@ public class ElevatorWrist implements Subsystem {
         return Commands.runOnce(() -> {
             elevatorPIDController.setGoal(height);
             wristPIDController.setGoal(angle.getRotations());
-        }).andThen(Commands
-            .waitUntil(() -> wristPIDController.atGoal() && elevatorPIDController.atGoal()));
+        }).andThen(Commands.waitUntil(() -> atGoal()));
     }
 
     /**
@@ -125,7 +124,7 @@ public class ElevatorWrist implements Subsystem {
     }
 
     public Boolean atGoal() {
-        return elevatorPIDController.atGoal();
+        return elevatorPIDController.atGoal() && wristPIDController.atGoal();
     }
 
 }
