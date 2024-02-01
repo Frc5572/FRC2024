@@ -1,6 +1,5 @@
 package frc.robot.subsystems.swerve;
 
-import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -38,8 +37,7 @@ public class SwerveReal implements SwerveIO {
         inputs.latencies = new double[4];
         for (int i = 0; i < cameras.length; i++) {
             inputs.latencies[i] = cameras[i].latency();
-            inputs.positions[i] =
-                cameras[i].getEstimatedGlobalPose(previousPose).map((x) -> x.estimatedPose);
+            inputs.positions[i] = cameras[i].getEstimatedGlobalPose(previousPose).estimatedPose;
             inputs.results[i] = cameras[i].photonCamera.getLatestResult();
             inputs.seesTarget[i] = cameras[i].seesTarget();
             inputs.estimatedRobotPose[i] = cameras[i].getEstimatedGlobalPose(previousPose);
@@ -47,8 +45,7 @@ public class SwerveReal implements SwerveIO {
 
     }
 
-    public Optional<EstimatedRobotPose> getEstimatedGlobalPose(int i,
-        Pose2d prevEstimatedRobotPose) {
+    public EstimatedRobotPose getEstimatedGlobalPose(int i, Pose2d prevEstimatedRobotPose) {
         return this.cameras[i].getEstimatedGlobalPose(prevEstimatedRobotPose);
     }
 

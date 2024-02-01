@@ -20,9 +20,9 @@ public interface SwerveIO {
         public float roll;
         public double[] latencies;
         public PhotonPipelineResult[] results;
-        public Optional<Pose3d>[] positions;
+        public Pose3d[] positions;
         public boolean[] seesTarget;
-        public Optional<EstimatedRobotPose>[] estimatedRobotPose;
+        public EstimatedRobotPose[] estimatedRobotPose;
     }
 
     public default void updateInputs(SwerveInputs inputs, Pose2d previousPose) {}

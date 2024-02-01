@@ -232,15 +232,15 @@ public class Swerve extends SubsystemBase {
         swerveOdometry.update(yaw, getSwerveModulePositions());
         if (!hasInitialized /* || DriverStation.isDisabled() */) {
             var robotPose = inputs.positions[0];
-            if (robotPose.isPresent()) {
+            if (robotPose != null) {
                 swerveOdometry.resetPosition(Rotation2d.fromDegrees(inputs.yaw),
-                    getSwerveModulePositions(), robotPose.get().toPose2d());
+                    getSwerveModulePositions(), robotPose.toPose2d());
                 hasInitialized = true;
             }
         } else {
-            for (Optional<EstimatedRobotPose> estimatedPose : inputs.estimatedRobotPose) {
-                if (estimatedPose.isPresent()) {
-                    var camPose = estimatedPose.get();
+            for (EstimatedRobotPose estimatedPose : inputs.estimatedRobotPose) {
+                if (estimatedPose != null) {
+                    var camPose = estimatedPose;
                     if (camPose.targetsUsed.get(0).getArea() > 0.7) {
                         swerveOdometry.addVisionMeasurement(camPose.estimatedPose.toPose2d(),
                             camPose.timestampSeconds);
