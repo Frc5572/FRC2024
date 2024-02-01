@@ -1,7 +1,6 @@
 package frc.robot.subsystems.swerve;
 
 import java.util.Optional;
-import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -255,15 +254,14 @@ public class Swerve extends SubsystemBase {
 
     /**
      * Returns the distance between the speaker and Swerve
-     *
-     * @param pose2d A {@link Pose2d} to provide the pose of Swerve
+     * 
      * @return the difference between the pose of speaker and swerve
      */
-    public double distanceFromSpeaker(Supplier<Pose2d> pose2d) {
+    public double distanceFromSpeaker() {
         double distance =
-            Math.hypot(FieldConstants.Speaker.centerSpeakerOpening.getY() - pose2d.get().getY(),
+            Math.hypot(FieldConstants.Speaker.centerSpeakerOpening.getY() - getPose().getY(),
                 FieldConstants.allianceFlip(FieldConstants.Speaker.centerSpeakerOpening).getX()
-                    - pose2d.get().getX());
+                    - getPose().getX());
         return distance;
     }
 }
