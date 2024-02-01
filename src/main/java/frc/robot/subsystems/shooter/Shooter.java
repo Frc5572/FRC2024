@@ -55,6 +55,12 @@ public class Shooter extends SubsystemBase {
         return 0.0;
     }
 
+    /**
+     * Command to shoot from a distance
+     *
+     * @param distance the distance from the target
+     * @return Returns a command
+     */
     public Command shootWithDistance(DoubleSupplier distance) {
         return Commands.run(() -> {
             double velocity = distanceToVelocity(distance.getAsDouble());
