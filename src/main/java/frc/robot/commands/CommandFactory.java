@@ -1,7 +1,7 @@
 package frc.robot.commands;
 
 import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -45,18 +45,19 @@ public class CommandFactory {
      */
     public static Command shootSpeaker(Shooter shooter, ElevatorWrist elevatorWrist, Swerve swerve,
         Intake intake) {
-        DoubleSupplier angle = () -> Math.atan(Constants.ShooterConstants.HEIGHT_FROM_SPEAKER
-            / swerve.distanceFromSpeaker(swerve::getPose));
+        Supplier<Rotation2d> rotation =
+            () -> new Rotation2d(Math.atan(Constants.ShooterConstants.HEIGHT_FROM_SPEAKER
+                / swerve.distanceFromSpeaker(swerve::getPose)));
         Command runIntakeIndexer =
             intake.runIntakeMotor(Constants.IntakeConstants.INDEX_MOTOR_FORWARD);
-        Command moveElevatorWrist =
-            elevatorWrist.followPosition(() -> Constants.ShooterConstants.HEIGHT_FROM_LOWEST_POS,
-                () -> Rotation2d.fromRadians(angle.getAsDouble()));
+        Command moveElevatorWrist = elevatorWrist
+            .followPosition(() -> Constants.ShooterConstants.HEIGHT_FROM_LOWEST_POS, rotation);
         Command runshooter =
             shooter.shootWithDistance(() -> swerve.distanceFromSpeaker(swerve::getPose));
-        Command waitForElevator = Commands.waitUntil(() -> elevatorWrist.atGoal());
-        return runshooter.alongWith(moveElevatorWrist)
-            .alongWith(waitForElevator.andThen(runIntakeIndexer));
+        Command readytoShoot =
+            Commands.waitUntil(() -> elevatorWrist.atGoal() && shooter.atSetpoint());
+        return runshooter.alongWith(moveElevatorWrist.alongWith())
+            .alongWith(readytoShoot.andThen(runIntakeIndexer));
     }
 
     /**

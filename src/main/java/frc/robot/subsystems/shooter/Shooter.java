@@ -55,6 +55,10 @@ public class Shooter extends SubsystemBase {
         return 0.0;
     }
 
+    public Boolean atSetpoint() {
+        return frontpid.atSetpoint() && backpid.atSetpoint();
+    }
+
     /**
      * Command to shoot from a distance
      *
