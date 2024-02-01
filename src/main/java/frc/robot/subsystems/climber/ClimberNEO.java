@@ -38,7 +38,12 @@ public class ClimberNEO implements ClimberIO {
     }
 
     @Override
-    public void setClimberVoltage(double voltage) {
+    public void setLeftClimberVoltage(double voltage) {
+        leftMotor.setVoltage(voltage);
+    }
+
+    @Override
+    public void setRightClimberVoltage(double voltage) {
         leftMotor.setVoltage(voltage);
     }
 }

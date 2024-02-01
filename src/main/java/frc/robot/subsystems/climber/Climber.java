@@ -36,20 +36,36 @@ public class Climber extends SubsystemBase {
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs("Climber", inputs);
+        double leftClimberPIDValue =
+            leftClimberPIDController.calculate(leftClimberDistanceTraveled());
+        double rightClimberPIDValue =
+            rightClimberPIDController.calculate(rightClimberDistanceTraveled());
         double climberFeedForwardValue =
             climberFeedforward.calculate(0, 0, leftClimberPIDController.getPeriod());
-
+        io.setLeftClimberVoltage(climberFeedForwardValue + leftClimberPIDValue);
+        io.setRightClimberVoltage(climberFeedForwardValue + rightClimberPIDValue);
         Logger.recordOutput("/Climber/VoltageFromFeedForward/LeftClimber", climberFeedForwardValue);
     }
 
     /**
-     * Sets voltage for climber system
+     * Sets voltage for left side climber system
      *
      * @param power Sets power for climbing motors.
      */
-    public void setClimberVoltage(double power) {
+    public void setLeftClimberVoltage(double power) {
         Logger.recordOutput("/Climber/Voltage", power);
-        io.setClimberVoltage(power);
+        io.setLeftClimberVoltage(power);
+
+    }
+
+    /**
+     * Sets voltage for right side climber system
+     *
+     * @param power Sets power for climbing motors.
+     */
+    public void setRightClimberVoltage(double power) {
+        Logger.recordOutput("/Climber/Voltage", power);
+        io.setRightClimberVoltage(power);
 
     }
 
