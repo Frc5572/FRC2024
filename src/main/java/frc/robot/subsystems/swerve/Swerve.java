@@ -1,44 +1,48 @@
 package frc.robot.subsystems.swerve;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.targeting.PhotonPipelineResult;
 import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.swerve.SwerveModule;
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
 
 /**
  * Swerve Subsystem
  */
 public class Swerve extends SubsystemBase {
-    public SwerveDriveOdometry swerveOdometry;
+    public SwerveDrivePoseEstimator swerveOdometry;
     public SwerveModule[] swerveMods;
     private final Field2d field = new Field2d();
     private double fieldOffset;
     private SwerveInputsAutoLogged inputs = new SwerveInputsAutoLogged();
     private SwerveIO swerveIO;
     private boolean hasInitialized = false;
-    private GenericEntry aprilTagTarget = RobotContainer.autoTab
-        .add("Currently Seeing April Tag", false).withWidget(BuiltInWidgets.kBooleanBox)
-        .withProperties(Map.of("Color when true", "green", "Color when false", "red"))
-        .withPosition(8, 4).withSize(2, 2).getEntry();
+
+    private PhotonPipelineResult[] bob;
+
+    // private GenericEntry aprilTagTarget =
+    // RobotContainer.autoTab.add("Currently Seeing At Least One April Tag", false)
+    // .withWidget(BuiltInWidgets.kBooleanBox)
+    // .withProperties(Map.of("Color when true", "green", "Color when false", "red"))
+    // .withPosition(8, 4).withSize(2, 2).getEntry();
 
     /**
      * Swerve Subsystem
@@ -61,16 +65,19 @@ public class Swerve extends SubsystemBase {
                 Constants.Swerve.Mod3.ANGLE_MOTOR_ID, Constants.Swerve.Mod3.CAN_CODER_ID,
                 Constants.Swerve.Mod3.ANGLE_OFFSET)};
 
-        swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getGyroYaw(),
-            getModulePositions());
+        swerveOdometry = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics,
+            getGyroYaw(), getModulePositions(), new Pose2d());
 
         AutoBuilder.configureHolonomic(this::getPose, this::resetOdometry, this::getChassisSpeeds,
             this::setModuleStates, Constants.Swerve.pathFollowerConfig, () -> shouldFlipPath(),
             this);
+        SmartDashboard.putBoolean("Currently Seeing At Least One April Tag", false);
 
-        RobotContainer.autoTab.add("Field Pos", field).withWidget(BuiltInWidgets.kField)
-            .withSize(8, 6) // make the widget 2x1
-            .withPosition(0, 0); // place it in the top-left corner
+
+        // RobotContainer.autoTab.add("Field Pos", field).withWidget(BuiltInWidgets.kField)
+        // .withSize(8, 6) // make the widget 2x1
+        // .withPosition(0, 0); // place it in the top-left corner
+        SmartDashboard.putData("Field Pos", field);
     }
 
     /**
@@ -158,7 +165,7 @@ public class Swerve extends SubsystemBase {
      */
     @AutoLogOutput(key = "Odometry/Robot")
     public Pose2d getPose() {
-        return swerveOdometry.getPoseMeters();
+        return swerveOdometry.getEstimatedPosition();
     }
 
     /**
@@ -219,7 +226,9 @@ public class Swerve extends SubsystemBase {
     @Override
     public void periodic() {
         swerveOdometry.update(getGyroYaw(), getModulePositions());
-        swerveIO.updateInputs(inputs);
+        swerveIO.updateInputs(inputs, swerveOdometry.getEstimatedPosition());
+        bob = new PhotonPipelineResult[] {inputs.backLeftPhotonResult, inputs.frontLeftPhotonResult,
+            inputs.backRightPhotonResult, inputs.frontRightPhotonResult};
         Logger.processInputs("Swerve", inputs);
         SmartDashboard.putBoolean("photonGood",
             inputs.frontLeftCameraLatency < 0.6 && inputs.frontRightCameraLatency < 0.6
@@ -234,21 +243,42 @@ public class Swerve extends SubsystemBase {
                 hasInitialized = true;
             }
         } else {
-            var frontLeftResult = inputs.frontLeftPhotonResult.get getEstimatedGlobalPose(swerveOdometry.getEstimatedPosition());
-            if (result.isPresent()) {
-                var camPose = result.get();
-                if (camPose.targetsUsed.get(0).getArea() > 0.7) {
-                    swerveOdometry.addVisionMeasurement(camPose.estimatedPose.toPose2d(),
-                        camPose.timestampSeconds);
+
+            for (PhotonPipelineResult a : bob) {
+
+            }
+            List<Optional<EstimatedRobotPose>> estimatedRobotPoses =
+                new ArrayList<Optional<EstimatedRobotPose>>();
+            estimatedRobotPoses.add(getEstimatedGlobalPose(swerveOdometry.getEstimatedPosition(),
+                inputs.frontLeftPhotonResult));
+            estimatedRobotPoses.add(getEstimatedGlobalPose(swerveOdometry.getEstimatedPosition(),
+                inputs.frontRightPhotonResult));
+            estimatedRobotPoses.add(getEstimatedGlobalPose(swerveOdometry.getEstimatedPosition(),
+                inputs.backLeftPhotonResult));
+            estimatedRobotPoses.add(getEstimatedGlobalPose(swerveOdometry.getEstimatedPosition(),
+                inputs.backRightPhotonResult));
+
+            for (Optional<EstimatedRobotPose> estimatedPose : estimatedRobotPoses) {
+                if (estimatedPose.isPresent()) {
+                    var camPose = estimatedPose.get();
+                    if (camPose.targetsUsed.get(0).getArea() > 0.7) {
+                        swerveOdometry.addVisionMeasurement(camPose.estimatedPose.toPose2d(),
+                            camPose.timestampSeconds);
+                    }
+                    field.getObject("Cam Est Pose").setPose(camPose.estimatedPose.toPose2d());
+                } else {
+                    field.getObject("Cam Est Pose")
+                        .setPose(new Pose2d(-100, -100, new Rotation2d()));
                 }
-                field.getObject("Cam Est Pose").setPose(camPose.estimatedPose.toPose2d());
-            } else {
-                field.getObject("Cam Est Pose").setPose(new Pose2d(-100, -100, new Rotation2d()));
             }
         }
 
         field.setRobotPose(getPose());
-        aprilTagTarget.setBoolean(cam.seesTarget());
+        // aprilTagTarget.setBoolean(inputs.frontLeftCamSeesTarget || inputs.frontRightCamSeesTarget
+        // || inputs.backLeftCamSeesTarget || inputs.backRightCamSeesTarget);
+        SmartDashboard.putBoolean("Currently Seeing At Least One April Tag",
+            inputs.frontLeftCamSeesTarget || inputs.frontRightCamSeesTarget
+                || inputs.backLeftCamSeesTarget || inputs.backRightCamSeesTarget);
 
         SmartDashboard.putBoolean("Has Initialized", hasInitialized);
         SmartDashboard.putNumber("Robot X", getPose().getX());
@@ -297,6 +327,7 @@ public class Swerve extends SubsystemBase {
         for (SwerveModule mod : swerveMods) {
             positions[mod.moduleNumber] = mod.getPosition();
         }
+        return positions;
     }
 
     /**
@@ -311,4 +342,24 @@ public class Swerve extends SubsystemBase {
         }
         return false;
     }
+
+    /**
+     * @param prevEstimatedRobotPose The current best guess at robot pose
+     *
+     * @return an EstimatedRobotPose with an estimated pose, the timestamp, and targets used to
+     *         create the estimate
+     */
+    public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose,
+        PhotonPipelineResult result, ) {
+        var res = result;
+        SmartDashboard.putNumber("photonLatency",
+            Timer.getFPGATimestamp() - res.getTimestampSeconds());
+        if (Timer.getFPGATimestamp() - res.getTimestampSeconds() > 0.4) {
+            return Optional.empty();
+        }
+   
+        photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
+        return photonPoseEstimator.update();
+    }
+
 }

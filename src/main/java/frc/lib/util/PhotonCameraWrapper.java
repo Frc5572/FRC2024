@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class PhotonCameraWrapper {
     public PhotonCamera photonCamera;
-    private PhotonPoseEstimator photonPoseEstimator;
+    public PhotonPoseEstimator photonPoseEstimator;
 
     /**
      * PhotonCamera-based Pose Estimator.
