@@ -44,11 +44,11 @@ public class Shooter extends SubsystemBase {
     }
 
     public double getFrontVelocity() {
-        return inputs.topshooterVelocityRotPerSecond;
+        return inputs.topshooterVelocityRotPerMin;
     }
 
     public double getBackVelocity() {
-        return inputs.bottomshooterVelocityRotPerSecond;
+        return inputs.bottomshooterVelocityRotPerMin;
     }
 
     public double distanceToVelocity(double distance) {

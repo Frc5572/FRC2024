@@ -260,13 +260,10 @@ public class Swerve extends SubsystemBase {
      * @return the difference between the pose of speaker and swerve
      */
     public double distanceFromSpeaker(Supplier<Pose2d> pose2d) {
-        double distance = Math.sqrt(
-            Math.pow(FieldConstants.Speaker.centerSpeakerOpening.getY() - pose2d.get().getY(), 2)
-                + Math.pow(
-                    FieldConstants.allianceFlip(FieldConstants.Speaker.centerSpeakerOpening).getX()
-                        - pose2d.get().getX(),
-                    2));
-
+        double distance =
+            Math.hypot(FieldConstants.Speaker.centerSpeakerOpening.getY() - pose2d.get().getY(),
+                FieldConstants.allianceFlip(FieldConstants.Speaker.centerSpeakerOpening).getX()
+                    - pose2d.get().getX());
         return distance;
     }
 }

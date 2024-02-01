@@ -12,8 +12,8 @@ public interface ShooterIO {
      */
     @AutoLog
     public static class ShooterIOInputs {
-        public double topshooterVelocityRotPerSecond;
-        public double bottomshooterVelocityRotPerSecond;
+        public double topshooterVelocityRotPerMin;
+        public double bottomshooterVelocityRotPerMin;
         public double topshooterSupplyVoltage;
         public double bottomshooterSupplyVoltage;
         public double topshooterAmps;
