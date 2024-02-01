@@ -261,9 +261,11 @@ public class Swerve extends SubsystemBase {
      */
     public double distanceFromSpeaker(Supplier<Pose2d> pose2d) {
         // figure out how to flip this for red alliance
-        double distance = Math.sqrt(Math.pow(
-            Math.abs(FieldConstants.Speaker.centerSpeakerOpening.getY() - pose2d.get().getY()), 2)
-            + Math.pow(pose2d.get().getX(), 2));
+        double xAxisSpeaker = shouldFlipPath() ? FieldConstants.fieldLength
+            : FieldConstants.Speaker.centerSpeakerOpening.getX();
+        double distance = Math.sqrt(
+            Math.pow(FieldConstants.Speaker.centerSpeakerOpening.getY() - pose2d.get().getY(), 2)
+                + Math.pow(xAxisSpeaker - pose2d.get().getX(), 2));
 
         return distance;
     }
