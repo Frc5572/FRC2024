@@ -53,8 +53,7 @@ public class CommandFactory {
         Command runshooter = shooter.shootWithDistance(() -> swerve.distanceFromSpeaker());
         Command readytoShoot =
             Commands.waitUntil(() -> elevatorWrist.atGoal() && shooter.atSetpoint());
-        return runshooter.alongWith(moveElevatorWrist.alongWith())
-            .alongWith(readytoShoot.andThen(runIndexer));
+        return runshooter.alongWith(moveElevatorWrist).alongWith(readytoShoot.andThen(runIndexer));
     }
 
     /**
