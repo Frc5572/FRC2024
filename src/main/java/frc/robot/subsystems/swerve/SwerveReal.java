@@ -1,8 +1,11 @@
 package frc.robot.subsystems.swerve;
 
 import org.photonvision.EstimatedRobotPose;
+import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.lib.util.PhotonCameraWrapper;
 import frc.lib.util.swerve.SwerveModule;
@@ -35,6 +38,12 @@ public class SwerveReal implements SwerveIO {
         inputs.yaw = gyro.getYaw();
         inputs.roll = gyro.getRoll();
         inputs.latencies = new double[4];
+        inputs.positions = new Pose3d[4];
+        inputs.results = new PhotonPipelineResult[4];
+        inputs.seesTarget = new boolean[4];
+        inputs.estimatedRobotPose3d = new Pose3d[4];
+        inputs.estimatedRobotPose3dTimestampSeconds = new double[4];
+        inputs.estimatedRobotPose3dTargets = new PhotonTrackedTarget[4];
         for (int i = 0; i < cameras.length; i++) {
             inputs.latencies[i] = cameras[i].latency();
             inputs.positions[i] = cameras[i].getEstimatedGlobalPose(previousPose).estimatedPose;

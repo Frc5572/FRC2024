@@ -27,31 +27,38 @@ public interface SwerveIO {
         public void toLog(LogTable table) {
             table.put("Yaw", yaw);
             table.put("Roll", roll);
-            table.put("Latencies", latencies);
-            table.put("Results/1", PhotonPipelineResult.proto, results[0]);
-            table.put("Positions", positions);
-            table.put("SeesTarget", seesTarget);
-            table.put("EstimatedRobotPose3d", estimatedRobotPose3d);
-            table.put("EstimatedRobotPoseTimestampSeconds", estimatedRobotPose3dTimestampSeconds);
-            // table.put("EstimatedRobotPoseTargets", estimatedRobotPose3dTargets);
-            table.put("EstimatedRobotPose3dTargets", estimatedRobotPose3dTargets);
+            for (int i = 0; i < 4; i++) {
+                table.put("Latencies/" + i, latencies[i]);
+                table.put("Results/" + i, PhotonPipelineResult.proto, results[i]);
+                table.put("Positions/" + i, positions[i]);
+                table.put("SeesTarget/" + i, seesTarget[i]);
+                table.put("EstimatedRobotPose3d/" + i, estimatedRobotPose3d[i]);
+                table.put("EstimatedRobotPoseTimestampSeconds/" + i,
+                    estimatedRobotPose3dTimestampSeconds[i]);
+                // table.put("EstimatedRobotPoseTargets", estimatedRobotPose3dTargets);
+                table.put("EstimatedRobotPose3dTargets/" + i, estimatedRobotPose3dTargets[i]);
+            }
         }
 
         @Override
         public void fromLog(LogTable table) {
             yaw = table.get("Yaw", yaw);
             roll = table.get("Roll", roll);
-            latencies = table.get("Latencies", latencies);
-            results[0] = table.get("Results/1", results[0]);
-            positions = table.get("Positions", positions);
-            seesTarget = table.get("SeesTarget", seesTarget);
-            estimatedRobotPose3d = table.get("EstimatedRobotPose3d", estimatedRobotPose3d);
-            estimatedRobotPose3dTimestampSeconds = table.get("EstimatedRobotPoseTimestampSeconds",
-                estimatedRobotPose3dTimestampSeconds);
-            // estimatedRobotPose3dTargets =
-            // table.get("EstimatedRobotPoseTargets", estimatedRobotPose3dTargets);
-            estimatedRobotPose3dTargets =
-                table.get("EstimatedRobotPose3dTargets", estimatedRobotPose3dTargets);
+            for (int i = 0; i < 4; i++) {
+                latencies[i] = table.get("Latencies/" + i, latencies[i]);
+                results[i] = table.get("Results/" + i, results[i]);
+                positions[i] = table.get("Positions/" + i, positions[i]);
+                seesTarget[i] = table.get("SeesTarget/" + i, seesTarget[i]);
+                estimatedRobotPose3d[i] =
+                    table.get("EstimatedRobotPose3d/" + i, estimatedRobotPose3d[i]);
+                estimatedRobotPose3dTimestampSeconds[i] =
+                    table.get("EstimatedRobotPoseTimestampSeconds/" + i,
+                        estimatedRobotPose3dTimestampSeconds[i]);
+                // estimatedRobotPose3dTargets =
+                // table.get("EstimatedRobotPoseTargets", estimatedRobotPose3dTargets);
+                estimatedRobotPose3dTargets[i] =
+                    table.get("EstimatedRobotPose3dTargets/" + i, estimatedRobotPose3dTargets[i]);
+            }
         }
 
         public SwerveInputsAutoLogged clone() {
