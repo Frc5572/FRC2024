@@ -1,9 +1,13 @@
 package frc.robot.subsystems.swerve;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.targeting.PhotonTrackedTarget;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -238,9 +242,15 @@ public class Swerve extends SubsystemBase {
                 hasInitialized = true;
             }
         } else {
-            for (EstimatedRobotPose estimatedPose : inputs.estimatedRobotPose) {
-                if (estimatedPose != null) {
-                    var camPose = estimatedPose;
+            for (int i = 0; i < 4; i++) {
+                List<PhotonTrackedTarget> list = new ArrayList<PhotonTrackedTarget>();
+                list.add(inputs.estimatedRobotPose3dTargets[i]);
+                // will the area == 0.0 if there are no targets???
+                if (inputs.estimatedRobotPose3dTargets[i].getArea() != 0.0) {
+                    EstimatedRobotPose camPose =
+                        new EstimatedRobotPose(inputs.estimatedRobotPose3d[i],
+                            inputs.estimatedRobotPose3dTimestampSeconds[i], list,
+                            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR);
                     if (camPose.targetsUsed.get(0).getArea() > 0.7) {
                         swerveOdometry.addVisionMeasurement(camPose.estimatedPose.toPose2d(),
                             camPose.timestampSeconds);
