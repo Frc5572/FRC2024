@@ -51,4 +51,17 @@ public class Intake extends SubsystemBase {
             setIndexerMotor(0);
         }, this).until(() -> getSensorStatus()).unless(() -> getSensorStatus());
     }
+
+    /**
+     * Command to run the indexer until the sensor trips
+     *
+     * @return {@link Command} to run the indexer motors
+     */
+    public Command runIndexerMotor(double speed) {
+        return Commands.startEnd(() -> {
+            setIndexerMotor(speed);
+        }, () -> {
+            setIndexerMotor(0);
+        }, this).until(() -> getSensorStatus()).unless(() -> getSensorStatus());
+    }
 }
