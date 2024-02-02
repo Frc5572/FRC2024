@@ -62,6 +62,6 @@ public class Intake extends SubsystemBase {
             setIndexerMotor(speed);
         }, () -> {
             setIndexerMotor(0);
-        }, this).until(() -> getSensorStatus()).unless(() -> getSensorStatus());
+        }, this);
     }
 }
