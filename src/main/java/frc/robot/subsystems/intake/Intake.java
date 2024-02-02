@@ -53,7 +53,7 @@ public class Intake extends SubsystemBase {
     }
 
     /**
-     * Command to run the indexer until the sensor trips
+     * Command to run the indexer
      *
      * @return {@link Command} to run the indexer motors
      */
