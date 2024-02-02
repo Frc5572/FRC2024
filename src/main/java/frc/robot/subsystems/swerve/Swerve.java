@@ -254,7 +254,7 @@ public class Swerve extends SubsystemBase {
 
     /**
      * Returns the distance between the speaker and Swerve
-     * 
+     *
      * @return the difference between the pose of speaker and swerve
      */
     public double distanceFromSpeaker() {
