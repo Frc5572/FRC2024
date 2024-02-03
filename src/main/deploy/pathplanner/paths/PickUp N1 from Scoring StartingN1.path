@@ -3,26 +3,10 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.997074694397118,
-        "y": 6.829530422066625
-      },
-      "prevControl": null,
-      "nextControl": {
-        "x": 1.2470694816496373,
-        "y": 6.8279160037293645
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
         "x": 1.90536876532052,
         "y": 6.3583101897830545
       },
-      "prevControl": {
-        "x": 1.6656692371434239,
-        "y": 6.28728810736021
-      },
+      "prevControl": null,
       "nextControl": {
         "x": 2.0897592909966995,
         "y": 6.4129444196130345
@@ -46,7 +30,7 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1,
+      "waypointRelativePos": 0.0,
       "rotationDegrees": -151.11341823308928,
       "rotateFast": false
     }
@@ -54,25 +38,8 @@
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "A1 M1",
-      "waypointRelativePos": 1.0,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "Shoot Command"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
       "name": "A1 M2",
-      "waypointRelativePos": 1.85,
+      "waypointRelativePos": 0.0,
       "command": {
         "type": "sequential",
         "data": {
@@ -81,12 +48,6 @@
               "type": "named",
               "data": {
                 "name": "Intake Command"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "Shoot Command"
               }
             }
           ]
@@ -108,7 +69,7 @@
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": -130.95551442581882,
+    "rotation": -152.72323661688642,
     "velocity": 0
   },
   "useDefaultConstraints": false

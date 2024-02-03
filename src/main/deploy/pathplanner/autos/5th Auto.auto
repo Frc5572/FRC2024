@@ -14,7 +14,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "P1 Scores StartingN and N1"
+            "pathName": "GetOuts and Scores StartingN P1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot Command"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "PickUp N1 from Scoring StartingN1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot Command"
           }
         },
         {

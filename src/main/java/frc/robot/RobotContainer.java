@@ -1,7 +1,7 @@
 package frc.robot;
 
-import java.util.HashMap;
 import java.util.List;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -103,21 +103,14 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         Command autocommand;
-        HashMap<String, Command> eventMap = new HashMap<>();
-
-        // public FollowPathCommand ​(PathPlannerPath path,Supplier<Pose2d> poseSupplier,
-        // Supplier<ChassisSpeeds> speedsSupplier,
-        // Consumer<ChassisSpeeds> outputRobotRelative,
-        // PathFollowingController controller,
-        // ReplanningConfig replanningConfig,
-        // BooleanSupplier shouldFlipPath,
-        // Subsystem... requirements){}
 
 
-        // NamedCommands.registerCommand("Intake Command",
-        // CommandFactory.runIntake(intake, elevatorWrist));
+        NamedCommands.registerCommand("Intake Command",
+            CommandFactory.runIntake(intake, elevatorWrist));
+        NamedCommands.registerCommand("Shoot Command",
+            CommandFactory.shootSpeaker(shooter, elevatorWrist, s_Swerve, intake));
 
-        // NamedComands.registerCommand("Shoot Command", shooterCommand when done )
+
         String stuff = autoChooser.getSelected();
         switch (stuff) {
             case "P1 3Ns Scoring":
@@ -126,8 +119,6 @@ public class RobotContainer {
                 s_Swerve.resetOdometry(initialState2);
                 autocommand = new PathPlannerAuto("2nd Auto");
 
-                eventMap.put("A1 M1", CommandFactory.runIntake(intake, elevatorWrist));
-                // eventMap.put("A1 M2", ShootCommand);
 
 
                 break;
@@ -144,48 +135,42 @@ public class RobotContainer {
                 List<PathPlannerPath> paths4 = PathPlannerAuto.getPathGroupFromAutoFile("4th Auto");
                 Pose2d initialState4 = paths4.get(0).getPreviewStartingHolonomicPose();
                 s_Swerve.resetOdometry(initialState4);
-                autocommand = new InstantCommand(() -> s_Swerve.resetOdometry(initialState4))
-                    .andThen(new PathPlannerAuto("4th Auto"));
+                autocommand = new PathPlannerAuto("4th Auto");
 
                 break;
             case "P1 4Ns Scoring far":
                 List<PathPlannerPath> paths5 = PathPlannerAuto.getPathGroupFromAutoFile("5th Auto");
                 Pose2d initialState5 = paths5.get(0).getPreviewStartingHolonomicPose();
                 s_Swerve.resetOdometry(initialState5);
-                autocommand = new InstantCommand(() -> s_Swerve.resetOdometry(initialState5))
-                    .andThen(new PathPlannerAuto("5th Auto"));
+                autocommand = new PathPlannerAuto("5th Auto");
 
                 break;
             case "P1 5Ns Scoring":
                 List<PathPlannerPath> paths6 = PathPlannerAuto.getPathGroupFromAutoFile("6th Auto");
                 Pose2d initialState6 = paths6.get(0).getPreviewStartingHolonomicPose();
                 s_Swerve.resetOdometry(initialState6);
-                autocommand = new InstantCommand(() -> s_Swerve.resetOdometry(initialState6))
-                    .andThen(new PathPlannerAuto("6th Auto"));
+                autocommand = new PathPlannerAuto("6th Auto");
 
                 break;
             case "P2 5Ns Scoring":
                 List<PathPlannerPath> paths7 = PathPlannerAuto.getPathGroupFromAutoFile("7th Auto");
                 Pose2d initialState7 = paths7.get(0).getPreviewStartingHolonomicPose();
                 s_Swerve.resetOdometry(initialState7);
-                autocommand = new InstantCommand(() -> s_Swerve.resetOdometry(initialState7))
-                    .andThen(new PathPlannerAuto("7th Auto"));
+                autocommand = new PathPlannerAuto("7th Auto");
 
                 break;
             case "P1 6Ns Scoring":
                 List<PathPlannerPath> paths8 = PathPlannerAuto.getPathGroupFromAutoFile("8th Auto");
                 Pose2d initialState8 = paths8.get(0).getPreviewStartingHolonomicPose();
                 s_Swerve.resetOdometry(initialState8);
-                autocommand = new InstantCommand(() -> s_Swerve.resetOdometry(initialState8))
-                    .andThen(new PathPlannerAuto("8th Auto"));
+                autocommand = new PathPlannerAuto("8th Auto");
 
                 break;
             case "P3 3Ns Scoring":
                 List<PathPlannerPath> paths9 = PathPlannerAuto.getPathGroupFromAutoFile("9th Auto");
                 Pose2d initialState9 = paths9.get(0).getPreviewStartingHolonomicPose();
                 s_Swerve.resetOdometry(initialState9);
-                autocommand = new InstantCommand(() -> s_Swerve.resetOdometry(initialState9))
-                    .andThen(new PathPlannerAuto("9th Auto"));
+                autocommand = new PathPlannerAuto("9th Auto");
 
                 break;
             default:
