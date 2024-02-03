@@ -110,13 +110,10 @@ public class FieldConstants {
         Optional<Alliance> ally = DriverStation.getAlliance();
         if (ally.isPresent()) {
             if (ally.get() == Alliance.Red) {
-                return new Pose2d(fieldLength - pose.getX(), pose.getY(),
+                pose = new Pose2d(fieldLength - pose.getX(), pose.getY(),
                     new Rotation2d(-pose.getRotation().getCos(), pose.getRotation().getSin()));
-            } else {
-                return pose;
             }
-        } else {
-            return pose;
         }
+        return pose;
     }
 }

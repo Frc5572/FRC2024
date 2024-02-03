@@ -14,9 +14,7 @@ import frc.robot.Constants;
  */
 public class Shooter extends SubsystemBase {
     private ShooterIO io;
-    private PIDController frontpid = new PIDController(Constants.ShooterConstants.KP,
-        Constants.ShooterConstants.KI, Constants.ShooterConstants.KD);
-    private PIDController backpid = new PIDController(Constants.ShooterConstants.KP,
+    private PIDController pid = new PIDController(Constants.ShooterConstants.KP,
         Constants.ShooterConstants.KI, Constants.ShooterConstants.KD);
     private SimpleMotorFeedforward shooterFeed =
         new SimpleMotorFeedforward(Constants.ShooterConstants.KS, Constants.ShooterConstants.KV);
@@ -33,22 +31,13 @@ public class Shooter extends SubsystemBase {
         Logger.processInputs("Shooter", inputs);
     }
 
-    public void setFrontMotor(double power) {
-        Logger.recordOutput("Shooter/Top Voltage", power);
-        io.setTopMotor(power);
+    public void setMotor(double power) {
+        Logger.recordOutput("Shooter/Voltage", power);
+        io.setMotor(power);
     }
 
-    public void setBackMotor(double power) {
-        Logger.recordOutput("Shooter/Bottom Voltage", power);
-        io.setBottomMotor(power);
-    }
-
-    public double getFrontVelocity() {
-        return inputs.topshooterVelocityRotPerMin;
-    }
-
-    public double getBackVelocity() {
-        return inputs.bottomshooterVelocityRotPerMin;
+    public double getVelocity() {
+        return inputs.shooterVelocityRotPerMin;
     }
 
     public double distanceToVelocity(double distance) {
@@ -56,7 +45,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public Boolean atSetpoint() {
-        return frontpid.atSetpoint() && backpid.atSetpoint();
+        return pid.atSetpoint();
     }
 
     /**
@@ -68,8 +57,7 @@ public class Shooter extends SubsystemBase {
     public Command shootWithDistance(DoubleSupplier distance) {
         return Commands.run(() -> {
             double velocity = distanceToVelocity(distance.getAsDouble());
-            setFrontMotor(frontpid.calculate(getFrontVelocity()) + shooterFeed.calculate(velocity));
-            setBackMotor(backpid.calculate(getBackVelocity()) + shooterFeed.calculate(velocity));
+            setMotor(pid.calculate(getVelocity()) + shooterFeed.calculate(velocity));
         }, this);
     }
 }
