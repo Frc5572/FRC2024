@@ -131,4 +131,25 @@ public class Conversions {
         return goal % 360;
     }
 
+    /**
+     * Generate a random number between and upper and lower bound
+     *
+     * @param upper The max value
+     * @param lower the min value
+     * @return The random integer
+     */
+    public static int random(int upper, int lower) {
+        return (int) (Math.random() * (upper - lower)) + lower;
+    }
+
+    /**
+     * Generate a random number between and upper value and 0
+     *
+     * @param upper The max value
+     * @return The random integer
+     */
+    public static int random(int upper) {
+        return random(upper, 0);
+    }
+
 }

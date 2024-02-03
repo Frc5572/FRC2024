@@ -1,9 +1,10 @@
-package frc.robot.subsystems.LEDs;
+package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 /**
  * This is the class header for the LEDs Subsystem
@@ -11,6 +12,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class LEDs extends SubsystemBase {
     private AddressableLEDBuffer controLedBuffer;
     private AddressableLED addressableLED;
+    private int length = Constants.LEDsConstants.LED_COUNT;
+    private int port = Constants.LEDsConstants.PWM_PORT;
 
     /**
      * constructs a LED Subsystem

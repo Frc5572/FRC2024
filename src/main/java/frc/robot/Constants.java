@@ -243,6 +243,14 @@ public final class Constants {
     }
 
     /**
+     * Constants for LEDs'
+     */
+    public static final class LEDsConstants {
+        public static final int LED_COUNT = -1;
+        public static final int PWM_PORT = -1;
+    }
+
+    /**
      * Class for elevator and wrist constants
      */
     public static final class ElevatorWristConstants {
