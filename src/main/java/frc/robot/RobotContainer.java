@@ -16,7 +16,12 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot.RobotRunType;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberIO;
+import frc.robot.subsystems.climber.ClimberNEO;
 import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
+import frc.robot.subsystems.elevator_wrist.ElevatorWristIO;
+import frc.robot.subsystems.elevator_wrist.ElevatorWristReal;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOFalcon;
@@ -47,6 +52,7 @@ public class RobotContainer {
     private Shooter shooter;
     private Intake intake;
     private ElevatorWrist elevatorWrist;
+    public Climber climber;
 
     /**
      */
@@ -58,6 +64,8 @@ public class RobotContainer {
                 s_Swerve = new Swerve(new SwerveReal());
                 shooter = new Shooter(new ShooterVortex());
                 intake = new Intake(new IntakeIOFalcon());
+                elevatorWrist = new ElevatorWrist(new ElevatorWristReal());
+                climber = new Climber(new ClimberNEO());
                 break;
             case kSimulation:
                 // s_Swerve = new Swerve(new SwerveIO() {});
@@ -66,6 +74,8 @@ public class RobotContainer {
                 s_Swerve = new Swerve(new SwerveIO() {});
                 shooter = new Shooter(new ShooterIO() {});
                 intake = new Intake(new IntakeIO() {});
+                elevatorWrist = new ElevatorWrist(new ElevatorWristIO() {});
+                climber = new Climber(new ClimberIO() {});
         }
         s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, driver,
             Constants.Swerve.isFieldRelative, Constants.Swerve.isOpenLoop));
