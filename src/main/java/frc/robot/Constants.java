@@ -158,43 +158,43 @@ public final class Constants {
 
         /* Module Specific Constants */
         /**
-         * Front Left Module - Module 0.
+         * Front Left Module - Module 0
          */
         public static final class Mod0 {
-            public static final int DRIVE_MOTOR_ID = 0;
-            public static final int ANGLE_MOTOR_ID = 0;
-            public static final int CAN_CODER_ID = 0;
-            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromDegrees(138.604);
+            public static final int driveMotorID = 10;
+            public static final int angleMotorID = 8;
+            public static final int canCoderID = 10;
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(115.400390625);
         }
 
         /**
-         * Front Right Module - Module 1.
+         * Front Right Module - Module 1
          */
         public static final class Mod1 {
-            public static final int DRIVE_MOTOR_ID = 0;
-            public static final int ANGLE_MOTOR_ID = 0;
-            public static final int CAN_CODER_ID = 0;
-            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromDegrees(280.107);
+            public static final int driveMotorID = 3;
+            public static final int angleMotorID = 9;
+            public static final int canCoderID = 1;
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(-55.37109375);
         }
 
         /**
-         * Back Left Module - Module 2.
+         * Back Left Module - Module 2
          */
         public static final class Mod2 {
-            public static final int DRIVE_MOTOR_ID = 0;
-            public static final int ANGLE_MOTOR_ID = 0;
-            public static final int CAN_CODER_ID = 0;
-            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromDegrees(121.553);
+            public static final int driveMotorID = 2;
+            public static final int angleMotorID = 40;
+            public static final int canCoderID = 2;
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(145.01953125);
         }
 
         /**
-         * Back Right Module - Module 3.
+         * Back Right Module - Module 3
          */
         public static final class Mod3 {
-            public static final int DRIVE_MOTOR_ID = 0;
-            public static final int ANGLE_MOTOR_ID = 0;
-            public static final int CAN_CODER_ID = 0;
-            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromDegrees(248.027);
+            public static final int driveMotorID = 6;
+            public static final int angleMotorID = 51;
+            public static final int canCoderID = 4;
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(3.955078125);
         }
 
         public static final HolonomicPathFollowerConfig pathFollowerConfig =
