@@ -1,6 +1,5 @@
 package frc.robot.subsystems.swerve;
 
-import org.photonvision.EstimatedRobotPose;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import com.kauailabs.navx.frc.AHRS;
@@ -37,7 +36,7 @@ public class SwerveReal implements SwerveIO {
     public void updateInputs(SwerveInputs inputs, Pose2d previousPose) {
         inputs.yaw = gyro.getYaw();
         inputs.roll = gyro.getRoll();
-        inputs.latencies = new double[4];
+        inputs.latencies = new boolean[4];
         inputs.positions = new Pose3d[4];
         inputs.results = new PhotonPipelineResult[4];
         inputs.seesTarget = new boolean[4];
@@ -45,7 +44,7 @@ public class SwerveReal implements SwerveIO {
         inputs.estimatedRobotPose3dTimestampSeconds = new double[4];
         inputs.estimatedRobotPose3dTargets = new PhotonTrackedTarget[4];
         for (int i = 0; i < cameras.length; i++) {
-            inputs.latencies[i] = cameras[i].latency();
+            inputs.latencies[i] = cameras[i].latency() < 0.6;
             inputs.positions[i] = cameras[i].getEstimatedGlobalPose(previousPose).estimatedPose;
             inputs.results[i] = cameras[i].photonCamera.getLatestResult();
             inputs.seesTarget[i] = cameras[i].seesTarget();
@@ -57,10 +56,6 @@ public class SwerveReal implements SwerveIO {
                 cameras[i].getEstimatedGlobalPose(previousPose).targetsUsed.get(0);
         }
 
-    }
-
-    public EstimatedRobotPose getEstimatedGlobalPose(int i, Pose2d prevEstimatedRobotPose) {
-        return this.cameras[i].getEstimatedGlobalPose(prevEstimatedRobotPose);
     }
 
     @Override

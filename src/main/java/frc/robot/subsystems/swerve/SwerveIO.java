@@ -78,7 +78,7 @@ public interface SwerveIO {
 
         public float yaw;
         public float roll;
-        public double[] latencies;
+        public boolean[] latencies;
         public PhotonPipelineResult[] results;
         public Pose3d[] positions;
         public boolean[] seesTarget;

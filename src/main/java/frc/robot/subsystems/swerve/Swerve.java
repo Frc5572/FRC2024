@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.swerve.SwerveModule;
 import frc.robot.Constants;
+import frc.robot.subsystems.swerve.SwerveIO.SwerveInputs;
 
 /**
  * Swerve Subsystem
@@ -33,7 +34,7 @@ public class Swerve extends SubsystemBase {
     public SwerveModule[] swerveMods;
     private final Field2d field = new Field2d();
     private double fieldOffset;
-    private SwerveInputsAutoLogged inputs = new SwerveInputsAutoLogged();
+    private SwerveInputs inputs = new SwerveInputs();
     private SwerveIO swerveIO;
     private boolean hasInitialized = false;
     private boolean latencyGood = false;
@@ -49,7 +50,6 @@ public class Swerve extends SubsystemBase {
      */
     public Swerve(SwerveIO swerveIO) {
         this.swerveIO = swerveIO;
-        swerveIO.updateInputs(inputs, swerveOdometry.getEstimatedPosition());
         fieldOffset = getGyroYaw().getDegrees();
         swerveMods = new SwerveModule[] {
             swerveIO.createSwerveModule(0, Constants.Swerve.Mod0.DRIVE_MOTOR_ID,
@@ -67,6 +67,8 @@ public class Swerve extends SubsystemBase {
 
         swerveOdometry = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics,
             getGyroYaw(), getModulePositions(), new Pose2d());
+
+        swerveIO.updateInputs(inputs, swerveOdometry.getEstimatedPosition());
 
         AutoBuilder.configureHolonomic(this::getPose, this::resetOdometry, this::getChassisSpeeds,
             this::setModuleStates, Constants.Swerve.pathFollowerConfig, () -> shouldFlipPath(),
@@ -228,9 +230,7 @@ public class Swerve extends SubsystemBase {
         swerveOdometry.update(getGyroYaw(), getModulePositions());
         swerveIO.updateInputs(inputs, swerveOdometry.getEstimatedPosition());
         Logger.processInputs("Swerve", inputs);
-        for (double latency : inputs.latencies) {
-            latencyGood = latency < 0.6 ? true : false;
-        }
+        latencyGood = containsBoolean(inputs.latencies, true);
         SmartDashboard.putBoolean("photonGood", latencyGood);
         Rotation2d yaw = Rotation2d.fromDegrees(inputs.yaw);
         swerveOdometry.update(yaw, getSwerveModulePositions());
@@ -332,6 +332,15 @@ public class Swerve extends SubsystemBase {
         Optional<Alliance> ally = DriverStation.getAlliance();
         if (ally.isPresent()) {
             return ally.get() == Alliance.Red;
+        }
+        return false;
+    }
+
+    private boolean containsBoolean(boolean[] list, boolean targetValue) {
+        for (boolean value : list) {
+            if (targetValue == value) {
+                return true;
+            }
         }
         return false;
     }
