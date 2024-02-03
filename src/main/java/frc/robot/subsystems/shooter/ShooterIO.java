@@ -12,13 +12,17 @@ public interface ShooterIO {
      */
     @AutoLog
     public static class ShooterIOInputs {
-        public double shooterVelocityRotPerMin;
-        public double shooterSupplyVoltage;
-        public double shooterAmps;
-
+        public double topShooterVelocityRotPerMin;
+        public double bottomShooterVelocityRotPerMin;
+        public double topShooterSupplyVoltage;
+        public double bottomShooterSupplyVoltage;
+        public double topShooterAmps;
+        public double bottomShooterAmps;
     }
 
-    public default void setMotor(double power) {}
+    public default void setTopMotor(double power) {}
+
+    public default void setBottomMotor(double power) {}
 
     public default void updateInputs(ShooterIOInputsAutoLogged inputs) {}
 }

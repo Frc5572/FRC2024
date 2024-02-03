@@ -31,13 +31,22 @@ public class Shooter extends SubsystemBase {
         Logger.processInputs("Shooter", inputs);
     }
 
-    public void setMotor(double power) {
-        Logger.recordOutput("Shooter/Voltage", power);
-        io.setMotor(power);
+    public void setTopMotor(double power) {
+        Logger.recordOutput("Shooter/Top Voltage", power);
+        io.setTopMotor(power);
     }
 
-    public double getVelocity() {
-        return inputs.shooterVelocityRotPerMin;
+    public void setBottomMotor(double power) {
+        Logger.recordOutput("Shooter/Bottom Voltage", power);
+        io.setBottomMotor(power);
+    }
+
+    public double getTopVelocity() {
+        return inputs.topShooterVelocityRotPerMin;
+    }
+
+    public double getBottomVelocity() {
+        return inputs.bottomShooterVelocityRotPerMin;
     }
 
     public double distanceToVelocity(double distance) {
@@ -57,7 +66,8 @@ public class Shooter extends SubsystemBase {
     public Command shootWithDistance(DoubleSupplier distance) {
         return Commands.run(() -> {
             double velocity = distanceToVelocity(distance.getAsDouble());
-            setMotor(pid.calculate(getVelocity()) + shooterFeed.calculate(velocity));
+            setTopMotor(pid.calculate(getTopVelocity()) + shooterFeed.calculate(velocity));
+            setBottomMotor(pid.calculate(getTopVelocity()) + shooterFeed.calculate(velocity));
         }, this);
     }
 }

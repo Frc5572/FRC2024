@@ -9,22 +9,35 @@ import frc.robot.Constants;
  * Class for ShooterVortex
  */
 public class ShooterVortex implements ShooterIO {
-    public final CANSparkFlex shooterMotor =
+    public final CANSparkFlex topShooterMotor =
         new CANSparkFlex(Constants.Motors.Shooter.SHOOTER_TOP_ID, MotorType.kBrushless);
-    private RelativeEncoder shooterEncoder;
+    public final CANSparkFlex bottomShooterMotor =
+        new CANSparkFlex(Constants.Motors.Shooter.SHOOTER_BOTTOM_ID, MotorType.kBrushless);
+    private RelativeEncoder topShooterEncoder;
+    private RelativeEncoder bottomShooterEncoder;
 
     public ShooterVortex() {
-        shooterEncoder = shooterMotor.getEncoder();
+        topShooterEncoder = topShooterMotor.getEncoder();
+        bottomShooterEncoder = bottomShooterMotor.getEncoder();
     }
 
-    public void setMotor(double power) {
-        shooterMotor.setVoltage(power);
+    public void setTopMotor(double power) {
+        topShooterMotor.setVoltage(power);
     }
+
+    public void setBottomMotor(double power) {
+        bottomShooterMotor.setVoltage(power);
+    }
+
 
     @Override
     public void updateInputs(ShooterIOInputsAutoLogged inputs) {
-        inputs.shooterVelocityRotPerMin = shooterEncoder.getVelocity();
-        inputs.shooterSupplyVoltage = shooterMotor.getBusVoltage();
-        inputs.shooterAmps = shooterMotor.getOutputCurrent();
+        inputs.topShooterVelocityRotPerMin = topShooterEncoder.getVelocity();
+        inputs.bottomShooterVelocityRotPerMin = bottomShooterEncoder.getVelocity();
+        inputs.topShooterSupplyVoltage = topShooterMotor.getBusVoltage();
+        inputs.bottomShooterSupplyVoltage = topShooterMotor.getBusVoltage();
+        inputs.topShooterAmps = topShooterMotor.getOutputCurrent();
+        inputs.bottomShooterAmps = topShooterMotor.getOutputCurrent();
+
     }
 }
