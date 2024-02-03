@@ -14,13 +14,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Scores startingN & pickups N11 P3"
+            "pathName": "Get Out  P3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Scores N11 N10"
+            "pathName": "Copy of Scores startingN & pickups N11 P3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Picks up and Scores N10"
           }
         }
       ]

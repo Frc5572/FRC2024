@@ -38,7 +38,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Score N2 & N3 from N1"
+            "pathName": "Copy of Score N2 & N3 from N1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot Command"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Copy of Copy of Score N2 & N3 from N1"
           }
         }
       ]

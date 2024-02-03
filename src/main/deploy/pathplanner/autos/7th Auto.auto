@@ -14,7 +14,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "GetOut&Score StartingN, N3, N2, P2"
+            "pathName": "GetOut & Scores P2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot Command"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": " PicksUp N2 from P2 StartingN Score"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot Command"
           }
         },
         {
@@ -24,9 +42,21 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Shoot Command"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "PickupN7 and scores from N1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot Command"
           }
         }
       ]

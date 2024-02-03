@@ -3,69 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.8809769560084124,
-        "y": 2.3973285271095732
+        "x": 2.387890972965045,
+        "y": 3.5698877031556884
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0004264676347088,
-        "y": 2.621218429434832
+        "x": 2.7766743545587906,
+        "y": 3.759957057743805
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.2536619804866365,
-        "y": 3.55147663226788
+        "x": 7.86557291424442,
+        "y": 0.7515553059275135
       },
       "prevControl": {
-        "x": 2.670247982940226,
-        "y": 3.0461100063405757
-      },
-      "nextControl": {
-        "x": 1.978396887850798,
-        "y": 3.8854047774326665
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 7.812694865687004,
-        "y": 0.7787894683964435
-      },
-      "prevControl": {
-        "x": 7.136596271541014,
-        "y": 0.55342327034778
+        "x": 7.189474320098429,
+        "y": 0.5261891078788501
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1,
-      "rotationDegrees": 133.45184230102203,
-      "rotateFast": false
-    },
-    {
-      "waypointRelativePos": 1.55,
-      "rotationDegrees": 147.90458748113602,
-      "rotateFast": false
-    },
-    {
-      "waypointRelativePos": 1.2,
-      "rotationDegrees": 147.03370453375123,
-      "rotateFast": false
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 1.0,
+      "waypointRelativePos": 0.0,
       "command": {
         "type": "parallel",
         "data": {
@@ -82,7 +50,7 @@
     },
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 2.0,
+      "waypointRelativePos": 1.0,
       "command": {
         "type": "parallel",
         "data": {
@@ -112,7 +80,7 @@
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": 180.0,
+    "rotation": 133.45,
     "velocity": 0
   },
   "useDefaultConstraints": false

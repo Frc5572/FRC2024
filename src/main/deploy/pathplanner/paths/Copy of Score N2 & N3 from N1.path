@@ -3,45 +3,57 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.51,
-        "y": 5.525138184875874
+        "x": 2.6046857727518278,
+        "y": 6.76399775334762
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.462195048898768,
-        "y": 5.777821497839527
+        "x": 2.301173053050332,
+        "y": 6.50384399360348
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.50634529345029,
-        "y": 6.720261962406666
+        "x": 2.5035148661846622,
+        "y": 5.5210409012367325
       },
       "prevControl": {
-        "x": 1.960002995150499,
-        "y": 6.481237206900508
+        "x": 2.3734379863125925,
+        "y": 6.012442447420106
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": 178.8542371618249,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 1.0,
+      "waypointRelativePos": 0.65,
       "command": {
-        "type": "sequential",
+        "type": "deadline",
         "data": {
           "commands": [
             {
               "type": "named",
               "data": {
                 "name": "Intake Command"
+              }
+            },
+            {
+              "type": "wait",
+              "data": {
+                "waitTime": 2.0
               }
             }
           ]
@@ -57,13 +69,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -145.68491240000273,
+    "rotation": -179.75,
     "rotateFast": false
   },
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": 180.0,
+    "rotation": -149.3,
     "velocity": 0
   },
   "useDefaultConstraints": false

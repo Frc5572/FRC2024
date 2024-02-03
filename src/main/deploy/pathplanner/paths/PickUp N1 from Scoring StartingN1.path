@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.90536876532052,
-        "y": 6.3583101897830545
+        "x": 2.3300790263552362,
+        "y": 7.067510473049116
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0897592909966995,
-        "y": 6.4129444196130345
+        "x": 2.5144695520314153,
+        "y": 7.122144702879096
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.5473209658227742,
-        "y": 6.720261962406666
+        "x": 2.648044732709184,
+        "y": 6.778450740000072
       },
       "prevControl": {
-        "x": 2.3356133252316047,
-        "y": 6.63148133893295
+        "x": 2.4363370921180145,
+        "y": 6.689670116526356
       },
       "nextControl": null,
       "isLocked": false,
@@ -38,8 +38,8 @@
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "A1 M2",
-      "waypointRelativePos": 0.0,
+      "name": "New Event Marker",
+      "waypointRelativePos": 0.85,
       "command": {
         "type": "sequential",
         "data": {

@@ -18,15 +18,57 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Shoot Command"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "PickUp N1 from Scoring StartingN1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot Command"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "PickupN7 and scores from N1"
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Shoot Command"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Score N2 & N3 from N1"
+            "pathName": "Copy of Score N2 & N3 from N1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot Command"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Copy of Copy of Score N2 & N3 from N1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot Command"
           }
         }
       ]

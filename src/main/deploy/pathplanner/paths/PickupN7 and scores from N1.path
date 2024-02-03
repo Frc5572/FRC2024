@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 7.77854847204327,
-        "y": 7.437336228925141
+        "x": 7.937837847506681,
+        "y": 7.457741112665324
       },
       "prevControl": {
-        "x": 7.508014840066915,
-        "y": 7.474651212646017
+        "x": 7.667304215530326,
+        "y": 7.495056096386199
       },
       "nextControl": {
-        "x": 8.049082104019629,
-        "y": 7.4000212452042655
+        "x": 8.208371479483041,
+        "y": 7.420426128944448
       },
       "isLocked": false,
       "linkedName": null
@@ -33,11 +33,11 @@
     {
       "anchor": {
         "x": 2.403906112519079,
-        "y": 6.522212879272992
+        "y": 6.52
       },
       "prevControl": {
         "x": 3.0185411981063432,
-        "y": 6.481237206900508
+        "y": 6.479024327627516
       },
       "nextControl": null,
       "isLocked": false,
@@ -62,9 +62,15 @@
       "name": "New Event Marker",
       "waypointRelativePos": 1.05,
       "command": {
-        "type": "parallel",
+        "type": "deadline",
         "data": {
           "commands": [
+            {
+              "type": "wait",
+              "data": {
+                "waitTime": 1.0
+              }
+            },
             {
               "type": "named",
               "data": {
@@ -79,9 +85,15 @@
       "name": "New Event Marker",
       "waypointRelativePos": 2.0,
       "command": {
-        "type": "parallel",
+        "type": "deadline",
         "data": {
           "commands": [
+            {
+              "type": "wait",
+              "data": {
+                "waitTime": 1.0
+              }
+            },
             {
               "type": "named",
               "data": {

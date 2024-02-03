@@ -26,7 +26,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "PicksUp N3 from P2 StartingN Score"
+            "pathName": "PicksUp N3 & Shoot from P2 StartingN Score"
           }
         },
         {
@@ -38,7 +38,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "PickUps N2 from N3"
+            "pathName": " PicksUp N2 from P2 StartingN Score"
           }
         },
         {

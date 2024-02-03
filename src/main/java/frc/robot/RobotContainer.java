@@ -108,7 +108,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("Intake Command",
             CommandFactory.runIntake(intake, elevatorWrist));
         NamedCommands.registerCommand("Shoot Command",
-            CommandFactory.shootSpeaker(shooter, elevatorWrist, s_Swerve, intake));
+            CommandFactory.shootSpeaker(shooter, elevatorWrist, s_Swerve, intake).withTimeout(1));
 
 
         String stuff = autoChooser.getSelected();
