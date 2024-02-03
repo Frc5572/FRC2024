@@ -53,7 +53,8 @@ public class RobotContainer {
     private Intake intake;
     private ElevatorWrist elevatorWrist;
     private Climber climber;
-    private LEDs leds;
+    private LEDs leds =
+        new LEDs(Constants.LEDsConstants.LED_COUNT, Constants.LEDsConstants.PWM_PORT);
 
     /**
      */
@@ -69,7 +70,11 @@ public class RobotContainer {
                 climber = new Climber(new ClimberNEO());
                 break;
             case kSimulation:
-                // s_Swerve = new Swerve(new SwerveIO() {});
+                s_Swerve = new Swerve(new SwerveIO() {});
+                shooter = new Shooter(new ShooterIO() {});
+                intake = new Intake(new IntakeIO() {});
+                elevatorWrist = new ElevatorWrist(new ElevatorWristIO() {});
+                climber = new Climber(new ClimberIO() {});
                 break;
             default:
                 s_Swerve = new Swerve(new SwerveIO() {});

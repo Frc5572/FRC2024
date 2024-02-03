@@ -210,11 +210,11 @@ public final class Constants {
         public static final double CLIMBER_KP = 0;
         public static final double CLIMBER_KI = 0;
         public static final double CLIMBER_KD = 0;
-        public static final double CLIMBER_MAX_VELOCITY = 0;
-        public static final double CLIMBER_MAX_ACCELERATION = 0;
-        public static final double CLIMBER_KS = 0;
-        public static final double CLIMBER_KG = 0;
-        public static final double CLIMBER_KV = 0;
+        public static final double CLIMBER_MAX_VELOCITY = 0.001;
+        public static final double CLIMBER_MAX_ACCELERATION = 0.001;
+        public static final double CLIMBER_KS = 0.001;
+        public static final double CLIMBER_KG = 0.001;
+        public static final double CLIMBER_KV = 0.001;
 
         public static final double CLIMBING_DISTANCE = Units.inchesToMeters(15);
         public static final double MAX_CLIMBING_DISTANCE = Units.inchesToMeters(21);
@@ -246,8 +246,8 @@ public final class Constants {
      * Constants for LEDs'
      */
     public static final class LEDsConstants {
-        public static final int LED_COUNT = -1;
-        public static final int PWM_PORT = -1;
+        public static final int LED_COUNT = 60;
+        public static final int PWM_PORT = 9;
     }
 
     /**
@@ -276,18 +276,18 @@ public final class Constants {
             public static final double ELEVATOR_KD = 0;
             public static final double ELEVATOR_MAX_VELOCITY = 0;
             public static final double ELEVATOR_MAX_ACCELERATION = 0;
-            public static final double ELEVATOR_KS = 0;
-            public static final double ELEVATOR_KG = 0;
-            public static final double ELEVATOR_KV = 0;
+            public static final double ELEVATOR_KS = 0.001;
+            public static final double ELEVATOR_KG = 0.001;
+            public static final double ELEVATOR_KV = 0.001;
 
             public static final double WRIST_KP = 0;
             public static final double WRIST_KI = 0;
             public static final double WRIST_KD = 0;
             public static final double WRIST_MAX_VELOCITY = 0;
             public static final double WRIST_MAX_ACCELERATION = 0;
-            public static final double WRIST_KS = 0;
-            public static final double WRIST_KG = 0;
-            public static final double WRIST_KV = 0;
+            public static final double WRIST_KS = 0.001;
+            public static final double WRIST_KG = 0.001;
+            public static final double WRIST_KV = 0.001;
         }
 
         /**
@@ -332,7 +332,7 @@ public final class Constants {
         public static final double KI = 0;
         public static final double KD = 0;
         public static final double KS = 0;
-        public static final double KV = 0;
+        public static final double KV = 0.001;
     }
 
     /**
