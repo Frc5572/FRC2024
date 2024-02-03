@@ -255,9 +255,9 @@ public class Swerve extends SubsystemBase {
                         swerveOdometry.addVisionMeasurement(camPose.estimatedPose.toPose2d(),
                             camPose.timestampSeconds);
                     }
-                    field.getObject("Cam Est Pose").setPose(camPose.estimatedPose.toPose2d());
+                    field.getObject("Cam Est Pose " + i).setPose(camPose.estimatedPose.toPose2d());
                 } else {
-                    field.getObject("Cam Est Pose")
+                    field.getObject("Cam Est Pose " + i)
                         .setPose(new Pose2d(-100, -100, new Rotation2d()));
                 }
             }
@@ -315,6 +315,9 @@ public class Swerve extends SubsystemBase {
         this.setMotorsZero(Constants.Swerve.isOpenLoop, Constants.Swerve.isFieldRelative);
     }
 
+    /**
+     * Gets a list containing all 4 swerve module positions
+     */
     public SwerveModulePosition[] getSwerveModulePositions() {
         SwerveModulePosition positions[] = new SwerveModulePosition[4];
         for (SwerveModule mod : swerveMods) {
@@ -336,6 +339,12 @@ public class Swerve extends SubsystemBase {
         return false;
     }
 
+    /**
+     * Scans through a list of booleans - returns if contains desired value
+     * 
+     * @param list List of booleans to scan through
+     * @param targetValue desired value in list
+     */
     private boolean containsBoolean(boolean[] list, boolean targetValue) {
         for (boolean value : list) {
             if (targetValue == value) {

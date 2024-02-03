@@ -3,7 +3,6 @@ package frc.robot.subsystems.swerve;
 import java.util.Optional;
 import org.littletonrobotics.junction.LogTable;
 import org.littletonrobotics.junction.inputs.LoggableInputs;
-import org.photonvision.EstimatedRobotPose;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -61,8 +60,14 @@ public interface SwerveIO {
             }
         }
 
-        public SwerveInputsAutoLogged clone() {
-            SwerveInputsAutoLogged copy = new SwerveInputsAutoLogged();
+
+        /**
+         * Returns copy of SwerveInputs for LoggableInputs class
+         * 
+         * @return copy of all SwerveInputs
+         */
+        public SwerveInputs clone() {
+            SwerveInputs copy = new SwerveInputs();
             copy.yaw = this.yaw;
             copy.roll = this.roll;
             copy.latencies = this.latencies.clone();
@@ -88,16 +93,6 @@ public interface SwerveIO {
     }
 
     public default void updateInputs(SwerveInputs inputs, Pose2d previousPose) {}
-
-    /**
-     * @param prevEstimatedRobotPose The current best guess at robot pose
-     *
-     * @return an EstimatedRobotPose with an estimated pose, the timestamp, and targets used to
-     *         create the estimate
-     */
-    public default Optional<EstimatedRobotPose> getFrontLeftEstimatedGlobalPose() {
-        return null;
-    }
 
     /** Instantiating SwerveModules */
     public default SwerveModule createSwerveModule(int moduleNumber, int driveMotorID,

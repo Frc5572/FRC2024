@@ -69,6 +69,9 @@ public final class Constants {
      */
     public static class CameraConstants {
 
+        /**
+         * Constants for Front Left Camera
+         */
         public static class FrontLeftFacingCamera {
             public static final double ROLL = -Math.PI / 2;
             public static final double PITCH = 0.0;
@@ -81,6 +84,9 @@ public final class Constants {
             public static final double LARGEST_DISTANCE = 0.1;
         }
 
+        /**
+         * Constants for Front Right Camera
+         */
         public static class FrontRightFacingCamera {
             public static final double ROLL = -Math.PI / 2;
             public static final double PITCH = 0.0;
@@ -93,6 +99,9 @@ public final class Constants {
             public static final double LARGEST_DISTANCE = 0.1;
         }
 
+        /**
+         * Constants for Back Left Camera
+         */
         public static class BackLeftFacingCamera {
             public static final double ROLL = -Math.PI / 2;
             public static final double PITCH = 0.0;
@@ -105,6 +114,9 @@ public final class Constants {
             public static final double LARGEST_DISTANCE = 0.1;
         }
 
+        /**
+         * Constants for Back Right Camera
+         */
         public static class BackRightFacingCamera {
             public static final double ROLL = -Math.PI / 2;
             public static final double PITCH = 0.0;
