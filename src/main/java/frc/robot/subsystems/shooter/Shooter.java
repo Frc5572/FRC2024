@@ -1,8 +1,11 @@
 package frc.robot.subsystems.shooter;
 
+import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -16,6 +19,7 @@ public class Shooter extends SubsystemBase {
     private SimpleMotorFeedforward shooterFeed =
         new SimpleMotorFeedforward(Constants.ShooterConstants.KS, Constants.ShooterConstants.KV);
     private ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
+
 
     public Shooter(ShooterIO io) {
         this.io = io;
@@ -37,4 +41,33 @@ public class Shooter extends SubsystemBase {
         io.setBottomMotor(power);
     }
 
+    public double getTopVelocity() {
+        return inputs.topShooterVelocityRotPerMin;
+    }
+
+    public double getBottomVelocity() {
+        return inputs.bottomShooterVelocityRotPerMin;
+    }
+
+    public double distanceToVelocity(double distance) {
+        return 0.0;
+    }
+
+    public Boolean atSetpoint() {
+        return pid.atSetpoint();
+    }
+
+    /**
+     * Command to shoot from a distance
+     *
+     * @param distance the distance from the target
+     * @return Returns a command
+     */
+    public Command shootWithDistance(DoubleSupplier distance) {
+        return Commands.run(() -> {
+            double velocity = distanceToVelocity(distance.getAsDouble());
+            setTopMotor(pid.calculate(getTopVelocity()) + shooterFeed.calculate(velocity));
+            setBottomMotor(pid.calculate(getTopVelocity()) + shooterFeed.calculate(velocity));
+        }, this);
+    }
 }

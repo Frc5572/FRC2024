@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.util.FieldConstants;
 import frc.lib.util.swerve.SwerveModule;
 import frc.robot.Constants;
 
@@ -249,5 +250,18 @@ public class Swerve extends SubsystemBase {
             return ally.get() == Alliance.Red;
         }
         return false;
+    }
+
+    /**
+     * Returns the distance between the speaker and Swerve
+     *
+     * @return the difference between the pose of speaker and swerve
+     */
+    public double distanceFromSpeaker() {
+        double distance =
+            Math.hypot(FieldConstants.Speaker.centerSpeakerOpening.getY() - getPose().getY(),
+                FieldConstants.allianceFlip(FieldConstants.Speaker.centerSpeakerOpening).getX()
+                    - getPose().getX());
+        return distance;
     }
 }
