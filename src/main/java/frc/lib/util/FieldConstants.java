@@ -3,12 +3,15 @@ package frc.lib.util;
 
 import static edu.wpi.first.apriltag.AprilTagFields.k2024Crescendo;
 import java.io.IOException;
+import java.util.Optional;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 /**
  * Contains various field dimensions and useful reference points. Dimensions are in meters, and sets
@@ -73,7 +76,7 @@ public class FieldConstants {
 
     // corners (blue alliance origin)
     public static Translation3d topRightSpeaker = new Translation3d(Units.inchesToMeters(18.055),
-        Units.inchesToMeters(238.815), Units.inchesToMeters(13.091));
+        Units.inchesToMeters(238.815), Units.inchesToMeters(83.091));
 
     public static Translation3d topLeftSpeaker = new Translation3d(Units.inchesToMeters(18.055),
         Units.inchesToMeters(197.765), Units.inchesToMeters(83.091));
@@ -82,6 +85,7 @@ public class FieldConstants {
         new Translation3d(0.0, Units.inchesToMeters(238.815), Units.inchesToMeters(78.324));
     public static Translation3d bottomLeftSpeaker =
         new Translation3d(0.0, Units.inchesToMeters(197.765), Units.inchesToMeters(78.324));
+    public static double centerSpeaker = topLeftSpeaker.getZ() - bottomLeftSpeaker.getZ();
 
     public static double aprilTagWidth = Units.inchesToMeters(6.50);
     public static AprilTagFieldLayout aprilTags;
@@ -92,5 +96,24 @@ public class FieldConstants {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Flips a pose to the correct side of the field based on the current alliance color. By
+     * default, all translations and poses in {@link FieldConstants} are stored with the origin at
+     * the rightmost point on the BLUE ALLIANCE wall.
+     *
+     * @param pose Initial Pose
+     * @return Pose2d flipped to Red Alliance
+     */
+    public static Pose2d allianceFlip(Pose2d pose) {
+        Optional<Alliance> ally = DriverStation.getAlliance();
+        if (ally.isPresent()) {
+            if (ally.get() == Alliance.Red) {
+                pose = new Pose2d(fieldLength - pose.getX(), pose.getY(),
+                    new Rotation2d(-pose.getRotation().getCos(), pose.getRotation().getSin()));
+            }
+        }
+        return pose;
     }
 }
