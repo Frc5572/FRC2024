@@ -13,13 +13,10 @@ public class ShooterVortex implements ShooterIO {
         new CANSparkFlex(Constants.Motors.Shooter.SHOOTER_TOP_ID, MotorType.kBrushless);
     public final CANSparkFlex shooterBottomMotor =
         new CANSparkFlex(Constants.Motors.Shooter.SHOOTER_BOTTOM_ID, MotorType.kBrushless);
-    private RelativeEncoder topEncoder;
-    private RelativeEncoder bottomEncoder;
+    private RelativeEncoder topEncoder = shooterTopMotor.getEncoder();
+    private RelativeEncoder bottomEncoder = shooterBottomMotor.getEncoder();
 
-    public ShooterVortex() {
-        topEncoder = shooterTopMotor.getEncoder();
-        bottomEncoder = shooterBottomMotor.getEncoder();
-    }
+    public ShooterVortex() {}
 
     public void setTopMotor(double power) {
         shooterTopMotor.setVoltage(power);
