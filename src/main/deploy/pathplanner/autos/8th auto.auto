@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7512873207564597,
-      "y": 7.033874431385226
+      "x": 0.89,
+      "y": 3.66
     },
-    "rotation": 180.0
+    "rotation": 142.34867883929098
   },
   "command": {
     "type": "sequential",
@@ -14,49 +14,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "GetOut&Score"
+            "pathName": "GetOut&Score StartingN, N3, N2, P2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Picking note 1"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Pickup and Score Note2 from Note1"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "PickUp note 3"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "PickupN7 from N1"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "ScoreN7"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "PickingUp N8"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "ScoreN7"
+            "pathName": "PickupN8 and scores from N2"
           }
         }
       ]

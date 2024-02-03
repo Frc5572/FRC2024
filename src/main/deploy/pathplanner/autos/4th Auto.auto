@@ -14,19 +14,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Pickup&ScoreN1"
+            "pathName": "P1 Scores StartingN and N1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Pickup and Score Note2 from Note1"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "PickUp note 3"
+            "pathName": "Score N2 & N3 from N1"
           }
         }
       ]

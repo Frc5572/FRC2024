@@ -14,31 +14,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Pickup Note 3 from position 2"
+            "pathName": "GetOut&Score StartingN, N3, N2, P2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "pickup N2 from N3"
+            "pathName": "Score N1 from N2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "PickupN1 from GetOut&Score"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "PickupN7 from N1"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "ScoreN7"
+            "pathName": "PickupN7 and scores from N1"
           }
         }
       ]

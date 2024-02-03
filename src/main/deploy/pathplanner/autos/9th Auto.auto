@@ -14,19 +14,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "pickup N3 from Pos3"
+            "pathName": "Scores startingN & pickups N11 P3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "pickup N2 from N3"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "PickupN1 from GetOut&Score"
+            "pathName": "Scores N11 N10"
           }
         }
       ]

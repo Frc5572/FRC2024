@@ -5,7 +5,7 @@
       "x": 0.8878062347371597,
       "y": 3.660745091927839
     },
-    "rotation": 180.0
+    "rotation": 119.74488129694224
   },
   "command": {
     "type": "sequential",
@@ -14,19 +14,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Pickup Note 3 from position 2"
+            "pathName": "GetOut&Score StartingN, N3, N2, P2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "pickup N2 from N3"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "PickupN1 from GetOut&Score"
+            "pathName": "Score N1 from N2"
           }
         }
       ]

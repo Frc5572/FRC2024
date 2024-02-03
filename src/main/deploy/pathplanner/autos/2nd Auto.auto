@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.9098760015701849,
-      "y": 7.0991756528967604
+      "x": 0.997074694397118,
+      "y": 6.829530422066625
     },
-    "rotation": 180.0
+    "rotation": -133.72696997994322
   },
   "command": {
     "type": "sequential",
@@ -14,55 +14,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "GetOut&Score"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot Command"
+            "pathName": "P1 Scores StartingN and N1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "PickupN1 from GetOut&Score"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Intake Command"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot Command"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "PickupN7 from N1"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Intake Command"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "ScoreN7"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot Command"
+            "pathName": "PickupN7 and scores from N1"
           }
         }
       ]
