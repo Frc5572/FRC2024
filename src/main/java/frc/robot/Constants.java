@@ -43,8 +43,8 @@ public final class Constants {
          * Shooter Id's
          */
         public static final class Shooter {
-            public static final int shooterTopId = 0;
-            public static final int shooterBottomId = 0;
+            public static final int SHOOTER_TOP_ID = 0;
+            public static final int SHOOTER_BOTTOM_ID = 0;
         }
 
         /**
@@ -61,6 +61,14 @@ public final class Constants {
         public static final class Intake {
             public static final int INTAKE_MOTOR_ID = -1;
             public static final int INDEXER_MOTOR_ID = -1;
+        }
+
+        /**
+         * Climber motor constants
+         */
+        public static final class Climber {
+            public static final int LEFT_MOTOR_ID = -1;
+            public static final int RIGHT_MOTOR_ID = -1;
         }
     }
 
@@ -266,6 +274,26 @@ public final class Constants {
     }
 
     /**
+     * Climber constants
+     */
+    public static final class ClimberConstants {
+        public static final double CLIMBER_KP = 0;
+        public static final double CLIMBER_KI = 0;
+        public static final double CLIMBER_KD = 0;
+        public static final double CLIMBER_MAX_VELOCITY = 0;
+        public static final double CLIMBER_MAX_ACCELERATION = 0;
+        public static final double CLIMBER_KS = 0;
+        public static final double CLIMBER_KG = 0;
+        public static final double CLIMBER_KV = 0;
+
+        public static final double CLIMBING_DISTANCE = Units.inchesToMeters(15);
+        public static final double MAX_CLIMBING_DISTANCE = Units.inchesToMeters(21);
+
+        // 2pi * radius
+        public static final double LINEAR_DISTANCE = Units.inchesToMeters(2 * Math.PI * 1);
+    }
+
+    /**
      * Auto constants
      */
     public static final class AutoConstants {
@@ -330,13 +358,21 @@ public final class Constants {
         public static final class SetPoints {
 
             public static final double HOME_HEIGHT = 0;
-            public static final double HOME_ANGLE = 0;
-            public static final double AMP_HEIGHT = 0;
-            public static final double AMP_ANGLE = 0;
-            public static final double TRAP_HEIGHT = 0;
-            public static final double TRAP_ANGLE = 0;
-            public static final double CLIMBING_HEIGHT = 0;
-            public static final double CLIMBING_ANGLE = 0;
+            public static final Rotation2d HOME_ANGLE = Rotation2d.fromDegrees(40);
+            public static final double AMP_HEIGHT = Units.inchesToMeters(34);
+            public static final Rotation2d AMP_ANGLE = Rotation2d.fromDegrees(-10);
+            public static final double TRAP_HEIGHT = Units.inchesToMeters(40);
+            public static final Rotation2d TRAP_ANGLE = Rotation2d.fromDegrees(30);
+            public static final double MAX_EXTENSION = Units.inchesToMeters(48);
+            public static final double CLIMBING_HEIGHT = Units.inchesToMeters(15);
+            public static final Rotation2d CLIMBING_ANGLE = Rotation2d.fromDegrees(0);
+            public static final Rotation2d MAX_ANGLE_UP_HOME = Rotation2d.fromDegrees(75);
+            public static final Rotation2d MAX_ANGLE_DOWN_HOME = Rotation2d.fromDegrees(0);
+            public static final Rotation2d MAX_ANGLE_UP_EXTENDED = Rotation2d.fromDegrees(75);
+            public static final Rotation2d MAX_ANGLE_DOWN_EXTENDED = Rotation2d.fromDegrees(-15);
+
+            public static final double LINEAR_DISTANCE = Units.inchesToMeters(2 * Math.PI * 659);
+
         }
 
 
@@ -354,10 +390,23 @@ public final class Constants {
      * Constants of Shooters
      */
     public static final class ShooterConstants {
-        public static final double kP = 0;
-        public static final double kI = 0;
-        public static final double kD = 0;
-        public static final double kS = 0;
-        public static final double kV = 0;
+        public static final double KP = 0;
+        public static final double KI = 0;
+        public static final double KD = 0;
+        public static final double KS = 0;
+        public static final double KV = 0;
+    }
+
+    /**
+     * Constants for intake
+     */
+    public static final class IntakeConstants {
+        public static final double INTAKE_MOTOR_FORWARD = 0;
+        public static final double INTAKE_MOTOR_BACKWARD = -0;
+        public static final double INTAKE_MOTOR_STOP = 0;
+        public static final double INDEX_MOTOR_FORWARD = 0;
+        public static final double INDEX_MOTOR_BACKWARD = -0;
+        public static final double INDEX_MOTOR_STOP = 0;
+
     }
 }
