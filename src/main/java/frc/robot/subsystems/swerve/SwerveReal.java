@@ -53,7 +53,10 @@ public class SwerveReal implements SwerveIO {
             inputs.estimatedRobotPose3dTimestampSeconds[i] =
                 cameras[i].getEstimatedGlobalPose(previousPose).timestampSeconds;
             inputs.estimatedRobotPose3dTargets[i] =
-                cameras[i].getEstimatedGlobalPose(previousPose).targetsUsed.get(0);
+                cameras[i].getEstimatedGlobalPose(previousPose) != null
+                    ? cameras[i].getEstimatedGlobalPose(previousPose).targetsUsed.get(0)
+                    : null;
+
         }
 
     }

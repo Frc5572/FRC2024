@@ -246,8 +246,8 @@ public class Swerve extends SubsystemBase {
             for (int i = 0; i < 4; i++) {
                 List<PhotonTrackedTarget> list = new ArrayList<PhotonTrackedTarget>();
                 list.add(inputs.estimatedRobotPose3dTargets[i]);
-                // will the area == 0.0 if there are no targets???
-                if (inputs.estimatedRobotPose3dTargets[i].getArea() != 0.0) {
+                if (inputs.estimatedRobotPose3dTargets[i] != null
+                    && inputs.estimatedRobotPose3dTargets[i].getArea() > .7) {
                     EstimatedRobotPose camPose =
                         new EstimatedRobotPose(inputs.estimatedRobotPose3d[i],
                             inputs.estimatedRobotPose3dTimestampSeconds[i], list,
