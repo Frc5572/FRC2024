@@ -76,7 +76,7 @@ public final class Constants {
     public static final class Swerve {
         public static final edu.wpi.first.wpilibj.SPI.Port navXID =
             edu.wpi.first.wpilibj.SPI.Port.kMXP;
-        public static final boolean invertGyro = false;
+        public static final boolean invertGyro = true;
         public static final boolean isFieldRelative = true;
         public static final boolean isOpenLoop = false;
 
@@ -100,11 +100,10 @@ public final class Constants {
 
         /* Module Gear Ratios */
         public static final double driveGearRatio = (8.14 / 1.0); // MK4i L1
-        public static final double angleGearRatio = 12.8 / 1.0;
+        public static final double angleGearRatio = ((150.0 / 7.0) / 1.0); // (150 / 7) : 1
 
         /* Motor Inverts */
-        public static final InvertedValue angleMotorInvert =
-            InvertedValue.CounterClockwise_Positive;
+        public static final InvertedValue angleMotorInvert = InvertedValue.Clockwise_Positive;
         public static final InvertedValue driveMotorInvert =
             InvertedValue.CounterClockwise_Positive;
 
