@@ -146,7 +146,7 @@ public final class Constants {
     public static final class Swerve {
         public static final edu.wpi.first.wpilibj.SPI.Port navXID =
             edu.wpi.first.wpilibj.SPI.Port.kMXP;
-        public static final boolean invertGyro = false;
+        public static final boolean invertGyro = true;
         public static final boolean isFieldRelative = true;
         public static final boolean isOpenLoop = false;
 
@@ -170,11 +170,10 @@ public final class Constants {
 
         /* Module Gear Ratios */
         public static final double driveGearRatio = (8.14 / 1.0); // MK4i L1
-        public static final double angleGearRatio = 12.8 / 1.0;
+        public static final double angleGearRatio = ((150.0 / 7.0) / 1.0); // (150 / 7) : 1
 
         /* Motor Inverts */
-        public static final InvertedValue angleMotorInvert =
-            InvertedValue.CounterClockwise_Positive;
+        public static final InvertedValue angleMotorInvert = InvertedValue.Clockwise_Positive;
         public static final InvertedValue driveMotorInvert =
             InvertedValue.CounterClockwise_Positive;
 
@@ -228,43 +227,43 @@ public final class Constants {
 
         /* Module Specific Constants */
         /**
-         * Front Left Module - Module 0.
+         * Front Left Module - Module 0
          */
         public static final class Mod0 {
-            public static final int DRIVE_MOTOR_ID = 0;
-            public static final int ANGLE_MOTOR_ID = 0;
-            public static final int CAN_CODER_ID = 0;
-            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromDegrees(138.604);
+            public static final int driveMotorID = 10;
+            public static final int angleMotorID = 8;
+            public static final int canCoderID = 10;
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(115.400390625);
         }
 
         /**
-         * Front Right Module - Module 1.
+         * Front Right Module - Module 1
          */
         public static final class Mod1 {
-            public static final int DRIVE_MOTOR_ID = 0;
-            public static final int ANGLE_MOTOR_ID = 0;
-            public static final int CAN_CODER_ID = 0;
-            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromDegrees(280.107);
+            public static final int driveMotorID = 3;
+            public static final int angleMotorID = 9;
+            public static final int canCoderID = 1;
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(-55.37109375);
         }
 
         /**
-         * Back Left Module - Module 2.
+         * Back Left Module - Module 2
          */
         public static final class Mod2 {
-            public static final int DRIVE_MOTOR_ID = 0;
-            public static final int ANGLE_MOTOR_ID = 0;
-            public static final int CAN_CODER_ID = 0;
-            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromDegrees(121.553);
+            public static final int driveMotorID = 2;
+            public static final int angleMotorID = 40;
+            public static final int canCoderID = 2;
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(145.01953125);
         }
 
         /**
-         * Back Right Module - Module 3.
+         * Back Right Module - Module 3
          */
         public static final class Mod3 {
-            public static final int DRIVE_MOTOR_ID = 0;
-            public static final int ANGLE_MOTOR_ID = 0;
-            public static final int CAN_CODER_ID = 0;
-            public static final Rotation2d ANGLE_OFFSET = Rotation2d.fromDegrees(248.027);
+            public static final int driveMotorID = 6;
+            public static final int angleMotorID = 51;
+            public static final int canCoderID = 4;
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(3.955078125);
         }
 
         public static final HolonomicPathFollowerConfig pathFollowerConfig =

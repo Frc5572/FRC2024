@@ -83,6 +83,7 @@ public interface SwerveIO {
 
         public float yaw;
         public float roll;
+        public float pitch;
         public boolean[] latencies;
         public PhotonPipelineResult[] results;
         public Pose3d[] positions;
@@ -90,6 +91,7 @@ public interface SwerveIO {
         public Pose3d[] estimatedRobotPose3d;
         public double[] estimatedRobotPose3dTimestampSeconds;
         public PhotonTrackedTarget[] estimatedRobotPose3dTargets;
+
     }
 
     public default void updateInputs(SwerveInputs inputs, Pose2d previousPose) {}

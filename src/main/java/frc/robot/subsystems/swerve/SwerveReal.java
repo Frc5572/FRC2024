@@ -35,6 +35,7 @@ public class SwerveReal implements SwerveIO {
     @Override
     public void updateInputs(SwerveInputs inputs, Pose2d previousPose) {
         inputs.yaw = gyro.getYaw();
+        inputs.pitch = gyro.getPitch();
         inputs.roll = gyro.getRoll();
         inputs.latencies = new boolean[4];
         inputs.positions = new Pose3d[4];
