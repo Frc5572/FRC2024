@@ -19,6 +19,8 @@ public class SwerveReal implements SwerveIO {
     @Override
     public void updateInputs(SwerveInputs inputs) {
         inputs.yaw = gyro.getYaw();
+        inputs.roll = gyro.getRoll();
+        inputs.pitch = gyro.getPitch();
     }
 
     @Override

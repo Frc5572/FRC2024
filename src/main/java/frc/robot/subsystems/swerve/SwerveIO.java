@@ -13,6 +13,7 @@ public interface SwerveIO {
     public static class SwerveInputs {
         public float yaw;
         public float roll;
+        public float pitch;
     }
 
     public default void updateInputs(SwerveInputs inputs) {}
