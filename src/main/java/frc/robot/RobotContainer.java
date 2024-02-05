@@ -17,17 +17,9 @@ import frc.robot.Robot.RobotRunType;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.climber.Climber;
-import frc.robot.subsystems.climber.ClimberIO;
-import frc.robot.subsystems.climber.ClimberNEO;
 import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
-import frc.robot.subsystems.elevator_wrist.ElevatorWristIO;
-import frc.robot.subsystems.elevator_wrist.ElevatorWristReal;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakeIO;
-import frc.robot.subsystems.intake.IntakeIOFalcon;
 import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.subsystems.shooter.ShooterIO;
-import frc.robot.subsystems.shooter.ShooterVortex;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.SwerveIO;
 import frc.robot.subsystems.swerve.SwerveReal;
@@ -62,20 +54,20 @@ public class RobotContainer {
         switch (runtimeType) {
             case kReal:
                 s_Swerve = new Swerve(new SwerveReal());
-                shooter = new Shooter(new ShooterVortex());
-                intake = new Intake(new IntakeIOFalcon());
-                elevatorWrist = new ElevatorWrist(new ElevatorWristReal());
-                climber = new Climber(new ClimberNEO());
+                // shooter = new Shooter(new ShooterVortex());
+                // intake = new Intake(new IntakeIOFalcon());
+                // elevatorWrist = new ElevatorWrist(new ElevatorWristReal());
+                // climber = new Climber(new ClimberNEO());
                 break;
             case kSimulation:
                 // s_Swerve = new Swerve(new SwerveIO() {});
                 break;
             default:
                 s_Swerve = new Swerve(new SwerveIO() {});
-                shooter = new Shooter(new ShooterIO() {});
-                intake = new Intake(new IntakeIO() {});
-                elevatorWrist = new ElevatorWrist(new ElevatorWristIO() {});
-                climber = new Climber(new ClimberIO() {});
+                // shooter = new Shooter(new ShooterIO() {});
+                // intake = new Intake(new IntakeIO() {});
+                // elevatorWrist = new ElevatorWrist(new ElevatorWristIO() {});
+                // climber = new Climber(new ClimberIO() {});
         }
         s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, driver,
             Constants.Swerve.isFieldRelative, Constants.Swerve.isOpenLoop));
