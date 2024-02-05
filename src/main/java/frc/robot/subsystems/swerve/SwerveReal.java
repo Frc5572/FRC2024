@@ -46,18 +46,23 @@ public class SwerveReal implements SwerveIO {
         inputs.estimatedRobotPose3dTargets = new PhotonTrackedTarget[4];
         for (int i = 0; i < cameras.length; i++) {
             inputs.latencies[i] = cameras[i].latency() < 0.6;
-            inputs.positions[i] = cameras[i].getEstimatedGlobalPose(previousPose).estimatedPose;
             inputs.results[i] = cameras[i].photonCamera.getLatestResult();
             inputs.seesTarget[i] = cameras[i].seesTarget();
-            inputs.estimatedRobotPose3d[i] =
-                cameras[i].getEstimatedGlobalPose(previousPose).estimatedPose;
-            inputs.estimatedRobotPose3dTimestampSeconds[i] =
-                cameras[i].getEstimatedGlobalPose(previousPose).timestampSeconds;
-            inputs.estimatedRobotPose3dTargets[i] =
-                cameras[i].getEstimatedGlobalPose(previousPose) != null
-                    ? cameras[i].getEstimatedGlobalPose(previousPose).targetsUsed.get(0)
-                    : null;
-
+            if (cameras[i].getEstimatedGlobalPose(previousPose) != null) {
+                inputs.positions[i] = cameras[i].getEstimatedGlobalPose(previousPose).estimatedPose;
+                inputs.estimatedRobotPose3d[i] =
+                    cameras[i].getEstimatedGlobalPose(previousPose).estimatedPose;
+                inputs.estimatedRobotPose3dTimestampSeconds[i] =
+                    cameras[i].getEstimatedGlobalPose(previousPose).timestampSeconds;
+                inputs.estimatedRobotPose3dTargets[i] =
+                    cameras[i].getEstimatedGlobalPose(previousPose).targetsUsed.get(0);
+            } else {
+                inputs.positions[i] = new Pose3d();
+                inputs.estimatedRobotPose3d[i] = new Pose3d();
+                inputs.estimatedRobotPose3dTimestampSeconds[i] = 0.0;
+                inputs.estimatedRobotPose3dTargets[i] =
+                    new PhotonTrackedTarget(0, 0, 0, 0, 500, null, null, i, null, null);
+            }
         }
 
     }
