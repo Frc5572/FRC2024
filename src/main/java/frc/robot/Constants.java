@@ -89,7 +89,7 @@ public final class Constants {
                 new Transform3d(new Translation3d(Units.inchesToMeters(0), Units.inchesToMeters(8),
                     Units.inchesToMeters(22.125)), new Rotation3d(ROLL, PITCH, YAW)).inverse();
 
-            public static final String CAMERA_NAME = "pv2";
+            public static final String CAMERA_NAME = "front-left";
             public static final double LARGEST_DISTANCE = 0.1;
         }
 
@@ -104,7 +104,7 @@ public final class Constants {
                 new Transform3d(new Translation3d(Units.inchesToMeters(0), Units.inchesToMeters(8),
                     Units.inchesToMeters(22.125)), new Rotation3d(ROLL, PITCH, YAW)).inverse();
 
-            public static final String CAMERA_NAME = "pv2";
+            public static final String CAMERA_NAME = "front-right";
             public static final double LARGEST_DISTANCE = 0.1;
         }
 
@@ -119,7 +119,7 @@ public final class Constants {
                 new Transform3d(new Translation3d(Units.inchesToMeters(0), Units.inchesToMeters(8),
                     Units.inchesToMeters(22.125)), new Rotation3d(ROLL, PITCH, YAW)).inverse();
 
-            public static final String CAMERA_NAME = "pv2";
+            public static final String CAMERA_NAME = "back-left";
             public static final double LARGEST_DISTANCE = 0.1;
         }
 
@@ -134,7 +134,7 @@ public final class Constants {
                 new Transform3d(new Translation3d(Units.inchesToMeters(0), Units.inchesToMeters(8),
                     Units.inchesToMeters(22.125)), new Rotation3d(ROLL, PITCH, YAW)).inverse();
 
-            public static final String CAMERA_NAME = "pv2";
+            public static final String CAMERA_NAME = "back-right";
             public static final double LARGEST_DISTANCE = 0.1;
         }
 
