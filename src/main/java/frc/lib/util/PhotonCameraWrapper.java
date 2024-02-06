@@ -80,18 +80,18 @@ public class PhotonCameraWrapper {
      * @return an EstimatedRobotPose with an estimated pose, the timestamp, and targets used to
      *         create the estimate
      */
-    public EstimatedRobotPose getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
+    public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
         var res = photonCamera.getLatestResult();
-        SmartDashboard.putNumber("photonLatency",
-            Timer.getFPGATimestamp() - res.getTimestampSeconds());
+        // SmartDashboard.putNumber("photonLatency",
+        // Timer.getFPGATimestamp() - res.getTimestampSeconds());
         if (Timer.getFPGATimestamp() - res.getTimestampSeconds() > 0.4) {
-            return null;
+            return Optional.empty();
         }
         if (photonPoseEstimator == null) {
             // The field layout failed to load, so we cannot estimate poses.
-            return null;
+            return Optional.empty();
         }
         photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
-        return photonPoseEstimator.update().get();
+        return photonPoseEstimator.update();
     }
 }

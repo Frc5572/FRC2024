@@ -24,12 +24,13 @@ public interface SwerveIO {
 
         @Override
         public void toLog(LogTable table) {
+            table.put("numCameras", numCameras);
             table.put("Yaw", yaw);
             table.put("Roll", roll);
-            for (int i = 0; i < 4; i++) {
+            table.put("Pitch", pitch);
+            for (int i = 0; i < numCameras; i++) {
                 table.put("Latencies/" + i, latencies[i]);
                 table.put("Results/" + i, PhotonPipelineResult.proto, results[i]);
-                table.put("Positions/" + i, positions[i]);
                 table.put("SeesTarget/" + i, seesTarget[i]);
                 table.put("EstimatedRobotPose3d/" + i, estimatedRobotPose3d[i]);
                 table.put("EstimatedRobotPoseTimestampSeconds/" + i,
@@ -41,12 +42,13 @@ public interface SwerveIO {
 
         @Override
         public void fromLog(LogTable table) {
+            numCameras = table.get("numCameras", numCameras);
             yaw = table.get("Yaw", yaw);
             roll = table.get("Roll", roll);
-            for (int i = 0; i < 4; i++) {
+            pitch = table.get("Roll", pitch);
+            for (int i = 0; i < numCameras; i++) {
                 latencies[i] = table.get("Latencies/" + i, latencies[i]);
                 results[i] = table.get("Results/" + i, results[i]);
-                positions[i] = table.get("Positions/" + i, positions[i]);
                 seesTarget[i] = table.get("SeesTarget/" + i, seesTarget[i]);
                 estimatedRobotPose3d[i] =
                     table.get("EstimatedRobotPose3d/" + i, estimatedRobotPose3d[i]);
@@ -63,16 +65,16 @@ public interface SwerveIO {
 
         /**
          * Returns copy of SwerveInputs for LoggableInputs class
-         * 
+         *
          * @return copy of all SwerveInputs
          */
         public SwerveInputs clone() {
             SwerveInputs copy = new SwerveInputs();
             copy.yaw = this.yaw;
             copy.roll = this.roll;
+            copy.pitch = this.pitch;
             copy.latencies = this.latencies.clone();
             copy.results = this.results.clone();
-            copy.positions = this.positions.clone();
             copy.seesTarget = this.seesTarget.clone();
             copy.estimatedRobotPose3d = this.estimatedRobotPose3d.clone();
             copy.estimatedRobotPose3dTimestampSeconds =
@@ -81,12 +83,12 @@ public interface SwerveIO {
             return copy;
         }
 
+        public int numCameras;
         public float yaw;
         public float roll;
         public float pitch;
         public boolean[] latencies;
         public PhotonPipelineResult[] results;
-        public Pose3d[] positions;
         public boolean[] seesTarget;
         public Pose3d[] estimatedRobotPose3d;
         public double[] estimatedRobotPose3dTimestampSeconds;
@@ -104,7 +106,7 @@ public interface SwerveIO {
     }
 
     public default Optional<Pose2d> getInitialPose() {
-        return null;
+        return Optional.empty();
     }
 
     public default void update(int i, Pose2d pose) {}

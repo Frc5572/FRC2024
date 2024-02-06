@@ -11,6 +11,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -236,14 +237,18 @@ public class Swerve extends SubsystemBase {
         Rotation2d yaw = Rotation2d.fromDegrees(inputs.yaw);
         swerveOdometry.update(yaw, getSwerveModulePositions());
         if (!hasInitialized /* || DriverStation.isDisabled() */) {
-            var robotPose = inputs.positions[0];
-            if (robotPose != null) {
-                swerveOdometry.resetPosition(Rotation2d.fromDegrees(inputs.yaw),
-                    getSwerveModulePositions(), robotPose.toPose2d());
-                hasInitialized = true;
+            Pose3d robotPose = null;
+            for (int i = 0; i < inputs.numCameras; i++) {
+                if (inputs.estimatedRobotPose3d[i] != new Pose3d()) {
+                    robotPose = inputs.estimatedRobotPose3d[i];
+                    swerveOdometry.resetPosition(Rotation2d.fromDegrees(inputs.yaw),
+                        getSwerveModulePositions(), robotPose.toPose2d());
+                    hasInitialized = true;
+                    break;
+                }
             }
         } else {
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < inputs.numCameras; i++) {
                 List<PhotonTrackedTarget> list = new ArrayList<PhotonTrackedTarget>();
                 list.add(inputs.estimatedRobotPose3dTargets[i]);
                 if (inputs.estimatedRobotPose3dTargets[i].getFiducialId() != 500) {
@@ -354,7 +359,7 @@ public class Swerve extends SubsystemBase {
 
     /**
      * Scans through a list of booleans - returns if contains desired value
-     * 
+     *
      * @param list List of booleans to scan through
      * @param targetValue desired value in list
      */
