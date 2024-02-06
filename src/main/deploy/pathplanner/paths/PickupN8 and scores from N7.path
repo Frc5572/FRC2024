@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.403906112519079,
-        "y": 6.522212879272992
+        "x": 3.614895244101759,
+        "y": 6.549814316086593
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.8273213937014168,
-        "y": 7.0412380626577935
+        "x": 4.8191211945930155,
+        "y": 6.388271810532888
       },
       "isLocked": false,
       "linkedName": null
@@ -20,24 +20,24 @@
         "y": 5.811967891483263
       },
       "prevControl": {
-        "x": 7.519035880350869,
-        "y": 6.064651204446918
+        "x": 6.757631261237478,
+        "y": 6.0798724817485414
       },
       "nextControl": {
-        "x": 8.01970381058875,
-        "y": 5.633843915637576
+        "x": 7.994612678859903,
+        "y": 5.765774830709957
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.403906112519079,
+        "x": 3.468038420871118,
         "y": 6.365139468511802
       },
       "prevControl": {
-        "x": 2.4926867359927947,
-        "y": 7.457824065111384
+        "x": 4.848492559239144,
+        "y": 6.476385904471273
       },
       "nextControl": null,
       "isLocked": false,
@@ -79,28 +79,11 @@
           ]
         }
       }
-    },
-    {
-      "name": "New Event Marker",
-      "waypointRelativePos": 2.0,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "Shoot Command"
-              }
-            }
-          ]
-        }
-      }
     }
   ],
   "globalConstraints": {
     "maxVelocity": 5.0,
-    "maxAcceleration": 2.0,
+    "maxAcceleration": 4.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },

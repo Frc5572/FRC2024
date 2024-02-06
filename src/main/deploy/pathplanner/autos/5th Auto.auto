@@ -42,9 +42,21 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Shoot Command"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "PickupN8 and scores from N7"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot Command"
           }
         }
       ]

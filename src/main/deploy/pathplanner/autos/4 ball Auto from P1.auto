@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7233010829658023,
-      "y": 2.2855427529036882
+      "x": 0.8126841687209385,
+      "y": 7.061725898844035
     },
     "rotation": 180.0
   },
@@ -14,7 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Get Out  P3"
+            "pathName": "GetOuts and Scores StartingN P1"
           }
         },
         {
@@ -26,7 +26,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": " Pickups N11 P3"
+            "pathName": "PickUp N1 from Scoring StartingN1"
           }
         },
         {
@@ -38,7 +38,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Shoots N11 P3"
+            "pathName": "Pickup N2 from N1"
           }
         },
         {
@@ -50,13 +50,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Picks up and Scores N10"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot Command"
+            "pathName": " Pickup N3 from N1"
           }
         }
       ]
