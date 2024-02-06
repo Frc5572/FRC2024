@@ -324,7 +324,7 @@ public class Swerve extends SubsystemBase {
      * Gets a list containing all 4 swerve module positions
      */
     public SwerveModulePosition[] getSwerveModulePositions() {
-        SwerveModulePosition positions[] = new SwerveModulePosition[4];
+        SwerveModulePosition[] positions = new SwerveModulePosition[4];
         for (SwerveModule mod : swerveMods) {
             positions[mod.moduleNumber] = mod.getPosition();
         }
