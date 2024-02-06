@@ -18,7 +18,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3 # v2 minimum required
       - name: Run check style
-        uses: nikitasavinov/checkstyle-action@master
+        uses: dbelyaev/action-checkstyle@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: 'github-check'
