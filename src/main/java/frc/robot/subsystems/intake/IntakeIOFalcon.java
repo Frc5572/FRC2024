@@ -11,8 +11,8 @@ public class IntakeIOFalcon implements IntakeIO {
 
     private final TalonFX intakeMotor =
         new TalonFX(Constants.Motors.Intake.INTAKE_MOTOR_ID, "canivore");
-    private final TalonFX indexerMotor =
-        new TalonFX(Constants.Motors.Intake.INDEXER_MOTOR_ID, "canivore");
+    // private final TalonFX indexerMotor =
+    // new TalonFX(Constants.Motors.Intake.INDEXER_MOTOR_ID, "canivore");
 
     private final DutyCycleOut intakeDutyCycleOut = new DutyCycleOut(0);
     private final DutyCycleOut indexerDutyCycleOut = new DutyCycleOut(0);
@@ -28,10 +28,10 @@ public class IntakeIOFalcon implements IntakeIO {
         inputs.intakeMotorVoltage = intakeMotor.getMotorVoltage().getValueAsDouble();
         inputs.intakeAmps = intakeMotor.getStatorCurrent().getValueAsDouble();
         inputs.intakeRPM = intakeMotor.getVelocity().getValueAsDouble();
-        inputs.indexerSupplyVoltage = indexerMotor.getSupplyVoltage().getValueAsDouble();
-        inputs.indexerMotorVoltage = indexerMotor.getMotorVoltage().getValueAsDouble();
-        inputs.indexerAmps = indexerMotor.getStatorCurrent().getValueAsDouble();
-        inputs.indexerRPM = indexerMotor.getVelocity().getValueAsDouble();
+        // inputs.indexerSupplyVoltage = indexerMotor.getSupplyVoltage().getValueAsDouble();
+        // inputs.indexerMotorVoltage = indexerMotor.getMotorVoltage().getValueAsDouble();
+        // inputs.indexerAmps = indexerMotor.getStatorCurrent().getValueAsDouble();
+        // inputs.indexerRPM = indexerMotor.getVelocity().getValueAsDouble();
         inputs.sensorStatus = false;
     }
 
@@ -40,8 +40,8 @@ public class IntakeIOFalcon implements IntakeIO {
         intakeMotor.setControl(intakeDutyCycleOut.withOutput(percent));
     }
 
-    @Override
-    public void setIndexerMotorPercentage(double percent) {
-        indexerMotor.setControl(indexerDutyCycleOut.withOutput(percent));
-    }
+    // @Override
+    // public void setIndexerMotorPercentage(double percent) {
+    // indexerMotor.setControl(indexerDutyCycleOut.withOutput(percent));
+    // }
 }
