@@ -70,6 +70,26 @@ public class Climber extends SubsystemBase {
     }
 
     /**
+     * Sets voltage for right side climber system
+     *
+     * @param power Sets power for climbing motors.
+     */
+    public void setLeftPower(double power) {
+        // Logger.recordOutput("/Climber/Right/Assigned Voltage", power);
+        io.setLeftPower(power);
+    }
+
+    /**
+     * Sets voltage for right side climber system
+     *
+     * @param power Sets power for climbing motors.
+     */
+    public void setRightPower(double power) {
+        // Logger.recordOutput("/Climber/Right/Assigned Voltage", power);
+        io.setRightPower(power);
+    }
+
+    /**
      * Climbs to designated position.
      *
      * @param distance Distance to climb

@@ -48,6 +48,8 @@ public class RobotContainer {
     public RobotContainer(RobotRunType runtimeType) {
         SmartDashboard.putData("Choose Auto: ", autoChooser);
         autoChooser.setDefaultOption("Wait 1 Second", "wait");
+        SmartDashboard.putNumber("Left Climber Power", 0);
+        SmartDashboard.putNumber("Right Climber Power", 0);
         switch (runtimeType) {
             case kReal:
                 s_Swerve = new Swerve(new SwerveReal());
@@ -83,6 +85,14 @@ public class RobotContainer {
     private void configureButtonBindings() { /* Driver Buttons */
         /* Driver Buttons */
         driver.y().onTrue(new InstantCommand(() -> s_Swerve.resetFieldRelativeOffset()));
+        driver.a().whileTrue(new InstantCommand(() -> {
+            climber.setLeftPower(SmartDashboard.getNumber("Left Climber Power", 0));
+            climber.setRightPower(SmartDashboard.getNumber("Right Climber Power", 0));
+        }, climber));
+        driver.b().whileTrue(new InstantCommand(() -> {
+            climber.setLeftPower(-SmartDashboard.getNumber("Left Climber Power", 0));
+            climber.setRightPower(-SmartDashboard.getNumber("Right Climber Power", 0));
+        }, climber));
     }
 
     /**
