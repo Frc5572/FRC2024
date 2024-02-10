@@ -45,8 +45,7 @@ public class RobotContainer {
     private Intake intake;
     private ElevatorWrist elevatorWrist;
     private Climber climber;
-    private LEDs leds =
-        new LEDs(Constants.LEDsConstants.LED_COUNT, Constants.LEDsConstants.PWM_PORT);
+    private LEDs leds;
 
     /**
      */
