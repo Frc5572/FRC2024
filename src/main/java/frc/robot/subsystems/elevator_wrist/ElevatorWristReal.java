@@ -1,11 +1,10 @@
 package frc.robot.subsystems.elevator_wrist;
 
 
-import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkAbsoluteEncoder.Type;
+import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants;
 
@@ -22,18 +21,18 @@ public class ElevatorWristReal implements ElevatorWristIO {
     public final DigitalInput bottomLimitSwitch =
         new DigitalInput(Constants.ElevatorWristConstants.Sensors.BOTTOM_LIMIT_SWITCH_PORT);
 
-    public final AbsoluteEncoder wristAbsoluteEnc;
-    public final AbsoluteEncoder elevatorAbsoluteEnc;
+    public final RelativeEncoder wristAbsoluteEnc;
+    public final RelativeEncoder elevatorAbsoluteEnc;
 
 
     /**
      * Constructor for elevator wrist real class
      */
     public ElevatorWristReal() {
-        wristAbsoluteEnc = wristMotor.getAbsoluteEncoder(Type.kDutyCycle);
+        wristAbsoluteEnc = wristMotor.getEncoder();
         wristAbsoluteEnc.setPositionConversionFactor(1);
 
-        elevatorAbsoluteEnc = elevatorMotor.getAbsoluteEncoder(Type.kDutyCycle);
+        elevatorAbsoluteEnc = elevatorMotor.getEncoder();
         elevatorAbsoluteEnc.setPositionConversionFactor(25);
 
         elevatorMotor.setIdleMode(IdleMode.kBrake);
