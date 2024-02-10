@@ -12,51 +12,71 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "race",
           "data": {
-            "pathName": "GetOut & Scores P2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot Command"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Pickup N2 from N3"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot Command"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Score N1 from N2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot Command"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "PickupN7 and scores from N1"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot Command"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Run Shooter"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "GetOut & Scores P2"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Run Indexer"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Pickup N2 from N3"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Run Indexer"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Score N1 from N2"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Run Indexer"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "PickupN7 and scores from N1"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Run Indexer"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
           }
         }
       ]

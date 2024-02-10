@@ -2,37 +2,69 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.9,
-      "y": 2.4
+      "x": 0.997074694397118,
+      "y": 6.829530422066625
     },
-    "rotation": 130.0
+    "rotation": -133.72696997994322
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "race",
           "data": {
-            "pathName": "GetOut & Scores P2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot Command"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Pickup N2 from N3"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot Command"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Run Shooter"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "GetOuts and Scores StartingN P1"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Run Indexer"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "PickUp N1 from Scoring StartingN1"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Run Indexer"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "PickupN7 and scores from N1"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Run Indexer"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
           }
         }
       ]

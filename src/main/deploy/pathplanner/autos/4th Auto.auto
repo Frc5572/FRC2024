@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7239035452472226,
-      "y": 7.0
+      "x": 0.8878062347371597,
+      "y": 3.660745091927839
     },
-    "rotation": 180.0
+    "rotation": 119.74488129694224
   },
   "command": {
     "type": "sequential",
@@ -28,7 +28,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "GetOuts and Scores StartingN P1"
+                        "pathName": "GetOut & Scores P2"
                       }
                     },
                     {
@@ -40,7 +40,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "PickUp N1 from Scoring StartingN1"
+                        "pathName": "Pickup N2 from N3"
                       }
                     },
                     {
@@ -52,19 +52,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "PickupN7 and scores from N1"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Run Indexer"
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "PickupN8 and scores from N7"
+                        "pathName": "Score N1 from N2"
                       }
                     },
                     {
