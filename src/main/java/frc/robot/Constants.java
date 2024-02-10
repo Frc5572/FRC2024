@@ -7,7 +7,10 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -49,15 +52,15 @@ public final class Constants {
          * Class for elevator and wrist motor constants
          */
         public static final class ElevatorWrist {
-            public static final int TALON_ID = -1;
-            public static final int NEO_ID = -1;
+            public static final int ELEVATOR_NEO_ID = 57;
+            public static final int WRIST_NEO_ID = 52;
         }
 
         /**
          * Intake and indexer motor constants
          */
         public static final class Intake {
-            public static final int INTAKE_MOTOR_ID = -1;
+            public static final int INTAKE_MOTOR_ID = 14;
             public static final int INDEXER_MOTOR_ID = -1;
         }
 
@@ -65,9 +68,76 @@ public final class Constants {
          * Climber motor constants
          */
         public static final class Climber {
-            public static final int LEFT_MOTOR_ID = -1;
-            public static final int RIGHT_MOTOR_ID = -1;
+            public static final int LEFT_MOTOR_ID = 60;
+            public static final int RIGHT_MOTOR_ID = 48;
         }
+    }
+
+    /**
+     * Camera offset constants.
+     */
+    public static class CameraConstants {
+
+        /**
+         * Constants for Front Left Camera
+         */
+        public static class FrontLeftFacingCamera {
+            public static final double ROLL = -Math.PI / 2;
+            public static final double PITCH = 0.0;
+            public static final double YAW = 0.0;
+            public static final Transform3d KCAMERA_TO_ROBOT =
+                new Transform3d(new Translation3d(Units.inchesToMeters(0), Units.inchesToMeters(8),
+                    Units.inchesToMeters(22.125)), new Rotation3d(ROLL, PITCH, YAW)).inverse();
+
+            public static final String CAMERA_NAME = "front-left";
+            public static final double LARGEST_DISTANCE = 0.1;
+        }
+
+        /**
+         * Constants for Front Right Camera
+         */
+        public static class FrontRightFacingCamera {
+            public static final double ROLL = -Math.PI / 2;
+            public static final double PITCH = 0.0;
+            public static final double YAW = 0.0;
+            public static final Transform3d KCAMERA_TO_ROBOT =
+                new Transform3d(new Translation3d(Units.inchesToMeters(0), Units.inchesToMeters(8),
+                    Units.inchesToMeters(22.125)), new Rotation3d(ROLL, PITCH, YAW)).inverse();
+
+            public static final String CAMERA_NAME = "front-right";
+            public static final double LARGEST_DISTANCE = 0.1;
+        }
+
+        /**
+         * Constants for Back Left Camera
+         */
+        public static class BackLeftFacingCamera {
+            public static final double ROLL = -Math.PI / 2;
+            public static final double PITCH = 0.0;
+            public static final double YAW = 0.0;
+            public static final Transform3d KCAMERA_TO_ROBOT =
+                new Transform3d(new Translation3d(Units.inchesToMeters(0), Units.inchesToMeters(8),
+                    Units.inchesToMeters(22.125)), new Rotation3d(ROLL, PITCH, YAW)).inverse();
+
+            public static final String CAMERA_NAME = "back-left";
+            public static final double LARGEST_DISTANCE = 0.1;
+        }
+
+        /**
+         * Constants for Back Right Camera
+         */
+        public static class BackRightFacingCamera {
+            public static final double ROLL = -Math.PI / 2;
+            public static final double PITCH = 0.0;
+            public static final double YAW = 0.0;
+            public static final Transform3d KCAMERA_TO_ROBOT =
+                new Transform3d(new Translation3d(Units.inchesToMeters(0), Units.inchesToMeters(8),
+                    Units.inchesToMeters(22.125)), new Rotation3d(ROLL, PITCH, YAW)).inverse();
+
+            public static final String CAMERA_NAME = "back-right";
+            public static final double LARGEST_DISTANCE = 0.1;
+        }
+
     }
 
     /**

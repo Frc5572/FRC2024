@@ -1,40 +1,57 @@
 package frc.robot.subsystems.swerve;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.targeting.PhotonTrackedTarget;
 import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.FieldConstants;
 import frc.lib.util.swerve.SwerveModule;
 import frc.robot.Constants;
+import frc.robot.subsystems.swerve.SwerveIO.SwerveInputs;
 
 /**
  * Swerve Subsystem
  */
 public class Swerve extends SubsystemBase {
-    public SwerveDriveOdometry swerveOdometry;
+    public SwerveDrivePoseEstimator swerveOdometry;
     public SwerveModule[] swerveMods;
+    private final Field2d field = new Field2d();
     private double fieldOffset;
-    private SwerveInputsAutoLogged inputs = new SwerveInputsAutoLogged();
+    private SwerveInputs inputs = new SwerveInputs();
     private SwerveIO swerveIO;
+    private boolean hasInitialized = false;
+    private boolean latencyGood = false;
+
+    // private GenericEntry aprilTagTarget =
+    // RobotContainer.autoTab.add("Currently Seeing At Least One April Tag", false)
+    // .withWidget(BuiltInWidgets.kBooleanBox)
+    // .withProperties(Map.of("Color when true", "green", "Color when false", "red"))
+    // .withPosition(8, 4).withSize(2, 2).getEntry();
 
     /**
      * Swerve Subsystem
      */
     public Swerve(SwerveIO swerveIO) {
         this.swerveIO = swerveIO;
-        swerveIO.updateInputs(inputs);
         fieldOffset = getGyroYaw().getDegrees();
         swerveMods = new SwerveModule[] {
             swerveIO.createSwerveModule(0, Constants.Swerve.Mod0.driveMotorID,
@@ -50,12 +67,21 @@ public class Swerve extends SubsystemBase {
                 Constants.Swerve.Mod3.angleMotorID, Constants.Swerve.Mod3.canCoderID,
                 Constants.Swerve.Mod3.angleOffset)};
 
-        swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getGyroYaw(),
-            getModulePositions());
+        swerveOdometry = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics,
+            getGyroYaw(), getModulePositions(), new Pose2d());
+
+        swerveIO.updateInputs(inputs, swerveOdometry.getEstimatedPosition());
 
         AutoBuilder.configureHolonomic(this::getPose, this::resetOdometry, this::getChassisSpeeds,
             this::setModuleStates, Constants.Swerve.pathFollowerConfig, () -> shouldFlipPath(),
             this);
+        SmartDashboard.putBoolean("Currently Seeing At Least One April Tag", false);
+
+
+        // RobotContainer.autoTab.add("Field Pos", field).withWidget(BuiltInWidgets.kField)
+        // .withSize(8, 6) // make the widget 2x1
+        // .withPosition(0, 0); // place it in the top-left corner
+        SmartDashboard.putData("Field Pos", field);
     }
 
     /**
@@ -141,8 +167,9 @@ public class Swerve extends SubsystemBase {
      *
      * @return Pose2d on the field
      */
+    @AutoLogOutput(key = "Odometry/Robot")
     public Pose2d getPose() {
-        return swerveOdometry.getPoseMeters();
+        return swerveOdometry.getEstimatedPosition();
     }
 
     /**
@@ -203,11 +230,62 @@ public class Swerve extends SubsystemBase {
     @Override
     public void periodic() {
         swerveOdometry.update(getGyroYaw(), getModulePositions());
-        swerveIO.updateInputs(inputs);
-        SmartDashboard.putNumber("Gyro Yaw: ", inputs.yaw);
-        SmartDashboard.putNumber("Gyro Roll: ", inputs.roll);
-        SmartDashboard.putNumber("Gyro Pitch: ", inputs.pitch);
+        swerveIO.updateInputs(inputs, swerveOdometry.getEstimatedPosition());
         Logger.processInputs("Swerve", inputs);
+        latencyGood = containsBoolean(inputs.latencies, true);
+        SmartDashboard.putBoolean("photonGood", latencyGood);
+        Rotation2d yaw = Rotation2d.fromDegrees(inputs.yaw);
+        swerveOdometry.update(yaw, getSwerveModulePositions());
+        if (!hasInitialized /* || DriverStation.isDisabled() */) {
+            Pose3d robotPose = null;
+            for (int i = 0; i < inputs.numCameras; i++) {
+                if (inputs.estimatedRobotPose3d[i] != new Pose3d()) {
+                    robotPose = inputs.estimatedRobotPose3d[i];
+                    swerveOdometry.resetPosition(Rotation2d.fromDegrees(inputs.yaw),
+                        getSwerveModulePositions(), robotPose.toPose2d());
+                    hasInitialized = true;
+                    break;
+                }
+            }
+        } else {
+            for (int i = 0; i < inputs.numCameras; i++) {
+                List<PhotonTrackedTarget> list = new ArrayList<PhotonTrackedTarget>();
+                list.add(inputs.estimatedRobotPose3dTargets[i]);
+                if (inputs.estimatedRobotPose3dTargets[i].getFiducialId() != 500) {
+                    EstimatedRobotPose camPose =
+                        new EstimatedRobotPose(inputs.estimatedRobotPose3d[i],
+                            inputs.estimatedRobotPose3dTimestampSeconds[i], list,
+                            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR);
+                    if (camPose.targetsUsed.get(0).getArea() > 0.7) {
+                        swerveOdometry.addVisionMeasurement(camPose.estimatedPose.toPose2d(),
+                            camPose.timestampSeconds);
+                    }
+                    field.getObject("Cam Est Pose " + i).setPose(camPose.estimatedPose.toPose2d());
+                } else {
+                    field.getObject("Cam Est Pose " + i)
+                        .setPose(new Pose2d(-100, -100, new Rotation2d()));
+                }
+            }
+        }
+
+        field.setRobotPose(getPose());
+
+        boolean targetSeen = false;
+        for (boolean seen : inputs.seesTarget) {
+            if (seen) {
+                targetSeen = seen;
+                break;
+            }
+        }
+        SmartDashboard.putBoolean("Currently Seeing At Least One April Tag", targetSeen);
+        SmartDashboard.putBoolean("Has Initialized", hasInitialized);
+        SmartDashboard.putNumber("Robot X", getPose().getX());
+        SmartDashboard.putNumber("Robot Y", getPose().getY());
+        SmartDashboard.putNumber("Robot Rotation", getPose().getRotation().getDegrees());
+        SmartDashboard.putNumber("Gyro Yaw", yaw.getDegrees());
+        SmartDashboard.putNumber("Field Offset", fieldOffset);
+        SmartDashboard.putNumber("Gyro Yaw - Offset", getFieldRelativeHeading().getDegrees());
+        SmartDashboard.putNumber("Gyro roll", inputs.roll);
         for (SwerveModule mod : swerveMods) {
             mod.periodic();
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " CANcoder",
@@ -243,6 +321,17 @@ public class Swerve extends SubsystemBase {
     }
 
     /**
+     * Gets a list containing all 4 swerve module positions
+     */
+    public SwerveModulePosition[] getSwerveModulePositions() {
+        SwerveModulePosition[] positions = new SwerveModulePosition[4];
+        for (SwerveModule mod : swerveMods) {
+            positions[mod.moduleNumber] = mod.getPosition();
+        }
+        return positions;
+    }
+
+    /**
      * Determine whether or not to flight the auto path
      *
      * @return True if flip path to Red Alliance, False if Blue
@@ -267,4 +356,20 @@ public class Swerve extends SubsystemBase {
                     - getPose().getX());
         return distance;
     }
+
+    /**
+     * Scans through a list of booleans - returns if contains desired value
+     *
+     * @param list List of booleans to scan through
+     * @param targetValue desired value in list
+     */
+    private boolean containsBoolean(boolean[] list, boolean targetValue) {
+        for (boolean value : list) {
+            if (targetValue == value) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
