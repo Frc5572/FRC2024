@@ -11,11 +11,11 @@ public interface ElevatorWristIO {
      */
     @AutoLog
     public static class ElevatorWristInputs {
-        public double elevatorRelativeEncRawValue;
         public boolean topLimitSwitch;
         public boolean bottomLimitSwitch;
         public double wristAbsoluteEncRawValue;
         public double elevatorMotorSupplyVoltage;
+        public double elevatorAbsoluteEncRawValue;
         public double elevatorMotorMotorVoltage;
         public double elevatorMotorAmp;
         public double wristMotorVoltage;
