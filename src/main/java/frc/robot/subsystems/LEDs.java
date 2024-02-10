@@ -10,10 +10,10 @@ import frc.robot.Constants;
  * This is the class header for the LEDs Subsystem
  */
 public class LEDs extends SubsystemBase {
-    private AddressableLEDBuffer controLedBuffer;
-    private AddressableLED addressableLED;
     private int length = Constants.LEDsConstants.LED_COUNT;
     private int port = Constants.LEDsConstants.PWM_PORT;
+    private AddressableLEDBuffer controLedBuffer = new AddressableLEDBuffer(length);
+    private AddressableLED addressableLED = new AddressableLED(port);
 
     /**
      * constructs a LED Subsystem
@@ -21,9 +21,7 @@ public class LEDs extends SubsystemBase {
      * @param length length of the addressable LEDS
      * @param port port ID for PWM
      */
-    public LEDs(int length, int port) {
-        controLedBuffer = new AddressableLEDBuffer(length);
-        addressableLED = new AddressableLED(port);
+    public LEDs() {
 
         addressableLED.setLength(controLedBuffer.getLength());
         addressableLED.setData(controLedBuffer);
