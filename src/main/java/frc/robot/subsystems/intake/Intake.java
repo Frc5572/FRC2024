@@ -34,7 +34,7 @@ public class Intake extends SubsystemBase {
     }
 
     public boolean getSensorStatus() {
-        return intakeAutoLogged.sensorStatus;
+        return !intakeAutoLogged.sensorStatus;
     }
 
     /**

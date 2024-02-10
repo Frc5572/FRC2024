@@ -2,6 +2,7 @@ package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants;
 
 /**
@@ -11,16 +12,19 @@ public class IntakeIOFalcon implements IntakeIO {
 
     private final TalonFX intakeMotor =
         new TalonFX(Constants.Motors.Intake.INTAKE_MOTOR_ID, "canivore");
-    // private final TalonFX indexerMotor =
-    // new TalonFX(Constants.Motors.Intake.INDEXER_MOTOR_ID, "canivore");
+    private final TalonFX indexerMotor =
+        new TalonFX(Constants.Motors.Intake.INDEXER_MOTOR_ID, "canivore");
 
     private final DutyCycleOut intakeDutyCycleOut = new DutyCycleOut(0);
     private final DutyCycleOut indexerDutyCycleOut = new DutyCycleOut(0);
+    private final DigitalInput beamBrake = new DigitalInput(9);
 
     /**
      * Intake IO Layer with real motors and sensors
      */
-    public IntakeIOFalcon() {}
+    public IntakeIOFalcon() {
+        intakeMotor.setInverted(Constants.IntakeConstants.INTAKE_MOTOR_INVERTED);
+    }
 
     @Override
     public void updateInputs(IntakeInputs inputs) {
@@ -28,11 +32,11 @@ public class IntakeIOFalcon implements IntakeIO {
         inputs.intakeMotorVoltage = intakeMotor.getMotorVoltage().getValueAsDouble();
         inputs.intakeAmps = intakeMotor.getStatorCurrent().getValueAsDouble();
         inputs.intakeRPM = intakeMotor.getVelocity().getValueAsDouble();
-        // inputs.indexerSupplyVoltage = indexerMotor.getSupplyVoltage().getValueAsDouble();
-        // inputs.indexerMotorVoltage = indexerMotor.getMotorVoltage().getValueAsDouble();
-        // inputs.indexerAmps = indexerMotor.getStatorCurrent().getValueAsDouble();
-        // inputs.indexerRPM = indexerMotor.getVelocity().getValueAsDouble();
-        inputs.sensorStatus = false;
+        inputs.indexerSupplyVoltage = indexerMotor.getSupplyVoltage().getValueAsDouble();
+        inputs.indexerMotorVoltage = indexerMotor.getMotorVoltage().getValueAsDouble();
+        inputs.indexerAmps = indexerMotor.getStatorCurrent().getValueAsDouble();
+        inputs.indexerRPM = indexerMotor.getVelocity().getValueAsDouble();
+        inputs.sensorStatus = beamBrake.get(); // true == no game piece
     }
 
     @Override

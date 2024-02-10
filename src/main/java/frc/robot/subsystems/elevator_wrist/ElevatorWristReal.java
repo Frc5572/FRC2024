@@ -11,7 +11,6 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Encoder;
 import frc.robot.Constants;
 
 /**
@@ -20,9 +19,9 @@ import frc.robot.Constants;
 public class ElevatorWristReal implements ElevatorWristIO {
     public final TalonFX elevatorMotor = new TalonFX(Constants.Motors.ElevatorWrist.TALON_ID);
     private final TalonFXConfiguration elevatorMotorConfig = new TalonFXConfiguration();
-    public final Encoder elevatorRelativeEnc =
-        new Encoder(Constants.ElevatorWristConstants.Sensors.ELEVATOR_ENC_CHANNEL_A,
-            Constants.ElevatorWristConstants.Sensors.ELEVATOR_ENC_CHANNEL_B);
+    // public final Encoder elevatorRelativeEnc =
+    // new Encoder(Constants.ElevatorWristConstants.Sensors.ELEVATOR_ENC_CHANNEL_A,
+    // Constants.ElevatorWristConstants.Sensors.ELEVATOR_ENC_CHANNEL_B);
 
     public final CANSparkMax wristMotor =
         new CANSparkMax(Constants.Motors.ElevatorWrist.NEO_ID, MotorType.kBrushless);
@@ -56,7 +55,7 @@ public class ElevatorWristReal implements ElevatorWristIO {
     public void updateInputs(ElevatorWristInputs inputs) {
         inputs.topLimitSwitch = topLimitSwitch.get();
         inputs.bottomLimitSwitch = bottomLimitSwitch.get();
-        inputs.elevatorRelativeEncRawValue = elevatorRelativeEnc.get();
+        // inputs.elevatorRelativeEncRawValue = elevatorRelativeEnc.get();
         inputs.wristAbsoluteEncRawValue = wristAbsoluteEnc.getPosition();
         inputs.elevatorMotorSupplyVoltage = elevatorMotor.getSupplyVoltage().getValueAsDouble();
         inputs.elevatorMotorMotorVoltage = elevatorMotor.getMotorVoltage().getValueAsDouble();
@@ -72,5 +71,15 @@ public class ElevatorWristReal implements ElevatorWristIO {
     @Override
     public void setWristVoltage(double v) {
         wristMotor.setVoltage(v);
+    }
+
+    @Override
+    public void setWristPower(double power) {
+        wristMotor.set(power);
+    }
+
+    @Override
+    public void setElevatorPower(double power) {
+        elevatorMotor.set(power);
     }
 }

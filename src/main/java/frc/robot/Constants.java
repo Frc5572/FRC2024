@@ -58,7 +58,7 @@ public final class Constants {
          */
         public static final class Intake {
             public static final int INTAKE_MOTOR_ID = 14;
-            // public static final int INDEXER_MOTOR_ID = -1;
+            public static final int INDEXER_MOTOR_ID = -1;
         }
 
         /**
@@ -147,7 +147,7 @@ public final class Constants {
 
         /* Swerve Profiling Values */
         /** Meters per Second */
-        public static final double maxSpeed = 4.5;
+        public static final double maxSpeed = 1.5;
         /** Radians per Second */
         public static final double maxAngularVelocity = 10.0;
 
@@ -254,8 +254,8 @@ public final class Constants {
 
             public static final int ELEVATOR_ENC_CHANNEL_A = -1;
             public static final int ELEVATOR_ENC_CHANNEL_B = -1;
-            public static final int TOP_LIMIT_SWITCH_PORT = -1;
-            public static final int BOTTOM_LIMIT_SWITCH_PORT = -1;
+            public static final int TOP_LIMIT_SWITCH_PORT = 1;
+            public static final int BOTTOM_LIMIT_SWITCH_PORT = 2;
         }
 
         /**
@@ -340,6 +340,7 @@ public final class Constants {
         public static final double INDEX_MOTOR_FORWARD = 0;
         public static final double INDEX_MOTOR_BACKWARD = -0;
         public static final double INDEX_MOTOR_STOP = 0;
+        public static final boolean INTAKE_MOTOR_INVERTED = true;
 
     }
 }
