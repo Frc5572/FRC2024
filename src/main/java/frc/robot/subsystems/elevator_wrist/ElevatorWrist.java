@@ -50,6 +50,7 @@ public class ElevatorWrist implements Subsystem {
 
     public ElevatorWrist(ElevatorWristIO io) {
         this.io = io;
+        io.updateInputs(inputs);
     }
 
     @Override
@@ -75,15 +76,14 @@ public class ElevatorWrist implements Subsystem {
         io.setElevatorVoltage(elevatorFeedForwardValue + elevatorPIDValue);
         io.setWristVoltage(wristFeedForwardValue + wristPIDValue);
 
-        Logger.recordOutput("/ElevatorWrist/Elevator/VoltageFromPID", elevatorPIDValue);
-        Logger.recordOutput("/ElevatorWrist/Elevator/VoltageFromFeedForward",
-            elevatorFeedForwardValue);
-        Logger.recordOutput("/ElevatorWrist/Elevator/TotalVoltage",
+        Logger.recordOutput("/ElevatorWrist/Elevator/PID Voltage", elevatorPIDValue);
+        Logger.recordOutput("/ElevatorWrist/Elevator/Feedforward", elevatorFeedForwardValue);
+        Logger.recordOutput("/ElevatorWrist/Elevator/Combined Voltage",
             elevatorPIDValue + elevatorFeedForwardValue);
 
-        Logger.recordOutput("/ElevatorWrist/Wrist/VoltageFromPID", wristPIDValue);
-        Logger.recordOutput("/ElevatorWrist/Wrist/VoltageFromFeedForward", wristFeedForwardValue);
-        Logger.recordOutput("/ElevatorWrist/Wrist/VoltageFromFeedForward",
+        Logger.recordOutput("/ElevatorWrist/Wrist/PID Voltage", wristPIDValue);
+        Logger.recordOutput("/ElevatorWrist/Wrist/Feedforward", wristFeedForwardValue);
+        Logger.recordOutput("/ElevatorWrist/Wrist/Combined Voltage",
             wristFeedForwardValue + wristPIDValue);
 
     }

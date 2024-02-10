@@ -14,7 +14,7 @@ public class ClimberNEO implements ClimberIO {
     public final CANSparkMax rightMotor =
         new CANSparkMax(Constants.Motors.Climber.RIGHT_MOTOR_ID, MotorType.kBrushless);
     public final RelativeEncoder leftRelativeEncoder = leftMotor.getEncoder();
-    public final RelativeEncoder rightRelativeEncoder = leftMotor.getEncoder();
+    public final RelativeEncoder rightRelativeEncoder = rightMotor.getEncoder();
 
 
     /**
@@ -44,6 +44,6 @@ public class ClimberNEO implements ClimberIO {
 
     @Override
     public void setRightClimberVoltage(double voltage) {
-        leftMotor.setVoltage(voltage);
+        rightMotor.setVoltage(voltage);
     }
 }
