@@ -33,7 +33,7 @@ public class ElevatorWristReal implements ElevatorWristIO {
         wristAbsoluteEnc = wristMotor.getAbsoluteEncoder(Type.kDutyCycle);
         wristAbsoluteEnc.setPositionConversionFactor(1);
 
-        elevatorAbsoluteEnc = wristMotor.getAbsoluteEncoder(Type.kDutyCycle);
+        elevatorAbsoluteEnc = elevatorMotor.getAbsoluteEncoder(Type.kDutyCycle);
         elevatorAbsoluteEnc.setPositionConversionFactor(25);
 
         elevatorMotor.setIdleMode(IdleMode.kBrake);
