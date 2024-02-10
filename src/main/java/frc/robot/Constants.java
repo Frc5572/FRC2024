@@ -52,15 +52,15 @@ public final class Constants {
          * Class for elevator and wrist motor constants
          */
         public static final class ElevatorWrist {
-            public static final int TALON_ID = -1;
-            public static final int NEO_ID = -1;
+            public static final int ELEVATOR_NEO_ID = 57;
+            public static final int WRIST_NEO_ID = 52;
         }
 
         /**
          * Intake and indexer motor constants
          */
         public static final class Intake {
-            public static final int INTAKE_MOTOR_ID = -1;
+            public static final int INTAKE_MOTOR_ID = 14;
             public static final int INDEXER_MOTOR_ID = -1;
         }
 
@@ -68,8 +68,8 @@ public final class Constants {
          * Climber motor constants
          */
         public static final class Climber {
-            public static final int LEFT_MOTOR_ID = -1;
-            public static final int RIGHT_MOTOR_ID = -1;
+            public static final int LEFT_MOTOR_ID = 60;
+            public static final int RIGHT_MOTOR_ID = 48;
         }
     }
 
