@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot.RobotRunType;
@@ -85,11 +86,15 @@ public class RobotContainer {
     private void configureButtonBindings() { /* Driver Buttons */
         /* Driver Buttons */
         driver.y().onTrue(new InstantCommand(() -> s_Swerve.resetFieldRelativeOffset()));
-        driver.a().whileTrue(new InstantCommand(() -> {
+        driver.a().whileTrue(new StartEndCommand(() -> {
             intake.setIntakeMotor(SmartDashboard.getNumber("Intake Power", 0));
+        }, () -> {
+            intake.setIntakeMotor(0.0);
         }, intake));
-        driver.b().whileTrue(new InstantCommand(() -> {
+        driver.b().whileTrue(new StartEndCommand(() -> {
             intake.setIntakeMotor(-SmartDashboard.getNumber("Intake Power", 0));
+        }, () -> {
+            intake.setIntakeMotor(0.0);
         }, intake));
     }
 
