@@ -61,7 +61,7 @@ public final class Constants {
          */
         public static final class Intake {
             public static final int INTAKE_MOTOR_ID = 14;
-            public static final int INDEXER_MOTOR_ID = -1;
+            public static final int INDEXER_MOTOR_ID = 32;
         }
 
         /**
@@ -277,14 +277,14 @@ public final class Constants {
      * Climber constants
      */
     public static final class ClimberConstants {
-        public static final double CLIMBER_KP = 0;
-        public static final double CLIMBER_KI = 0;
-        public static final double CLIMBER_KD = 0;
+        public static final double CLIMBER_KP = 0.1;
+        public static final double CLIMBER_KI = 0.1;
+        public static final double CLIMBER_KD = 0.1;
         public static final double CLIMBER_MAX_VELOCITY = 0;
         public static final double CLIMBER_MAX_ACCELERATION = 0;
-        public static final double CLIMBER_KS = 0;
-        public static final double CLIMBER_KG = 0;
-        public static final double CLIMBER_KV = 0;
+        public static final double CLIMBER_KS = 0.1;
+        public static final double CLIMBER_KG = 0.1;
+        public static final double CLIMBER_KV = 0.1;
 
         public static final double CLIMBING_DISTANCE = Units.inchesToMeters(15);
         public static final double MAX_CLIMBING_DISTANCE = Units.inchesToMeters(21);

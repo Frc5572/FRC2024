@@ -25,7 +25,7 @@ public class Climber extends SubsystemBase {
 
     private ElevatorFeedforward climberFeedforward =
         new ElevatorFeedforward(Constants.ClimberConstants.CLIMBER_KS,
-            Constants.ClimberConstants.CLIMBER_KG, Constants.ClimberConstants.CLIMBER_KV);
+            Constants.ClimberConstants.CLIMBER_KG, Constants.ClimberConstants.CLIMBER_KV, 0.1);
 
     public Climber(ClimberIO io) {
         this.io = io;

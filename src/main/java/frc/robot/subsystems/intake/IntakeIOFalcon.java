@@ -2,6 +2,7 @@ package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants;
 
@@ -12,18 +13,19 @@ public class IntakeIOFalcon implements IntakeIO {
 
     private final TalonFX intakeMotor =
         new TalonFX(Constants.Motors.Intake.INTAKE_MOTOR_ID, "canivore");
-    private final TalonFX indexerMotor =
-        new TalonFX(Constants.Motors.Intake.INDEXER_MOTOR_ID, "canivore");
+    private final TalonFX indexerMotor = new TalonFX(Constants.Motors.Intake.INDEXER_MOTOR_ID);
 
     private final DutyCycleOut intakeDutyCycleOut = new DutyCycleOut(0);
     private final DutyCycleOut indexerDutyCycleOut = new DutyCycleOut(0);
-    private final DigitalInput beamBrake = new DigitalInput(9);
+    private final DigitalInput beamBrake = new DigitalInput(1);
 
     /**
      * Intake IO Layer with real motors and sensors
      */
     public IntakeIOFalcon() {
         intakeMotor.setInverted(Constants.IntakeConstants.INTAKE_MOTOR_INVERTED);
+        intakeMotor.setNeutralMode(NeutralModeValue.Coast);
+        indexerMotor.setInverted(true);
     }
 
     @Override
@@ -44,8 +46,8 @@ public class IntakeIOFalcon implements IntakeIO {
         intakeMotor.setControl(intakeDutyCycleOut.withOutput(percent));
     }
 
-    // @Override
-    // public void setIndexerMotorPercentage(double percent) {
-    // indexerMotor.setControl(indexerDutyCycleOut.withOutput(percent));
-    // }
+    @Override
+    public void setIndexerMotorPercentage(double percent) {
+        indexerMotor.setControl(indexerDutyCycleOut.withOutput(percent));
+    }
 }
