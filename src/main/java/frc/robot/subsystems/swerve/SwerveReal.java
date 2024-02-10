@@ -1,6 +1,7 @@
 package frc.robot.subsystems.swerve;
 
 import java.util.List;
+import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -49,9 +50,10 @@ public class SwerveReal implements SwerveIO {
         inputs.estimatedRobotPose3dTimestampSeconds = new double[cameras.length];
         inputs.estimatedRobotPose3dTargets = new PhotonTrackedTarget[cameras.length];
         for (int i = 0; i < inputs.numCameras; i++) {
-            if (cameras[i].getEstimatedGlobalPose(previousPose).isPresent()) {
-                EstimatedRobotPose robotPose =
-                    cameras[i].getEstimatedGlobalPose(previousPose).get();
+            Optional<EstimatedRobotPose> optionalRobotPose =
+                cameras[i].getEstimatedGlobalPose(previousPose);
+            if (optionalRobotPose.isPresent()) {
+                EstimatedRobotPose robotPose = optionalRobotPose.get();
                 inputs.latencies[i] = cameras[i].latency() < 0.6;
                 inputs.results[i] = cameras[i].photonCamera.getLatestResult();
                 inputs.seesTarget[i] = cameras[i].seesTarget();
