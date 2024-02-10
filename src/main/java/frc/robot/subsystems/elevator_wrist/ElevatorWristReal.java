@@ -49,7 +49,7 @@ public class ElevatorWristReal implements ElevatorWristIO {
     public void updateInputs(ElevatorWristInputs inputs) {
         inputs.topLimitSwitch = topLimitSwitch.get();
         inputs.bottomLimitSwitch = bottomLimitSwitch.get();
-        inputs.elevatorAbsoluteEncRawValue = elevatorAbsoluteEnc.getPosition();
+        inputs.elevatorRelativeEncRawValue = elevatorRelativeEnc.getPosition();
         inputs.wristAbsoluteEncRawValue = wristAbsoluteEnc.getPosition();
         inputs.elevatorMotorSupplyVoltage = elevatorMotor.getBusVoltage();
         inputs.elevatorMotorMotorVoltage = elevatorMotor.getOutputCurrent();
