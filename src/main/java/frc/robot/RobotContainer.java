@@ -69,6 +69,7 @@ public class RobotContainer {
                 break;
             case kSimulation:
                 // s_Swerve = new Swerve(new SwerveIO() {});
+                s_Swerve = new Swerve(new SwerveReal());
                 break;
             default:
                 s_Swerve = new Swerve(new SwerveIO() {});
