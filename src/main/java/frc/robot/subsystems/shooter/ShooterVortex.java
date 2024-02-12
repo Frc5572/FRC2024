@@ -23,10 +23,10 @@ public class ShooterVortex implements ShooterIO {
     public ShooterVortex() {
         topShooterMotor.setIdleMode(IdleMode.kCoast);
         bottomShooterMotor.setIdleMode(IdleMode.kCoast);
-        topEncoder.setPositionConversionFactor(1.9375);
-        topEncoder.setVelocityConversionFactor(1.9375);
-        bottomEncoder.setPositionConversionFactor(1.9375);
-        bottomEncoder.setVelocityConversionFactor(1.9375);
+        topEncoder.setPositionConversionFactor(31.0 / 16.0);
+        topEncoder.setVelocityConversionFactor(31.0 / 16.0);
+        bottomEncoder.setPositionConversionFactor(31.0 / 16.0);
+        bottomEncoder.setVelocityConversionFactor(31.0 / 16.0);
         bottomShooterMotor.burnFlash();
         topShooterMotor.burnFlash();
     }
@@ -50,7 +50,6 @@ public class ShooterVortex implements ShooterIO {
         inputs.bottomShooterAmps = topShooterMotor.getOutputCurrent();
         inputs.topShooterPosition = topEncoder.getPosition();
         inputs.bottomShooterPosition = bottomEncoder.getPosition();
-        inputs.bottomShooterVelocityRotPerMin = bottomEncoder.getVelocity();
         inputs.topShooterPower = topShooterMotor.get();
         inputs.bottomShooterPower = bottomShooterMotor.get();
     }
