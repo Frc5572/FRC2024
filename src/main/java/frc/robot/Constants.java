@@ -44,8 +44,8 @@ public final class Constants {
          * Shooter Id's
          */
         public static final class Shooter {
-            public static final int SHOOTER_TOP_ID = 0;
-            public static final int SHOOTER_BOTTOM_ID = 0;
+            public static final int SHOOTER_TOP_ID = 13;
+            public static final int SHOOTER_BOTTOM_ID = 15;
         }
 
         /**
@@ -61,7 +61,7 @@ public final class Constants {
          */
         public static final class Intake {
             public static final int INTAKE_MOTOR_ID = 14;
-            public static final int INDEXER_MOTOR_ID = -1;
+            public static final int INDEXER_MOTOR_ID = 32;
         }
 
         /**
@@ -277,14 +277,14 @@ public final class Constants {
      * Climber constants
      */
     public static final class ClimberConstants {
-        public static final double CLIMBER_KP = 0;
-        public static final double CLIMBER_KI = 0;
-        public static final double CLIMBER_KD = 0;
+        public static final double CLIMBER_KP = 0.1;
+        public static final double CLIMBER_KI = 0.1;
+        public static final double CLIMBER_KD = 0.1;
         public static final double CLIMBER_MAX_VELOCITY = 0;
         public static final double CLIMBER_MAX_ACCELERATION = 0;
-        public static final double CLIMBER_KS = 0;
-        public static final double CLIMBER_KG = 0;
-        public static final double CLIMBER_KV = 0;
+        public static final double CLIMBER_KS = 0.1;
+        public static final double CLIMBER_KG = 0.1;
+        public static final double CLIMBER_KV = 0.1;
 
         public static final double CLIMBING_DISTANCE = Units.inchesToMeters(15);
         public static final double MAX_CLIMBING_DISTANCE = Units.inchesToMeters(21);
@@ -324,8 +324,8 @@ public final class Constants {
 
             public static final int ELEVATOR_ENC_CHANNEL_A = -1;
             public static final int ELEVATOR_ENC_CHANNEL_B = -1;
-            public static final int TOP_LIMIT_SWITCH_PORT = -1;
-            public static final int BOTTOM_LIMIT_SWITCH_PORT = -1;
+            public static final int TOP_LIMIT_SWITCH_PORT = 1;
+            public static final int BOTTOM_LIMIT_SWITCH_PORT = 2;
         }
 
         /**
@@ -407,9 +407,10 @@ public final class Constants {
         public static final double INTAKE_MOTOR_FORWARD = 0;
         public static final double INTAKE_MOTOR_BACKWARD = -0;
         public static final double INTAKE_MOTOR_STOP = 0;
-        public static final double INDEX_MOTOR_FORWARD = 0;
+        public static final double INDEX_MOTOR_FORWARD = .2;
         public static final double INDEX_MOTOR_BACKWARD = -0;
         public static final double INDEX_MOTOR_STOP = 0;
 
+        public static final boolean INTAKE_MOTOR_INVERTED = true;
     }
 }

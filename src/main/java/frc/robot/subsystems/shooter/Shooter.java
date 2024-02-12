@@ -20,7 +20,6 @@ public class Shooter extends SubsystemBase {
         new SimpleMotorFeedforward(Constants.ShooterConstants.KS, Constants.ShooterConstants.KV);
     private ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
-
     public Shooter(ShooterIO io) {
         this.io = io;
     }
@@ -66,8 +65,9 @@ public class Shooter extends SubsystemBase {
     public Command shootWithDistance(DoubleSupplier distance) {
         return Commands.run(() -> {
             double velocity = distanceToVelocity(distance.getAsDouble());
+            // double velocity = 1000 / 60; // distanceToVelocity(distance.getAsDouble());
             setTopMotor(pid.calculate(getTopVelocity()) + shooterFeed.calculate(velocity));
-            setBottomMotor(pid.calculate(getTopVelocity()) + shooterFeed.calculate(velocity));
+            setBottomMotor(pid.calculate(getBottomVelocity()) + shooterFeed.calculate(velocity));
         }, this);
     }
 }
