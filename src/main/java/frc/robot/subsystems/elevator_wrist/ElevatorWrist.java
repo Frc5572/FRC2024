@@ -125,7 +125,7 @@ public class ElevatorWrist implements Subsystem {
      * @return Height of elevator in meters
      */
     public double elevatorDistanceTraveled() {
-        return inputs.elevatorAbsoluteEncRawValue
+        return inputs.elevatorRelativeEncRawValue
             * Constants.ElevatorWristConstants.SetPoints.LINEAR_DISTANCE;
     }
 
