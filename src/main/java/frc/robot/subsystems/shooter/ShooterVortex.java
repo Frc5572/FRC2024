@@ -1,5 +1,6 @@
 package frc.robot.subsystems.shooter;
 
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
@@ -15,8 +16,18 @@ public class ShooterVortex implements ShooterIO {
         new CANSparkFlex(Constants.Motors.Shooter.SHOOTER_BOTTOM_ID, MotorType.kBrushless);
     private RelativeEncoder topEncoder = topShooterMotor.getEncoder();
     private RelativeEncoder bottomEncoder = bottomShooterMotor.getEncoder();
+    // gear ratio 31:16
 
-    public ShooterVortex() {}
+    public ShooterVortex() {
+        topShooterMotor.setIdleMode(IdleMode.kCoast);
+        bottomShooterMotor.setIdleMode(IdleMode.kCoast);
+        topEncoder.setPositionConversionFactor(1.9375);
+        topEncoder.setVelocityConversionFactor(1.9375);
+        bottomEncoder.setPositionConversionFactor(1.9375);
+        bottomEncoder.setVelocityConversionFactor(1.9375);
+        bottomShooterMotor.burnFlash();
+        topShooterMotor.burnFlash();
+    }
 
     public void setTopMotor(double power) {
         topShooterMotor.setVoltage(power);
@@ -31,10 +42,14 @@ public class ShooterVortex implements ShooterIO {
     public void updateInputs(ShooterIOInputsAutoLogged inputs) {
         inputs.topShooterVelocityRotPerMin = topEncoder.getVelocity();
         inputs.bottomShooterVelocityRotPerMin = bottomEncoder.getVelocity();
+        inputs.topShooterPosition = topEncoder.getPosition();
+        inputs.bottomShooterPosition = bottomEncoder.getPosition();
+        inputs.bottomShooterVelocityRotPerMin = bottomEncoder.getVelocity();
         inputs.topShooterSupplyVoltage = topShooterMotor.getBusVoltage();
         inputs.bottomShooterSupplyVoltage = topShooterMotor.getBusVoltage();
         inputs.topShooterAmps = topShooterMotor.getOutputCurrent();
         inputs.bottomShooterAmps = topShooterMotor.getOutputCurrent();
-
+        inputs.topShooterPower = topShooterMotor.get();
+        inputs.bottomShooterPower = bottomShooterMotor.get();
     }
 }

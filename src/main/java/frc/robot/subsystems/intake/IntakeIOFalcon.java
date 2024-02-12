@@ -17,7 +17,7 @@ public class IntakeIOFalcon implements IntakeIO {
 
     private final DutyCycleOut intakeDutyCycleOut = new DutyCycleOut(0);
     private final DutyCycleOut indexerDutyCycleOut = new DutyCycleOut(0);
-    private final DigitalInput beamBrake = new DigitalInput(1);
+    private final DigitalInput beamBrake = new DigitalInput(8);
 
     /**
      * Intake IO Layer with real motors and sensors

@@ -12,10 +12,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Robot.RobotRunType;
-import frc.robot.commands.TeleopSwerve;
+import frc.robot.commands.CommandFactory;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOFalcon;
+import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterVortex;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.SwerveIO;
 import frc.robot.subsystems.swerve.SwerveReal;
@@ -30,13 +33,15 @@ public class RobotContainer {
     /* Controllers */
     private final CommandXboxController driver = new CommandXboxController(Constants.DRIVER_ID);
     private final CommandXboxController operator = new CommandXboxController(Constants.OPERATOR_ID);
+    private final CommandXboxController testControler = new CommandXboxController(4);
+
 
     // Initialize AutoChooser Sendable
     private final SendableChooser<String> autoChooser = new SendableChooser<>();
 
     /* Subsystems */
     private Swerve s_Swerve;
-    // private Shooter shooter;
+    private Shooter shooter;
     private Intake intake;
     // private ElevatorWrist elevatorWrist;
     // public Climber climber;
@@ -54,8 +59,8 @@ public class RobotContainer {
 
         switch (runtimeType) {
             case kReal:
-                s_Swerve = new Swerve(new SwerveReal());
-                // shooter = new Shooter(new ShooterVortex());
+                // s_Swerve = new Swerve(new SwerveReal());
+                shooter = new Shooter(new ShooterVortex());
                 intake = new Intake(new IntakeIOFalcon());
                 // elevatorWrist = new ElevatorWrist(new ElevatorWristReal());
                 // climber = new Climber(new ClimberNEO());
@@ -71,12 +76,13 @@ public class RobotContainer {
                 // elevatorWrist = new ElevatorWrist(new ElevatorWristIO() {});
                 // climber = new Climber(new ClimberIO() {});
         }
-        s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, driver,
-            Constants.Swerve.isFieldRelative, Constants.Swerve.isOpenLoop));
+        // s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, driver,
+        // Constants.Swerve.isFieldRelative, Constants.Swerve.isOpenLoop));
         // autoChooser.addOption(resnickAuto, new ResnickAuto(s_Swerve));
         SmartDashboard.putData("Choose Auto: ", autoChooser);
         // Configure the button bindings
         configureButtonBindings();
+        configureSysIDButtons();
     }
 
     /**
@@ -89,9 +95,11 @@ public class RobotContainer {
         /* Driver Buttons */
         driver.y().onTrue(new InstantCommand(() -> s_Swerve.resetFieldRelativeOffset()));
         // intake forward
-        driver.a().whileTrue(intake.runIntakeMotor(.25));
+        driver.a().whileTrue(intake.runIntakeMotor(1, .25));
         // intake backward
-        driver.b().whileTrue(intake.runIntakeMotor(-.5));
+        driver.b().whileTrue(intake.runIntakeMotor(-1, -.25));
+
+        driver.x().whileTrue(CommandFactory.shootSpeaker(shooter, intake));
         // climber forward
         // driver.start().whileTrue(new StartEndCommand(() -> {
         // climber.setLeftPower(SmartDashboard.getNumber("Left Climber Power", 0));
@@ -122,6 +130,8 @@ public class RobotContainer {
         // elevatorWrist.setElevatorPower(0.0);
         // }, climber));
 
+
+
     }
 
     /**
@@ -145,5 +155,16 @@ public class RobotContainer {
                 autocommand = new WaitCommand(1.0);
         }
         return autocommand;
+    }
+
+    private void configureSysIDButtons() {
+        testControler.a().and(testControler.leftBumper())
+            .whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        testControler.b().and(testControler.leftBumper())
+            .whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        testControler.x().and(testControler.leftBumper())
+            .whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        testControler.y().and(testControler.leftBumper())
+            .whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     }
 }

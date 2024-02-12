@@ -44,10 +44,10 @@ public class Intake extends SubsystemBase {
      *
      * @return {@link Command} to run the intake and indexer motors
      */
-    public Command runIntakeMotor(double speed) {
+    public Command runIntakeMotor(double intakeSpeed, double indexerSpeed) {
         return Commands.startEnd(() -> {
-            // setIntakeMotor(speed);
-            setIndexerMotor(speed);
+            // setIntakeMotor(intakeSpeed);
+            setIndexerMotor(indexerSpeed);
         }, () -> {
             // setIntakeMotor(0);
             setIndexerMotor(0);

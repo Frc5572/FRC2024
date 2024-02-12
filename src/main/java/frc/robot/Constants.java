@@ -44,8 +44,8 @@ public final class Constants {
          * Shooter Id's
          */
         public static final class Shooter {
-            public static final int SHOOTER_TOP_ID = 0;
-            public static final int SHOOTER_BOTTOM_ID = 0;
+            public static final int SHOOTER_TOP_ID = 13;
+            public static final int SHOOTER_BOTTOM_ID = 15;
         }
 
         /**
@@ -407,7 +407,7 @@ public final class Constants {
         public static final double INTAKE_MOTOR_FORWARD = 0;
         public static final double INTAKE_MOTOR_BACKWARD = -0;
         public static final double INTAKE_MOTOR_STOP = 0;
-        public static final double INDEX_MOTOR_FORWARD = 0;
+        public static final double INDEX_MOTOR_FORWARD = .2;
         public static final double INDEX_MOTOR_BACKWARD = -0;
         public static final double INDEX_MOTOR_STOP = 0;
         public static final boolean INTAKE_MOTOR_INVERTED = true;
