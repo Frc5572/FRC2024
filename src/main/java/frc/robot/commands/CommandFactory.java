@@ -30,7 +30,7 @@ public class CommandFactory {
             elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
                 Constants.ElevatorWristConstants.SetPoints.HOME_ANGLE);
         Command runIntakeIndexer =
-            intake.runIntakeMotor(Constants.IntakeConstants.INDEX_MOTOR_FORWARD);
+            intake.runIntakeMotor(0, Constants.IntakeConstants.INDEX_MOTOR_FORWARD);
         return moveElevatorWrist.andThen(runIntakeIndexer).unless(sensor);
     }
 

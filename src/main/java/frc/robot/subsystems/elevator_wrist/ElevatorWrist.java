@@ -135,4 +135,12 @@ public class ElevatorWrist implements Subsystem {
         return elevatorPIDController.atGoal() && wristPIDController.atGoal();
     }
 
+    public void setWristPower(double power) {
+        io.setWristPower(power);
+    }
+
+    public void setElevatorPower(double power) {
+        io.setElevatorPower(power);
+    }
+
 }
