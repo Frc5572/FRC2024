@@ -25,7 +25,7 @@ public class Climber extends SubsystemBase {
 
     private ElevatorFeedforward climberFeedforward =
         new ElevatorFeedforward(Constants.ClimberConstants.CLIMBER_KS,
-            Constants.ClimberConstants.CLIMBER_KG, Constants.ClimberConstants.CLIMBER_KV);
+            Constants.ClimberConstants.CLIMBER_KG, Constants.ClimberConstants.CLIMBER_KV, 0.1);
 
     public Climber(ClimberIO io) {
         this.io = io;
@@ -67,6 +67,26 @@ public class Climber extends SubsystemBase {
         Logger.recordOutput("/Climber/Right/Assigned Voltage", power);
         io.setRightClimberVoltage(power);
 
+    }
+
+    /**
+     * Sets voltage for right side climber system
+     *
+     * @param power Sets power for climbing motors.
+     */
+    public void setLeftPower(double power) {
+        // Logger.recordOutput("/Climber/Right/Assigned Voltage", power);
+        io.setLeftPower(power);
+    }
+
+    /**
+     * Sets voltage for right side climber system
+     *
+     * @param power Sets power for climbing motors.
+     */
+    public void setRightPower(double power) {
+        // Logger.recordOutput("/Climber/Right/Assigned Voltage", power);
+        io.setRightPower(power);
     }
 
     /**
