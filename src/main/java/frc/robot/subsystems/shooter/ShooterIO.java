@@ -18,6 +18,10 @@ public interface ShooterIO {
         public double bottomShooterSupplyVoltage;
         public double topShooterAmps;
         public double bottomShooterAmps;
+        public double topShooterPosition;
+        public double bottomShooterPosition;
+        public double topShooterPower;
+        public double bottomShooterPower;
     }
 
     public default void setTopMotor(double power) {}
