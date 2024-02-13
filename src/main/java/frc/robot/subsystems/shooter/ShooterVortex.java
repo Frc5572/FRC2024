@@ -21,6 +21,8 @@ public class ShooterVortex implements ShooterIO {
     public ShooterVortex() {
         topShooterMotor.setIdleMode(IdleMode.kCoast);
         bottomShooterMotor.setIdleMode(IdleMode.kCoast);
+        topShooterMotor.setInverted(false);
+        bottomShooterMotor.setInverted(false);
         topEncoder.setPositionConversionFactor(1.9375);
         topEncoder.setVelocityConversionFactor(1.9375);
         bottomEncoder.setPositionConversionFactor(1.9375);

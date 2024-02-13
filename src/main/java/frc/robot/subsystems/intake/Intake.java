@@ -46,10 +46,10 @@ public class Intake extends SubsystemBase {
      */
     public Command runIntakeMotor(double intakeSpeed, double indexerSpeed) {
         return Commands.startEnd(() -> {
-            // setIntakeMotor(intakeSpeed);
+            setIntakeMotor(intakeSpeed);
             setIndexerMotor(indexerSpeed);
         }, () -> {
-            // setIntakeMotor(0);
+            setIntakeMotor(0);
             setIndexerMotor(0);
         }, this).until(() -> !getSensorStatus()).unless(() -> !getSensorStatus());
     }

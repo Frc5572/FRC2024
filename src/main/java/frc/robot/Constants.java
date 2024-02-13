@@ -61,6 +61,7 @@ public final class Constants {
          */
         public static final class Intake {
             public static final int INTAKE_MOTOR_ID = 14;
+            public static final int INTAKE_TWO_MOTOR_ID = 14;
             public static final int INDEXER_MOTOR_ID = 32;
         }
 
