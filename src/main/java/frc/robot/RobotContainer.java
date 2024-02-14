@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Robot.RobotRunType;
 import frc.robot.commands.CommandFactory;
 import frc.robot.subsystems.intake.Intake;
@@ -82,7 +81,6 @@ public class RobotContainer {
         SmartDashboard.putData("Choose Auto: ", autoChooser);
         // Configure the button bindings
         configureButtonBindings();
-        configureSysIDButtons();
     }
 
     /**
@@ -157,14 +155,4 @@ public class RobotContainer {
         return autocommand;
     }
 
-    private void configureSysIDButtons() {
-        testControler.a().and(testControler.leftBumper())
-            .whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        testControler.b().and(testControler.leftBumper())
-            .whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        testControler.x().and(testControler.leftBumper())
-            .whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        testControler.y().and(testControler.leftBumper())
-            .whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-    }
 }
