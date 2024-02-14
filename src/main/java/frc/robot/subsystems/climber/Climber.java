@@ -36,15 +36,6 @@ public class Climber extends SubsystemBase {
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs("Climber", inputs);
-        double leftClimberPIDValue =
-            leftClimberPIDController.calculate(leftClimberDistanceTraveled());
-        double rightClimberPIDValue =
-            rightClimberPIDController.calculate(rightClimberDistanceTraveled());
-        double climberFeedForwardValue =
-            climberFeedforward.calculate(0, 0, leftClimberPIDController.getPeriod());
-        io.setLeftClimberVoltage(climberFeedForwardValue + leftClimberPIDValue);
-        io.setRightClimberVoltage(climberFeedForwardValue + rightClimberPIDValue);
-        Logger.recordOutput("/Climber/Feedforward", climberFeedForwardValue);
     }
 
     /**
@@ -102,12 +93,14 @@ public class Climber extends SubsystemBase {
             leftClimberPIDController.setSetpoint(distance);
             rightClimberPIDController.setSetpoint(distance);
         }).andThen(Commands.run(() -> {
-            leftClimberPIDController.calculate(leftClimberDistanceTraveled());
-            rightClimberPIDController.calculate(leftClimberDistanceTraveled());
             double leftClimberPIDValue =
                 leftClimberPIDController.calculate(leftClimberDistanceTraveled());
             double rightClimberPIDValue =
                 rightClimberPIDController.calculate(rightClimberDistanceTraveled());
+            double climberFeedForwardValue = climberFeedforward.calculate(0, 0);
+            io.setLeftClimberVoltage(climberFeedForwardValue + leftClimberPIDValue);
+            io.setRightClimberVoltage(climberFeedForwardValue + rightClimberPIDValue);
+            Logger.recordOutput("/Climber/Feedforward", climberFeedForwardValue);
             Logger.recordOutput("/Climber/Left/PID Voltage", leftClimberPIDValue);
             Logger.recordOutput("/Climber/Right/PID Voltage", rightClimberPIDValue);
         }).until(end));

@@ -61,7 +61,6 @@ public final class Constants {
          */
         public static final class Intake {
             public static final int INTAKE_MOTOR_ID = 14;
-            public static final int INTAKE_TWO_MOTOR_ID = 14;
             public static final int INDEXER_MOTOR_ID = 32;
         }
 
@@ -152,8 +151,8 @@ public final class Constants {
         public static final boolean isOpenLoop = false;
 
         /* Drivetrain Constants */
-        public static final double trackWidth = Units.inchesToMeters(22.5);
-        public static final double wheelBase = Units.inchesToMeters(29.0);
+        public static final double trackWidth = Units.inchesToMeters(23.75);
+        public static final double wheelBase = Units.inchesToMeters(17.75);
         public static final double wheelDiameter = Units.inchesToMeters(4.0);
         public static final double wheelCircumference = wheelDiameter * Math.PI;
         public static final Translation2d MOD0_MODOFFSET =

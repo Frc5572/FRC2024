@@ -16,8 +16,11 @@ public class ShooterVortex implements ShooterIO {
         new CANSparkFlex(Constants.Motors.Shooter.SHOOTER_BOTTOM_ID, MotorType.kBrushless);
     private RelativeEncoder topEncoder = topShooterMotor.getEncoder();
     private RelativeEncoder bottomEncoder = bottomShooterMotor.getEncoder();
-    // gear ratio 31:16
 
+    // gear ratio 31:16
+    /**
+     * Constructor Shooter Subsystem - sets motor and encoder preferences
+     */
     public ShooterVortex() {
         topShooterMotor.setIdleMode(IdleMode.kCoast);
         bottomShooterMotor.setIdleMode(IdleMode.kCoast);
@@ -51,6 +54,8 @@ public class ShooterVortex implements ShooterIO {
         inputs.bottomShooterSupplyVoltage = topShooterMotor.getBusVoltage();
         inputs.topShooterAmps = topShooterMotor.getOutputCurrent();
         inputs.bottomShooterAmps = topShooterMotor.getOutputCurrent();
+        inputs.topShooterPosition = topEncoder.getPosition();
+        inputs.bottomShooterPosition = bottomEncoder.getPosition();
         inputs.topShooterPower = topShooterMotor.get();
         inputs.bottomShooterPower = bottomShooterMotor.get();
     }

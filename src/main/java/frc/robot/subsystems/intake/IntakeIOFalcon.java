@@ -16,7 +16,7 @@ public class IntakeIOFalcon implements IntakeIO {
     // private final TalonFX intakeMotor =
     // new TalonFX(Constants.Motors.Intake.INTAKE_MOTOR_ID, "canivore");
     private final CANSparkMax intakeMotor =
-        new CANSparkMax(Constants.Motors.Intake.INTAKE_TWO_MOTOR_ID, MotorType.kBrushless);
+        new CANSparkMax(Constants.Motors.Intake.INTAKE_MOTOR_ID, MotorType.kBrushless);
     private final TalonFX indexerMotor = new TalonFX(Constants.Motors.Intake.INDEXER_MOTOR_ID);
 
     private final DutyCycleOut intakeDutyCycleOut = new DutyCycleOut(0);
