@@ -35,8 +35,6 @@ public class CommandFactory {
      * Wrist follows the speaker until it is met, then it shoots
      *
      * @param shooter Shooter subsystem
-     * @param elevatorWrist Elevator and Wrist subsystem
-     * @param swerve Swerve subsystem
      * @param intake Intake subsystem
      * @return Returns a command
      */

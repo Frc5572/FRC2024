@@ -131,14 +131,28 @@ public class ElevatorWrist implements Subsystem {
             * Constants.ElevatorWristConstants.SetPoints.LINEAR_DISTANCE;
     }
 
+    /**
+     * 
+     * @return boolean representing if the elevator and wrist PID controllers are at their goals
+     */
     public Boolean atGoal() {
         return elevatorPIDController.atGoal() && wristPIDController.atGoal();
     }
 
+    /**
+     * Set power output for wrist
+     * 
+     * @param power desired power output percentage
+     */
     public void setWristPower(double power) {
         io.setWristPower(power);
     }
 
+    /**
+     * Set power output for elevator
+     * 
+     * @param power desired power output percentage
+     */
     public void setElevatorPower(double power) {
         io.setElevatorPower(power);
     }
