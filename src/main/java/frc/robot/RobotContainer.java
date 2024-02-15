@@ -62,6 +62,7 @@ public class RobotContainer {
 
         switch (runtimeType) {
             case kReal:
+                s_Swerve = new Swerve(new SwerveReal(), cameras);
                 shooter = new Shooter(new ShooterVortex());
                 intake = new Intake(new IntakeIOFalcon());
                 cameras =
@@ -85,8 +86,6 @@ public class RobotContainer {
                             new PhotonReal(
                                 Constants.CameraConstants.BackRightFacingCamera.CAMERA_NAME),
                             Constants.CameraConstants.BackRightFacingCamera.KCAMERA_TO_ROBOT)};
-
-                s_Swerve = new Swerve(new SwerveIO() {}, cameras);
                 // elevatorWrist = new ElevatorWrist(new ElevatorWristReal());
                 // climber = new Climber(new ClimberNEO());
                 break;
