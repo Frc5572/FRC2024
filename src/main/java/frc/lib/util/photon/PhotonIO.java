@@ -28,6 +28,9 @@ public abstract class PhotonIO {
         public double[] distCoeffs;
         public String name;
 
+        /**
+         * Default Constructor.
+         */
         public PhotonInputs() {
             rawBytes = new byte[0];
             result = null;

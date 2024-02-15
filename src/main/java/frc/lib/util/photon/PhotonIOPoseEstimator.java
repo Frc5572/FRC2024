@@ -638,8 +638,9 @@ public class PhotonIOPoseEstimator {
         Translation3d transform = new Translation3d();
         Rotation3d rotation = new Rotation3d();
 
-        if (estimatedRobotPoses.isEmpty())
+        if (estimatedRobotPoses.isEmpty()) {
             return Optional.empty();
+        }
 
         for (Pair<PhotonTrackedTarget, Pose3d> pair : estimatedRobotPoses) {
             // Total ambiguity is non-zero confirmed because if it was zero, that pose was
