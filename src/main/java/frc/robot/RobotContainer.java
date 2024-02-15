@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot.RobotRunType;
 import frc.robot.commands.CommandFactory;
+import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOFalcon;
 import frc.robot.subsystems.shooter.Shooter;
@@ -32,7 +33,6 @@ public class RobotContainer {
     /* Controllers */
     private final CommandXboxController driver = new CommandXboxController(Constants.DRIVER_ID);
     private final CommandXboxController operator = new CommandXboxController(Constants.OPERATOR_ID);
-    private final CommandXboxController testControler = new CommandXboxController(4);
 
 
     // Initialize AutoChooser Sendable
@@ -75,8 +75,8 @@ public class RobotContainer {
                 // elevatorWrist = new ElevatorWrist(new ElevatorWristIO() {});
                 // climber = new Climber(new ClimberIO() {});
         }
-        // s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, driver,
-        // Constants.Swerve.isFieldRelative, Constants.Swerve.isOpenLoop));
+        s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, driver,
+            Constants.Swerve.isFieldRelative, Constants.Swerve.isOpenLoop));
         // autoChooser.addOption(resnickAuto, new ResnickAuto(s_Swerve));
         SmartDashboard.putData("Choose Auto: ", autoChooser);
         // Configure the button bindings

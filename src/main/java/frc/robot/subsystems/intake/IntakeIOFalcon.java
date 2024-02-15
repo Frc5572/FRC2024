@@ -38,10 +38,12 @@ public class IntakeIOFalcon implements IntakeIO {
         // inputs.intakeMotorVoltage = intakeMotor.getMotorVoltage().getValueAsDouble();
         inputs.intakeAmps = intakeMotor.getOutputCurrent();
         inputs.intakeRPM = intakeMotor.getEncoder().getVelocity();
+        inputs.intakeTemp = intakeMotor.getMotorTemperature();
         inputs.indexerSupplyVoltage = indexerMotor.getSupplyVoltage().getValueAsDouble();
         inputs.indexerMotorVoltage = indexerMotor.getMotorVoltage().getValueAsDouble();
         inputs.indexerAmps = indexerMotor.getSupplyCurrent().getValueAsDouble();
         inputs.indexerRPM = indexerMotor.getVelocity().getValueAsDouble();
+        inputs.indexerTemp = indexerMotor.getDeviceTemp().getValueAsDouble();
         inputs.sensorStatus = beamBrake.get(); // true == no game piece
     }
 

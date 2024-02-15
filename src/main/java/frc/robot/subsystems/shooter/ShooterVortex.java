@@ -58,5 +58,7 @@ public class ShooterVortex implements ShooterIO {
         inputs.bottomShooterPosition = bottomEncoder.getPosition();
         inputs.topShooterPower = topShooterMotor.get();
         inputs.bottomShooterPower = bottomShooterMotor.get();
+        inputs.topShooterTemp = topShooterMotor.getMotorTemperature();
+        inputs.bottomShooterTemp = bottomShooterMotor.getMotorTemperature();
     }
 }
