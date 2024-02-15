@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot.RobotRunType;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOFalcon;
 import frc.robot.subsystems.shooter.Shooter;
@@ -41,7 +42,7 @@ public class RobotContainer {
     private Swerve s_Swerve;
     private Shooter shooter;
     private Intake intake;
-    // private ElevatorWrist elevatorWrist;
+    private ElevatorWrist elevatorWrist;
     // public Climber climber;
 
     /**
@@ -144,7 +145,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("Intake Command",
             CommandFactory.runIntake(intake, elevatorWrist));
         NamedCommands.registerCommand("Shoot Command",
-            CommandFactory.shootSpeaker(shooter, elevatorWrist, s_Swerve, intake).withTimeout(1));
+            CommandFactory.shootSpeaker(shooter, intake).withTimeout(1));
         NamedCommands.registerCommand("Run Shooter", runshooter);
         NamedCommands.registerCommand("Run Indexer", runIndexer.withTimeout(1));
 
