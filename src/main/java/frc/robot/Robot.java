@@ -61,6 +61,7 @@ public class Robot extends LoggedRobot {
             default:
                 Logger.recordMetadata("GitDirty", "Unknown");
                 break;
+
         }
 
 
@@ -153,6 +154,14 @@ public class Robot extends LoggedRobot {
     @Override
     public void teleopPeriodic() {
         // vision.update();
+        double Translation = -RobotContainer.driver.getRawAxis(1);
+        double Turn = RobotContainer.driver.getRawAxis(4);
+        double left = Translation + Turn;
+        double right = Translation - Turn;
+
+        // will need to write code to set motors to the left and right variables
+
+
     }
 
     @Override

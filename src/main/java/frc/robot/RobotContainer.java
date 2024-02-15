@@ -32,7 +32,8 @@ import frc.robot.subsystems.swerve.SwerveReal;
  */
 public class RobotContainer {
     /* Controllers */
-    private final CommandXboxController driver = new CommandXboxController(Constants.DRIVER_ID);
+    public static final CommandXboxController driver =
+        new CommandXboxController(Constants.DRIVER_ID);
     private final CommandXboxController operator = new CommandXboxController(Constants.OPERATOR_ID);
 
     // Initialize AutoChooser Sendable
