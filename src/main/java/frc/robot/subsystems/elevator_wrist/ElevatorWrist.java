@@ -132,7 +132,8 @@ public class ElevatorWrist implements Subsystem {
     }
 
     /**
-     * 
+     * Get if at elevator + wrist PID goal
+     *
      * @return boolean representing if the elevator and wrist PID controllers are at their goals
      */
     public Boolean atGoal() {
@@ -141,7 +142,7 @@ public class ElevatorWrist implements Subsystem {
 
     /**
      * Set power output for wrist
-     * 
+     *
      * @param power desired power output percentage
      */
     public void setWristPower(double power) {
@@ -150,7 +151,7 @@ public class ElevatorWrist implements Subsystem {
 
     /**
      * Set power output for elevator
-     * 
+     *
      * @param power desired power output percentage
      */
     public void setElevatorPower(double power) {
