@@ -12,8 +12,12 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.numbers.N5;
 
+/** PhotonVision Camera IO. */
 public abstract class PhotonIO {
 
+    /**
+     * Inputs from PhotonVision.
+     */
     public static class PhotonInputs implements LoggableInputs {
 
         public byte[] rawBytes;
@@ -53,18 +57,26 @@ public abstract class PhotonIO {
             this.distCoeffs = table.get("distCoeffs", distCoeffs);
         }
 
+        /**
+         * Camera Matrix from PhotonVision
+         */
         public Optional<Matrix<N3, N3>> getCameraMatrix() {
             if (cameraMatrix != null && cameraMatrix.length == 9) {
                 return Optional.of(MatBuilder.fill(Nat.N3(), Nat.N3(), cameraMatrix));
-            } else
+            } else {
                 return Optional.empty();
+            }
         }
 
+        /**
+         * Distortion Coefficients from PhotonVision
+         */
         public Optional<Matrix<N5, N1>> getDistCoeffs() {
             if (distCoeffs != null && distCoeffs.length == 5) {
                 return Optional.of(MatBuilder.fill(Nat.N5(), Nat.N1(), distCoeffs));
-            } else
+            } else {
                 return Optional.empty();
+            }
         }
 
     }

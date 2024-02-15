@@ -20,6 +20,7 @@
  *
  * Later modified by FRC Team 5572.
  */
+
 package frc.lib.util.photon;
 
 import java.util.ArrayList;
@@ -80,7 +81,7 @@ public class PhotonIOPoseEstimator {
      * @param strategy The strategy it should use to determine the best pose.
      * @param camera PhotonCamera
      * @param robotToCamera Transform3d from the center of the robot to the camera mount position
-     *        (ie, robot ➔ camera) in the <a href=
+     *        (ie, robot -> camera) in the <a href=
      *        "https://docs.wpilib.org/en/stable/docs/software/advanced-controls/geometry/coordinate-systems.html#robot-coordinate-system">Robot
      *        Coordinate System</a>.
      */
@@ -296,8 +297,9 @@ public class PhotonIOPoseEstimator {
      *         create the estimate.
      */
     public Optional<EstimatedRobotPose> update(PhotonPipelineResult cameraResult) {
-        if (camera == null)
+        if (camera == null) {
             return update(cameraResult, Optional.empty(), Optional.empty());
+        }
         return update(cameraResult, camera.getCameraMatrix(), camera.getDistCoeffs());
     }
 
@@ -345,9 +347,9 @@ public class PhotonIOPoseEstimator {
 
     private Optional<EstimatedRobotPose> update(PhotonPipelineResult cameraResult,
         Optional<Matrix<N3, N3>> cameraMatrix, Optional<Matrix<N5, N1>> distCoeffs,
-        PoseStrategy strat) {
+        PoseStrategy strategy) {
         Optional<EstimatedRobotPose> estimatedPose;
-        switch (strat) {
+        switch (strategy) {
             case LOWEST_AMBIGUITY:
                 estimatedPose = lowestAmbiguityStrategy(cameraResult);
                 break;
@@ -407,8 +409,9 @@ public class PhotonIOPoseEstimator {
         var pnpResult = VisionEstimation.estimateCamPosePNP(cameraMatrixOpt.get(),
             distCoeffsOpt.get(), result.getTargets(), fieldTags, tagModel);
         // try fallback strategy if solvePNP fails for some reason
-        if (!pnpResult.isPresent)
+        if (!pnpResult.isPresent) {
             return update(result, cameraMatrixOpt, distCoeffsOpt, this.multiTagFallbackStrategy);
+        }
         var best = new Pose3d().plus(pnpResult.best) // field-to-camera
             .plus(robotToCamera.inverse()); // field-to-robot
 
@@ -440,8 +443,9 @@ public class PhotonIOPoseEstimator {
 
         // Although there are confirmed to be targets, none of them may be fiducial
         // targets.
-        if (lowestAmbiguityTarget == null)
+        if (lowestAmbiguityTarget == null) {
             return Optional.empty();
+        }
 
         int targetFiducialId = lowestAmbiguityTarget.getFiducialId();
 
@@ -478,8 +482,9 @@ public class PhotonIOPoseEstimator {
             // Don't report errors for non-fiducial targets. This could also be resolved by
             // adding -1 to
             // the initial HashSet.
-            if (targetFiducialId == -1)
+            if (targetFiducialId == -1) {
                 continue;
+            }
 
             Optional<Pose3d> targetPosition = fieldTags.getTagPose(target.getFiducialId());
 
@@ -528,9 +533,9 @@ public class PhotonIOPoseEstimator {
     private Optional<EstimatedRobotPose> closestToReferencePoseStrategy(PhotonPipelineResult result,
         Pose3d referencePose) {
         if (referencePose == null) {
-            DriverStation.reportError(
-                "[PhotonPoseEstimator] Tried to use reference pose strategy without setting the reference!",
-                false);
+            DriverStation
+                .reportError("[PhotonPoseEstimator] Tried to use reference pose strategy without "
+                    + "setting the reference!", false);
             return Optional.empty();
         }
 
@@ -543,8 +548,9 @@ public class PhotonIOPoseEstimator {
             // Don't report errors for non-fiducial targets. This could also be resolved by
             // adding -1 to
             // the initial HashSet.
-            if (targetFiducialId == -1)
+            if (targetFiducialId == -1) {
                 continue;
+            }
 
             Optional<Pose3d> targetPosition = fieldTags.getTagPose(target.getFiducialId());
 
@@ -598,8 +604,9 @@ public class PhotonIOPoseEstimator {
             // Don't report errors for non-fiducial targets. This could also be resolved by
             // adding -1 to
             // the initial HashSet.
-            if (targetFiducialId == -1)
+            if (targetFiducialId == -1) {
                 continue;
+            }
 
             Optional<Pose3d> targetPosition = fieldTags.getTagPose(target.getFiducialId());
 

@@ -69,7 +69,7 @@ public class PhotonReal extends PhotonIO implements AutoCloseable {
 
     /**
      * Constructs a PhotonReal from a root table.
-     * 
+     *
      * @param instance The NetworkTableInstance to pull data from.
      * @param cameraName The name of the camera, as seen in the UI.
      */

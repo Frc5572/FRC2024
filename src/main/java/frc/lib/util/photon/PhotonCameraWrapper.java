@@ -23,7 +23,7 @@ public class PhotonCameraWrapper {
     /**
      * PhotonCamera-based Pose Estimator.
      *
-     * @param cameraName camera name (not to be confused with mDNS name).
+     * @param io Camera IO.
      * @param robotToCam transform from robot body coordinates to camera coordinates.
      */
     public PhotonCameraWrapper(PhotonIO io, Transform3d robotToCam) {
