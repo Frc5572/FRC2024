@@ -12,7 +12,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.numbers.N5;
 
-public interface PhotonIO {
+public abstract class PhotonIO {
 
     public static class PhotonInputs implements LoggableInputs {
 
@@ -22,6 +22,7 @@ public interface PhotonIO {
         public double timeSinceLastHeartbeat;
         public double[] cameraMatrix;
         public double[] distCoeffs;
+        public String name;
 
         public PhotonInputs() {
             rawBytes = new byte[0];
@@ -68,6 +69,14 @@ public interface PhotonIO {
 
     }
 
-    public default void updateInputs(PhotonInputs inputs) {}
+    private final String name;
+
+    public PhotonIO(String name) {
+        this.name = name;
+    }
+
+    public void updateInputs(PhotonInputs inputs) {
+        inputs.name = name;
+    }
 
 }

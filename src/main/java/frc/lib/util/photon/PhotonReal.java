@@ -15,7 +15,7 @@ import edu.wpi.first.networktables.StringSubscriber;
 import edu.wpi.first.wpilibj.Timer;
 
 /** Represents an actual camera that is connected to PhotonVision. Based on {@link PhotonCamera}. */
-public class PhotonReal implements PhotonIO, AutoCloseable {
+public class PhotonReal extends PhotonIO implements AutoCloseable {
     public static final String kTableName = "photonvision";
     private static int InstanceCount = 0;
 
@@ -74,6 +74,7 @@ public class PhotonReal implements PhotonIO, AutoCloseable {
      * @param cameraName The name of the camera, as seen in the UI.
      */
     public PhotonReal(NetworkTableInstance instance, String cameraName) {
+        super(cameraName);
         var photonvision_root_table = instance.getTable(kTableName);
         this.cameraTable = photonvision_root_table.getSubTable(cameraName);
         var rawBytesEntry = cameraTable.getRawTopic("rawBytes").subscribe("rawBytes", new byte[] {},
@@ -105,6 +106,7 @@ public class PhotonReal implements PhotonIO, AutoCloseable {
 
     @Override
     public void updateInputs(PhotonInputs inputs) {
+        super.updateInputs(inputs);
         var result = resultSubscriber.get();
         result.result.setTimestampSeconds((resultSubscriber.subscriber.getLastChange() / 1e6)
             - result.result.getLatencyMillis() / 1e3);

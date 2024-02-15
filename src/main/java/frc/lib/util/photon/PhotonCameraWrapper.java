@@ -1,6 +1,7 @@
 package frc.lib.util.photon;
 
 import java.util.Optional;
+import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -35,7 +36,14 @@ public class PhotonCameraWrapper {
         photonPoseEstimator = new PhotonIOPoseEstimator(fieldLayout,
             PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, this.inputs, robotToCam);
         photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.CLOSEST_TO_CAMERA_HEIGHT);
+    }
 
+    /**
+     * Update inputs and such.
+     */
+    public void periodic() {
+        this.io.updateInputs(this.inputs);
+        Logger.processInputs("PhotonVision/" + inputs.name, inputs);
     }
 
     /**
