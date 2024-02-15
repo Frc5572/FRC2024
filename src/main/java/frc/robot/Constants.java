@@ -82,12 +82,13 @@ public final class Constants {
          * Constants for Front Left Camera
          */
         public static class FrontLeftFacingCamera {
-            public static final double ROLL = -Math.PI / 2;
-            public static final double PITCH = 0.0;
-            public static final double YAW = 0.0;
+            public static final double ROLL = 0.0;
+            public static final double PITCH = 130;
+            public static final double YAW = -10;
             public static final Transform3d KCAMERA_TO_ROBOT =
-                new Transform3d(new Translation3d(Units.inchesToMeters(0), Units.inchesToMeters(8),
-                    Units.inchesToMeters(22.125)), new Rotation3d(ROLL, PITCH, YAW)).inverse();
+                new Transform3d(new Translation3d(Units.inchesToMeters(-3.96),
+                    Units.inchesToMeters(10.275), Units.inchesToMeters(18.164)),
+                    new Rotation3d(ROLL, PITCH, YAW)).inverse();
 
             public static final String CAMERA_NAME = "front-left";
             public static final double LARGEST_DISTANCE = 0.1;
@@ -97,12 +98,13 @@ public final class Constants {
          * Constants for Front Right Camera
          */
         public static class FrontRightFacingCamera {
-            public static final double ROLL = -Math.PI / 2;
-            public static final double PITCH = 0.0;
-            public static final double YAW = 0.0;
+            public static final double ROLL = 0.0;
+            public static final double PITCH = 95;
+            public static final double YAW = -10;
             public static final Transform3d KCAMERA_TO_ROBOT =
-                new Transform3d(new Translation3d(Units.inchesToMeters(0), Units.inchesToMeters(8),
-                    Units.inchesToMeters(22.125)), new Rotation3d(ROLL, PITCH, YAW)).inverse();
+                new Transform3d(new Translation3d(Units.inchesToMeters(3.96),
+                    Units.inchesToMeters(11.013), Units.inchesToMeters(18.074)),
+                    new Rotation3d(ROLL, PITCH, YAW)).inverse();
 
             public static final String CAMERA_NAME = "front-right";
             public static final double LARGEST_DISTANCE = 0.1;
@@ -112,12 +114,13 @@ public final class Constants {
          * Constants for Back Left Camera
          */
         public static class BackLeftFacingCamera {
-            public static final double ROLL = -Math.PI / 2;
-            public static final double PITCH = 0.0;
-            public static final double YAW = 0.0;
+            public static final double ROLL = 0.0;
+            public static final double PITCH = 90;
+            public static final double YAW = 180;
             public static final Transform3d KCAMERA_TO_ROBOT =
-                new Transform3d(new Translation3d(Units.inchesToMeters(0), Units.inchesToMeters(8),
-                    Units.inchesToMeters(22.125)), new Rotation3d(ROLL, PITCH, YAW)).inverse();
+                new Transform3d(new Translation3d(Units.inchesToMeters(-12.83),
+                    Units.inchesToMeters(-8.175), Units.inchesToMeters(18.5)),
+                    new Rotation3d(ROLL, PITCH, YAW)).inverse();
 
             public static final String CAMERA_NAME = "back-left";
             public static final double LARGEST_DISTANCE = 0.1;
@@ -127,12 +130,13 @@ public final class Constants {
          * Constants for Back Right Camera
          */
         public static class BackRightFacingCamera {
-            public static final double ROLL = -Math.PI / 2;
-            public static final double PITCH = 0.0;
-            public static final double YAW = 0.0;
+            public static final double ROLL = 0.0;
+            public static final double PITCH = 90;
+            public static final double YAW = 180;
             public static final Transform3d KCAMERA_TO_ROBOT =
-                new Transform3d(new Translation3d(Units.inchesToMeters(0), Units.inchesToMeters(8),
-                    Units.inchesToMeters(22.125)), new Rotation3d(ROLL, PITCH, YAW)).inverse();
+                new Transform3d(new Translation3d(Units.inchesToMeters(12.831),
+                    Units.inchesToMeters(-8.56), Units.inchesToMeters(17.85)),
+                    new Rotation3d(ROLL, PITCH, YAW)).inverse();
 
             public static final String CAMERA_NAME = "back-right";
             public static final double LARGEST_DISTANCE = 0.1;

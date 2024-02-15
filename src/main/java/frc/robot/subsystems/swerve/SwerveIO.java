@@ -1,13 +1,16 @@
 package frc.robot.subsystems.swerve;
 
+import java.util.List;
 import java.util.Optional;
 import org.littletonrobotics.junction.LogTable;
 import org.littletonrobotics.junction.inputs.LoggableInputs;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
+import org.photonvision.targeting.TargetCorner;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import frc.lib.util.swerve.SwerveModule;
 import frc.lib.util.swerve.SwerveModuleIO;
 
@@ -18,8 +21,35 @@ public interface SwerveIO {
 
     public static class SwerveInputs implements LoggableInputs, Cloneable {
 
-        public SwerveInputs() {
+        public int numCameras;
+        public float yaw;
+        public float roll;
+        public float pitch;
+        public boolean[] latencies;
+        public PhotonPipelineResult[] results;
+        public boolean[] seesTarget;
+        public Pose3d[] estimatedRobotPose3d;
+        public double[] estimatedRobotPose3dTimestampSeconds;
+        public PhotonTrackedTarget[] estimatedRobotPose3dTargets;
 
+        public SwerveInputs() {
+            int numCameras = 4;
+            this.latencies = new boolean[numCameras];
+            this.results = new PhotonPipelineResult[numCameras];
+            this.seesTarget = new boolean[numCameras];
+            this.estimatedRobotPose3d = new Pose3d[numCameras];
+            this.estimatedRobotPose3dTimestampSeconds = new double[numCameras];
+            this.estimatedRobotPose3dTargets = new PhotonTrackedTarget[numCameras];
+            for (int i = 0; i < numCameras; i++) {
+                this.results[i] = new PhotonPipelineResult();
+                this.estimatedRobotPose3d[i] = new Pose3d();
+                this.estimatedRobotPose3dTimestampSeconds[i] = 0.0;
+                List<TargetCorner> targetCornersList =
+                    List.of(new TargetCorner(0.0, 0.0), new TargetCorner(0.0, 0.0),
+                        new TargetCorner(0.0, 0.0), new TargetCorner(0.0, 0.0));
+                this.estimatedRobotPose3dTargets[i] = new PhotonTrackedTarget(0, 0, 0, 0, 500,
+                    new Transform3d(), new Transform3d(), 0, targetCornersList, targetCornersList);
+            }
         }
 
         @Override
@@ -82,18 +112,6 @@ public interface SwerveIO {
             copy.estimatedRobotPose3dTargets = this.estimatedRobotPose3dTargets.clone();
             return copy;
         }
-
-        public int numCameras;
-        public float yaw;
-        public float roll;
-        public float pitch;
-        public boolean[] latencies;
-        public PhotonPipelineResult[] results;
-        public boolean[] seesTarget;
-        public Pose3d[] estimatedRobotPose3d;
-        public double[] estimatedRobotPose3dTimestampSeconds;
-        public PhotonTrackedTarget[] estimatedRobotPose3dTargets;
-
     }
 
     public default void updateInputs(SwerveInputs inputs, Pose2d previousPose) {}
