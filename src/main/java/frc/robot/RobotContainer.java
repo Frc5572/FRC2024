@@ -58,7 +58,7 @@ public class RobotContainer {
 
         switch (runtimeType) {
             case kReal:
-                // s_Swerve = new Swerve(new SwerveReal());
+                s_Swerve = new Swerve(new SwerveReal());
                 shooter = new Shooter(new ShooterVortex());
                 intake = new Intake(new IntakeIOFalcon());
                 // elevatorWrist = new ElevatorWrist(new ElevatorWristReal());
