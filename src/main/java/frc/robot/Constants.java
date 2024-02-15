@@ -151,8 +151,8 @@ public final class Constants {
         public static final boolean isOpenLoop = false;
 
         /* Drivetrain Constants */
-        public static final double trackWidth = Units.inchesToMeters(22.5);
-        public static final double wheelBase = Units.inchesToMeters(29.0);
+        public static final double trackWidth = Units.inchesToMeters(23.75);
+        public static final double wheelBase = Units.inchesToMeters(17.75);
         public static final double wheelDiameter = Units.inchesToMeters(4.0);
         public static final double wheelCircumference = wheelDiameter * Math.PI;
         public static final Translation2d MOD0_MODOFFSET =
@@ -217,7 +217,7 @@ public final class Constants {
 
         /* Swerve Profiling Values */
         /** Meters per Second */
-        public static final double maxSpeed = 4.5;
+        public static final double maxSpeed = 1.5;
         /** Radians per Second */
         public static final double maxAngularVelocity = 10.0;
 
@@ -410,7 +410,7 @@ public final class Constants {
         public static final double INDEX_MOTOR_FORWARD = .2;
         public static final double INDEX_MOTOR_BACKWARD = -0;
         public static final double INDEX_MOTOR_STOP = 0;
-
         public static final boolean INTAKE_MOTOR_INVERTED = true;
+
     }
 }

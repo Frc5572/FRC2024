@@ -13,11 +13,12 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot.RobotRunType;
+import frc.robot.commands.CommandFactory;
 import frc.robot.commands.TeleopSwerve;
-import frc.robot.subsystems.climber.Climber;
-import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIOFalcon;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterVortex;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.SwerveIO;
 import frc.robot.subsystems.swerve.SwerveReal;
@@ -33,6 +34,7 @@ public class RobotContainer {
     private final CommandXboxController driver = new CommandXboxController(Constants.DRIVER_ID);
     private final CommandXboxController operator = new CommandXboxController(Constants.OPERATOR_ID);
 
+
     // Initialize AutoChooser Sendable
     private final SendableChooser<String> autoChooser = new SendableChooser<>();
 
@@ -40,19 +42,25 @@ public class RobotContainer {
     private Swerve s_Swerve;
     private Shooter shooter;
     private Intake intake;
-    private ElevatorWrist elevatorWrist;
-    public Climber climber;
+    // private ElevatorWrist elevatorWrist;
+    // public Climber climber;
 
     /**
      */
     public RobotContainer(RobotRunType runtimeType) {
         SmartDashboard.putData("Choose Auto: ", autoChooser);
         autoChooser.setDefaultOption("Wait 1 Second", "wait");
+        SmartDashboard.putNumber("Intake Power", 0);
+        SmartDashboard.putNumber("Left Climber Power", 0);
+        SmartDashboard.putNumber("Right Climber Power", 0);
+        SmartDashboard.putNumber("Elevator Power", 0);
+        SmartDashboard.putNumber("Wrist Power", 0);
+
         switch (runtimeType) {
             case kReal:
-                s_Swerve = new Swerve(new SwerveReal());
-                // shooter = new Shooter(new ShooterVortex());
-                // intake = new Intake(new IntakeIOFalcon());
+                // s_Swerve = new Swerve(new SwerveReal());
+                shooter = new Shooter(new ShooterVortex());
+                intake = new Intake(new IntakeIOFalcon());
                 // elevatorWrist = new ElevatorWrist(new ElevatorWristReal());
                 // climber = new Climber(new ClimberNEO());
                 break;
@@ -84,6 +92,44 @@ public class RobotContainer {
     private void configureButtonBindings() { /* Driver Buttons */
         /* Driver Buttons */
         driver.y().onTrue(new InstantCommand(() -> s_Swerve.resetFieldRelativeOffset()));
+        // intake forward
+        driver.a().whileTrue(intake.runIntakeMotor(1, .25));
+        // intake backward
+        driver.b().whileTrue(intake.runIntakeMotor(-1, -.25));
+
+        driver.x().whileTrue(CommandFactory.shootSpeaker(shooter, intake));
+        // climber forward
+        // driver.start().whileTrue(new StartEndCommand(() -> {
+        // climber.setLeftPower(SmartDashboard.getNumber("Left Climber Power", 0));
+        // climber.setRightPower(SmartDashboard.getNumber("Right Climber Power", 0));
+        // }, () -> {
+        // climber.setLeftPower(0);
+        // climber.setRightPower(0);
+        // }, climber));
+        // // climber backward
+        // driver.back().whileTrue(new StartEndCommand(() -> {
+        // climber.setLeftPower(-SmartDashboard.getNumber("Left Climber Power", 0));
+        // climber.setRightPower(-SmartDashboard.getNumber("Right Climber Power", 0));
+        // }, () -> {
+        // climber.setLeftPower(0);
+        // climber.setRightPower(0);
+        // }, climber));
+
+        // elevator forward
+        // driver.start().whileTrue(new StartEndCommand(() -> {
+        // elevatorWrist.setElevatorPower(SmartDashboard.getNumber("Elevator Power", 0));
+        // }, () -> {
+        // elevatorWrist.setElevatorPower(0.0);
+        // }, climber));
+        // // climber backward
+        // driver.back().whileTrue(new StartEndCommand(() -> {
+        // elevatorWrist.setElevatorPower(-SmartDashboard.getNumber("Elevator Power", 0));
+        // }, () -> {
+        // elevatorWrist.setElevatorPower(0.0);
+        // }, climber));
+
+
+
     }
 
     /**
@@ -108,4 +154,5 @@ public class RobotContainer {
         }
         return autocommand;
     }
+
 }
