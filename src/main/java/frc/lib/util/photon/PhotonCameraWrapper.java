@@ -1,9 +1,7 @@
-package frc.lib.util;
+package frc.lib.util.photon;
 
 import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
-import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -11,13 +9,15 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.lib.util.photon.PhotonIO.PhotonInputs;
 
 /**
  * PhotonCamera-based Pose Estimator.
  */
 public class PhotonCameraWrapper {
-    public PhotonCamera photonCamera;
-    public PhotonPoseEstimator photonPoseEstimator;
+    public PhotonIO io;
+    public PhotonInputs inputs = new PhotonInputs();
+    public PhotonIOPoseEstimator photonPoseEstimator;
 
     /**
      * PhotonCamera-based Pose Estimator.
@@ -25,16 +25,15 @@ public class PhotonCameraWrapper {
      * @param cameraName camera name (not to be confused with mDNS name).
      * @param robotToCam transform from robot body coordinates to camera coordinates.
      */
-    public PhotonCameraWrapper(String cameraName, Transform3d robotToCam) {
-        // Change the name of your camera here to whatever it is in the PhotonVision UI.
-        photonCamera = new PhotonCamera(cameraName);
+    public PhotonCameraWrapper(PhotonIO io, Transform3d robotToCam) {
+        this.io = io;
 
         // Attempt to load the AprilTagFieldLayout that will tell us where the tags are on the
         // field.
         AprilTagFieldLayout fieldLayout = AprilTagFields.k2023ChargedUp.loadAprilTagLayoutField();
         // Create pose estimator
-        photonPoseEstimator = new PhotonPoseEstimator(fieldLayout,
-            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, photonCamera, robotToCam);
+        photonPoseEstimator = new PhotonIOPoseEstimator(fieldLayout,
+            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, this.inputs, robotToCam);
         photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.CLOSEST_TO_CAMERA_HEIGHT);
 
     }
@@ -43,7 +42,7 @@ public class PhotonCameraWrapper {
      * Gets if photonvision can see a target.
      */
     public boolean seesTarget() {
-        return photonCamera.getLatestResult().hasTargets();
+        return inputs.result.hasTargets();
     }
 
     /**
@@ -52,7 +51,7 @@ public class PhotonCameraWrapper {
      * @return an estimated Pose2d based solely on apriltags
      */
     public Optional<Pose2d> getInitialPose() {
-        var res = photonCamera.getLatestResult();
+        var res = inputs.result;
         SmartDashboard.putNumber("lastTimePhton", res.getTimestampSeconds());
         if (res.hasTargets()) {
             var target = res.getBestTarget();
@@ -70,7 +69,7 @@ public class PhotonCameraWrapper {
     }
 
     public double latency() {
-        var res = photonCamera.getLatestResult();
+        var res = inputs.result;
         return Timer.getFPGATimestamp() - res.getTimestampSeconds();
     }
 
@@ -81,7 +80,7 @@ public class PhotonCameraWrapper {
      *         create the estimate
      */
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
-        var res = photonCamera.getLatestResult();
+        var res = inputs.result;
         // SmartDashboard.putNumber("photonLatency",
         // Timer.getFPGATimestamp() - res.getTimestampSeconds());
         if (Timer.getFPGATimestamp() - res.getTimestampSeconds() > 0.4) {
