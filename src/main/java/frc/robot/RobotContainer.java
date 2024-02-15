@@ -86,7 +86,7 @@ public class RobotContainer {
                                 Constants.CameraConstants.BackRightFacingCamera.CAMERA_NAME),
                             Constants.CameraConstants.BackRightFacingCamera.KCAMERA_TO_ROBOT)};
 
-                s_Swerve = new Swerve(new SwerveReal(), cameras);
+                s_Swerve = new Swerve(new SwerveIO() {}, cameras);
                 // elevatorWrist = new ElevatorWrist(new ElevatorWristReal());
                 // climber = new Climber(new ClimberNEO());
                 break;

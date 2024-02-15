@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.robot.Constants;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.SwerveIO;
@@ -20,10 +21,10 @@ public class ZeroMotorsWaitCommand extends Command {
      *
      * @param seconds how long the wait command should run
      */
-    public ZeroMotorsWaitCommand(double seconds, SwerveIO swerveIO) {
+    public ZeroMotorsWaitCommand(double seconds, SwerveIO swerveIO, PhotonCameraWrapper[] cameras) {
         this.m_duration = seconds;
         SendableRegistry.setName(this, getName() + ": " + seconds + " seconds");
-        this.s_Swerve = new Swerve(swerveIO);
+        this.s_Swerve = new Swerve(swerveIO, cameras);
     }
 
     @Override

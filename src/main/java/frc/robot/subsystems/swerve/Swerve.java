@@ -21,7 +21,6 @@ import frc.lib.util.FieldConstants;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.swerve.SwerveModule;
 import frc.robot.Constants;
-import frc.robot.subsystems.swerve.SwerveIO.SwerveInputs;
 
 /**
  * Swerve Subsystem
@@ -31,7 +30,7 @@ public class Swerve extends SubsystemBase {
     public SwerveModule[] swerveMods;
     private final Field2d field = new Field2d();
     private double fieldOffset;
-    private SwerveInputs inputs = new SwerveInputs();
+    private SwerveInputsAutoLogged inputs = new SwerveInputsAutoLogged();
     private SwerveIO swerveIO;
     private boolean hasInitialized = false;
     private boolean latencyGood = false;
@@ -49,6 +48,7 @@ public class Swerve extends SubsystemBase {
      */
     public Swerve(SwerveIO swerveIO, PhotonCameraWrapper[] cameras) {
         this.swerveIO = swerveIO;
+        this.cameras = cameras;
         fieldOffset = getGyroYaw().getDegrees();
         swerveMods = new SwerveModule[] {
             swerveIO.createSwerveModule(0, Constants.Swerve.Mod0.driveMotorID,
@@ -235,9 +235,12 @@ public class Swerve extends SubsystemBase {
         Rotation2d yaw = Rotation2d.fromDegrees(inputs.yaw);
         swerveOdometry.update(yaw, getSwerveModulePositions());
 
+        Logger.recordOutput("/Swerve/hasInitialized", hasInitialized);
+
         if (!hasInitialized) {
             for (int i = 0; i < cameras.length; i++) {
                 var robotPose = cameras[i].getInitialPose();
+                Logger.recordOutput("/Swerve/hasInitialPose[" + i + "]", robotPose.isPresent());
                 if (robotPose.isPresent()) {
                     swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(),
                         robotPose.get());
@@ -251,10 +254,8 @@ public class Swerve extends SubsystemBase {
                     cameras[i].getEstimatedGlobalPose(swerveOdometry.getEstimatedPosition());
                 if (result.isPresent()) {
                     var camPose = result.get();
-                    if (camPose.targetsUsed.get(0).getArea() > 0.7) {
-                        swerveOdometry.addVisionMeasurement(camPose.estimatedPose.toPose2d(),
-                            camPose.timestampSeconds);
-                    }
+                    swerveOdometry.addVisionMeasurement(camPose.estimatedPose.toPose2d(),
+                        camPose.timestampSeconds);
                 }
             }
         }

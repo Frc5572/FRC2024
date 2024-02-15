@@ -31,7 +31,7 @@ public class PhotonCameraWrapper {
 
         // Attempt to load the AprilTagFieldLayout that will tell us where the tags are on the
         // field.
-        AprilTagFieldLayout fieldLayout = AprilTagFields.k2023ChargedUp.loadAprilTagLayoutField();
+        AprilTagFieldLayout fieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
         // Create pose estimator
         photonPoseEstimator = new PhotonIOPoseEstimator(fieldLayout,
             PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, this.inputs, robotToCam);
