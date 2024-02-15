@@ -1,6 +1,7 @@
 package frc.robot.subsystems.intake;
 
 import org.littletonrobotics.junction.Logger;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -20,6 +21,7 @@ public class Intake extends SubsystemBase {
     @Override
     public void periodic() {
         io.updateInputs(intakeAutoLogged);
+        SmartDashboard.putBoolean("Bean Break Status", intakeAutoLogged.sensorStatus);
         Logger.processInputs("Intake", intakeAutoLogged);
     }
 
@@ -42,14 +44,14 @@ public class Intake extends SubsystemBase {
      *
      * @return {@link Command} to run the intake and indexer motors
      */
-    public Command runIntakeMotor(double speed) {
+    public Command runIntakeMotor(double intakeSpeed, double indexerSpeed) {
         return Commands.startEnd(() -> {
-            setIntakeMotor(speed);
-            setIndexerMotor(speed);
+            setIntakeMotor(intakeSpeed);
+            setIndexerMotor(indexerSpeed);
         }, () -> {
-            setIntakeMotor(0);
+            // setIntakeMotor(0);
             setIndexerMotor(0);
-        }, this).until(() -> getSensorStatus()).unless(() -> getSensorStatus());
+        }, this).until(() -> !getSensorStatus()).unless(() -> !getSensorStatus());
     }
 
     /**

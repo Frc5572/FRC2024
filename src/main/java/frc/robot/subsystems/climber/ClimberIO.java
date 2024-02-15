@@ -14,8 +14,10 @@ public interface ClimberIO {
     public static class ClimberInputs {
         public double climberLeftMotorVoltage;
         public double climberLeftMotorAmp;
+        public double climberRightMotorTemp;
         public double climberRightMotorVoltage;
         public double climberRightMotorAmp;
+        public double climberLeftMotorTemp;
         public double leftMotorEncoderValue;
         public double rightMotorEncoderValue;
 
@@ -26,4 +28,9 @@ public interface ClimberIO {
     public default void setLeftClimberVoltage(double volts) {}
 
     public default void setRightClimberVoltage(double volts) {}
+
+    public default void setLeftPower(double power) {}
+
+    public default void setRightPower(double power) {}
+
 }

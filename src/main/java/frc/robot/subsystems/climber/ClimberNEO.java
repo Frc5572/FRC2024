@@ -30,8 +30,10 @@ public class ClimberNEO implements ClimberIO {
     public void updateInputs(ClimberInputs inputs) {
         inputs.climberLeftMotorVoltage = leftMotor.getBusVoltage();
         inputs.climberLeftMotorAmp = leftMotor.getOutputCurrent();
+        inputs.climberLeftMotorTemp = leftMotor.getMotorTemperature();
         inputs.climberRightMotorVoltage = rightMotor.getBusVoltage();
         inputs.climberRightMotorAmp = rightMotor.getOutputCurrent();
+        inputs.climberRightMotorTemp = rightMotor.getMotorTemperature();
         inputs.leftMotorEncoderValue = leftRelativeEncoder.getPosition();
         inputs.rightMotorEncoderValue = rightRelativeEncoder.getPosition();
 
@@ -45,5 +47,13 @@ public class ClimberNEO implements ClimberIO {
     @Override
     public void setRightClimberVoltage(double voltage) {
         rightMotor.setVoltage(voltage);
+    }
+
+    public void setLeftPower(double power) {
+        leftMotor.set(power);
+    }
+
+    public void setRightPower(double power) {
+        rightMotor.set(power);
     }
 }

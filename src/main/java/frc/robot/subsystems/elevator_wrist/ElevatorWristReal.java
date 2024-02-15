@@ -52,9 +52,11 @@ public class ElevatorWristReal implements ElevatorWristIO {
         inputs.elevatorRelativeEncRawValue = elevatorRelativeEnc.getPosition();
         inputs.wristAbsoluteEncRawValue = wristAbsoluteEnc.getPosition();
         inputs.elevatorMotorSupplyVoltage = elevatorMotor.getBusVoltage();
-        inputs.elevatorMotorMotorVoltage = elevatorMotor.getOutputCurrent();
+        inputs.elevatorMotorVoltage = elevatorMotor.getOutputCurrent();
+        inputs.elevatorMotorTemp = elevatorMotor.getMotorTemperature();
         inputs.wristMotorVoltage = wristMotor.getBusVoltage();
         inputs.wristMotorAmp = wristMotor.getOutputCurrent();
+        inputs.wristMotorTemp = wristMotor.getMotorTemperature();
     }
 
     @Override
@@ -65,5 +67,15 @@ public class ElevatorWristReal implements ElevatorWristIO {
     @Override
     public void setWristVoltage(double v) {
         wristMotor.setVoltage(v);
+    }
+
+    @Override
+    public void setWristPower(double power) {
+        wristMotor.set(power);
+    }
+
+    @Override
+    public void setElevatorPower(double power) {
+        elevatorMotor.set(power);
     }
 }

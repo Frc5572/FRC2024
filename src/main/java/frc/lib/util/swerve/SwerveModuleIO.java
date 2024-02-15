@@ -12,6 +12,8 @@ public interface SwerveModuleIO {
         public double driveMotorSelectedSensorVelocity;
         public double angleMotorSelectedPosition;
         public double absolutePositionAngleEncoder;
+        public double driveMotorTemp;
+        public double angleMotorTemp;
     }
 
     public default void updateInputs(SwerveModuleInputs inputs) {}
