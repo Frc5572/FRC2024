@@ -394,14 +394,16 @@ public final class Constants {
      * Constants of Shooters
      */
     public static final class ShooterConstants {
-        public static final double KP = 0;
+        public static final double KP = 0.00004;
         public static final double KI = 0;
         public static final double KD = 0;
         public static final double KS = 0;
-        public static final double KV = 0;
+        public static final double KV = 0.00092;
         public static final double HEIGHT_FROM_LOWEST_POS = Units.inchesToMeters(32.0);
         public static final double HEIGHT_FROM_SPEAKER =
             FieldConstants.centerSpeaker - HEIGHT_FROM_LOWEST_POS;
+
+        public static final double DESIRED_SPEED = 9500.0;
     }
 
     /**

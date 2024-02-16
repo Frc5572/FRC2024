@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.util.photon.PhotonCameraWrapper;
@@ -62,7 +63,6 @@ public class RobotContainer {
 
         switch (runtimeType) {
             case kReal:
-                s_Swerve = new Swerve(new SwerveReal(), cameras);
                 shooter = new Shooter(new ShooterVortex());
                 intake = new Intake(new IntakeIOFalcon());
                 cameras =
@@ -88,6 +88,7 @@ public class RobotContainer {
                             Constants.CameraConstants.BackRightFacingCamera.KCAMERA_TO_ROBOT)};
                 // elevatorWrist = new ElevatorWrist(new ElevatorWristReal());
                 // climber = new Climber(new ClimberNEO());
+                s_Swerve = new Swerve(new SwerveReal(), cameras);
                 break;
             case kSimulation:
                 // s_Swerve = new Swerve(new SwerveIO() {});
@@ -156,6 +157,9 @@ public class RobotContainer {
         driver.b().whileTrue(intake.runIntakeMotor(-1, -.25));
 
         driver.x().whileTrue(CommandFactory.shootSpeaker(shooter, intake));
+
+        driver.start().whileTrue(new StartEndCommand(() -> shooter.setActive(true),
+            () -> shooter.setActive(false), shooter));
         // climber forward
         // driver.start().whileTrue(new StartEndCommand(() -> {
         // climber.setLeftPower(SmartDashboard.getNumber("Left Climber Power", 0));
