@@ -16,10 +16,12 @@ public interface ElevatorWristIO {
         public double wristAbsoluteEncRawValue;
         public double elevatorMotorSupplyVoltage;
         public double elevatorRelativeEncRawValue;
-        public double elevatorMotorMotorVoltage;
+        public double elevatorMotorVoltage;
         public double elevatorMotorAmp;
+        public double elevatorMotorTemp;
         public double wristMotorVoltage;
         public double wristMotorAmp;
+        public double wristMotorTemp;
     }
 
     public default void updateInputs(ElevatorWristInputs inputs) {}

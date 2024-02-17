@@ -22,6 +22,8 @@ public interface ShooterIO {
         public double bottomShooterPosition;
         public double topShooterPower;
         public double bottomShooterPower;
+        public double topShooterTemp;
+        public double bottomShooterTemp;
     }
 
     public default void setTopMotor(double power) {}
