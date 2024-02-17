@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.util.photon.PhotonCameraWrapper;
@@ -18,6 +19,10 @@ import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberNEO;
+import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
+import frc.robot.subsystems.elevator_wrist.ElevatorWristReal;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOFalcon;
 import frc.robot.subsystems.shooter.Shooter;
@@ -36,6 +41,7 @@ public class RobotContainer {
     /* Controllers */
     private final CommandXboxController driver = new CommandXboxController(Constants.DRIVER_ID);
     private final CommandXboxController operator = new CommandXboxController(Constants.OPERATOR_ID);
+    private final CommandXboxController test = new CommandXboxController(2);
 
 
     // Initialize AutoChooser Sendable
@@ -46,8 +52,8 @@ public class RobotContainer {
     private Shooter shooter;
     private Intake intake;
     private PhotonCameraWrapper[] cameras;
-    // private ElevatorWrist elevatorWrist;
-    // public Climber climber;
+    private ElevatorWrist elevatorWrist;
+    public Climber climber;
 
     /**
      */
@@ -85,8 +91,8 @@ public class RobotContainer {
                             new PhotonReal(
                                 Constants.CameraConstants.BackRightFacingCamera.CAMERA_NAME),
                             Constants.CameraConstants.BackRightFacingCamera.KCAMERA_TO_ROBOT)};
-                // elevatorWrist = new ElevatorWrist(new ElevatorWristReal());
-                // climber = new Climber(new ClimberNEO());
+                elevatorWrist = new ElevatorWrist(new ElevatorWristReal());
+                climber = new Climber(new ClimberNEO());
                 s_Swerve = new Swerve(new SwerveReal(), cameras);
                 break;
             case kSimulation:
@@ -156,35 +162,61 @@ public class RobotContainer {
         driver.b().whileTrue(intake.runIndexerMotor(-.1));
 
         driver.x().whileTrue(CommandFactory.shootSpeaker(shooter, intake));
-        // climber forward
-        // driver.start().whileTrue(new StartEndCommand(() -> {
-        // climber.setLeftPower(SmartDashboard.getNumber("Left Climber Power", 0));
-        // climber.setRightPower(SmartDashboard.getNumber("Right Climber Power", 0));
-        // }, () -> {
-        // climber.setLeftPower(0);
-        // climber.setRightPower(0);
-        // }, climber));
-        // // climber backward
-        // driver.back().whileTrue(new StartEndCommand(() -> {
-        // climber.setLeftPower(-SmartDashboard.getNumber("Left Climber Power", 0));
-        // climber.setRightPower(-SmartDashboard.getNumber("Right Climber Power", 0));
-        // }, () -> {
-        // climber.setLeftPower(0);
-        // climber.setRightPower(0);
-        // }, climber));
+        double climberPower = 0.3;
+        // Right in
+        test.x().whileTrue(new StartEndCommand(() -> {
+            climber.setRightPower(climberPower);
+        }, () -> {
+            climber.setRightPower(0);
+        }, climber));
+        // Right Out
+        test.y().whileTrue(new StartEndCommand(() -> {
+            climber.setRightPower(-climberPower);
+        }, () -> {
+            climber.setRightPower(0);
+        }, climber));
+        // left in
+        test.a().whileTrue(new StartEndCommand(() -> {
+            climber.setLeftPower(climberPower);
+        }, () -> {
+            climber.setLeftPower(0);
+        }, climber));
+        // left Out
+        test.b().whileTrue(new StartEndCommand(() -> {
+            climber.setLeftPower(-climberPower);
+        }, () -> {
+            climber.setLeftPower(0);
+        }, climber));
 
-        // elevator forward
-        // driver.start().whileTrue(new StartEndCommand(() -> {
-        // elevatorWrist.setElevatorPower(SmartDashboard.getNumber("Elevator Power", 0));
-        // }, () -> {
-        // elevatorWrist.setElevatorPower(0.0);
-        // }, climber));
-        // // climber backward
-        // driver.back().whileTrue(new StartEndCommand(() -> {
-        // elevatorWrist.setElevatorPower(-SmartDashboard.getNumber("Elevator Power", 0));
-        // }, () -> {
-        // elevatorWrist.setElevatorPower(0.0);
-        // }, climber));
+        test.start().whileTrue(new StartEndCommand(() -> {
+            climber.setLeftPower(climberPower);
+            climber.setRightPower(climberPower);
+        }, () -> {
+            climber.setLeftPower(0);
+            climber.setRightPower(0);
+        }, climber));
+        // left Out
+        test.back().whileTrue(new StartEndCommand(() -> {
+            climber.setLeftPower(-climberPower);
+            climber.setRightPower(-climberPower);
+        }, () -> {
+            climber.setLeftPower(0);
+            climber.setRightPower(0);
+        }, climber));
+
+        // elevator down
+        double elevatorPower = 0.2;
+        test.povRight().whileTrue(new StartEndCommand(() -> {
+            elevatorWrist.setElevatorPower(elevatorPower);
+        }, () -> {
+            elevatorWrist.setElevatorPower(0.0);
+        }, climber));
+        // climber up
+        test.povLeft().whileTrue(new StartEndCommand(() -> {
+            elevatorWrist.setElevatorPower(-elevatorPower);
+        }, () -> {
+            elevatorWrist.setElevatorPower(0.0);
+        }, climber));
 
 
 

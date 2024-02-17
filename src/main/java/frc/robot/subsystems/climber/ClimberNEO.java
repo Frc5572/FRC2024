@@ -21,9 +21,13 @@ public class ClimberNEO implements ClimberIO {
      * Constructor for climberNEO subsystem.
      */
     public ClimberNEO() {
-        rightMotor.follow(leftMotor, true);
+        leftMotor.restoreFactoryDefaults();
+        rightMotor.restoreFactoryDefaults();
         leftRelativeEncoder.setPositionConversionFactor(25);
         rightRelativeEncoder.setPositionConversionFactor(25);
+        rightMotor.setInverted(true);
+        rightMotor.burnFlash();
+        leftMotor.burnFlash();
     }
 
     @Override

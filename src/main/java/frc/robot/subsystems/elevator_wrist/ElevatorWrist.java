@@ -61,11 +61,9 @@ public class ElevatorWrist implements Subsystem {
         double elevatorPIDValue = elevatorPIDController.calculate(elevatorDistanceTraveled());
         double wristPIDValue = wristPIDController.calculate(inputs.wristAbsoluteEncRawValue);
 
-        double elevatorFeedForwardValue =
-            elevatorFeedForward.calculate(0, 0, elevatorPIDController.getPeriod());
+        double elevatorFeedForwardValue = elevatorFeedForward.calculate(0, 0);
 
-        double wristFeedForwardValue =
-            wristFeedForward.calculate(0, 0, wristPIDController.getPeriod());
+        double wristFeedForwardValue = wristFeedForward.calculate(0, 0);
 
         if (inputs.topLimitSwitch && elevatorPIDValue > 0) {
             elevatorPIDValue = 0;
@@ -88,6 +86,20 @@ public class ElevatorWrist implements Subsystem {
         Logger.recordOutput("/ElevatorWrist/Wrist/Combined Voltage",
             wristFeedForwardValue + wristPIDValue);
 
+    }
+
+    /**
+     * Command to move Elevator and Wrist to set positions
+     *
+     * @param height The height of the elevator in meters
+     * @param angle The angle of the wrist in {@link Rotation2d}
+     *
+     * @return A {@link Command}
+     */
+    public Command wristToPosition(Rotation2d angle) {
+        return Commands.runOnce(() -> {
+            wristPIDController.setGoal(angle.getDegrees());
+        }).andThen(Commands.waitUntil(() -> atGoal()));
     }
 
     /**
