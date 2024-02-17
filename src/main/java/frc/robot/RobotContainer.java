@@ -17,6 +17,7 @@ import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonIO;
 import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
+import frc.robot.commands.CommandFactory;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberNEO;
@@ -159,10 +160,9 @@ public class RobotContainer {
         driver.a().whileTrue(intake.runIntakeMotor(1, .20));
         // intake backward
         driver.b().whileTrue(intake.runIndexerMotor(-.1));
-        driver.start().whileTrue(new StartEndCommand(() -> shooter.setActive(true),
-            () -> shooter.setActive(false), shooter));
+        // driver.start().whileTrue();
 
-        // driver.x().whileTrue(CommandFactory.shootSpeaker(shooter, intake));
+        driver.x().whileTrue(CommandFactory.shootSpeaker(shooter, intake));
         double climberPower = 0.3;
         // Right in
         test.x().whileTrue(new StartEndCommand(() -> {

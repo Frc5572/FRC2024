@@ -4,6 +4,7 @@ import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -22,12 +23,15 @@ public class Shooter extends SubsystemBase {
         new SimpleMotorFeedforward(Constants.ShooterConstants.KS, Constants.ShooterConstants.KV);
     private ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
     private boolean shooterIsOn;
+    private int lastAtSetpoint = 0;
 
     public Shooter(ShooterIO io) {
         this.io = io;
         shooterIsOn = false;
         topPid.setSetpoint(Constants.ShooterConstants.DESIRED_SPEED);
         bottomPid.setSetpoint(Constants.ShooterConstants.DESIRED_SPEED);
+        topPid.setTolerance(500);
+        bottomPid.setTolerance(500);
     }
 
     @Override
@@ -39,10 +43,18 @@ public class Shooter extends SubsystemBase {
                 + shooterFeed.calculate(Constants.ShooterConstants.DESIRED_SPEED));
             setBottomMotor(bottomPid.calculate(inputs.bottomShooterVelocityRotPerMin)
                 + shooterFeed.calculate(Constants.ShooterConstants.DESIRED_SPEED));
+            if (topPid.atSetpoint() && bottomPid.atSetpoint()) {
+                lastAtSetpoint++;
+            } else {
+                lastAtSetpoint = 0;
+            }
         } else {
             setTopMotor(0);
             setBottomMotor(0);
+            lastAtSetpoint = 0;
         }
+        SmartDashboard.putNumber("Shooter Speed Top", inputs.topShooterVelocityRotPerMin);
+        SmartDashboard.putNumber("Shooter Speed Bottom", inputs.bottomShooterVelocityRotPerMin);
     }
 
     public void setTopMotor(double power) {
@@ -72,7 +84,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public Boolean atSetpoint() {
-        return topPid.atSetpoint() && bottomPid.atSetpoint();
+        return lastAtSetpoint > 5;
     }
 
     /**
