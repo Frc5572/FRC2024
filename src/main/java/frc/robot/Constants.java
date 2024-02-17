@@ -230,30 +230,21 @@ public final class Constants {
         public static final NeutralModeValue driveNeutralMode = NeutralModeValue.Brake;
 
         /* Module Specific Constants */
+
         /**
-         * Front Left Module - Module 0
+         * Front Left Module - Module 3
          */
         public static final class Mod0 {
-            public static final int driveMotorID = 10;
-            public static final int angleMotorID = 8;
-            public static final int canCoderID = 10;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(115.400390625);
+            public static final int driveMotorID = 6;
+            public static final int angleMotorID = 51;
+            public static final int canCoderID = 4;
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(3.955078125);
         }
 
         /**
          * Front Right Module - Module 1
          */
         public static final class Mod1 {
-            public static final int driveMotorID = 3;
-            public static final int angleMotorID = 9;
-            public static final int canCoderID = 1;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(-55.37109375);
-        }
-
-        /**
-         * Back Left Module - Module 2
-         */
-        public static final class Mod2 {
             public static final int driveMotorID = 2;
             public static final int angleMotorID = 40;
             public static final int canCoderID = 2;
@@ -261,13 +252,23 @@ public final class Constants {
         }
 
         /**
+         * Back Left Module - Module 2
+         */
+        public static final class Mod2 {
+            public static final int driveMotorID = 3;
+            public static final int angleMotorID = 9;
+            public static final int canCoderID = 1;
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(-55.37109375);
+        }
+
+        /**
          * Back Right Module - Module 3
          */
         public static final class Mod3 {
-            public static final int driveMotorID = 6;
-            public static final int angleMotorID = 51;
-            public static final int canCoderID = 4;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(3.955078125);
+            public static final int driveMotorID = 10;
+            public static final int angleMotorID = 8;
+            public static final int canCoderID = 10;
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(115.400390625);
         }
 
         public static final HolonomicPathFollowerConfig pathFollowerConfig =
