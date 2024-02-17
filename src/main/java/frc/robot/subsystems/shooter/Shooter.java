@@ -70,4 +70,5 @@ public class Shooter extends SubsystemBase {
             setBottomMotor(pid.calculate(getBottomVelocity()) + shooterFeed.calculate(velocity));
         }, this);
     }
+
 }

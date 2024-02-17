@@ -1,17 +1,11 @@
 package frc.robot.subsystems.swerve;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
-import org.photonvision.EstimatedRobotPose;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-import org.photonvision.targeting.PhotonTrackedTarget;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -24,9 +18,9 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.FieldConstants;
+import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.swerve.SwerveModule;
 import frc.robot.Constants;
-import frc.robot.subsystems.swerve.SwerveIO.SwerveInputs;
 
 /**
  * Swerve Subsystem
@@ -36,10 +30,12 @@ public class Swerve extends SubsystemBase {
     public SwerveModule[] swerveMods;
     private final Field2d field = new Field2d();
     private double fieldOffset;
-    private SwerveInputs inputs = new SwerveInputs();
+    private SwerveInputsAutoLogged inputs = new SwerveInputsAutoLogged();
     private SwerveIO swerveIO;
     private boolean hasInitialized = false;
     private boolean latencyGood = false;
+
+    private PhotonCameraWrapper[] cameras;
 
     // private GenericEntry aprilTagTarget =
     // RobotContainer.autoTab.add("Currently Seeing At Least One April Tag", false)
@@ -50,8 +46,9 @@ public class Swerve extends SubsystemBase {
     /**
      * Swerve Subsystem
      */
-    public Swerve(SwerveIO swerveIO) {
+    public Swerve(SwerveIO swerveIO, PhotonCameraWrapper[] cameras) {
         this.swerveIO = swerveIO;
+        this.cameras = cameras;
         fieldOffset = getGyroYaw().getDegrees();
         swerveMods = new SwerveModule[] {
             swerveIO.createSwerveModule(0, Constants.Swerve.Mod0.driveMotorID,
@@ -232,52 +229,39 @@ public class Swerve extends SubsystemBase {
         swerveOdometry.update(getGyroYaw(), getModulePositions());
         swerveIO.updateInputs(inputs, swerveOdometry.getEstimatedPosition());
         Logger.processInputs("Swerve", inputs);
-        latencyGood = containsBoolean(inputs.latencies, true);
-        SmartDashboard.putBoolean("photonGood", latencyGood);
+        for (int i = 0; i < cameras.length; i++) {
+            cameras[i].periodic();
+        }
         Rotation2d yaw = Rotation2d.fromDegrees(inputs.yaw);
         swerveOdometry.update(yaw, getSwerveModulePositions());
-        if (!hasInitialized /* || DriverStation.isDisabled() */) {
-            Pose3d robotPose = null;
-            for (int i = 0; i < inputs.numCameras; i++) {
-                if (inputs.estimatedRobotPose3d[i] != new Pose3d()) {
-                    robotPose = inputs.estimatedRobotPose3d[i];
-                    swerveOdometry.resetPosition(Rotation2d.fromDegrees(inputs.yaw),
-                        getSwerveModulePositions(), robotPose.toPose2d());
+
+        Logger.recordOutput("/Swerve/hasInitialized", hasInitialized);
+
+        if (!hasInitialized) {
+            for (int i = 0; i < cameras.length; i++) {
+                var robotPose = cameras[i].getInitialPose();
+                Logger.recordOutput("/Swerve/hasInitialPose[" + i + "]", robotPose.isPresent());
+                if (robotPose.isPresent()) {
+                    swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(),
+                        robotPose.get());
                     hasInitialized = true;
                     break;
                 }
             }
         } else {
-            for (int i = 0; i < inputs.numCameras; i++) {
-                List<PhotonTrackedTarget> list = new ArrayList<PhotonTrackedTarget>();
-                list.add(inputs.estimatedRobotPose3dTargets[i]);
-                if (inputs.estimatedRobotPose3dTargets[i].getFiducialId() != 500) {
-                    EstimatedRobotPose camPose =
-                        new EstimatedRobotPose(inputs.estimatedRobotPose3d[i],
-                            inputs.estimatedRobotPose3dTimestampSeconds[i], list,
-                            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR);
-                    if (camPose.targetsUsed.get(0).getArea() > 0.7) {
-                        swerveOdometry.addVisionMeasurement(camPose.estimatedPose.toPose2d(),
-                            camPose.timestampSeconds);
-                    }
-                    field.getObject("Cam Est Pose " + i).setPose(camPose.estimatedPose.toPose2d());
-                } else {
-                    field.getObject("Cam Est Pose " + i)
-                        .setPose(new Pose2d(-100, -100, new Rotation2d()));
+            for (int i = 0; i < cameras.length; i++) {
+                var result =
+                    cameras[i].getEstimatedGlobalPose(swerveOdometry.getEstimatedPosition());
+                if (result.isPresent()) {
+                    var camPose = result.get();
+                    swerveOdometry.addVisionMeasurement(camPose.estimatedPose.toPose2d(),
+                        camPose.timestampSeconds);
                 }
             }
         }
 
         field.setRobotPose(getPose());
 
-        boolean targetSeen = false;
-        for (boolean seen : inputs.seesTarget) {
-            if (seen) {
-                targetSeen = seen;
-                break;
-            }
-        }
-        SmartDashboard.putBoolean("Currently Seeing At Least One April Tag", targetSeen);
         SmartDashboard.putBoolean("Has Initialized", hasInitialized);
         SmartDashboard.putNumber("Robot X", getPose().getX());
         SmartDashboard.putNumber("Robot Y", getPose().getY());
