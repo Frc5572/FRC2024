@@ -14,20 +14,35 @@ import frc.robot.Constants;
  */
 public class Shooter extends SubsystemBase {
     private ShooterIO io;
-    private PIDController pid = new PIDController(Constants.ShooterConstants.KP,
+    private PIDController topPid = new PIDController(Constants.ShooterConstants.KP,
+        Constants.ShooterConstants.KI, Constants.ShooterConstants.KD);
+    private PIDController bottomPid = new PIDController(Constants.ShooterConstants.KP,
         Constants.ShooterConstants.KI, Constants.ShooterConstants.KD);
     private SimpleMotorFeedforward shooterFeed =
         new SimpleMotorFeedforward(Constants.ShooterConstants.KS, Constants.ShooterConstants.KV);
     private ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
+    private boolean shooterIsOn;
 
     public Shooter(ShooterIO io) {
         this.io = io;
+        shooterIsOn = false;
+        topPid.setSetpoint(Constants.ShooterConstants.DESIRED_SPEED);
+        bottomPid.setSetpoint(Constants.ShooterConstants.DESIRED_SPEED);
     }
 
     @Override
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs("Shooter", inputs);
+        if (shooterIsOn) {
+            setTopMotor(topPid.calculate(inputs.topShooterVelocityRotPerMin)
+                + shooterFeed.calculate(Constants.ShooterConstants.DESIRED_SPEED));
+            setBottomMotor(bottomPid.calculate(inputs.bottomShooterVelocityRotPerMin)
+                + shooterFeed.calculate(Constants.ShooterConstants.DESIRED_SPEED));
+        } else {
+            setTopMotor(0);
+            setBottomMotor(0);
+        }
     }
 
     public void setTopMotor(double power) {
@@ -38,6 +53,10 @@ public class Shooter extends SubsystemBase {
     public void setBottomMotor(double power) {
         Logger.recordOutput("Shooter/Bottom Voltage", power);
         io.setBottomMotor(power);
+    }
+
+    public void setActive(boolean active) {
+        this.shooterIsOn = active;
     }
 
     public double getTopVelocity() {
@@ -53,7 +72,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public Boolean atSetpoint() {
-        return pid.atSetpoint();
+        return topPid.atSetpoint() && bottomPid.atSetpoint();
     }
 
     /**
@@ -66,8 +85,9 @@ public class Shooter extends SubsystemBase {
         return Commands.run(() -> {
             double velocity = distanceToVelocity(distance.getAsDouble());
             // double velocity = 1000 / 60; // distanceToVelocity(distance.getAsDouble());
-            setTopMotor(pid.calculate(getTopVelocity()) + shooterFeed.calculate(velocity));
-            setBottomMotor(pid.calculate(getBottomVelocity()) + shooterFeed.calculate(velocity));
+            setTopMotor(topPid.calculate(getTopVelocity()) + shooterFeed.calculate(velocity));
+            setBottomMotor(
+                bottomPid.calculate(getBottomVelocity()) + shooterFeed.calculate(velocity));
         }, this);
     }
 
