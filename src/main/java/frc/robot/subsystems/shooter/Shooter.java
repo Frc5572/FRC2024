@@ -23,6 +23,11 @@ public class Shooter extends SubsystemBase {
     private ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
     private int lastAtSetpoint = 0;
 
+    /**
+     * Shooter Subsystem
+     *
+     * @param io Shooter IO Layer
+     */
     public Shooter(ShooterIO io) {
         this.io = io;
         topPid.setSetpoint(0);
@@ -39,34 +44,37 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("Shooter Speed Bottom", inputs.bottomShooterVelocityRotPerMin);
     }
 
-    public void setTopMotor(double power) {
-        Logger.recordOutput("Shooter/Top Voltage", power);
-        io.setTopMotor(power);
+    /**
+     * Set voltage to Top Shooter Motor
+     *
+     * @param voltage
+     */
+    public void setTopMotor(double voltage) {
+        Logger.recordOutput("Shooter/Top Voltage", voltage);
+        io.setTopMotor(voltage);
     }
 
-    public void setBottomMotor(double power) {
-        Logger.recordOutput("Shooter/Bottom Voltage", power);
-        io.setBottomMotor(power);
+    /**
+     * Set voltage to Bottom Shooter Motor
+     *
+     * @param voltage
+     */
+    public void setBottomMotor(double voltage) {
+        Logger.recordOutput("Shooter/Bottom Voltage", voltage);
+        io.setBottomMotor(voltage);
     }
 
-    public double getTopVelocity() {
-        return inputs.topShooterVelocityRotPerMin;
-    }
-
-    public double getBottomVelocity() {
-        return inputs.bottomShooterVelocityRotPerMin;
-    }
-
-    public double distanceToVelocity(double distance) {
-        return 0.0;
-    }
-
+    /**
+     * If Both shooter motors at at their setpoint within the tolerance
+     *
+     * @return True if at setpoint
+     */
     public Boolean atSetpoint() {
         return lastAtSetpoint > 5;
     }
 
     /**
-     * Command to shoot from a distance
+     * Command to run the shooter at a set RPM for the speaker
      *
      * @return Returns a command
      */
@@ -91,5 +99,4 @@ public class Shooter extends SubsystemBase {
             lastAtSetpoint = 0;
         });
     }
-
 }
