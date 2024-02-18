@@ -47,7 +47,7 @@ public class Shooter extends SubsystemBase {
     /**
      * Set voltage to Top Shooter Motor
      *
-     * @param voltage
+     * @param voltage Voltage to apply to motor
      */
     public void setTopMotor(double voltage) {
         Logger.recordOutput("Shooter/Top Voltage", voltage);
@@ -57,7 +57,7 @@ public class Shooter extends SubsystemBase {
     /**
      * Set voltage to Bottom Shooter Motor
      *
-     * @param voltage
+     * @param voltage Voltage to apply to motor
      */
     public void setBottomMotor(double voltage) {
         Logger.recordOutput("Shooter/Bottom Voltage", voltage);
