@@ -238,7 +238,7 @@ public final class Constants {
             public static final int driveMotorID = 6;
             public static final int angleMotorID = 51;
             public static final int canCoderID = 4;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(3.955078125 + 180);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(183.955078125);
         }
 
         /**
@@ -248,7 +248,7 @@ public final class Constants {
             public static final int driveMotorID = 2;
             public static final int angleMotorID = 40;
             public static final int canCoderID = 2;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(145.01953125 + 180);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(325.01953125);
         }
 
         /**
@@ -258,7 +258,7 @@ public final class Constants {
             public static final int driveMotorID = 3;
             public static final int angleMotorID = 9;
             public static final int canCoderID = 1;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(-55.37109375 + 180);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(124.62890625);
         }
 
         /**
@@ -268,8 +268,7 @@ public final class Constants {
             public static final int driveMotorID = 10;
             public static final int angleMotorID = 8;
             public static final int canCoderID = 10;
-            public static final Rotation2d angleOffset =
-                Rotation2d.fromDegrees(115.400390625 + 180);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(295.400390625);
         }
 
         public static final HolonomicPathFollowerConfig pathFollowerConfig =
@@ -401,6 +400,7 @@ public final class Constants {
         public static final double KD = 0;
         public static final double KS = 0;
         public static final double KV = 0.00092;
+        public static final double GEAR_RATIO = 31.0 / 16.0;
         public static final double HEIGHT_FROM_LOWEST_POS = Units.inchesToMeters(32.0);
         public static final double HEIGHT_FROM_SPEAKER =
             FieldConstants.centerSpeaker - HEIGHT_FROM_LOWEST_POS;
