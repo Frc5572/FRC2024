@@ -145,6 +145,7 @@ public class RobotContainer {
         SmartDashboard.putData("Choose Auto: ", autoChooser);
         // Configure the button bindings
         configureButtonBindings();
+        configureTestButtonBindings();
     }
 
     /**
@@ -153,7 +154,7 @@ public class RobotContainer {
      * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a
      * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
-    private void configureButtonBindings() { /* Driver Buttons */
+    private void configureButtonBindings() {
         /* Driver Buttons */
         driver.y().onTrue(new InstantCommand(() -> s_Swerve.resetFieldRelativeOffset()));
         // intake forward
@@ -163,8 +164,9 @@ public class RobotContainer {
         // driver.start().whileTrue();
 
         driver.x().whileTrue(CommandFactory.shootSpeaker(shooter, intake));
+    }
 
-
+    private void configureTestButtonBindings() {
         double climberPower = 0.3;
         // Right in
         test.x().whileTrue(new StartEndCommand(() -> {
@@ -207,22 +209,33 @@ public class RobotContainer {
             climber.setRightPower(0);
         }, climber));
 
-        // elevator down
         double elevatorPower = 0.2;
-        test.povRight().whileTrue(new StartEndCommand(() -> {
-            elevatorWrist.setElevatorPower(elevatorPower);
-        }, () -> {
-            elevatorWrist.setElevatorPower(0.0);
-        }, climber));
         // climber up
-        test.povLeft().whileTrue(new StartEndCommand(() -> {
+        test.povUp().whileTrue(new StartEndCommand(() -> {
             elevatorWrist.setElevatorPower(-elevatorPower);
         }, () -> {
             elevatorWrist.setElevatorPower(0.0);
         }, climber));
+        // elevator down
+        test.povDown().whileTrue(new StartEndCommand(() -> {
+            elevatorWrist.setElevatorPower(elevatorPower);
+        }, () -> {
+            elevatorWrist.setElevatorPower(0.0);
+        }, climber));
 
-
-
+        double wristPower = 0.2;
+        // wrist up
+        test.povRight().whileTrue(new StartEndCommand(() -> {
+            elevatorWrist.setWristPower(-wristPower);
+        }, () -> {
+            elevatorWrist.setWristPower(0.0);
+        }, climber));
+        // wrist down
+        test.povLeft().whileTrue(new StartEndCommand(() -> {
+            elevatorWrist.setWristPower(wristPower);
+        }, () -> {
+            elevatorWrist.setWristPower(0.0);
+        }, climber));
     }
 
     /**
