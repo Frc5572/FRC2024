@@ -17,7 +17,6 @@ public class ShooterVortex implements ShooterIO {
     private RelativeEncoder topEncoder = topShooterMotor.getEncoder();
     private RelativeEncoder bottomEncoder = bottomShooterMotor.getEncoder();
 
-    // gear ratio 31:16
     /**
      * Constructor Shooter Subsystem - sets motor and encoder preferences
      */
@@ -26,10 +25,11 @@ public class ShooterVortex implements ShooterIO {
         bottomShooterMotor.setIdleMode(IdleMode.kCoast);
         topShooterMotor.setInverted(false);
         bottomShooterMotor.setInverted(false);
-        topEncoder.setPositionConversionFactor(31.0 / 16.0);
-        topEncoder.setVelocityConversionFactor(31.0 / 16.0);
-        bottomEncoder.setPositionConversionFactor(31.0 / 16.0);
-        bottomEncoder.setVelocityConversionFactor(31.0 / 16.0);
+        // gear ratio 31:16
+        topEncoder.setPositionConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
+        topEncoder.setVelocityConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
+        bottomEncoder.setPositionConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
+        bottomEncoder.setVelocityConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
         bottomShooterMotor.burnFlash();
         topShooterMotor.burnFlash();
     }
@@ -49,13 +49,10 @@ public class ShooterVortex implements ShooterIO {
         inputs.bottomShooterVelocityRotPerMin = bottomEncoder.getVelocity();
         inputs.topShooterPosition = topEncoder.getPosition();
         inputs.bottomShooterPosition = bottomEncoder.getPosition();
-        inputs.bottomShooterVelocityRotPerMin = bottomEncoder.getVelocity();
         inputs.topShooterSupplyVoltage = topShooterMotor.getBusVoltage();
         inputs.bottomShooterSupplyVoltage = topShooterMotor.getBusVoltage();
         inputs.topShooterAmps = topShooterMotor.getOutputCurrent();
         inputs.bottomShooterAmps = topShooterMotor.getOutputCurrent();
-        inputs.topShooterPosition = topEncoder.getPosition();
-        inputs.bottomShooterPosition = bottomEncoder.getPosition();
         inputs.topShooterPower = topShooterMotor.get();
         inputs.bottomShooterPower = bottomShooterMotor.get();
         inputs.topShooterTemp = topShooterMotor.getMotorTemperature();
