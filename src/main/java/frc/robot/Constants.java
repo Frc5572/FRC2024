@@ -232,7 +232,7 @@ public final class Constants {
         /* Module Specific Constants */
 
         /**
-         * Front Left Module - Module 3
+         * Front Left Module - Module 0
          */
         public static final class Mod0 {
             public static final int driveMotorID = 6;
