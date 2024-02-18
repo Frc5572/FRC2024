@@ -163,6 +163,8 @@ public class RobotContainer {
         // driver.start().whileTrue();
 
         driver.x().whileTrue(CommandFactory.shootSpeaker(shooter, intake));
+
+
         double climberPower = 0.3;
         // Right in
         test.x().whileTrue(new StartEndCommand(() -> {

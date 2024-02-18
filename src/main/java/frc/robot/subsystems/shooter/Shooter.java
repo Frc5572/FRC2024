@@ -1,6 +1,5 @@
 package frc.robot.subsystems.shooter;
 
-import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -22,14 +21,12 @@ public class Shooter extends SubsystemBase {
     private SimpleMotorFeedforward shooterFeed =
         new SimpleMotorFeedforward(Constants.ShooterConstants.KS, Constants.ShooterConstants.KV);
     private ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
-    private boolean shooterIsOn;
     private int lastAtSetpoint = 0;
 
     public Shooter(ShooterIO io) {
         this.io = io;
-        shooterIsOn = false;
-        topPid.setSetpoint(Constants.ShooterConstants.DESIRED_SPEED);
-        bottomPid.setSetpoint(Constants.ShooterConstants.DESIRED_SPEED);
+        topPid.setSetpoint(0);
+        bottomPid.setSetpoint(0);
         topPid.setTolerance(500);
         bottomPid.setTolerance(500);
     }
@@ -38,21 +35,6 @@ public class Shooter extends SubsystemBase {
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs("Shooter", inputs);
-        if (shooterIsOn) {
-            setTopMotor(topPid.calculate(inputs.topShooterVelocityRotPerMin)
-                + shooterFeed.calculate(Constants.ShooterConstants.DESIRED_SPEED));
-            setBottomMotor(bottomPid.calculate(inputs.bottomShooterVelocityRotPerMin)
-                + shooterFeed.calculate(Constants.ShooterConstants.DESIRED_SPEED));
-            if (topPid.atSetpoint() && bottomPid.atSetpoint()) {
-                lastAtSetpoint++;
-            } else {
-                lastAtSetpoint = 0;
-            }
-        } else {
-            setTopMotor(0);
-            setBottomMotor(0);
-            lastAtSetpoint = 0;
-        }
         SmartDashboard.putNumber("Shooter Speed Top", inputs.topShooterVelocityRotPerMin);
         SmartDashboard.putNumber("Shooter Speed Bottom", inputs.bottomShooterVelocityRotPerMin);
     }
@@ -65,10 +47,6 @@ public class Shooter extends SubsystemBase {
     public void setBottomMotor(double power) {
         Logger.recordOutput("Shooter/Bottom Voltage", power);
         io.setBottomMotor(power);
-    }
-
-    public void setActive(boolean active) {
-        this.shooterIsOn = active;
     }
 
     public double getTopVelocity() {
@@ -90,17 +68,28 @@ public class Shooter extends SubsystemBase {
     /**
      * Command to shoot from a distance
      *
-     * @param distance the distance from the target
      * @return Returns a command
      */
-    public Command shootWithDistance(DoubleSupplier distance) {
-        return Commands.run(() -> {
-            double velocity = distanceToVelocity(distance.getAsDouble());
-            // double velocity = 1000 / 60; // distanceToVelocity(distance.getAsDouble());
-            setTopMotor(topPid.calculate(getTopVelocity()) + shooterFeed.calculate(velocity));
-            setBottomMotor(
-                bottomPid.calculate(getBottomVelocity()) + shooterFeed.calculate(velocity));
-        }, this);
+    public Command shootSpeaker() {
+        return Commands.runOnce(() -> {
+            topPid.setSetpoint(Constants.ShooterConstants.SHOOT_SPEAKER_RPM);
+            bottomPid.setSetpoint(Constants.ShooterConstants.SHOOT_SPEAKER_RPM);
+            lastAtSetpoint = 0;
+        }, this).andThen(Commands.run(() -> {
+            setTopMotor(topPid.calculate(inputs.topShooterVelocityRotPerMin)
+                + shooterFeed.calculate(Constants.ShooterConstants.SHOOT_SPEAKER_RPM));
+            setBottomMotor(bottomPid.calculate(inputs.bottomShooterVelocityRotPerMin)
+                + shooterFeed.calculate(Constants.ShooterConstants.SHOOT_SPEAKER_RPM));
+            if (topPid.atSetpoint() && bottomPid.atSetpoint()) {
+                lastAtSetpoint++;
+            } else {
+                lastAtSetpoint = 0;
+            }
+        }, this)).finallyDo(() -> {
+            setTopMotor(0);
+            setBottomMotor(0);
+            lastAtSetpoint = 0;
+        });
     }
 
 }

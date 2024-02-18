@@ -3,7 +3,6 @@ package frc.robot.commands;
 import java.util.function.BooleanSupplier;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.robot.Constants;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
@@ -42,17 +41,12 @@ public class CommandFactory {
     public static Command shootSpeaker(Shooter shooter, Intake intake) {
         // Supplier<Rotation2d> rotation = () -> new Rotation2d(Math
         // .atan(Constants.ShooterConstants.HEIGHT_FROM_SPEAKER / swerve.distanceFromSpeaker()));
-        Command runIndexer = intake.runIndexerMotor(1);
+        Command runIndexer = intake.runIndexerMotor(1).finallyDo(() -> intake.setIndexerMotor(0));
         // Command moveElevatorWrist = elevatorWrist
         // .followPosition(() -> Constants.ShooterConstants.HEIGHT_FROM_LOWEST_POS, rotation);
-        Command runshooter = new StartEndCommand(() -> shooter.setActive(true),
-            () -> shooter.setActive(false), shooter);
+        Command runshooter = shooter.shootSpeaker();
         Command readytoShoot = Commands.waitUntil(() -> shooter.atSetpoint());
-        return runshooter.alongWith(readytoShoot.andThen(runIndexer)).finallyDo(x -> {
-            shooter.setBottomMotor(0);
-            shooter.setTopMotor(0);
-            intake.setIndexerMotor(0);
-        });
+        return runshooter.alongWith(readytoShoot.andThen(runIndexer));
     }
 
     /**

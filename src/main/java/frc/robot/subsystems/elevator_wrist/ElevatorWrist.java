@@ -91,7 +91,6 @@ public class ElevatorWrist implements Subsystem {
     /**
      * Command to move Elevator and Wrist to set positions
      *
-     * @param height The height of the elevator in meters
      * @param angle The angle of the wrist in {@link Rotation2d}
      *
      * @return A {@link Command}
