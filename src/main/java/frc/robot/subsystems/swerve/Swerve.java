@@ -33,8 +33,6 @@ public class Swerve extends SubsystemBase {
     private SwerveInputsAutoLogged inputs = new SwerveInputsAutoLogged();
     private SwerveIO swerveIO;
     private boolean hasInitialized = false;
-    private boolean latencyGood = false;
-
     private PhotonCameraWrapper[] cameras;
 
     // private GenericEntry aprilTagTarget =
@@ -340,20 +338,4 @@ public class Swerve extends SubsystemBase {
                     - getPose().getX());
         return distance;
     }
-
-    /**
-     * Scans through a list of booleans - returns if contains desired value
-     *
-     * @param list List of booleans to scan through
-     * @param targetValue desired value in list
-     */
-    private boolean containsBoolean(boolean[] list, boolean targetValue) {
-        for (boolean value : list) {
-            if (targetValue == value) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 }

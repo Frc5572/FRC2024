@@ -13,13 +13,10 @@ import frc.robot.Constants;
  */
 public class IntakeIOFalcon implements IntakeIO {
 
-    // private final TalonFX intakeMotor =
-    // new TalonFX(Constants.Motors.Intake.INTAKE_MOTOR_ID, "canivore");
     private final CANSparkMax intakeMotor =
         new CANSparkMax(Constants.Motors.Intake.INTAKE_MOTOR_ID, MotorType.kBrushless);
     private final TalonFX indexerMotor = new TalonFX(Constants.Motors.Intake.INDEXER_MOTOR_ID);
 
-    private final DutyCycleOut intakeDutyCycleOut = new DutyCycleOut(0);
     private final DutyCycleOut indexerDutyCycleOut = new DutyCycleOut(0);
     private final DigitalInput beamBrake = new DigitalInput(8);
 
@@ -35,7 +32,6 @@ public class IntakeIOFalcon implements IntakeIO {
     @Override
     public void updateInputs(IntakeInputs inputs) {
         inputs.intakeSupplyVoltage = intakeMotor.getBusVoltage();
-        // inputs.intakeMotorVoltage = intakeMotor.getMotorVoltage().getValueAsDouble();
         inputs.intakeAmps = intakeMotor.getOutputCurrent();
         inputs.intakeRPM = intakeMotor.getEncoder().getVelocity();
         inputs.intakeTemp = intakeMotor.getMotorTemperature();
@@ -49,7 +45,6 @@ public class IntakeIOFalcon implements IntakeIO {
 
     @Override
     public void setIntakeMotorPercentage(double percent) {
-        // intakeMotor.setControl(intakeDutyCycleOut.withOutput(percent));
         intakeMotor.set(percent);
     }
 
