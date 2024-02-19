@@ -83,6 +83,7 @@ public class ElevatorWrist extends SubsystemBase {
         // elevatorPIDValue + elevatorFeedForwardValue);
 
         Logger.recordOutput("/ElevatorWrist/Wrist/PID Voltage", wristPIDValue);
+        Logger.recordOutput("/ElevatorWrist/Wrist/PID Goal", wristPIDController.getGoal().position);
         // Logger.recordOutput("/ElevatorWrist/Wrist/Feedforward", wristFeedForwardValue);
         // Logger.recordOutput("/ElevatorWrist/Wrist/Combined Voltage",
         // wristFeedForwardValue + wristPIDValue);

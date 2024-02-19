@@ -373,8 +373,8 @@ public final class Constants {
             public static final Rotation2d CLIMBING_ANGLE = Rotation2d.fromDegrees(0);
             public static final Rotation2d MAX_ANGLE_UP_HOME = Rotation2d.fromDegrees(75);
             public static final Rotation2d MAX_ANGLE_DOWN_HOME = Rotation2d.fromDegrees(0);
-            public static final Rotation2d MAX_ANGLE_UP_EXTENDED = Rotation2d.fromRotations(.091);
-            public static final Rotation2d MAX_ANGLE_DOWN_EXTENDED = Rotation2d.fromRotations(.396);
+            public static final Rotation2d MAX_ANGLE_UP_EXTENDED = Rotation2d.fromRotations(.095);
+            public static final Rotation2d MAX_ANGLE_DOWN_EXTENDED = Rotation2d.fromRotations(.390);
 
             public static final double LINEAR_DISTANCE = Units.inchesToMeters(2 * Math.PI * 659);
 
