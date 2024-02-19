@@ -3,9 +3,9 @@ package frc.robot.subsystems.elevatorWrist;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
-import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -27,13 +27,16 @@ public class ElevatorWrist extends SubsystemBase {
     // Constants.ElevatorWristConstants.PID.ELEVATOR_MAX_VELOCITY,
     // Constants.ElevatorWristConstants.PID.ELEVATOR_MAX_ACCELERATION));
 
-    ProfiledPIDController wristPIDController =
-        new ProfiledPIDController(Constants.ElevatorWristConstants.PID.WRIST_KP,
+    PIDController wristPIDController =
+        new PIDController(Constants.ElevatorWristConstants.PID.WRIST_KP,
             Constants.ElevatorWristConstants.PID.WRIST_KI,
-            Constants.ElevatorWristConstants.PID.WRIST_KD,
-            new TrapezoidProfile.Constraints(
-                Constants.ElevatorWristConstants.PID.WRIST_MAX_VELOCITY,
-                Constants.ElevatorWristConstants.PID.WRIST_MAX_ACCELERATION));
+            Constants.ElevatorWristConstants.PID.WRIST_KD);
+    // new ProfiledPIDController(Constants.ElevatorWristConstants.PID.WRIST_KP,
+    // Constants.ElevatorWristConstants.PID.WRIST_KI,
+    // Constants.ElevatorWristConstants.PID.WRIST_KD,
+    // new TrapezoidProfile.Constraints(
+    // Constants.ElevatorWristConstants.PID.WRIST_MAX_VELOCITY,
+    // Constants.ElevatorWristConstants.PID.WRIST_MAX_ACCELERATION));
 
 
     // private ElevatorFeedforward elevatorFeedForward =
@@ -83,7 +86,10 @@ public class ElevatorWrist extends SubsystemBase {
         // elevatorPIDValue + elevatorFeedForwardValue);
 
         Logger.recordOutput("/ElevatorWrist/Wrist/PID Voltage", wristPIDValue);
-        Logger.recordOutput("/ElevatorWrist/Wrist/PID Goal", wristPIDController.getGoal().position);
+        Logger.recordOutput("/ElevatorWrist/Wrist/PID setpoint", wristPIDController.getSetpoint());
+
+        SmartDashboard.putNumber("ElevatorWrist PID Voltage", wristPIDValue);
+        SmartDashboard.putNumber("ElevatorWrist PID setpoint", wristPIDController.getSetpoint());
         // Logger.recordOutput("/ElevatorWrist/Wrist/Feedforward", wristFeedForwardValue);
         // Logger.recordOutput("/ElevatorWrist/Wrist/Combined Voltage",
         // wristFeedForwardValue + wristPIDValue);
@@ -102,7 +108,7 @@ public class ElevatorWrist extends SubsystemBase {
     public Command goToPosition(double height, Rotation2d angle) {
         return Commands.runOnce(() -> {
             // elevatorPIDController.setGoal(height);
-            wristPIDController.setGoal(angle.getRotations());
+            wristPIDController.setSetpoint(angle.getRotations());
         }).andThen(Commands.waitUntil(() -> atGoal()));
     }
 
@@ -118,7 +124,7 @@ public class ElevatorWrist extends SubsystemBase {
     public Command followPosition(DoubleSupplier height, Supplier<Rotation2d> angle) {
         return Commands.run(() -> {
             // elevatorPIDController.setGoal(height.getAsDouble());
-            wristPIDController.setGoal(angle.get().getRotations());
+            wristPIDController.setSetpoint(angle.get().getRotations());
         });
     }
 
@@ -139,7 +145,7 @@ public class ElevatorWrist extends SubsystemBase {
      */
     public Boolean atGoal() {
         // return elevatorPIDController.atGoal() && wristPIDController.atGoal();
-        return wristPIDController.atGoal();
+        return wristPIDController.atSetpoint();
         // return true;
     }
 
