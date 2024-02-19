@@ -363,7 +363,7 @@ public final class Constants {
         public static final class SetPoints {
 
             public static final double HOME_HEIGHT = 0;
-            public static final Rotation2d HOME_ANGLE = Rotation2d.fromDegrees(40);
+            public static final Rotation2d HOME_ANGLE = Rotation2d.fromRotations(.242);
             public static final double AMP_HEIGHT = Units.inchesToMeters(34);
             public static final Rotation2d AMP_ANGLE = Rotation2d.fromDegrees(-10);
             public static final double TRAP_HEIGHT = Units.inchesToMeters(40);
@@ -373,8 +373,8 @@ public final class Constants {
             public static final Rotation2d CLIMBING_ANGLE = Rotation2d.fromDegrees(0);
             public static final Rotation2d MAX_ANGLE_UP_HOME = Rotation2d.fromDegrees(75);
             public static final Rotation2d MAX_ANGLE_DOWN_HOME = Rotation2d.fromDegrees(0);
-            public static final Rotation2d MAX_ANGLE_UP_EXTENDED = Rotation2d.fromDegrees(75);
-            public static final Rotation2d MAX_ANGLE_DOWN_EXTENDED = Rotation2d.fromDegrees(-15);
+            public static final Rotation2d MAX_ANGLE_UP_EXTENDED = Rotation2d.fromRotations(.091);
+            public static final Rotation2d MAX_ANGLE_DOWN_EXTENDED = Rotation2d.fromRotations(.396);
 
             public static final double LINEAR_DISTANCE = Units.inchesToMeters(2 * Math.PI * 659);
 
@@ -400,10 +400,10 @@ public final class Constants {
         public static final double KD = 0;
         public static final double KS = 0;
         public static final double KV = 0.00092;
+        public static final double GEAR_RATIO = 31.0 / 16.0;
         public static final double HEIGHT_FROM_LOWEST_POS = Units.inchesToMeters(32.0);
         public static final double HEIGHT_FROM_SPEAKER =
             FieldConstants.centerSpeaker - HEIGHT_FROM_LOWEST_POS;
-
         public static final double DESIRED_SPEED = 9500.0;
     }
 

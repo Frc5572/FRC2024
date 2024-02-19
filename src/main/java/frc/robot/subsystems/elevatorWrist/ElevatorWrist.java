@@ -1,10 +1,8 @@
-package frc.robot.subsystems.elevator_wrist;
+package frc.robot.subsystems.elevatorWrist;
 
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
-import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -12,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
+import frc.robot.subsystems.elevator_wrist.ElevatorWristInputsAutoLogged;
 
 /**
  * Elevator and Wrist Subsystem
@@ -21,13 +20,13 @@ public class ElevatorWrist implements Subsystem {
     public ElevatorWristInputsAutoLogged inputs = new ElevatorWristInputsAutoLogged();
 
 
-    ProfiledPIDController elevatorPIDController =
-        new ProfiledPIDController(Constants.ElevatorWristConstants.PID.ELEVATOR_KP,
-            Constants.ElevatorWristConstants.PID.ELEVATOR_KI,
-            Constants.ElevatorWristConstants.PID.ELEVATOR_KD,
-            new TrapezoidProfile.Constraints(
-                Constants.ElevatorWristConstants.PID.ELEVATOR_MAX_VELOCITY,
-                Constants.ElevatorWristConstants.PID.ELEVATOR_MAX_ACCELERATION));
+    // ProfiledPIDController elevatorPIDController =
+    // new ProfiledPIDController(Constants.ElevatorWristConstants.PID.ELEVATOR_KP,
+    // Constants.ElevatorWristConstants.PID.ELEVATOR_KI,
+    // Constants.ElevatorWristConstants.PID.ELEVATOR_KD,
+    // new TrapezoidProfile.Constraints(
+    // Constants.ElevatorWristConstants.PID.ELEVATOR_MAX_VELOCITY,
+    // Constants.ElevatorWristConstants.PID.ELEVATOR_MAX_ACCELERATION));
 
     ProfiledPIDController wristPIDController =
         new ProfiledPIDController(Constants.ElevatorWristConstants.PID.WRIST_KP,
@@ -38,15 +37,15 @@ public class ElevatorWrist implements Subsystem {
                 Constants.ElevatorWristConstants.PID.WRIST_MAX_ACCELERATION));
 
 
-    private ElevatorFeedforward elevatorFeedForward =
-        new ElevatorFeedforward(Constants.ElevatorWristConstants.PID.ELEVATOR_KS,
-            Constants.ElevatorWristConstants.PID.ELEVATOR_KG,
-            Constants.ElevatorWristConstants.PID.ELEVATOR_KV);
+    // private ElevatorFeedforward elevatorFeedForward =
+    // new ElevatorFeedforward(Constants.ElevatorWristConstants.PID.ELEVATOR_KS,
+    // Constants.ElevatorWristConstants.PID.ELEVATOR_KG,
+    // Constants.ElevatorWristConstants.PID.ELEVATOR_KV);
 
-    private ArmFeedforward wristFeedForward =
-        new ArmFeedforward(Constants.ElevatorWristConstants.PID.WRIST_KS,
-            Constants.ElevatorWristConstants.PID.WRIST_KG,
-            Constants.ElevatorWristConstants.PID.WRIST_KV);
+    // private ArmFeedforward wristFeedForward =
+    // new ArmFeedforward(Constants.ElevatorWristConstants.PID.WRIST_KS,
+    // Constants.ElevatorWristConstants.PID.WRIST_KG,
+    // Constants.ElevatorWristConstants.PID.WRIST_KV);
 
     public ElevatorWrist(ElevatorWristIO io) {
         this.io = io;
@@ -58,35 +57,36 @@ public class ElevatorWrist implements Subsystem {
         io.updateInputs(inputs);
         Logger.processInputs("ElevatorWrist", inputs);
 
-        double elevatorPIDValue = elevatorPIDController.calculate(elevatorDistanceTraveled());
+        // double elevatorPIDValue = elevatorPIDController.calculate(elevatorDistanceTraveled());
         double wristPIDValue = wristPIDController.calculate(inputs.wristAbsoluteEncRawValue);
 
-        double elevatorFeedForwardValue =
-            elevatorFeedForward.calculate(0, 0, elevatorPIDController.getPeriod());
+        // double elevatorFeedForwardValue =
+        // elevatorFeedForward.calculate(0, 0, elevatorPIDController.getPeriod());
 
-        double wristFeedForwardValue =
-            wristFeedForward.calculate(0, 0, wristPIDController.getPeriod());
+        // double wristFeedForwardValue =
+        // wristFeedForward.calculate(0, 0, wristPIDController.getPeriod());
 
-        if (inputs.topLimitSwitch && elevatorPIDValue > 0) {
-            elevatorPIDValue = 0;
-        }
+        // if (inputs.topLimitSwitch && elevatorPIDValue > 0) {
+        // elevatorPIDValue = 0;
+        // }
 
-        if (inputs.bottomLimitSwitch && elevatorPIDValue < 0) {
-            elevatorPIDValue = 0;
-        }
+        // if (inputs.bottomLimitSwitch && elevatorPIDValue < 0) {
+        // elevatorPIDValue = 0;
+        // }
 
-        io.setElevatorVoltage(elevatorFeedForwardValue + elevatorPIDValue);
-        io.setWristVoltage(wristFeedForwardValue + wristPIDValue);
+        // io.setElevatorVoltage(elevatorFeedForwardValue + elevatorPIDValue);
+        // io.setWristVoltage(wristFeedForwardValue + wristPIDValue);
 
-        Logger.recordOutput("/ElevatorWrist/Elevator/PID Voltage", elevatorPIDValue);
-        Logger.recordOutput("/ElevatorWrist/Elevator/Feedforward", elevatorFeedForwardValue);
-        Logger.recordOutput("/ElevatorWrist/Elevator/Combined Voltage",
-            elevatorPIDValue + elevatorFeedForwardValue);
+        // Logger.recordOutput("/ElevatorWrist/Elevator/PID Voltage", elevatorPIDValue);
+        // Logger.recordOutput("/ElevatorWrist/Elevator/Feedforward", elevatorFeedForwardValue);
+        // Logger.recordOutput("/ElevatorWrist/Elevator/Combined Voltage",
+        // elevatorPIDValue + elevatorFeedForwardValue);
 
         Logger.recordOutput("/ElevatorWrist/Wrist/PID Voltage", wristPIDValue);
-        Logger.recordOutput("/ElevatorWrist/Wrist/Feedforward", wristFeedForwardValue);
-        Logger.recordOutput("/ElevatorWrist/Wrist/Combined Voltage",
-            wristFeedForwardValue + wristPIDValue);
+        // Logger.recordOutput("/ElevatorWrist/Wrist/Feedforward", wristFeedForwardValue);
+        // Logger.recordOutput("/ElevatorWrist/Wrist/Combined Voltage",
+        // wristFeedForwardValue + wristPIDValue);
+        Logger.recordOutput("/ElevatorWrist/Wrist/Combined Voltage", wristPIDValue);
 
     }
 
@@ -100,7 +100,7 @@ public class ElevatorWrist implements Subsystem {
      */
     public Command goToPosition(double height, Rotation2d angle) {
         return Commands.runOnce(() -> {
-            elevatorPIDController.setGoal(height);
+            // elevatorPIDController.setGoal(height);
             wristPIDController.setGoal(angle.getRotations());
         }).andThen(Commands.waitUntil(() -> atGoal()));
     }
@@ -116,7 +116,7 @@ public class ElevatorWrist implements Subsystem {
      */
     public Command followPosition(DoubleSupplier height, Supplier<Rotation2d> angle) {
         return Commands.run(() -> {
-            elevatorPIDController.setGoal(height.getAsDouble());
+            // elevatorPIDController.setGoal(height.getAsDouble());
             wristPIDController.setGoal(angle.get().getRotations());
         });
     }
@@ -137,7 +137,8 @@ public class ElevatorWrist implements Subsystem {
      * @return boolean representing if the elevator and wrist PID controllers are at their goals
      */
     public Boolean atGoal() {
-        return elevatorPIDController.atGoal() && wristPIDController.atGoal();
+        // return elevatorPIDController.atGoal() && wristPIDController.atGoal();
+        return true;
     }
 
     /**

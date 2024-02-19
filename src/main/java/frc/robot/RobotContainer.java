@@ -4,6 +4,7 @@ import java.util.List;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -19,6 +20,8 @@ import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.subsystems.elevatorWrist.ElevatorWrist;
+import frc.robot.subsystems.elevatorWrist.ElevatorWristReal;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOFalcon;
 import frc.robot.subsystems.shooter.Shooter;
@@ -47,7 +50,7 @@ public class RobotContainer {
     private Shooter shooter;
     private Intake intake;
     private PhotonCameraWrapper[] cameras;
-    // private ElevatorWrist elevatorWrist;
+    private ElevatorWrist elevatorWrist;
     // public Climber climber;
 
     /**
@@ -87,7 +90,7 @@ public class RobotContainer {
                                 Constants.CameraConstants.BackRightFacingCamera.CAMERA_NAME),
                             Constants.CameraConstants.BackRightFacingCamera.KCAMERA_TO_ROBOT)};
                 s_Swerve = new Swerve(new SwerveReal(), cameras);
-                // elevatorWrist = new ElevatorWrist(new ElevatorWristReal());
+                elevatorWrist = new ElevatorWrist(new ElevatorWristReal());
                 // climber = new Climber(new ClimberNEO());
                 s_Swerve = new Swerve(new SwerveReal(), cameras);
                 break;
@@ -159,8 +162,10 @@ public class RobotContainer {
 
         driver.x().whileTrue(CommandFactory.shootSpeaker(shooter, intake));
 
-        driver.start().whileTrue(new StartEndCommand(() -> shooter.setActive(true),
-            () -> shooter.setActive(false), shooter));
+        driver.start()
+            .whileTrue(new StartEndCommand(
+                () -> elevatorWrist.goToPosition(0, Rotation2d.fromRotations(.3)),
+                () -> elevatorWrist.setWristPower(0), elevatorWrist));
         // climber forward
         // driver.start().whileTrue(new StartEndCommand(() -> {
         // climber.setLeftPower(SmartDashboard.getNumber("Left Climber Power", 0));
