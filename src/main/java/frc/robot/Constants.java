@@ -347,11 +347,11 @@ public final class Constants {
             public static final double ELEVATOR_KG = 0;
             public static final double ELEVATOR_KV = 0;
 
-            public static final double WRIST_KP = 0;
+            public static final double WRIST_KP = 15;
             public static final double WRIST_KI = 0;
             public static final double WRIST_KD = 0;
-            public static final double WRIST_MAX_VELOCITY = 0;
-            public static final double WRIST_MAX_ACCELERATION = 0;
+            public static final double WRIST_MAX_VELOCITY = 0.1;
+            public static final double WRIST_MAX_ACCELERATION = 0.01;
             public static final double WRIST_KS = 0;
             public static final double WRIST_KG = 0;
             public static final double WRIST_KV = 0;

@@ -8,14 +8,13 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.subsystems.elevator_wrist.ElevatorWristInputsAutoLogged;
 
 /**
  * Elevator and Wrist Subsystem
  */
-public class ElevatorWrist implements Subsystem {
+public class ElevatorWrist extends SubsystemBase {
     public ElevatorWristIO io;
     public ElevatorWristInputsAutoLogged inputs = new ElevatorWristInputsAutoLogged();
 
@@ -76,6 +75,7 @@ public class ElevatorWrist implements Subsystem {
 
         // io.setElevatorVoltage(elevatorFeedForwardValue + elevatorPIDValue);
         // io.setWristVoltage(wristFeedForwardValue + wristPIDValue);
+        io.setWristVoltage(wristPIDValue);
 
         // Logger.recordOutput("/ElevatorWrist/Elevator/PID Voltage", elevatorPIDValue);
         // Logger.recordOutput("/ElevatorWrist/Elevator/Feedforward", elevatorFeedForwardValue);
@@ -138,7 +138,8 @@ public class ElevatorWrist implements Subsystem {
      */
     public Boolean atGoal() {
         // return elevatorPIDController.atGoal() && wristPIDController.atGoal();
-        return true;
+        return wristPIDController.atGoal();
+        // return true;
     }
 
     /**

@@ -11,9 +11,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.lib.math.Conversions;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonIO;
 import frc.lib.util.photon.PhotonReal;
@@ -162,10 +162,8 @@ public class RobotContainer {
 
         driver.x().whileTrue(CommandFactory.shootSpeaker(shooter, intake));
 
-        driver.start()
-            .whileTrue(new StartEndCommand(
-                () -> elevatorWrist.goToPosition(0, Rotation2d.fromRotations(.3)),
-                () -> elevatorWrist.setWristPower(0), elevatorWrist));
+        driver.start().whileTrue(elevatorWrist.goToPosition(0,
+            Rotation2d.fromDegrees(Conversions.wristOffsetToVisualAngle(0))));
         // climber forward
         // driver.start().whileTrue(new StartEndCommand(() -> {
         // climber.setLeftPower(SmartDashboard.getNumber("Left Climber Power", 0));
