@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.lib.math.Conversions;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonIO;
 import frc.lib.util.photon.PhotonReal;
@@ -162,8 +161,9 @@ public class RobotContainer {
 
         driver.x().whileTrue(CommandFactory.shootSpeaker(shooter, intake));
 
-        driver.start().whileTrue(elevatorWrist.goToPosition(0,
-            Rotation2d.fromDegrees(Conversions.wristOffsetToVisualAngle(0))));
+        driver.start().whileTrue(elevatorWrist.goToPosition(0, Rotation2d.fromRotations(.242)));
+        SmartDashboard.putNumber("RobotCOntainer goal",
+            Rotation2d.fromRotations(0.242).getRotations());
         // climber forward
         // driver.start().whileTrue(new StartEndCommand(() -> {
         // climber.setLeftPower(SmartDashboard.getNumber("Left Climber Power", 0));

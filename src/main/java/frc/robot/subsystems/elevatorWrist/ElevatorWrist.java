@@ -52,6 +52,7 @@ public class ElevatorWrist extends SubsystemBase {
     public ElevatorWrist(ElevatorWristIO io) {
         this.io = io;
         io.updateInputs(inputs);
+        // wristPIDController.setSetpoint(0);
     }
 
     @Override
@@ -78,7 +79,7 @@ public class ElevatorWrist extends SubsystemBase {
 
         // io.setElevatorVoltage(elevatorFeedForwardValue + elevatorPIDValue);
         // io.setWristVoltage(wristFeedForwardValue + wristPIDValue);
-        io.setWristVoltage(wristPIDValue);
+        io.setWristVoltage(-wristPIDValue);
 
         // Logger.recordOutput("/ElevatorWrist/Elevator/PID Voltage", elevatorPIDValue);
         // Logger.recordOutput("/ElevatorWrist/Elevator/Feedforward", elevatorFeedForwardValue);
@@ -90,6 +91,8 @@ public class ElevatorWrist extends SubsystemBase {
 
         SmartDashboard.putNumber("ElevatorWrist PID Voltage", wristPIDValue);
         SmartDashboard.putNumber("ElevatorWrist PID setpoint", wristPIDController.getSetpoint());
+        SmartDashboard.putNumber("ElevatorWrist Encoder Value", inputs.wristAbsoluteEncRawValue);
+        SmartDashboard.putNumber("ElevatorWrist Amp Drawn", inputs.wristMotorAmp);
         // Logger.recordOutput("/ElevatorWrist/Wrist/Feedforward", wristFeedForwardValue);
         // Logger.recordOutput("/ElevatorWrist/Wrist/Combined Voltage",
         // wristFeedForwardValue + wristPIDValue);
@@ -109,7 +112,9 @@ public class ElevatorWrist extends SubsystemBase {
         return Commands.runOnce(() -> {
             // elevatorPIDController.setGoal(height);
             wristPIDController.setSetpoint(angle.getRotations());
-        }).andThen(Commands.waitUntil(() -> atGoal()));
+        }).andThen(Commands.waitUntil(() -> atGoal())).andThen(Commands.run(() -> {
+            wristPIDController.setSetpoint(0);
+        }));
     }
 
     /**
