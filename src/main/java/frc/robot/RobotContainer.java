@@ -147,47 +147,15 @@ public class RobotContainer {
      * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a
      * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
-    private void configureButtonBindings() { /* Driver Buttons */
+    private void configureButtonBindings() {
         /* Driver Buttons */
         driver.y().onTrue(new InstantCommand(() -> s_Swerve.resetFieldRelativeOffset()));
         // intake forward
-        driver.a().whileTrue(intake.runIntakeMotor(1, .25));
+        driver.a().whileTrue(intake.runIntakeMotor(1, .20));
         // intake backward
-        driver.b().whileTrue(intake.runIntakeMotor(-1, -.25));
+        driver.b().whileTrue(intake.runIndexerMotor(-.1));
 
         driver.x().whileTrue(CommandFactory.shootSpeaker(shooter, intake));
-        // climber forward
-        // driver.start().whileTrue(new StartEndCommand(() -> {
-        // climber.setLeftPower(SmartDashboard.getNumber("Left Climber Power", 0));
-        // climber.setRightPower(SmartDashboard.getNumber("Right Climber Power", 0));
-        // }, () -> {
-        // climber.setLeftPower(0);
-        // climber.setRightPower(0);
-        // }, climber));
-        // // climber backward
-        // driver.back().whileTrue(new StartEndCommand(() -> {
-        // climber.setLeftPower(-SmartDashboard.getNumber("Left Climber Power", 0));
-        // climber.setRightPower(-SmartDashboard.getNumber("Right Climber Power", 0));
-        // }, () -> {
-        // climber.setLeftPower(0);
-        // climber.setRightPower(0);
-        // }, climber));
-
-        // elevator forward
-        // driver.start().whileTrue(new StartEndCommand(() -> {
-        // elevatorWrist.setElevatorPower(SmartDashboard.getNumber("Elevator Power", 0));
-        // }, () -> {
-        // elevatorWrist.setElevatorPower(0.0);
-        // }, climber));
-        // // climber backward
-        // driver.back().whileTrue(new StartEndCommand(() -> {
-        // elevatorWrist.setElevatorPower(-SmartDashboard.getNumber("Elevator Power", 0));
-        // }, () -> {
-        // elevatorWrist.setElevatorPower(0.0);
-        // }, climber));
-
-
-
     }
 
     /**
