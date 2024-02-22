@@ -41,16 +41,12 @@ public class CommandFactory {
     public static Command shootSpeaker(Shooter shooter, Intake intake) {
         // Supplier<Rotation2d> rotation = () -> new Rotation2d(Math
         // .atan(Constants.ShooterConstants.HEIGHT_FROM_SPEAKER / swerve.distanceFromSpeaker()));
-        Command runIndexer = intake.runIndexerMotor(Constants.IntakeConstants.INDEX_MOTOR_FORWARD);
+        Command runIndexer = intake.runIndexerMotor(1);
         // Command moveElevatorWrist = elevatorWrist
         // .followPosition(() -> Constants.ShooterConstants.HEIGHT_FROM_LOWEST_POS, rotation);
-        Command runshooter = shooter.shootWithDistance(() -> 0);
-        Command readytoShoot = Commands.waitUntil(() -> shooter.atSetpoint());
-        return runshooter.alongWith(readytoShoot.andThen(runIndexer)).finallyDo(x -> {
-            shooter.setBottomMotor(0);
-            shooter.setTopMotor(0);
-            intake.setIndexerMotor(0);
-        });
+        Command runshooter = shooter.shootSpeaker();
+        Command readytoShoot = Commands.waitUntil(() -> shooter.readyToShoot());
+        return runshooter.alongWith(readytoShoot.andThen(runIndexer));
     }
 
     /**
