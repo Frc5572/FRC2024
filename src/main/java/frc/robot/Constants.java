@@ -338,16 +338,16 @@ public final class Constants {
          */
         public static final class PID {
 
-            public static final double ELEVATOR_KP = 0;
+            public static final double ELEVATOR_KP = 0.06;
             public static final double ELEVATOR_KI = 0;
             public static final double ELEVATOR_KD = 0;
-            public static final double ELEVATOR_MAX_VELOCITY = 0;
-            public static final double ELEVATOR_MAX_ACCELERATION = 0;
+            public static final double ELEVATOR_MAX_VELOCITY = 2400;
+            public static final double ELEVATOR_MAX_ACCELERATION = 8000;
             public static final double ELEVATOR_KS = 0;
             public static final double ELEVATOR_KG = 0;
             public static final double ELEVATOR_KV = 0;
 
-            public static final double WRIST_KP = -10;
+            public static final double WRIST_KP = 55;
             public static final double WRIST_KI = 0;
             public static final double WRIST_KD = 0;
             public static final double WRIST_MAX_VELOCITY = 0.1;
