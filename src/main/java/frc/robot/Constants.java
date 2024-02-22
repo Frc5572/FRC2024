@@ -364,13 +364,16 @@ public final class Constants {
 
             public static final double HOME_HEIGHT = 0;
             public static final Rotation2d HOME_ANGLE = Rotation2d.fromRotations(.242);
-            public static final double AMP_HEIGHT = Units.inchesToMeters(34);
-            public static final Rotation2d AMP_ANGLE = Rotation2d.fromDegrees(-10);
-            public static final double TRAP_HEIGHT = Units.inchesToMeters(40);
-            public static final Rotation2d TRAP_ANGLE = Rotation2d.fromDegrees(30);
-            public static final double MAX_EXTENSION = Units.inchesToMeters(48);
+            // public static final double AMP_HEIGHT = Units.inchesToMeters(34);
+            public static final double AMP_HEIGHT = 500;
+            public static final Rotation2d AMP_ANGLE = Rotation2d.fromRotations(.300);
+            // public static final double TRAP_HEIGHT = Units.inchesToMeters(40);
+            public static final double TRAP_HEIGHT = 900;
+            public static final Rotation2d TRAP_ANGLE = Rotation2d.fromRotations(.350);
+            // public static final double MAX_EXTENSION = Units.inchesToMeters(48);
+            public static final double MAX_EXTENSION = 900;
             public static final double CLIMBING_HEIGHT = Units.inchesToMeters(15);
-            public static final Rotation2d CLIMBING_ANGLE = Rotation2d.fromDegrees(0);
+            public static final Rotation2d CLIMBING_ANGLE = Rotation2d.fromRotations(.280);
             public static final Rotation2d MAX_ANGLE_UP_HOME = Rotation2d.fromDegrees(75);
             public static final Rotation2d MAX_ANGLE_DOWN_HOME = Rotation2d.fromDegrees(0);
             public static final Rotation2d MAX_ANGLE_UP_EXTENDED = Rotation2d.fromRotations(.095);

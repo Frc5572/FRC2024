@@ -41,8 +41,6 @@ public class ElevatorWristReal implements ElevatorWristIO {
         elevatorMotor.setInverted(false);
 
         wristMotor.setIdleMode(IdleMode.kBrake);
-        // negative power sends wrist downwards
-        // motor definitely inverted
         wristMotor.setInverted(false);
     }
 

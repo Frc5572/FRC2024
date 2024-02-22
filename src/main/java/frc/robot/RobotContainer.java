@@ -166,6 +166,14 @@ public class RobotContainer {
         driver.start().whileTrue(elevatorWrist.goToPosition(900, Rotation2d.fromRotations(.13)));
         SmartDashboard.putNumber("RobotCOntainer goal",
             Rotation2d.fromRotations(0.242).getRotations());
+
+        operator.povDown().whileTrue(
+            elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.AMP_HEIGHT,
+                Constants.ElevatorWristConstants.SetPoints.AMP_ANGLE));
+        operator.povUp().whileTrue(
+            elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.TRAP_HEIGHT,
+                Constants.ElevatorWristConstants.SetPoints.TRAP_ANGLE));
+
         // climber forward
         operator.a().whileTrue(new StartEndCommand(() -> {
             climber.setLeftPower(SmartDashboard.getNumber("Left Climber Power", 0));

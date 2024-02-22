@@ -33,12 +33,6 @@ public class ElevatorWrist extends SubsystemBase {
         new PIDController(Constants.ElevatorWristConstants.PID.WRIST_KP,
             Constants.ElevatorWristConstants.PID.WRIST_KI,
             Constants.ElevatorWristConstants.PID.WRIST_KD);
-    // new ProfiledPIDController(Constants.ElevatorWristConstants.PID.WRIST_KP,
-    // Constants.ElevatorWristConstants.PID.WRIST_KI,
-    // Constants.ElevatorWristConstants.PID.WRIST_KD,
-    // new TrapezoidProfile.Constraints(
-    // Constants.ElevatorWristConstants.PID.WRIST_MAX_VELOCITY,
-    // Constants.ElevatorWristConstants.PID.WRIST_MAX_ACCELERATION));
 
 
     // private ElevatorFeedforward elevatorFeedForward =
