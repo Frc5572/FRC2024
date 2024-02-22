@@ -165,7 +165,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         Command autocommand;
-        Command runshooter = shooter.shootWithDistance(() -> s_Swerve.distanceFromSpeaker());
+        Command runshooter = shooter.shootSpeaker();
         Command runIndexer = intake.runIndexerMotor(Constants.IntakeConstants.INDEX_MOTOR_FORWARD);
 
         NamedCommands.registerCommand("Intake Command",
@@ -187,7 +187,7 @@ public class RobotContainer {
                 break;
 
             case "P1 4Ns Scoring Close":
-                autocommand = new PathPlannerAuto("3th Auto");
+                autocommand = new PathPlannerAuto("3rd Auto");
                 break;
 
             case "P1 4Ns Scoring far":
