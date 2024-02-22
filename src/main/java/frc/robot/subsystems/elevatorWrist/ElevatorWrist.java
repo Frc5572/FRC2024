@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
 
 /**
@@ -19,6 +20,7 @@ import frc.robot.Constants;
 public class ElevatorWrist extends SubsystemBase {
     public ElevatorWristIO io;
     public ElevatorWristInputsAutoLogged inputs = new ElevatorWristInputsAutoLogged();
+    private CommandXboxController test;
 
 
     ProfiledPIDController elevatorPIDController =
@@ -45,11 +47,12 @@ public class ElevatorWrist extends SubsystemBase {
     // Constants.ElevatorWristConstants.PID.WRIST_KG,
     // Constants.ElevatorWristConstants.PID.WRIST_KV);
 
-    public ElevatorWrist(ElevatorWristIO io) {
+    public ElevatorWrist(ElevatorWristIO io, CommandXboxController test) {
         this.io = io;
         io.updateInputs(inputs);
         wristPIDController.setSetpoint(0.2);
         wristPIDController.setTolerance(Rotation2d.fromDegrees(0.5).getRotations());
+        this.test = test;
     }
 
     @Override
@@ -77,8 +80,14 @@ public class ElevatorWrist extends SubsystemBase {
         double elevatorPIDValue =
             elevatorPIDController.calculate(-inputs.elevatorRelativeEncRawValue);
 
-        io.setElevatorVoltage(-0.05 * 12.0 - elevatorPIDValue);
-        io.setWristVoltage(wristPIDValue);
+        if (!test.b().getAsBoolean()) {
+            io.setElevatorVoltage(-0.05 * 12.0 - elevatorPIDValue);
+            io.setWristVoltage(wristPIDValue);
+        } else {
+            io.setElevatorPower(test.getLeftY());
+            io.setWristPower(test.getRightY());
+        }
+
 
         // Logger.recordOutput("/ElevatorWrist/Elevator/PID Voltage", elevatorPIDValue);
         // Logger.recordOutput("/ElevatorWrist/Elevator/Feedforward", elevatorFeedForwardValue);
@@ -92,7 +101,10 @@ public class ElevatorWrist extends SubsystemBase {
         SmartDashboard.putNumber("ElevatorWrist PID Voltage", elevatorPIDValue);
         SmartDashboard.putNumber("ElevatorWrist PID setpoint",
             elevatorPIDController.getSetpoint().position);
-        SmartDashboard.putNumber("ElevatorWrist Encoder Value", inputs.elevatorRelativeEncRawValue);
+        SmartDashboard.putNumber("ElevatorWrist Elevator Encoder Value",
+            inputs.elevatorRelativeEncRawValue);
+        SmartDashboard.putNumber("ElevatorWrist Wrist Encoder Value",
+            inputs.wristAbsoluteEncRawValue);
         SmartDashboard.putNumber("ElevatorWrist Amp Drawn", inputs.wristMotorAmp);
         // Logger.recordOutput("/ElevatorWrist/Wrist/Feedforward", wristFeedForwardValue);
         // Logger.recordOutput("/ElevatorWrist/Wrist/Combined Voltage",

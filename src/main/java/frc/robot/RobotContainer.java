@@ -42,6 +42,7 @@ public class RobotContainer {
     /* Controllers */
     public final CommandXboxController driver = new CommandXboxController(Constants.DRIVER_ID);
     private final CommandXboxController operator = new CommandXboxController(Constants.OPERATOR_ID);
+    private final CommandXboxController test = new CommandXboxController(4);
 
 
     // Initialize AutoChooser Sendable
@@ -92,7 +93,7 @@ public class RobotContainer {
                                 Constants.CameraConstants.BackRightFacingCamera.CAMERA_NAME),
                             Constants.CameraConstants.BackRightFacingCamera.KCAMERA_TO_ROBOT)};
                 s_Swerve = new Swerve(new SwerveReal(), cameras);
-                elevatorWrist = new ElevatorWrist(new ElevatorWristReal());
+                elevatorWrist = new ElevatorWrist(new ElevatorWristReal(), test);
                 climber = new Climber(new ClimberNEO());
                 break;
             case kSimulation:
