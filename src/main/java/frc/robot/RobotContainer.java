@@ -153,16 +153,15 @@ public class RobotContainer {
      * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a
      * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
-    private void configureButtonBindings() { /* Driver Buttons */
+    private void configureButtonBindings() {
         /* Driver Buttons */
         driver.y().onTrue(new InstantCommand(() -> s_Swerve.resetFieldRelativeOffset()));
         // intake forward
-        driver.a().whileTrue(intake.runIntakeMotor(1, .25));
+        driver.a().whileTrue(intake.runIntakeMotor(1, .20));
         // intake backward
-        driver.b().whileTrue(intake.runIntakeMotor(-1, -.25));
+        driver.b().whileTrue(intake.runIndexerMotor(-.1));
 
         driver.x().whileTrue(CommandFactory.shootSpeaker(shooter, intake));
-
         driver.start().whileTrue(elevatorWrist.goToPosition(900, Rotation2d.fromRotations(.13)));
         SmartDashboard.putNumber("RobotCOntainer goal",
             Rotation2d.fromRotations(0.242).getRotations());
@@ -211,9 +210,6 @@ public class RobotContainer {
         }, () -> {
             elevatorWrist.setElevatorPower(0.0);
         }));
-
-
-
     }
 
     /**

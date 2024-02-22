@@ -407,7 +407,7 @@ public final class Constants {
         public static final double HEIGHT_FROM_LOWEST_POS = Units.inchesToMeters(32.0);
         public static final double HEIGHT_FROM_SPEAKER =
             FieldConstants.centerSpeaker - HEIGHT_FROM_LOWEST_POS;
-        public static final double DESIRED_SPEED = 9500.0;
+        public static final double SHOOT_SPEAKER_RPM = 11500.0;
     }
 
     /**
