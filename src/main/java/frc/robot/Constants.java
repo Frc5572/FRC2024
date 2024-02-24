@@ -150,7 +150,7 @@ public final class Constants {
     public static final class Swerve {
         public static final edu.wpi.first.wpilibj.SPI.Port navXID =
             edu.wpi.first.wpilibj.SPI.Port.kMXP;
-        public static final boolean invertGyro = false;
+        public static final boolean invertGyro = true;
         public static final boolean isFieldRelative = true;
         public static final boolean isOpenLoop = false;
 
@@ -322,6 +322,45 @@ public final class Constants {
      */
     public static final class ElevatorWristConstants {
 
+        public static final Rotation2d WRIST_REF_1_ANGLE_MEASURED = Rotation2d.fromRotations(0.1);
+        public static final Rotation2d WRIST_REF_2_ANGLE_MEASURED = Rotation2d.fromRotations(0.0);
+        public static final Rotation2d WRIST_REF_1_ANGLE_ACTUAL = Rotation2d.fromRotations(0.1);
+        public static final Rotation2d WRIST_REF_2_ANGLE_ACTUAL = Rotation2d.fromRotations(0.0);
+
+        public static final double WRIST_M;
+        public static final double WRIST_B;
+
+        static {
+            WRIST_M =
+                (WRIST_REF_2_ANGLE_ACTUAL.getRotations() - WRIST_REF_1_ANGLE_ACTUAL.getRotations())
+                    / (WRIST_REF_2_ANGLE_MEASURED.getRotations()
+                        - WRIST_REF_1_ANGLE_MEASURED.getRotations());
+            // meas_1 * m + b = act_1
+            // b = act_1 - meas_1 * m
+            WRIST_B = WRIST_REF_1_ANGLE_ACTUAL.getRotations()
+                - WRIST_REF_1_ANGLE_MEASURED.getRotations() * WRIST_M;
+        }
+
+        public static final Rotation2d ELEVATOR_REF_1_ANGLE_MEASURED =
+            Rotation2d.fromRotations(0.0);
+        public static final Rotation2d ELEVATOR_REF_2_ANGLE_MEASURED =
+            Rotation2d.fromRotations(0.0);
+        public static final double ELEVATOR_REF_1_HEIGHT = 0.0;
+        public static final double ELEVATOR_REF_2_HEIGHT = 0.1;
+
+        public static final double ELEVATOR_M;
+        public static final double ELEVATOR_B;
+
+        static {
+            ELEVATOR_M = (ELEVATOR_REF_2_HEIGHT - ELEVATOR_REF_1_HEIGHT)
+                / (ELEVATOR_REF_2_ANGLE_MEASURED.getRotations()
+                    - ELEVATOR_REF_1_ANGLE_MEASURED.getRotations());
+            // meas_1 * m + b = act_1
+            // b = act_1 - meas_1 * m
+            ELEVATOR_B =
+                ELEVATOR_REF_1_HEIGHT - ELEVATOR_REF_1_ANGLE_MEASURED.getRotations() * ELEVATOR_M;
+        }
+
         /**
          * Sensor Constants
          */
@@ -398,16 +437,17 @@ public final class Constants {
      * Constants of Shooters
      */
     public static final class ShooterConstants {
-        public static final double KP = 0.00004;
+        public static final double KP = 0.0014;
         public static final double KI = 0;
         public static final double KD = 0;
         public static final double KS = 0;
-        public static final double KV = 0.00092;
+        public static final double TOP_KV = 0.00092;
+        public static final double BOTTOM_KV = 0.00092;
         public static final double GEAR_RATIO = 31.0 / 16.0;
         public static final double HEIGHT_FROM_LOWEST_POS = Units.inchesToMeters(32.0);
         public static final double HEIGHT_FROM_SPEAKER =
             FieldConstants.centerSpeaker - HEIGHT_FROM_LOWEST_POS;
-        public static final double SHOOT_SPEAKER_RPM = 11500.0;
+        public static final double SHOOT_SPEAKER_RPM = 12000.0;
     }
 
     /**

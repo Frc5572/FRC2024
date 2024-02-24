@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.util.photon.PhotonCameraWrapper;
@@ -92,7 +91,7 @@ public class RobotContainer {
                                 Constants.CameraConstants.BackRightFacingCamera.CAMERA_NAME),
                             Constants.CameraConstants.BackRightFacingCamera.KCAMERA_TO_ROBOT)};
                 s_Swerve = new Swerve(new SwerveReal(), cameras);
-                elevatorWrist = new ElevatorWrist(new ElevatorWristReal());
+                elevatorWrist = new ElevatorWrist(new ElevatorWristReal(), operator);
                 climber = new Climber(new ClimberNEO());
                 break;
             case kSimulation:
@@ -161,55 +160,56 @@ public class RobotContainer {
         // intake backward
         driver.b().whileTrue(intake.runIndexerMotor(-.1));
 
-        driver.x().whileTrue(CommandFactory.shootSpeaker(shooter, intake));
-        driver.start().whileTrue(elevatorWrist.goToPosition(900, Rotation2d.fromRotations(.13)));
+        operator.x().whileTrue(CommandFactory.shootSpeaker(shooter, intake));
+        driver.start().whileTrue(elevatorWrist.goToPosition(900, Rotation2d.fromRotations(.11)));
+        driver.back().whileTrue(elevatorWrist.goToPosition(900, Rotation2d.fromRotations(.13)));
         SmartDashboard.putNumber("RobotCOntainer goal",
             Rotation2d.fromRotations(0.242).getRotations());
 
-        operator.povDown().whileTrue(
-            elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.AMP_HEIGHT,
-                Constants.ElevatorWristConstants.SetPoints.AMP_ANGLE));
-        operator.povUp().whileTrue(
-            elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.TRAP_HEIGHT,
-                Constants.ElevatorWristConstants.SetPoints.TRAP_ANGLE));
+        // operator.povDown().whileTrue(
+        // elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.AMP_HEIGHT,
+        // Constants.ElevatorWristConstants.SetPoints.AMP_ANGLE));
+        // operator.povUp().whileTrue(
+        // elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.TRAP_HEIGHT,
+        // Constants.ElevatorWristConstants.SetPoints.TRAP_ANGLE));
 
-        // climber forward
-        operator.a().whileTrue(new StartEndCommand(() -> {
-            climber.setLeftPower(SmartDashboard.getNumber("Left Climber Power", 0));
-            climber.setRightPower(SmartDashboard.getNumber("Right Climber Power", 0));
-        }, () -> {
-            climber.setLeftPower(0);
-            climber.setRightPower(0);
-        }, climber));
-        // // climber backward
-        operator.b().whileTrue(new StartEndCommand(() -> {
-            climber.setLeftPower(-SmartDashboard.getNumber("Left Climber Power", 0));
-            climber.setRightPower(-SmartDashboard.getNumber("Right Climber Power", 0));
-        }, () -> {
-            climber.setLeftPower(0);
-            climber.setRightPower(0);
-        }, climber));
-        // // climber left
-        operator.x().whileTrue(new StartEndCommand(() -> {
-            climber.setLeftPower(-SmartDashboard.getNumber("Left Climber Power", 0));
-        }, () -> {
-            climber.setLeftPower(0);
-            climber.setRightPower(0);
-        }, climber));
-        // // climber right
-        operator.y().whileTrue(new StartEndCommand(() -> {
-            climber.setRightPower(-SmartDashboard.getNumber("Right Climber Power", 0));
-        }, () -> {
-            climber.setLeftPower(0);
-            climber.setRightPower(0);
-        }, climber));
+        // // climber forward
+        // operator.a().whileTrue(new StartEndCommand(() -> {
+        // climber.setLeftPower(SmartDashboard.getNumber("Left Climber Power", 0));
+        // climber.setRightPower(SmartDashboard.getNumber("Right Climber Power", 0));
+        // }, () -> {
+        // climber.setLeftPower(0);
+        // climber.setRightPower(0);
+        // }, climber));
+        // // // climber backward
+        // operator.b().whileTrue(new StartEndCommand(() -> {
+        // climber.setLeftPower(-SmartDashboard.getNumber("Left Climber Power", 0));
+        // climber.setRightPower(-SmartDashboard.getNumber("Right Climber Power", 0));
+        // }, () -> {
+        // climber.setLeftPower(0);
+        // climber.setRightPower(0);
+        // }, climber));
+        // // // climber left
+        // operator.x().whileTrue(new StartEndCommand(() -> {
+        // climber.setLeftPower(-SmartDashboard.getNumber("Left Climber Power", 0));
+        // }, () -> {
+        // climber.setLeftPower(0);
+        // climber.setRightPower(0);
+        // }, climber));
+        // // // climber right
+        // operator.y().whileTrue(new StartEndCommand(() -> {
+        // climber.setRightPower(-SmartDashboard.getNumber("Right Climber Power", 0));
+        // }, () -> {
+        // climber.setLeftPower(0);
+        // climber.setRightPower(0);
+        // }, climber));
 
-        // elevator forward
-        driver.leftBumper().whileTrue(new StartEndCommand(() -> {
-            elevatorWrist.setElevatorPower(-0.2);
-        }, () -> {
-            elevatorWrist.setElevatorPower(0.0);
-        }));
+        // // elevator forward
+        // driver.leftBumper().whileTrue(new StartEndCommand(() -> {
+        // elevatorWrist.setElevatorPower(-0.2);
+        // }, () -> {
+        // elevatorWrist.setElevatorPower(0.0);
+        // }));
     }
 
     /**

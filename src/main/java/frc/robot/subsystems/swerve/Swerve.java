@@ -260,6 +260,9 @@ public class Swerve extends SubsystemBase {
 
         field.setRobotPose(getPose());
 
+        SmartDashboard.putNumber("Distance to Speaker", FieldConstants.Speaker.centerSpeakerOpening
+            .getTranslation().minus(getPose().getTranslation()).getNorm());
+
         SmartDashboard.putBoolean("Has Initialized", hasInitialized);
         SmartDashboard.putNumber("Robot X", getPose().getX());
         SmartDashboard.putNumber("Robot Y", getPose().getY());

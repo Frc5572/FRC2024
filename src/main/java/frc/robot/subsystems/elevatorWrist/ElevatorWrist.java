@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
 
 /**
@@ -19,7 +20,7 @@ import frc.robot.Constants;
 public class ElevatorWrist extends SubsystemBase {
     public ElevatorWristIO io;
     public ElevatorWristInputsAutoLogged inputs = new ElevatorWristInputsAutoLogged();
-
+    private CommandXboxController operator;
 
     ProfiledPIDController elevatorPIDController =
         new ProfiledPIDController(Constants.ElevatorWristConstants.PID.ELEVATOR_KP,
@@ -45,10 +46,11 @@ public class ElevatorWrist extends SubsystemBase {
     // Constants.ElevatorWristConstants.PID.WRIST_KG,
     // Constants.ElevatorWristConstants.PID.WRIST_KV);
 
-    public ElevatorWrist(ElevatorWristIO io) {
+    public ElevatorWrist(ElevatorWristIO io, CommandXboxController operator) {
+        this.operator = operator;
         this.io = io;
         io.updateInputs(inputs);
-        wristPIDController.setSetpoint(0.2);
+        wristPIDController.setSetpoint(.13);
         wristPIDController.setTolerance(Rotation2d.fromDegrees(0.5).getRotations());
     }
 
@@ -77,8 +79,9 @@ public class ElevatorWrist extends SubsystemBase {
         double elevatorPIDValue =
             elevatorPIDController.calculate(-inputs.elevatorRelativeEncRawValue);
 
-        io.setElevatorVoltage(-0.05 * 12.0 - elevatorPIDValue);
-        io.setWristVoltage(wristPIDValue);
+        // io.setElevatorVoltage(-0.05 * 12.0 - elevatorPIDValue);
+        // io.setWristVoltage(wristPIDValue);
+        io.setWristVoltage(operator.getLeftY() * 4.0);
 
         // Logger.recordOutput("/ElevatorWrist/Elevator/PID Voltage", elevatorPIDValue);
         // Logger.recordOutput("/ElevatorWrist/Elevator/Feedforward", elevatorFeedForwardValue);
