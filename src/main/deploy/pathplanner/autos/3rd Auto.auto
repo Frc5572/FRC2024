@@ -26,6 +26,12 @@
                 "data": {
                   "commands": [
                     {
+                      "type": "named",
+                      "data": {
+                        "name": "Wrist Pos"
+                      }
+                    },
+                    {
                       "type": "path",
                       "data": {
                         "pathName": "GetOuts and Scores StartingN P1"
@@ -44,33 +50,15 @@
                       }
                     },
                     {
-                      "type": "named",
-                      "data": {
-                        "name": "Run Indexer"
-                      }
-                    },
-                    {
                       "type": "path",
                       "data": {
                         "pathName": "Pickup N2 from N1"
                       }
                     },
                     {
-                      "type": "named",
-                      "data": {
-                        "name": "Run Indexer"
-                      }
-                    },
-                    {
                       "type": "path",
                       "data": {
                         "pathName": " Pickup N3 from N1"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Run Indexer"
                       }
                     }
                   ]

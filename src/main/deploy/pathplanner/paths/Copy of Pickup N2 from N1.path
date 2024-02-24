@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.301173053050332,
-        "y": 6.50384399360348
+        "x": 2.6162688461334,
+        "y": 6.402957492855952
       },
       "isLocked": false,
       "linkedName": null
@@ -20,8 +20,8 @@
         "y": 5.5210409012367325
       },
       "prevControl": {
-        "x": 2.3734379863125925,
-        "y": 6.012442447420106
+        "x": 2.5868974814872714,
+        "y": 5.9770727054870925
       },
       "nextControl": null,
       "isLocked": false,
@@ -39,9 +39,9 @@
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 0.8,
+      "waypointRelativePos": 0.65,
       "command": {
-        "type": "race",
+        "type": "deadline",
         "data": {
           "commands": [
             {

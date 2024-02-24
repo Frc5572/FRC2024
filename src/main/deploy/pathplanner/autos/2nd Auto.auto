@@ -3,7 +3,7 @@
   "startingPose": {
     "position": {
       "x": 0.9,
-      "y": 2.4
+      "y": 3.65
     },
     "rotation": 130.0
   },
@@ -26,6 +26,12 @@
                 "data": {
                   "commands": [
                     {
+                      "type": "named",
+                      "data": {
+                        "name": "Wrist Pos"
+                      }
+                    },
+                    {
                       "type": "path",
                       "data": {
                         "pathName": "GetOut & Scores P2"
@@ -41,12 +47,6 @@
                       "type": "path",
                       "data": {
                         "pathName": "Pickup N2 from N3"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Run Indexer"
                       }
                     }
                   ]
