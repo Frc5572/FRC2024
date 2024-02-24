@@ -402,7 +402,8 @@ public final class Constants {
         public static final class SetPoints {
 
             public static final double HOME_HEIGHT = 0;
-            public static final Rotation2d HOME_ANGLE = Rotation2d.fromRotations(.242);
+            public static final Rotation2d INTAKE_ANGLE = Rotation2d.fromRotations(.1258);
+            public static final Rotation2d HOME_ANGLE = Rotation2d.fromRotations(.2);
             // public static final double AMP_HEIGHT = Units.inchesToMeters(34);
             public static final double AMP_HEIGHT = 500;
             public static final Rotation2d AMP_ANGLE = Rotation2d.fromRotations(.300);
