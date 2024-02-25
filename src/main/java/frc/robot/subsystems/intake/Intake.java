@@ -53,6 +53,21 @@ public class Intake extends SubsystemBase {
     }
 
     /**
+     * Command to run the intake motor and indexer until the sensor trips
+     *
+     * @return {@link Command} to run the intake and indexer motors
+     */
+    public Command runIntakeMotorNonStop(double intakeSpeed, double indexerSpeed) {
+        return Commands.startEnd(() -> {
+            setIntakeMotor(intakeSpeed);
+            setIndexerMotor(indexerSpeed);
+        }, () -> {
+            setIntakeMotor(0);
+            setIndexerMotor(0);
+        }, this);
+    }
+
+    /**
      * Command to run the indexer
      *
      * @return {@link Command} to run the indexer motors

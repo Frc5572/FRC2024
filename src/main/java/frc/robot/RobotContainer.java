@@ -4,7 +4,6 @@ import java.util.List;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -160,12 +159,12 @@ public class RobotContainer {
         driver.a().whileTrue(intake.runIntakeMotor(1, .20));
         // intake backward
         driver.b().whileTrue(intake.runIndexerMotor(-.1));
+        driver.x().whileTrue(CommandFactory.passThroughShoot(shooter, intake));
 
-        operator.x().whileTrue(CommandFactory.shootSpeaker(shooter, intake));
-        driver.start().whileTrue(elevatorWrist.goToPosition(900, Rotation2d.fromRotations(.11)));
-        driver.back().whileTrue(elevatorWrist.goToPosition(900, Rotation2d.fromRotations(.13)));
-        SmartDashboard.putNumber("RobotCOntainer goal",
-            Rotation2d.fromRotations(0.242).getRotations());
+        operator.x().whileTrue(CommandFactory.spit(shooter, intake));
+        operator.rightBumper().whileTrue(CommandFactory.shootSpeaker(shooter, intake));
+        operator.start().onTrue(elevatorWrist.ampPosition());
+        operator.back().onTrue(elevatorWrist.homePosition());
 
         // operator.povDown().whileTrue(
         // elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.AMP_HEIGHT,

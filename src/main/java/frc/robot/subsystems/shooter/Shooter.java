@@ -70,6 +70,7 @@ public class Shooter extends SubsystemBase {
      */
     public void setTopMotor(double voltage) {
         Logger.recordOutput("Shooter/Top Voltage", voltage);
+        SmartDashboard.putNumber("Shooter Top Voltage", voltage);
         io.setTopMotor(voltage);
     }
 
@@ -82,6 +83,7 @@ public class Shooter extends SubsystemBase {
 
     public void setBottomMotor(double voltage) {
         Logger.recordOutput("Shooter/Bottom Voltage", voltage);
+        SmartDashboard.putNumber("Shooter Bottom Voltage", voltage);
         io.setBottomMotor(voltage);
     }
 
@@ -138,5 +140,15 @@ public class Shooter extends SubsystemBase {
                 setBottomMotor(0);
                 lastAtSetpoint = Timer.getFPGATimestamp();
             });
+    }
+
+    public Command spit() {
+        return Commands.run(() -> {
+            setTopMotor(2.0);
+            setBottomMotor(2.0);
+        }, this).finallyDo(() -> {
+            setTopMotor(0.0);
+            setBottomMotor(0.0);
+        });
     }
 }
