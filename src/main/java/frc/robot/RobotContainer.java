@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.lib.util.PhotonCameraWrapper;
+import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonIO;
 import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
