@@ -1,6 +1,5 @@
 package frc.robot.subsystems.shooter;
 
-import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -14,14 +13,26 @@ import frc.robot.Constants;
  */
 public class Shooter extends SubsystemBase {
     private ShooterIO io;
-    private PIDController pid = new PIDController(Constants.ShooterConstants.KP,
+    private PIDController topPid = new PIDController(Constants.ShooterConstants.KP,
+        Constants.ShooterConstants.KI, Constants.ShooterConstants.KD);
+    private PIDController bottomPid = new PIDController(Constants.ShooterConstants.KP,
         Constants.ShooterConstants.KI, Constants.ShooterConstants.KD);
     private SimpleMotorFeedforward shooterFeed =
         new SimpleMotorFeedforward(Constants.ShooterConstants.KS, Constants.ShooterConstants.KV);
     private ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
+    private int lastAtSetpoint = 0;
 
+    /**
+     * Shooter Subsystem
+     *
+     * @param io Shooter IO Layer
+     */
     public Shooter(ShooterIO io) {
         this.io = io;
+        topPid.setSetpoint(0);
+        bottomPid.setSetpoint(0);
+        topPid.setTolerance(500);
+        bottomPid.setTolerance(500);
     }
 
     @Override
@@ -30,44 +41,78 @@ public class Shooter extends SubsystemBase {
         Logger.processInputs("Shooter", inputs);
     }
 
-    public void setTopMotor(double power) {
-        Logger.recordOutput("Shooter/Top Voltage", power);
-        io.setTopMotor(power);
-    }
-
-    public void setBottomMotor(double power) {
-        Logger.recordOutput("Shooter/Bottom Voltage", power);
-        io.setBottomMotor(power);
-    }
-
-    public double getTopVelocity() {
-        return inputs.topShooterVelocityRotPerMin;
-    }
-
-    public double getBottomVelocity() {
-        return inputs.bottomShooterVelocityRotPerMin;
-    }
-
-    public double distanceToVelocity(double distance) {
-        return 0.0;
-    }
-
-    public Boolean atSetpoint() {
-        return pid.atSetpoint();
+    /**
+     * Set voltage to Top Shooter Motor
+     *
+     * @param voltage Voltage to apply to motor
+     */
+    public void setTopMotor(double voltage) {
+        Logger.recordOutput("Shooter/Top Voltage", voltage);
+        io.setTopMotor(voltage);
     }
 
     /**
-     * Command to shoot from a distance
+     * Set voltage to Bottom Shooter Motor
      *
-     * @param distance the distance from the target
+     * @param voltage Voltage to apply to motor
+     */
+    public void setBottomMotor(double voltage) {
+        Logger.recordOutput("Shooter/Bottom Voltage", voltage);
+        io.setBottomMotor(voltage);
+    }
+
+    /**
+     * If Both shooter motors are currently at their setpoint within the tolerance
+     *
+     * @return True if at setpoint
+     */
+    public Boolean atSetpoint() {
+        return topPid.atSetpoint() && bottomPid.atSetpoint();
+    }
+
+    /**
+     * If Both shooter motors have a consistent RPM within their Setpoint tolerance for more than 5
+     * cycles
+     *
+     * @return True if at setpoint
+     */
+    public Boolean readyToShoot() {
+        return lastAtSetpoint > 5;
+    }
+
+    /**
+     * Set the shooter RPM setpoint
+     *
+     * @param setpoint Setpoint in RPM
+     */
+    public void setSetpoint(double setpoint) {
+        topPid.setSetpoint(setpoint);
+        bottomPid.setSetpoint(setpoint);
+        lastAtSetpoint = 0;
+    }
+
+    /**
+     * Command to run the shooter at a set RPM for the speaker
+     *
      * @return Returns a command
      */
-    public Command shootWithDistance(DoubleSupplier distance) {
-        return Commands.run(() -> {
-            double velocity = distanceToVelocity(distance.getAsDouble());
-            // double velocity = 1000 / 60; // distanceToVelocity(distance.getAsDouble());
-            setTopMotor(pid.calculate(getTopVelocity()) + shooterFeed.calculate(velocity));
-            setBottomMotor(pid.calculate(getBottomVelocity()) + shooterFeed.calculate(velocity));
-        }, this);
+    public Command shootSpeaker() {
+        return Commands
+            .runOnce(() -> setSetpoint(Constants.ShooterConstants.SHOOT_SPEAKER_RPM), this)
+            .andThen(Commands.run(() -> {
+                setTopMotor(topPid.calculate(inputs.topShooterVelocityRotPerMin)
+                    + shooterFeed.calculate(Constants.ShooterConstants.SHOOT_SPEAKER_RPM));
+                setBottomMotor(bottomPid.calculate(inputs.bottomShooterVelocityRotPerMin)
+                    + shooterFeed.calculate(Constants.ShooterConstants.SHOOT_SPEAKER_RPM));
+                if (atSetpoint()) {
+                    lastAtSetpoint++;
+                } else {
+                    lastAtSetpoint = 0;
+                }
+            }, this)).finallyDo(() -> {
+                setTopMotor(0);
+                setBottomMotor(0);
+                lastAtSetpoint = 0;
+            });
     }
 }

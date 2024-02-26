@@ -1,8 +1,6 @@
 package frc.robot.commands;
 
 import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
@@ -10,7 +8,6 @@ import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.subsystems.swerve.Swerve;
 
 /**
  * File to create commands using factories
@@ -38,22 +35,18 @@ public class CommandFactory {
      * Wrist follows the speaker until it is met, then it shoots
      *
      * @param shooter Shooter subsystem
-     * @param elevatorWrist Elevator and Wrist subsystem
-     * @param swerve Swerve subsystem
      * @param intake Intake subsystem
      * @return Returns a command
      */
-    public static Command shootSpeaker(Shooter shooter, ElevatorWrist elevatorWrist, Swerve swerve,
-        Intake intake) {
-        Supplier<Rotation2d> rotation = () -> new Rotation2d(Math
-            .atan(Constants.ShooterConstants.HEIGHT_FROM_SPEAKER / swerve.distanceFromSpeaker()));
-        Command runIndexer = intake.runIndexerMotor(Constants.IntakeConstants.INDEX_MOTOR_FORWARD);
-        Command moveElevatorWrist = elevatorWrist
-            .followPosition(() -> Constants.ShooterConstants.HEIGHT_FROM_LOWEST_POS, rotation);
-        Command runshooter = shooter.shootWithDistance(() -> swerve.distanceFromSpeaker());
-        Command readytoShoot =
-            Commands.waitUntil(() -> elevatorWrist.atGoal() && shooter.atSetpoint());
-        return runshooter.alongWith(moveElevatorWrist).alongWith(readytoShoot.andThen(runIndexer));
+    public static Command shootSpeaker(Shooter shooter, Intake intake) {
+        // Supplier<Rotation2d> rotation = () -> new Rotation2d(Math
+        // .atan(Constants.ShooterConstants.HEIGHT_FROM_SPEAKER / swerve.distanceFromSpeaker()));
+        Command runIndexer = intake.runIndexerMotor(1);
+        // Command moveElevatorWrist = elevatorWrist
+        // .followPosition(() -> Constants.ShooterConstants.HEIGHT_FROM_LOWEST_POS, rotation);
+        Command runshooter = shooter.shootSpeaker();
+        Command readytoShoot = Commands.waitUntil(() -> shooter.readyToShoot());
+        return runshooter.alongWith(readytoShoot.andThen(runIndexer));
     }
 
     /**

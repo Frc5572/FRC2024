@@ -82,12 +82,13 @@ public final class Constants {
          * Constants for Front Left Camera
          */
         public static class FrontLeftFacingCamera {
-            public static final double ROLL = -Math.PI / 2;
-            public static final double PITCH = 0.0;
-            public static final double YAW = 0.0;
+            public static final double ROLL = 0.0;
+            public static final double PITCH = Math.toRadians(40);
+            public static final double YAW = Math.toRadians(10);
             public static final Transform3d KCAMERA_TO_ROBOT =
-                new Transform3d(new Translation3d(Units.inchesToMeters(0), Units.inchesToMeters(8),
-                    Units.inchesToMeters(22.125)), new Rotation3d(ROLL, PITCH, YAW)).inverse();
+                new Transform3d(new Translation3d(Units.inchesToMeters(-3.96),
+                    Units.inchesToMeters(10.275), Units.inchesToMeters(18.164)),
+                    new Rotation3d(ROLL, PITCH, YAW)).inverse();
 
             public static final String CAMERA_NAME = "front-left";
             public static final double LARGEST_DISTANCE = 0.1;
@@ -97,12 +98,13 @@ public final class Constants {
          * Constants for Front Right Camera
          */
         public static class FrontRightFacingCamera {
-            public static final double ROLL = -Math.PI / 2;
-            public static final double PITCH = 0.0;
-            public static final double YAW = 0.0;
+            public static final double ROLL = 0.0;
+            public static final double PITCH = Math.toRadians(5);
+            public static final double YAW = Math.toRadians(-10);
             public static final Transform3d KCAMERA_TO_ROBOT =
-                new Transform3d(new Translation3d(Units.inchesToMeters(0), Units.inchesToMeters(8),
-                    Units.inchesToMeters(22.125)), new Rotation3d(ROLL, PITCH, YAW)).inverse();
+                new Transform3d(new Translation3d(Units.inchesToMeters(3.96),
+                    Units.inchesToMeters(11.013), Units.inchesToMeters(18.074)),
+                    new Rotation3d(ROLL, PITCH, YAW)).inverse();
 
             public static final String CAMERA_NAME = "front-right";
             public static final double LARGEST_DISTANCE = 0.1;
@@ -112,12 +114,13 @@ public final class Constants {
          * Constants for Back Left Camera
          */
         public static class BackLeftFacingCamera {
-            public static final double ROLL = -Math.PI / 2;
-            public static final double PITCH = 0.0;
-            public static final double YAW = 0.0;
+            public static final double ROLL = 0.0;
+            public static final double PITCH = Math.toRadians(0);
+            public static final double YAW = Math.toRadians(180);
             public static final Transform3d KCAMERA_TO_ROBOT =
-                new Transform3d(new Translation3d(Units.inchesToMeters(0), Units.inchesToMeters(8),
-                    Units.inchesToMeters(22.125)), new Rotation3d(ROLL, PITCH, YAW)).inverse();
+                new Transform3d(new Translation3d(Units.inchesToMeters(-12.83),
+                    Units.inchesToMeters(-8.175), Units.inchesToMeters(18.5)),
+                    new Rotation3d(ROLL, PITCH, YAW)).inverse();
 
             public static final String CAMERA_NAME = "back-left";
             public static final double LARGEST_DISTANCE = 0.1;
@@ -127,12 +130,13 @@ public final class Constants {
          * Constants for Back Right Camera
          */
         public static class BackRightFacingCamera {
-            public static final double ROLL = -Math.PI / 2;
-            public static final double PITCH = 0.0;
-            public static final double YAW = 0.0;
+            public static final double ROLL = 0.0;
+            public static final double PITCH = Math.toRadians(0);
+            public static final double YAW = Math.toRadians(180);
             public static final Transform3d KCAMERA_TO_ROBOT =
-                new Transform3d(new Translation3d(Units.inchesToMeters(0), Units.inchesToMeters(8),
-                    Units.inchesToMeters(22.125)), new Rotation3d(ROLL, PITCH, YAW)).inverse();
+                new Transform3d(new Translation3d(Units.inchesToMeters(12.831),
+                    Units.inchesToMeters(-8.56), Units.inchesToMeters(17.85)),
+                    new Rotation3d(ROLL, PITCH, YAW)).inverse();
 
             public static final String CAMERA_NAME = "back-right";
             public static final double LARGEST_DISTANCE = 0.1;
@@ -146,13 +150,13 @@ public final class Constants {
     public static final class Swerve {
         public static final edu.wpi.first.wpilibj.SPI.Port navXID =
             edu.wpi.first.wpilibj.SPI.Port.kMXP;
-        public static final boolean invertGyro = true;
+        public static final boolean invertGyro = false;
         public static final boolean isFieldRelative = true;
         public static final boolean isOpenLoop = false;
 
         /* Drivetrain Constants */
-        public static final double trackWidth = Units.inchesToMeters(22.5);
-        public static final double wheelBase = Units.inchesToMeters(29.0);
+        public static final double trackWidth = Units.inchesToMeters(23.75);
+        public static final double wheelBase = Units.inchesToMeters(17.75);
         public static final double wheelDiameter = Units.inchesToMeters(4.0);
         public static final double wheelCircumference = wheelDiameter * Math.PI;
         public static final Translation2d MOD0_MODOFFSET =
@@ -217,7 +221,7 @@ public final class Constants {
 
         /* Swerve Profiling Values */
         /** Meters per Second */
-        public static final double maxSpeed = 4.5;
+        public static final double maxSpeed = 1.5;
         /** Radians per Second */
         public static final double maxAngularVelocity = 10.0;
 
@@ -226,44 +230,45 @@ public final class Constants {
         public static final NeutralModeValue driveNeutralMode = NeutralModeValue.Brake;
 
         /* Module Specific Constants */
+
         /**
          * Front Left Module - Module 0
          */
         public static final class Mod0 {
-            public static final int driveMotorID = 10;
-            public static final int angleMotorID = 8;
-            public static final int canCoderID = 10;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(115.400390625);
+            public static final int driveMotorID = 6;
+            public static final int angleMotorID = 51;
+            public static final int canCoderID = 4;
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(183.955078125);
         }
 
         /**
          * Front Right Module - Module 1
          */
         public static final class Mod1 {
-            public static final int driveMotorID = 3;
-            public static final int angleMotorID = 9;
-            public static final int canCoderID = 1;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(-55.37109375);
+            public static final int driveMotorID = 2;
+            public static final int angleMotorID = 40;
+            public static final int canCoderID = 2;
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(325.01953125);
         }
 
         /**
          * Back Left Module - Module 2
          */
         public static final class Mod2 {
-            public static final int driveMotorID = 2;
-            public static final int angleMotorID = 40;
-            public static final int canCoderID = 2;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(145.01953125);
+            public static final int driveMotorID = 3;
+            public static final int angleMotorID = 9;
+            public static final int canCoderID = 1;
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(124.62890625);
         }
 
         /**
          * Back Right Module - Module 3
          */
         public static final class Mod3 {
-            public static final int driveMotorID = 6;
-            public static final int angleMotorID = 51;
-            public static final int canCoderID = 4;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(3.955078125);
+            public static final int driveMotorID = 10;
+            public static final int angleMotorID = 8;
+            public static final int canCoderID = 10;
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(295.400390625);
         }
 
         public static final HolonomicPathFollowerConfig pathFollowerConfig =
@@ -398,14 +403,17 @@ public final class Constants {
      * Constants of Shooters
      */
     public static final class ShooterConstants {
-        public static final double KP = 0;
+        public static final double KP = 0.00004;
         public static final double KI = 0;
         public static final double KD = 0;
         public static final double KS = 0;
-        public static final double KV = 0;
+        public static final double KV = 0.00092;
+        public static final double GEAR_RATIO = 31.0 / 16.0;
         public static final double HEIGHT_FROM_LOWEST_POS = Units.inchesToMeters(32.0);
         public static final double HEIGHT_FROM_SPEAKER =
             FieldConstants.centerSpeaker - HEIGHT_FROM_LOWEST_POS;
+
+        public static final double SHOOT_SPEAKER_RPM = 11500.0;
     }
 
     /**
@@ -418,7 +426,7 @@ public final class Constants {
         public static final double INDEX_MOTOR_FORWARD = .2;
         public static final double INDEX_MOTOR_BACKWARD = -0;
         public static final double INDEX_MOTOR_STOP = 0;
-
         public static final boolean INTAKE_MOTOR_INVERTED = true;
+
     }
 }
