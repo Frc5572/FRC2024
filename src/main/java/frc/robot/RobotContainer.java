@@ -43,7 +43,7 @@ public class RobotContainer {
     /* Controllers */
     public final CommandXboxController driver = new CommandXboxController(Constants.DRIVER_ID);
     private final CommandXboxController operator = new CommandXboxController(Constants.OPERATOR_ID);
-    private final CommandXboxController test = new CommandXboxController(4);
+    // private final CommandXboxController test = new CommandXboxController(4);
 
 
     // Initialize AutoChooser Sendable
