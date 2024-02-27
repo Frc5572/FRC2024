@@ -74,13 +74,11 @@ public class Shooter extends SubsystemBase {
         io.setTopMotor(voltage);
     }
 
-    /*
-     * 
+    /**
      * Set voltage to Bottom Shooter Motor**
-     * 
+     *
      * @param voltage Voltage to apply to motor
      */
-
     public void setBottomMotor(double voltage) {
         Logger.recordOutput("Shooter/Bottom Voltage", voltage);
         SmartDashboard.putNumber("Shooter Bottom Voltage", voltage);

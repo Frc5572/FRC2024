@@ -1,4 +1,4 @@
-package frc.robot.subsystems.elevatorWrist;
+package frc.robot.subsystems.elevator_wrist;
 
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -51,6 +51,9 @@ public class ElevatorWrist extends SubsystemBase {
     // Constants.ElevatorWristConstants.PID.WRIST_KG,
     // Constants.ElevatorWristConstants.PID.WRIST_KV);
 
+    /**
+     * Create new ElevatorWrist.
+     */
     public ElevatorWrist(ElevatorWristIO io, CommandXboxController operator) {
         this.operator = operator;
         this.io = io;
@@ -159,17 +162,27 @@ public class ElevatorWrist extends SubsystemBase {
 
     }
 
+    /**
+     * Calculate elevator height from raw encoder value.
+     */
     public double getHeight() {
         return Constants.ElevatorWristConstants.ELEVATOR_M * inputs.elevatorRelativeEncRawValue
             + Constants.ElevatorWristConstants.ELEVATOR_B;
     }
 
+    /**
+     * Calculate wrist angle from raw encoder value.
+     */
     public Rotation2d getWristAngle() {
         return Rotation2d.fromRotations(
             Constants.ElevatorWristConstants.WRIST_M * inputs.wristAbsoluteEncRawValue
                 + Constants.ElevatorWristConstants.WRIST_B);
     }
 
+    /**
+     * Set elevator and wrist to amp position. Performs two steps to avoid colliding with
+     * electronics box.
+     */
     public Command ampPosition() {
         return goToPosition(Constants.ElevatorWristConstants.SetPoints.AMP_HEIGHT,
             Constants.ElevatorWristConstants.SetPoints.HOME_ANGLE).until(() -> getHeight() > 32)
@@ -178,6 +191,10 @@ public class ElevatorWrist extends SubsystemBase {
                     Constants.ElevatorWristConstants.SetPoints.AMP_ANGLE).withTimeout(0.5));
     }
 
+    /**
+     * Set elevator to home position which can fit under the stage. Performs two steps to avoid
+     * colliding with electronics box.
+     */
     public Command homePosition() {
         return goToPosition(36, Rotation2d.fromDegrees(24))
             .until(() -> getWristAngle().getDegrees() > 15).withTimeout(2)

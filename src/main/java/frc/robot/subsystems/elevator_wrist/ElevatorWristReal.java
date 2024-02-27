@@ -1,4 +1,4 @@
-package frc.robot.subsystems.elevatorWrist;
+package frc.robot.subsystems.elevator_wrist;
 
 
 import com.revrobotics.AbsoluteEncoder;

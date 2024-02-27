@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.subsystems.climber.Climber;
-import frc.robot.subsystems.elevatorWrist.ElevatorWrist;
+import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
 
@@ -50,18 +50,13 @@ public class CommandFactory {
     }
 
     /**
-     * Wrist follows the speaker until it is met, then it shoots
+     * Runs intake, indexer and shooter all at once.
      *
      * @param shooter Shooter subsystem
      * @param intake Intake subsystem
      * @return Returns a command
      */
     public static Command passThroughShoot(Shooter shooter, Intake intake) {
-        // Supplier<Rotation2d> rotation = () -> new Rotation2d(Math
-        // .atan(Constants.ShooterConstants.HEIGHT_FROM_SPEAKER / swerve.distanceFromSpeaker()));
-        Command runIndexer = intake.runIndexerMotor(1);
-        // Command moveElevatorWrist = elevatorWrist
-        // .followPosition(() -> Constants.ShooterConstants.HEIGHT_FROM_LOWEST_POS, rotation);
         Command runshooter = shooter.shootSpeaker();
         Command readytoShoot = Commands.waitUntil(() -> shooter.readyToShoot());
         return runshooter
