@@ -126,13 +126,13 @@ public class RobotContainer {
         /* Driver Buttons */
         driver.y().onTrue(new InstantCommand(() -> s_Swerve.resetFieldRelativeOffset()));
         // intake forward
-        driver.a().whileTrue(intake.runIntakeMotor(1, .20));
+        driver.rightTrigger().whileTrue(intake.runIntakeMotor(1, .20));
         // intake backward
         driver.b().whileTrue(intake.runIndexerMotor(-.1));
         driver.x().whileTrue(CommandFactory.passThroughShoot(shooter, intake));
 
         operator.x().whileTrue(CommandFactory.spit(shooter, intake));
-        operator.rightBumper().whileTrue(CommandFactory.shootSpeaker(shooter, intake));
+        operator.rightTrigger().whileTrue(CommandFactory.shootSpeaker(shooter, intake));
         operator.start().onTrue(elevatorWrist.ampPosition());
         operator.back().onTrue(elevatorWrist.homePosition());
 

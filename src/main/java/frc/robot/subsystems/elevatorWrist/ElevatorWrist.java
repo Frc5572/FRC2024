@@ -68,6 +68,8 @@ public class ElevatorWrist extends SubsystemBase {
         io.updateInputs(inputs);
         Logger.processInputs("ElevatorWrist", inputs);
 
+
+
         if (inputs.wristAbsoluteEncRawValue > 0.5) {
             inputs.wristAbsoluteEncRawValue -= 1.0;
         }
