@@ -9,9 +9,11 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.lib.util.MatchCommand;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
@@ -135,6 +137,19 @@ public class RobotContainer {
         operator.rightTrigger().whileTrue(CommandFactory.shootSpeaker(shooter, intake));
         operator.start().onTrue(elevatorWrist.ampPosition());
         operator.back().onTrue(elevatorWrist.homePosition());
+
+        operator.povRight().onTrue(Commands.runOnce(() -> {
+            OperatorState.increment();
+        }));
+        operator.povLeft().onTrue(Commands.runOnce(() -> {
+            OperatorState.decrement();
+        }));
+
+        operator.a().onTrue(new MatchCommand<OperatorState.State>(List.of(OperatorState.State.kAmp),
+            List.of(elevatorWrist.ampPosition()), OperatorState::getCurrentState));
+        operator.start().onTrue(Commands.runOnce(() -> {
+            OperatorState.toggleManualMode();
+        }));
 
         // operator.povDown().whileTrue(
         // elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.AMP_HEIGHT,

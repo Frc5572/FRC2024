@@ -14,6 +14,7 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -108,6 +109,9 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void robotPeriodic() {
+        SmartDashboard.putString("Operator State", OperatorState.getCurrentState().displayName);
+        SmartDashboard.putBoolean("Operator Manual Mode", OperatorState.manualModeEnabled());
+
         // Runs the Scheduler. This is responsible for polling buttons, adding newly-scheduled
         // commands,
         // running already-scheduled commands, removing finished or interrupted commands, and
@@ -115,7 +119,6 @@ public class Robot extends LoggedRobot {
         // subsystem periodic() methods. This must be called from the robot's periodic block in
         // order for
         // anything in the Command-based framework to work.
-
         CommandScheduler.getInstance().run();
     }
 
