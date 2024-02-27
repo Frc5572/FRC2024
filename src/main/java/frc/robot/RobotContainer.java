@@ -13,10 +13,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
 import frc.robot.commands.CommandFactory;
+import frc.robot.commands.leds.FlashingLEDColor;
 import frc.robot.commands.leds.MovingColorLEDs;
 import frc.robot.commands.swerve.TeleopSwerve;
 import frc.robot.subsystems.LEDs;
@@ -135,11 +137,14 @@ public class RobotContainer {
         // intake backward
         driver.b().whileTrue(intake.runIndexerMotor(-.1));
         driver.x().whileTrue(CommandFactory.passThroughShoot(shooter, intake));
-
         operator.x().whileTrue(CommandFactory.spit(shooter, intake));
         operator.rightTrigger().whileTrue(CommandFactory.shootSpeaker(shooter, intake));
         operator.start().onTrue(elevatorWrist.ampPosition());
         operator.back().onTrue(elevatorWrist.homePosition());
+        operator.povUp().onTrue(new FlashingLEDColor(leds, Color.kOrange).withTimeout(5));
+        operator.povDown().onTrue(new FlashingLEDColor(leds, Color.kBlue).withTimeout(5));
+        new Trigger(() -> intake.getSensorStatus())
+            .whileTrue(new InstantCommand(() -> leds.setColor(Color.kGreen)));
 
         // operator.povDown().whileTrue(
         // elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.AMP_HEIGHT,
