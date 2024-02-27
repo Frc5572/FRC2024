@@ -20,7 +20,7 @@ public class MatchCommand<T extends Enum<T>> extends Command {
     /**
      * Create new MatchCommand. Note that the length of enumValues and commandValues must be the
      * same.
-     * 
+     *
      * @throws IllegalArgumentException when enumValues and commandValues have different lengths.
      */
     public MatchCommand(List<T> enumValues, List<Command> commandValues, Supplier<T> condition) {

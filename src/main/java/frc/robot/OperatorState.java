@@ -16,6 +16,7 @@ public class OperatorState {
             this.displayName = displayName;
         }
 
+        /** Get next state. */
         public State increment() {
             int new_ordinal = this.ordinal() + 1;
             if (new_ordinal >= State.values().length) {
@@ -24,6 +25,7 @@ public class OperatorState {
             return State.values()[new_ordinal];
         }
 
+        /** Get previous state. */
         public State decrement() {
             int new_ordinal = this.ordinal() - 1;
             if (new_ordinal < 0) {
