@@ -37,6 +37,11 @@ public final class Constants {
     public static final int OPERATOR_ID = 1;
 
     /**
+     * How far in the future we should "lead" the aiming of the shooter for shooting while moving.
+     */
+    public static final double LEAD_GAIN = 0.3;
+
+    /**
      * Motor CAN id's.
      */
     public static final class Motors {
@@ -148,6 +153,10 @@ public final class Constants {
      * Swerve Constants
      */
     public static final class Swerve {
+        public static final double AUTO_ROTATION_KP = 5.0;
+        public static final double AUTO_ROTATION_KI = 0.0;
+        public static final double AUTO_ROTATION_KD = 0.0;
+
         public static final edu.wpi.first.wpilibj.SPI.Port navXID =
             edu.wpi.first.wpilibj.SPI.Port.kMXP;
         public static final boolean invertGyro = true;
@@ -273,7 +282,7 @@ public final class Constants {
 
         public static final HolonomicPathFollowerConfig pathFollowerConfig =
             new HolonomicPathFollowerConfig(new PIDConstants(5.0, 0, 0), // Translation constants
-                new PIDConstants(5.0, 0, 0), // Rotation constants
+                new PIDConstants(AUTO_ROTATION_KP, AUTO_ROTATION_KI, AUTO_ROTATION_KD), // Rotation constants
                 // Drive base radius (distance from center to furthest module)
                 maxSpeed, MOD0_MODOFFSET.getNorm(), new ReplanningConfig());
     }
