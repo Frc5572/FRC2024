@@ -120,8 +120,8 @@ public class SwerveModuleReal implements SwerveModuleIO {
         inputs.driveMotorSelectedSensorVelocity = mDriveMotor.getVelocity().getValueAsDouble();
         inputs.angleMotorSelectedPosition = mAngleMotor.getPosition().getValueAsDouble();
         inputs.absolutePositionAngleEncoder = angleEncoder.getAbsolutePosition().getValueAsDouble();
-        inputs.driveMotorTemp = mDriveMotor.getDeviceTemp().getValueAsDouble();
-        inputs.angleMotorTemp = mAngleMotor.getDeviceTemp().getValueAsDouble();
+        // inputs.driveMotorTemp = mDriveMotor.getDeviceTemp().getValueAsDouble();
+        // inputs.angleMotorTemp = mAngleMotor.getDeviceTemp().getValueAsDouble();
     }
 
     @Override
