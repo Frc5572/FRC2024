@@ -28,6 +28,7 @@ deploy {
                 // getTargetTypeClass is a shortcut to get the class type using a string
 
                 frcJava(getArtifactTypeClass('FRCJavaArtifact')) {
+                    // jvmArgs.add("-XX:StartFlightRecording=duration=30s,filename=/home/lvuser/flight.jfr")
                 }
 
                 // Static files artifact
