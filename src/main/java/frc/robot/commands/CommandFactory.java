@@ -46,7 +46,22 @@ public class CommandFactory {
         // .followPosition(() -> Constants.ShooterConstants.HEIGHT_FROM_LOWEST_POS, rotation);
         Command runshooter = shooter.shootSpeaker();
         Command readytoShoot = Commands.waitUntil(() -> shooter.readyToShoot());
-        return runshooter.alongWith(readytoShoot.andThen(runIndexer));
+        return runshooter.alongWith(readytoShoot.withTimeout(2).andThen(runIndexer));
+    }
+
+    /**
+     * Runs intake, indexer and shooter all at once.
+     *
+     * @param shooter Shooter subsystem
+     * @param intake Intake subsystem
+     * @return Returns a command
+     */
+    public static Command passThroughShoot(Shooter shooter, Intake intake) {
+        Command runshooter = shooter.shootSpeaker();
+        Command readytoShoot = Commands.waitUntil(() -> shooter.readyToShoot());
+        return runshooter
+            .alongWith(readytoShoot.withTimeout(1).andThen(intake.runIntakeMotorNonStop(0, 1)
+                .withTimeout(1).andThen(intake.runIntakeMotorNonStop(1, 1))));
     }
 
     /**
@@ -68,5 +83,9 @@ public class CommandFactory {
             elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.TRAP_HEIGHT,
                 Constants.ElevatorWristConstants.SetPoints.TRAP_ANGLE);
         return initialExtension.andThen(hooksAttach).andThen(climb).andThen(extendToTrap);
+    }
+
+    public static Command spit(Shooter shooter, Intake intake) {
+        return shooter.spit().alongWith(intake.runIndexerMotor(1.0));
     }
 }
