@@ -388,37 +388,21 @@ public final class Constants {
             public static final double ELEVATOR_KP = 1.6;
             public static final double ELEVATOR_KI = 0;
             public static final double ELEVATOR_KD = 0;
-<<<<<<< HEAD
-            public static final double ELEVATOR_MAX_VELOCITY = 0;
-            public static final double ELEVATOR_MAX_ACCELERATION = 0;
-            public static final double ELEVATOR_KS = 0.001;
-            public static final double ELEVATOR_KG = 0.001;
-            public static final double ELEVATOR_KV = 0.001;
-=======
             public static final double ELEVATOR_MAX_VELOCITY = 20;
             public static final double ELEVATOR_MAX_ACCELERATION = 50;
             public static final double ELEVATOR_KS = 0;
             public static final double ELEVATOR_KG = 0;
             public static final double ELEVATOR_KV = 0;
->>>>>>> origin/main
 
             public static final double WRIST_KP = 105;
             public static final double WRIST_LARGE_KP = 45;
             public static final double WRIST_KI = 60;
             public static final double WRIST_KD = 0;
-<<<<<<< HEAD
-            public static final double WRIST_MAX_VELOCITY = 0;
-            public static final double WRIST_MAX_ACCELERATION = 0;
-            public static final double WRIST_KS = 0.001;
-            public static final double WRIST_KG = 0.001;
-            public static final double WRIST_KV = 0.001;
-=======
             public static final double WRIST_MAX_VELOCITY = 0.000001;
             public static final double WRIST_MAX_ACCELERATION = 0.0000000001;
             public static final double WRIST_KS = 0;
             public static final double WRIST_KG = 0;
             public static final double WRIST_KV = 0;
->>>>>>> origin/main
         }
 
         /**
