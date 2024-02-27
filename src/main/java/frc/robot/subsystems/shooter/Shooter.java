@@ -140,6 +140,9 @@ public class Shooter extends SubsystemBase {
             });
     }
 
+    /**
+     * Eject note at a lower speed (for dropping or outtaking into the amp).
+     */
     public Command spit() {
         return Commands.run(() -> {
             setTopMotor(2.0);
