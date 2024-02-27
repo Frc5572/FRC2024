@@ -133,7 +133,6 @@ public class Conversions {
         return goal % 360;
     }
 
-<<<<<<< HEAD
     /**
      * Generate a random number between and upper and lower bound
      *
@@ -153,11 +152,11 @@ public class Conversions {
      */
     public static int random(int upper) {
         return random(upper, 0);
-=======
+
+    }
 
     public static double wristOffsetToVisualAngle(double desiredAngle) {
         return desiredAngle + Constants.ElevatorWristConstants.SetPoints.HOME_ANGLE.getDegrees();
->>>>>>> origin/main
     }
 
 }
