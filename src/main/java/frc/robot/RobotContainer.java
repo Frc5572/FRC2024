@@ -13,18 +13,21 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.util.photon.PhotonCameraWrapper;
-import frc.lib.util.photon.PhotonIO;
 import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberNEO;
 import frc.robot.subsystems.elevatorWrist.ElevatorWrist;
+import frc.robot.subsystems.elevatorWrist.ElevatorWristIO;
 import frc.robot.subsystems.elevatorWrist.ElevatorWristReal;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOFalcon;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterVortex;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.SwerveIO;
@@ -65,78 +68,45 @@ public class RobotContainer {
         SmartDashboard.putNumber("Elevator Power", 0);
         SmartDashboard.putNumber("Wrist Power", 0);
 
+        cameras =
+            /*
+             * Camera Order: 0 - Front Left 1 - Front RIght 2 - Back Left 3 - Back Right
+             */
+            new PhotonCameraWrapper[] {
+                new PhotonCameraWrapper(
+                    new PhotonReal(Constants.CameraConstants.FrontLeftFacingCamera.CAMERA_NAME),
+                    Constants.CameraConstants.FrontLeftFacingCamera.KCAMERA_TO_ROBOT),
+                new PhotonCameraWrapper(
+                    new PhotonReal(Constants.CameraConstants.FrontRightFacingCamera.CAMERA_NAME),
+                    Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT),
+                new PhotonCameraWrapper(
+                    new PhotonReal(Constants.CameraConstants.BackLeftFacingCamera.CAMERA_NAME),
+                    Constants.CameraConstants.BackLeftFacingCamera.KCAMERA_TO_ROBOT),
+                new PhotonCameraWrapper(
+                    new PhotonReal(Constants.CameraConstants.BackRightFacingCamera.CAMERA_NAME),
+                    Constants.CameraConstants.BackRightFacingCamera.KCAMERA_TO_ROBOT)};
+
         switch (runtimeType) {
             case kReal:
                 shooter = new Shooter(new ShooterVortex());
                 intake = new Intake(new IntakeIOFalcon());
-                cameras =
-                    /*
-                     * Camera Order: 0 - Front Left 1 - Front RIght 2 - Back Left 3 - Back Right
-                     */
-                    new PhotonCameraWrapper[] {
-                        new PhotonCameraWrapper(
-                            new PhotonReal(
-                                Constants.CameraConstants.FrontLeftFacingCamera.CAMERA_NAME),
-                            Constants.CameraConstants.FrontLeftFacingCamera.KCAMERA_TO_ROBOT),
-                        new PhotonCameraWrapper(
-                            new PhotonReal(
-                                Constants.CameraConstants.FrontRightFacingCamera.CAMERA_NAME),
-                            Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT),
-                        new PhotonCameraWrapper(
-                            new PhotonReal(
-                                Constants.CameraConstants.BackLeftFacingCamera.CAMERA_NAME),
-                            Constants.CameraConstants.BackLeftFacingCamera.KCAMERA_TO_ROBOT),
-                        new PhotonCameraWrapper(
-                            new PhotonReal(
-                                Constants.CameraConstants.BackRightFacingCamera.CAMERA_NAME),
-                            Constants.CameraConstants.BackRightFacingCamera.KCAMERA_TO_ROBOT)};
                 s_Swerve = new Swerve(new SwerveReal(), cameras);
                 elevatorWrist = new ElevatorWrist(new ElevatorWristReal(), operator);
                 climber = new Climber(new ClimberNEO());
                 break;
             case kSimulation:
-                // s_Swerve = new Swerve(new SwerveIO() {});
-                cameras = new PhotonCameraWrapper[] {
-                    new PhotonCameraWrapper(
-                        new PhotonIO(
-                            Constants.CameraConstants.FrontLeftFacingCamera.CAMERA_NAME) {},
-                        Constants.CameraConstants.FrontLeftFacingCamera.KCAMERA_TO_ROBOT),
-                    new PhotonCameraWrapper(
-                        new PhotonIO(
-                            Constants.CameraConstants.FrontRightFacingCamera.CAMERA_NAME) {},
-                        Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT),
-                    new PhotonCameraWrapper(
-                        new PhotonIO(Constants.CameraConstants.BackLeftFacingCamera.CAMERA_NAME) {},
-                        Constants.CameraConstants.BackLeftFacingCamera.KCAMERA_TO_ROBOT),
-                    new PhotonCameraWrapper(
-                        new PhotonIO(
-                            Constants.CameraConstants.BackRightFacingCamera.CAMERA_NAME) {},
-                        Constants.CameraConstants.BackRightFacingCamera.KCAMERA_TO_ROBOT)};
-                s_Swerve = new Swerve(new SwerveReal(), cameras);
+                s_Swerve = new Swerve(new SwerveIO() {}, cameras);
+                shooter = new Shooter(new ShooterIO() {});
+                intake = new Intake(new IntakeIO() {});
+                elevatorWrist = new ElevatorWrist(new ElevatorWristIO() {}, operator);
+                climber = new Climber(new ClimberIO() {});
                 break;
             default:
-                cameras = new PhotonCameraWrapper[] {
-                    new PhotonCameraWrapper(
-                        new PhotonIO(
-                            Constants.CameraConstants.FrontLeftFacingCamera.CAMERA_NAME) {},
-                        Constants.CameraConstants.FrontLeftFacingCamera.KCAMERA_TO_ROBOT),
-                    new PhotonCameraWrapper(
-                        new PhotonIO(
-                            Constants.CameraConstants.FrontRightFacingCamera.CAMERA_NAME) {},
-                        Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT),
-                    new PhotonCameraWrapper(
-                        new PhotonIO(Constants.CameraConstants.BackLeftFacingCamera.CAMERA_NAME) {},
-                        Constants.CameraConstants.BackLeftFacingCamera.KCAMERA_TO_ROBOT),
-                    new PhotonCameraWrapper(
-                        new PhotonIO(
-                            Constants.CameraConstants.BackRightFacingCamera.CAMERA_NAME) {},
-                        Constants.CameraConstants.BackRightFacingCamera.KCAMERA_TO_ROBOT)};
                 s_Swerve = new Swerve(new SwerveIO() {}, cameras);
-
-                // shooter = new Shooter(new ShooterIO() {});
-                // intake = new Intake(new IntakeIO() {});
-                // elevatorWrist = new ElevatorWrist(new ElevatorWristIO() {});
-                // climber = new Climber(new ClimberIO() {});
+                shooter = new Shooter(new ShooterIO() {});
+                intake = new Intake(new IntakeIO() {});
+                elevatorWrist = new ElevatorWrist(new ElevatorWristIO() {}, operator);
+                climber = new Climber(new ClimberIO() {});
         }
         s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, driver,
             Constants.Swerve.isFieldRelative, Constants.Swerve.isOpenLoop));
