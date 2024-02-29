@@ -1,13 +1,20 @@
 package frc.robot.commands;
 
 import java.util.function.BooleanSupplier;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.lib.util.FieldConstants;
 import frc.robot.Constants;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.swerve.Swerve;
+
 
 /**
  * File to create commands using factories
@@ -71,18 +78,21 @@ public class CommandFactory {
      * @param elevatorWrist Elevator and Wrist subsystem
      * @return Returns auto climb command
      */
-    public static Command autoClimb(Climber climber, ElevatorWrist elevatorWrist) {
+    public static Command autoClimb(Climber climber, ElevatorWrist elevatorWrist, Swerve swerve) {
         Command initialExtension =
             elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.CLIMBING_HEIGHT,
                 Constants.ElevatorWristConstants.SetPoints.HOME_ANGLE);
-        Command hooksAttach =
-            elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-                Constants.ElevatorWristConstants.SetPoints.HOME_ANGLE);
+        Command moveForward = new MoveToPos(swerve,
+            () -> new Pose2d(
+                FieldConstants.aprilTags.getTagPose(7).get().toPose2d().getTranslation()
+                    .plus(new Translation2d(20, new Rotation2d(Units.degreesToRadians(120)))),
+                Rotation2d.fromDegrees(0)),
+            true);
         Command climb = climber.getToPosition(Constants.ClimberConstants.CLIMBING_DISTANCE);
         Command extendToTrap =
             elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.TRAP_HEIGHT,
                 Constants.ElevatorWristConstants.SetPoints.TRAP_ANGLE);
-        return initialExtension.andThen(hooksAttach).andThen(climb).andThen(extendToTrap);
+        return initialExtension.andThen(climb).andThen(extendToTrap);
     }
 
     public static Command spit(Shooter shooter, Intake intake) {
