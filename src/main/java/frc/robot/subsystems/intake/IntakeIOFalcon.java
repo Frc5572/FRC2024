@@ -5,6 +5,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkRelativeEncoder;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants;
 
@@ -15,6 +17,8 @@ public class IntakeIOFalcon implements IntakeIO {
 
     private final CANSparkMax intakeMotor =
         new CANSparkMax(Constants.Motors.Intake.INTAKE_MOTOR_ID, MotorType.kBrushless);
+    public final RelativeEncoder intakeRelativeEnc =
+        intakeMotor.getEncoder(SparkRelativeEncoder.Type.kHallSensor, 42);
     private final TalonFX indexerMotor = new TalonFX(Constants.Motors.Intake.INDEXER_MOTOR_ID);
 
     private final DutyCycleOut indexerDutyCycleOut = new DutyCycleOut(0);
@@ -33,7 +37,7 @@ public class IntakeIOFalcon implements IntakeIO {
     public void updateInputs(IntakeInputs inputs) {
         inputs.intakeSupplyVoltage = intakeMotor.getBusVoltage();
         inputs.intakeAmps = intakeMotor.getOutputCurrent();
-        inputs.intakeRPM = intakeMotor.getEncoder().getVelocity();
+        inputs.intakeRPM = intakeRelativeEnc.getVelocity();
         inputs.intakeTemp = intakeMotor.getMotorTemperature();
         inputs.indexerSupplyVoltage = indexerMotor.getSupplyVoltage().getValueAsDouble();
         inputs.indexerMotorVoltage = indexerMotor.getMotorVoltage().getValueAsDouble();
