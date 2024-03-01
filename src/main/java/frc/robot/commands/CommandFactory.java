@@ -1,14 +1,14 @@
 package frc.robot.commands;
 
 import java.util.function.BooleanSupplier;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import frc.lib.util.FieldConstants;
 import frc.robot.Constants;
+import frc.robot.OperatorState;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
 import frc.robot.subsystems.intake.Intake;
@@ -82,17 +82,18 @@ public class CommandFactory {
         Command initialExtension =
             elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.CLIMBING_HEIGHT,
                 Constants.ElevatorWristConstants.SetPoints.HOME_ANGLE);
-        Command moveForward = new MoveToPos(swerve,
-            () -> new Pose2d(
-                FieldConstants.aprilTags.getTagPose(7).get().toPose2d().getTranslation()
-                    .plus(new Translation2d(20, new Rotation2d(Units.degreesToRadians(120)))),
-                Rotation2d.fromDegrees(0)),
-            true);
+        Command lineUp =
+            new MoveToPos(swerve, () -> OperatorState.getCurrentClimberState().getPose(), true);
         Command climb = climber.getToPosition(Constants.ClimberConstants.CLIMBING_DISTANCE);
         Command extendToTrap =
             elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.TRAP_HEIGHT,
                 Constants.ElevatorWristConstants.SetPoints.TRAP_ANGLE);
-        return initialExtension.andThen(climb).andThen(extendToTrap);
+        Command checkIfUnder = new ConditionalCommand(new MoveToPos(swerve, () -> OperatorState
+            .getCurrentClimberState().getPose().plus(new Transform2d(-1, -1, new Rotation2d()))),
+            Commands.runOnce(() -> {
+            }), () -> FieldConstants.underStage(swerve.getPose()));
+        return checkIfUnder.andThen(initialExtension).andThen(lineUp).andThen(climb)
+            .andThen(extendToTrap);
     }
 
     public static Command spit(Shooter shooter, Intake intake) {

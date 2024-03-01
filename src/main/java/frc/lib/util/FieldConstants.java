@@ -116,4 +116,31 @@ public class FieldConstants {
         }
         return pose;
     }
+
+    private static double sign(Translation2d p1, Translation2d p2, Translation2d p3) {
+        return (p1.getX() - p3.getY()) * (p2.getY() - p3.getY())
+            - (p2.getX() - p3.getX()) * (p1.getY() - p3.getY());
+    }
+
+    private static boolean PointInTriangle(Translation2d pt, Translation2d v1, Translation2d v2,
+        Translation2d v3) {
+        double d1, d2, d3;
+        boolean has_neg, has_pos;
+
+        d1 = sign(pt, v1, v2);
+        d2 = sign(pt, v2, v3);
+        d3 = sign(pt, v3, v1);
+
+        has_neg = (d1 < 0) || (d2 < 0) || (d3 < 0);
+        has_pos = (d1 > 0) || (d2 > 0) || (d3 > 0);
+
+        return !(has_neg && has_pos);
+    }
+
+    public static boolean underStage(Pose2d pose) {
+        Translation2d p = pose.getTranslation();
+        return PointInTriangle(p, new Translation2d(153, 121), new Translation2d(98, 218),
+            new Translation2d(231, 218));
+
+    }
 }
