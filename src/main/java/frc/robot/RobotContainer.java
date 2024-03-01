@@ -18,6 +18,7 @@ import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
 import frc.robot.commands.CommandFactory;
+import frc.robot.commands.ShootWhileMoving;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
@@ -131,22 +132,31 @@ public class RobotContainer {
         driver.rightTrigger().whileTrue(intake.runIntakeMotor(1, .20));
         // intake backward
         driver.b().whileTrue(intake.runIndexerMotor(-.1));
+        // intake and shoot as fast as possible
         driver.x().whileTrue(CommandFactory.passThroughShoot(shooter, intake));
+        // toggle shooting while moving
+        driver.a().toggleOnTrue(new ShootWhileMoving(s_Swerve, driver));
 
+        // spit note currently in robot through shooter
         operator.x().whileTrue(CommandFactory.spit(shooter, intake));
+        // shoot note to speaker after being intaked
         operator.rightTrigger().whileTrue(CommandFactory.shootSpeaker(shooter, intake));
+        // set shooter to amp scoring preset position
         operator.start().onTrue(elevatorWrist.ampPosition());
+        // set shooter to home preset position
         operator.back().onTrue(elevatorWrist.homePosition());
-
+        // increment once through states list to next state
         operator.povRight().onTrue(Commands.runOnce(() -> {
             OperatorState.increment();
         }));
+        // go back one through the states list to the previous state
         operator.povLeft().onTrue(Commands.runOnce(() -> {
             OperatorState.decrement();
         }));
-
+        // go to current state as incremented through operator states list
         operator.a().onTrue(new MatchCommand<OperatorState.State>(List.of(OperatorState.State.kAmp),
             List.of(elevatorWrist.ampPosition()), OperatorState::getCurrentState));
+        //
         operator.start().onTrue(Commands.runOnce(() -> {
             OperatorState.toggleManualMode();
         }));
