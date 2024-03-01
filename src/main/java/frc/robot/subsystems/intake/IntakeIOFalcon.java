@@ -15,10 +15,12 @@ import frc.robot.Constants;
  */
 public class IntakeIOFalcon implements IntakeIO {
 
-    private final CANSparkMax intakeMotor =
-        new CANSparkMax(Constants.Motors.Intake.INTAKE_MOTOR_ID, MotorType.kBrushless);
+    private final CANSparkMax intakeMotorLeft =
+        new CANSparkMax(Constants.Motors.Intake.INTAKE_MOTOR_ID_LEFT, MotorType.kBrushless);
+    private final CANSparkMax intakeMotorRight =
+        new CANSparkMax(Constants.Motors.Intake.INTAKE_MOTOR_ID_RIGHT, MotorType.kBrushless);
     public final RelativeEncoder intakeRelativeEnc =
-        intakeMotor.getEncoder(SparkRelativeEncoder.Type.kHallSensor, 42);
+        intakeMotorLeft.getEncoder(SparkRelativeEncoder.Type.kHallSensor, 42);
     private final TalonFX indexerMotor = new TalonFX(Constants.Motors.Intake.INDEXER_MOTOR_ID);
 
     private final DutyCycleOut indexerDutyCycleOut = new DutyCycleOut(0);
@@ -28,28 +30,31 @@ public class IntakeIOFalcon implements IntakeIO {
      * Intake IO Layer with real motors and sensors
      */
     public IntakeIOFalcon() {
-        intakeMotor.setInverted(Constants.IntakeConstants.INTAKE_MOTOR_INVERTED);
-        intakeMotor.setIdleMode(IdleMode.kCoast);
+        intakeMotorLeft.setInverted(Constants.IntakeConstants.INTAKE_MOTOR_INVERTED);
+        intakeMotorLeft.setIdleMode(IdleMode.kCoast);
+        intakeMotorRight.restoreFactoryDefaults();
+        intakeMotorRight.setInverted(false);
         indexerMotor.setInverted(true);
     }
 
     @Override
     public void updateInputs(IntakeInputs inputs) {
-        inputs.intakeSupplyVoltage = intakeMotor.getBusVoltage();
-        inputs.intakeAmps = intakeMotor.getOutputCurrent();
+        inputs.intakeSupplyVoltage = intakeMotorLeft.getBusVoltage();
+        inputs.intakeAmps = intakeMotorLeft.getOutputCurrent();
         inputs.intakeRPM = intakeRelativeEnc.getVelocity();
-        inputs.intakeTemp = intakeMotor.getMotorTemperature();
+        // inputs.intakeTemp = intakeMotorLeft.getMotorTemperature();
         inputs.indexerSupplyVoltage = indexerMotor.getSupplyVoltage().getValueAsDouble();
         inputs.indexerMotorVoltage = indexerMotor.getMotorVoltage().getValueAsDouble();
         inputs.indexerAmps = indexerMotor.getSupplyCurrent().getValueAsDouble();
         inputs.indexerRPM = indexerMotor.getVelocity().getValueAsDouble();
-        inputs.indexerTemp = indexerMotor.getDeviceTemp().getValueAsDouble();
+        // inputs.indexerTemp = indexerMotor.getDeviceTemp().getValueAsDouble();
         inputs.sensorStatus = beamBrake.get(); // true == no game piece
     }
 
     @Override
     public void setIntakeMotorPercentage(double percent) {
-        intakeMotor.set(percent);
+        intakeMotorLeft.set(percent);
+        intakeMotorRight.set(percent);
     }
 
     @Override

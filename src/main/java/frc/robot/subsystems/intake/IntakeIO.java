@@ -17,11 +17,9 @@ public interface IntakeIO {
         public double intakeMotorVoltage;
         public double indexerMotorVoltage;
         public double intakeAmps;
-        public double intakeTemp;
         public double indexerAmps;
         public double intakeRPM;
         public double indexerRPM;
-        public double indexerTemp;
         public boolean sensorStatus;
     }
 
