@@ -24,7 +24,7 @@ public class ShootWhileMoving extends Command {
         Constants.Swerve.AUTO_ROTATION_KI, Constants.Swerve.AUTO_ROTATION_KD);
 
     /**
-     * Shoot while moving comand
+     * Shoot while moving command
      *
      * @param swerveDrive Swerve Drive subsystem
      * @param controller Driver Controller

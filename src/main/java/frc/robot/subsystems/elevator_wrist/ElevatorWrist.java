@@ -207,7 +207,7 @@ public class ElevatorWrist extends SubsystemBase {
 
     /**
      * Set the Wrist to a specified angle
-     * 
+     *
      * @param angle Angle of the wrist
      */
     public void setWristAngle(Rotation2d angle) {
