@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.util.FieldConstants;
@@ -27,6 +28,7 @@ public class ShootWhileMoving extends Command {
                                                                 // PathPlanner uses radians
                                                                 // internally. That way we can reuse
                                                                 // PID gains from autonomous.
+        pidController.setTolerance(Math.toRadians(.5));
     }
 
     @Override
@@ -46,11 +48,14 @@ public class ShootWhileMoving extends Command {
             new Transform2d(translation.times(Constants.LEAD_GAIN), Rotation2d.fromRotations(0)));
 
         Rotation2d desiredRotation = FieldConstants.Speaker.centerSpeakerOpening.getTranslation()
-            .minus(futurePose.getTranslation()).getAngle();
+            .minus(futurePose.getTranslation()).getAngle().plus(Rotation2d.fromDegrees(5));
 
+        SmartDashboard.putNumber("Move Shoot Desired Rotation", desiredRotation.getDegrees());
         pidController.setSetpoint(desiredRotation.getRadians());
-        double rotation = pidController.calculate(futurePose.getRotation().getRadians());
-
+        double rotation = pidController.calculate(swerveDrive.getPose().getRotation().getRadians());
+        if (pidController.atSetpoint()) {
+            rotation = 0;
+        }
         swerveDrive.drive(translation, rotation, true, false);
     }
 

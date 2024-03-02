@@ -50,15 +50,15 @@ public class ShooterVortex implements ShooterIO {
     public void updateInputs(ShooterIOInputsAutoLogged inputs) {
         inputs.topShooterVelocityRotPerMin = topEncoder.getVelocity();
         inputs.bottomShooterVelocityRotPerMin = bottomEncoder.getVelocity();
-        inputs.topShooterPosition = topEncoder.getPosition();
-        inputs.bottomShooterPosition = bottomEncoder.getPosition();
-        inputs.topShooterSupplyVoltage = topShooterMotor.getBusVoltage();
-        inputs.bottomShooterSupplyVoltage = topShooterMotor.getBusVoltage();
-        inputs.topShooterAmps = topShooterMotor.getOutputCurrent();
-        inputs.bottomShooterAmps = topShooterMotor.getOutputCurrent();
-        inputs.topShooterPower = topShooterMotor.get();
-        inputs.bottomShooterPower = bottomShooterMotor.get();
-        inputs.topShooterTemp = topShooterMotor.getMotorTemperature();
-        inputs.bottomShooterTemp = bottomShooterMotor.getMotorTemperature();
+        // inputs.topShooterPosition = topEncoder.getPosition();
+        // inputs.bottomShooterPosition = bottomEncoder.getPosition();
+        // inputs.topShooterSupplyVoltage = topShooterMotor.getBusVoltage();
+        // inputs.bottomShooterSupplyVoltage = topShooterMotor.getBusVoltage();
+        // inputs.topShooterAmps = topShooterMotor.getOutputCurrent();
+        // inputs.bottomShooterAmps = topShooterMotor.getOutputCurrent();
+        // inputs.topShooterPower = topShooterMotor.get();
+        // inputs.bottomShooterPower = bottomShooterMotor.get();
+        // inputs.topShooterTemp = topShooterMotor.getMotorTemperature();
+        // inputs.bottomShooterTemp = bottomShooterMotor.getMotorTemperature();
     }
 }

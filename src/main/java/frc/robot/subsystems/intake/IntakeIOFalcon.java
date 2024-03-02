@@ -40,13 +40,13 @@ public class IntakeIOFalcon implements IntakeIO {
 
     @Override
     public void updateInputs(IntakeInputs inputs) {
-        inputs.intakeSupplyVoltage = intakeMotorLeft.getBusVoltage();
-        inputs.intakeAmps = intakeMotorLeft.getOutputCurrent();
-        inputs.intakeRPM = intakeRelativeEnc.getVelocity();
-        inputs.indexerSupplyVoltage = indexerMotor.getSupplyVoltage().getValueAsDouble();
-        inputs.indexerMotorVoltage = indexerMotor.getMotorVoltage().getValueAsDouble();
-        inputs.indexerAmps = indexerMotor.getSupplyCurrent().getValueAsDouble();
-        inputs.indexerRPM = indexerMotor.getVelocity().getValueAsDouble();
+        // inputs.intakeSupplyVoltage = intakeMotorLeft.getBusVoltage();
+        // inputs.intakeAmps = intakeMotorLeft.getOutputCurrent();
+        // inputs.intakeRPM = intakeRelativeEnc.getVelocity();
+        // inputs.indexerSupplyVoltage = indexerMotor.getSupplyVoltage().getValueAsDouble();
+        // inputs.indexerMotorVoltage = indexerMotor.getMotorVoltage().getValueAsDouble();
+        // inputs.indexerAmps = indexerMotor.getSupplyCurrent().getValueAsDouble();
+        // inputs.indexerRPM = indexerMotor.getVelocity().getValueAsDouble();
         inputs.sensorStatus = beamBrake.get(); // true == no game piece
     }
 

@@ -108,8 +108,8 @@ public final class Constants {
             public static final double PITCH = Math.toRadians(5);
             public static final double YAW = Math.toRadians(-10);
             public static final Transform3d KCAMERA_TO_ROBOT =
-                new Transform3d(new Translation3d(Units.inchesToMeters(3.96),
-                    Units.inchesToMeters(11.013), Units.inchesToMeters(18.074)),
+                new Transform3d(new Translation3d(Units.inchesToMeters(11.013),
+                    Units.inchesToMeters(-10.96), Units.inchesToMeters(18.074)),
                     new Rotation3d(ROLL, PITCH, YAW)).inverse();
 
             public static final String CAMERA_NAME = "front-right";
@@ -283,7 +283,8 @@ public final class Constants {
 
         public static final HolonomicPathFollowerConfig pathFollowerConfig =
             new HolonomicPathFollowerConfig(new PIDConstants(5.0, 0, 0), // Translation constants
-                new PIDConstants(AUTO_ROTATION_KP, AUTO_ROTATION_KI, AUTO_ROTATION_KD), // Rotation constants
+                new PIDConstants(AUTO_ROTATION_KP, AUTO_ROTATION_KI, AUTO_ROTATION_KD), // Rotation
+                                                                                        // constants
                 // Drive base radius (distance from center to furthest module)
                 maxSpeed, MOD0_MODOFFSET.getNorm(), new ReplanningConfig());
     }

@@ -76,18 +76,18 @@ public class RobotContainer {
              * Camera Order: 0 - Front Left 1 - Front RIght 2 - Back Left 3 - Back Right
              */
             new PhotonCameraWrapper[] {
-                new PhotonCameraWrapper(
-                    new PhotonReal(Constants.CameraConstants.FrontLeftFacingCamera.CAMERA_NAME),
-                    Constants.CameraConstants.FrontLeftFacingCamera.KCAMERA_TO_ROBOT),
+                // new PhotonCameraWrapper(
+                // new PhotonReal(Constants.CameraConstants.FrontLeftFacingCamera.CAMERA_NAME),
+                // Constants.CameraConstants.FrontLeftFacingCamera.KCAMERA_TO_ROBOT),
                 new PhotonCameraWrapper(
                     new PhotonReal(Constants.CameraConstants.FrontRightFacingCamera.CAMERA_NAME),
-                    Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT),
-                new PhotonCameraWrapper(
-                    new PhotonReal(Constants.CameraConstants.BackLeftFacingCamera.CAMERA_NAME),
-                    Constants.CameraConstants.BackLeftFacingCamera.KCAMERA_TO_ROBOT),
-                new PhotonCameraWrapper(
-                    new PhotonReal(Constants.CameraConstants.BackRightFacingCamera.CAMERA_NAME),
-                    Constants.CameraConstants.BackRightFacingCamera.KCAMERA_TO_ROBOT)};
+                    Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT)};
+        // new PhotonCameraWrapper(
+        // new PhotonReal(Constants.CameraConstants.BackLeftFacingCamera.CAMERA_NAME),
+        // Constants.CameraConstants.BackLeftFacingCamera.KCAMERA_TO_ROBOT),
+        // new PhotonCameraWrapper(
+        // new PhotonReal(Constants.CameraConstants.BackRightFacingCamera.CAMERA_NAME),
+        // Constants.CameraConstants.BackRightFacingCamera.KCAMERA_TO_ROBOT)};
 
         switch (runtimeType) {
             case kReal:
@@ -128,6 +128,8 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
         driver.y().onTrue(new InstantCommand(() -> s_Swerve.resetFieldRelativeOffset()));
+        driver.start().onTrue(
+            new InstantCommand(() -> s_Swerve.resetPvInitialization()).ignoringDisable(true));
         // intake forward
         driver.rightTrigger().whileTrue(intake.runIntakeMotor(1, .20));
         // intake backward
@@ -135,7 +137,9 @@ public class RobotContainer {
         // intake and shoot as fast as possible
         driver.x().whileTrue(CommandFactory.passThroughShoot(shooter, intake));
         // toggle shooting while moving
-        driver.a().toggleOnTrue(new ShootWhileMoving(s_Swerve, driver));
+        driver.a().toggleOnTrue(
+            new ShootWhileMoving(s_Swerve, driver).alongWith(elevatorWrist.followPosition(() -> 0,
+                () -> elevatorWrist.getAngleFromDistance(s_Swerve.getPose()))));
 
         // spit note currently in robot through shooter
         operator.x().whileTrue(CommandFactory.spit(shooter, intake));
