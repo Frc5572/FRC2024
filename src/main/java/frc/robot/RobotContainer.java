@@ -133,22 +133,14 @@ public class RobotContainer {
         // intake forward
         driver.rightTrigger().whileTrue(intake.runIntakeMotor(1, .20));
         // intake backward
-        driver.b().whileTrue(intake.runIndexerMotor(-.1));
-        // intake and shoot as fast as possible
-        driver.x().whileTrue(CommandFactory.passThroughShoot(shooter, intake));
-        // toggle shooting while moving
-        driver.a().toggleOnTrue(
-            new ShootWhileMoving(s_Swerve, driver).alongWith(elevatorWrist.followPosition(() -> 0,
-                () -> elevatorWrist.getAngleFromDistance(s_Swerve.getPose()))));
+        driver.leftTrigger().whileTrue(intake.runIndexerMotor(-.1));
 
         // spit note currently in robot through shooter
         operator.x().whileTrue(CommandFactory.spit(shooter, intake));
         // shoot note to speaker after being intaked
         operator.rightTrigger().whileTrue(CommandFactory.shootSpeaker(shooter, intake));
-        // set shooter to amp scoring preset position
-        operator.start().onTrue(elevatorWrist.ampPosition());
         // set shooter to home preset position
-        operator.back().onTrue(elevatorWrist.homePosition());
+        operator.y().onTrue(elevatorWrist.homePosition());
         // increment once through states list to next state
         operator.povRight().onTrue(Commands.runOnce(() -> {
             OperatorState.increment();
@@ -158,8 +150,14 @@ public class RobotContainer {
             OperatorState.decrement();
         }));
         // go to current state as incremented through operator states list
-        operator.a().onTrue(new MatchCommand<OperatorState.State>(List.of(OperatorState.State.kAmp),
-            List.of(elevatorWrist.ampPosition()), OperatorState::getCurrentState));
+        operator.a()
+            .whileTrue(new MatchCommand<OperatorState.State>(
+                List.of(OperatorState.State.kAmp, OperatorState.State.kShootWhileMove,
+                    OperatorState.State.kClimb),
+                List.of(elevatorWrist.ampPosition(),
+                    new ShootWhileMoving(s_Swerve, driver).alongWith(elevatorWrist.followPosition(
+                        () -> 0, () -> elevatorWrist.getAngleFromDistance(s_Swerve.getPose())))),
+                OperatorState::getCurrentState));
         //
         operator.start().onTrue(Commands.runOnce(() -> {
             OperatorState.toggleManualMode();

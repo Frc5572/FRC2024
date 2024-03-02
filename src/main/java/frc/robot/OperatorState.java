@@ -7,8 +7,8 @@ public class OperatorState {
 
     /** Operating state. */
     public static enum State {
-        kAmp("Amp"), kShootPost("Shoot from Post"), kShootTrap("Shoot from Trap"), kShootWhileMove(
-            "Shoot while moving"), kClimb("Climb");
+        kAmp("Amp"), kShootTrap("Shoot from Trap"), kShootWhileMove("Shoot while moving"), kClimb(
+            "Climb");
 
         public final String displayName;
 
