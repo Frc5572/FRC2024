@@ -20,6 +20,12 @@ import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberIO;
+import frc.robot.subsystems.climber.ClimberNEO;
+import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
+import frc.robot.subsystems.elevator_wrist.ElevatorWristIO;
+import frc.robot.subsystems.elevator_wrist.ElevatorWristReal;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOFalcon;
@@ -52,8 +58,8 @@ public class RobotContainer {
     private Shooter shooter;
     private Intake intake;
     private PhotonCameraWrapper[] cameras;
-    // private ElevatorWrist elevatorWrist;
-    // public Climber climber;
+    private ElevatorWrist elevatorWrist;
+    public Climber climber;
 
     /**
      */
@@ -187,7 +193,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         Command autocommand;
-        Command goToWristPos = elevatorWrist.goToPosition(900, Rotation2d.fromRotations(.13));
+        Command goToWristPos = elevatorWrist.goToPosition(24, Rotation2d.fromDegrees(30));
         Command readytoShoot = Commands.waitUntil(() -> shooter.readyToShoot());
         Command runIndexer = intake.runIndexerMotor(1);
         Command runIntake = intake.runIntakeMotor(1, .2);
