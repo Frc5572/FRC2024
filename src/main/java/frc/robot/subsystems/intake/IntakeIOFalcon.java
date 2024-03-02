@@ -54,9 +54,7 @@ public class IntakeIOFalcon implements IntakeIO {
     public void setIntakeMotorPercentage(double percent) {
         // Left ratio is 60:30
         // Right ratio is 32:30
-        // To equalize the speeds roughly, to run right at max power, the left can only be run at
-        // ~0.7
-        intakeMotorLeft.set(percent * 0.7);
+        intakeMotorLeft.set(percent);
         intakeMotorRight.set(percent);
     }
 
