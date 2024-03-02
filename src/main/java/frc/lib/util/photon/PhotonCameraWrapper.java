@@ -60,6 +60,10 @@ public class PhotonCameraWrapper {
      */
     public Optional<Pose2d> getInitialPose() {
         var res = inputs.result;
+        SmartDashboard.putNumber("Heartbeat", inputs.timeSinceLastHeartbeat);
+        if (inputs.timeSinceLastHeartbeat > 0.5) {
+            return Optional.empty();
+        }
         SmartDashboard.putNumber("lastTimePhton", res.getTimestampSeconds());
         if (res.hasTargets()) {
             var target = res.getBestTarget();

@@ -12,12 +12,12 @@ public interface ClimberIO {
      */
     @AutoLog
     public static class ClimberInputs {
-        public double climberLeftMotorVoltage;
-        public double climberLeftMotorAmp;
-        public double climberRightMotorTemp;
-        public double climberRightMotorVoltage;
-        public double climberRightMotorAmp;
-        public double climberLeftMotorTemp;
+        // public double climberLeftMotorVoltage;
+        // public double climberLeftMotorAmp;
+        // public double climberRightMotorTemp;
+        // public double climberRightMotorVoltage;
+        // public double climberRightMotorAmp;
+        // public double climberLeftMotorTemp;
         public double leftMotorEncoderValue;
         public double rightMotorEncoderValue;
 

@@ -9,13 +9,16 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.lib.util.MatchCommand;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
 import frc.robot.commands.CommandFactory;
+import frc.robot.commands.ShootWhileMoving;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
@@ -73,18 +76,18 @@ public class RobotContainer {
              * Camera Order: 0 - Front Left 1 - Front RIght 2 - Back Left 3 - Back Right
              */
             new PhotonCameraWrapper[] {
-                new PhotonCameraWrapper(
-                    new PhotonReal(Constants.CameraConstants.FrontLeftFacingCamera.CAMERA_NAME),
-                    Constants.CameraConstants.FrontLeftFacingCamera.KCAMERA_TO_ROBOT),
+                // new PhotonCameraWrapper(
+                // new PhotonReal(Constants.CameraConstants.FrontLeftFacingCamera.CAMERA_NAME),
+                // Constants.CameraConstants.FrontLeftFacingCamera.KCAMERA_TO_ROBOT),
                 new PhotonCameraWrapper(
                     new PhotonReal(Constants.CameraConstants.FrontRightFacingCamera.CAMERA_NAME),
-                    Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT),
-                new PhotonCameraWrapper(
-                    new PhotonReal(Constants.CameraConstants.BackLeftFacingCamera.CAMERA_NAME),
-                    Constants.CameraConstants.BackLeftFacingCamera.KCAMERA_TO_ROBOT),
-                new PhotonCameraWrapper(
-                    new PhotonReal(Constants.CameraConstants.BackRightFacingCamera.CAMERA_NAME),
-                    Constants.CameraConstants.BackRightFacingCamera.KCAMERA_TO_ROBOT)};
+                    Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT)};
+        // new PhotonCameraWrapper(
+        // new PhotonReal(Constants.CameraConstants.BackLeftFacingCamera.CAMERA_NAME),
+        // Constants.CameraConstants.BackLeftFacingCamera.KCAMERA_TO_ROBOT),
+        // new PhotonCameraWrapper(
+        // new PhotonReal(Constants.CameraConstants.BackRightFacingCamera.CAMERA_NAME),
+        // Constants.CameraConstants.BackRightFacingCamera.KCAMERA_TO_ROBOT)};
 
         switch (runtimeType) {
             case kReal:
@@ -125,16 +128,42 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
         driver.y().onTrue(new InstantCommand(() -> s_Swerve.resetFieldRelativeOffset()));
+        driver.start().onTrue(
+            new InstantCommand(() -> s_Swerve.resetPvInitialization()).ignoringDisable(true));
         // intake forward
         driver.rightTrigger().whileTrue(intake.runIntakeMotor(1, .20));
         // intake backward
         driver.b().whileTrue(intake.runIndexerMotor(-.1));
+        // intake and shoot as fast as possible
         driver.x().whileTrue(CommandFactory.passThroughShoot(shooter, intake));
+        // toggle shooting while moving
+        driver.a().toggleOnTrue(
+            new ShootWhileMoving(s_Swerve, driver).alongWith(elevatorWrist.followPosition(() -> 0,
+                () -> elevatorWrist.getAngleFromDistance(s_Swerve.getPose()))));
 
+        // spit note currently in robot through shooter
         operator.x().whileTrue(CommandFactory.spit(shooter, intake));
+        // shoot note to speaker after being intaked
         operator.rightTrigger().whileTrue(CommandFactory.shootSpeaker(shooter, intake));
+        // set shooter to amp scoring preset position
         operator.start().onTrue(elevatorWrist.ampPosition());
+        // set shooter to home preset position
         operator.back().onTrue(elevatorWrist.homePosition());
+        // increment once through states list to next state
+        operator.povRight().onTrue(Commands.runOnce(() -> {
+            OperatorState.increment();
+        }));
+        // go back one through the states list to the previous state
+        operator.povLeft().onTrue(Commands.runOnce(() -> {
+            OperatorState.decrement();
+        }));
+        // go to current state as incremented through operator states list
+        operator.a().onTrue(new MatchCommand<OperatorState.State>(List.of(OperatorState.State.kAmp),
+            List.of(elevatorWrist.ampPosition()), OperatorState::getCurrentState));
+        //
+        operator.start().onTrue(Commands.runOnce(() -> {
+            OperatorState.toggleManualMode();
+        }));
 
         // operator.povDown().whileTrue(
         // elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.AMP_HEIGHT,
