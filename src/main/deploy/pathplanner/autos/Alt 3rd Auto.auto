@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.8878062347371597,
-      "y": 3.660745091927839
+      "x": 1.0,
+      "y": 6.8
     },
-    "rotation": 119.74488129694224
+    "rotation": 180.0
   },
   "command": {
     "type": "sequential",
@@ -34,7 +34,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "GetOut & Scores P2"
+                        "pathName": "GetOuts and Scores StartingN P1"
                       }
                     },
                     {
@@ -46,13 +46,19 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "Pickup N2 from N3"
+                        "pathName": "PickUp N1 from Scoring StartingN1"
                       }
                     },
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "Score N1 from N2"
+                        "pathName": "Copy of Pickup N2 from N1"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": " Pickup N3 from N1"
                       }
                     }
                   ]

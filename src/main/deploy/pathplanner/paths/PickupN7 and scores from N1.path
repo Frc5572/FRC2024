@@ -60,7 +60,7 @@
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 0.9,
+      "waypointRelativePos": 0.8,
       "command": {
         "type": "sequential",
         "data": {
@@ -68,7 +68,7 @@
             {
               "type": "named",
               "data": {
-                "name": "Intake Command"
+                "name": "Run Intake"
               }
             }
           ]
