@@ -12,6 +12,9 @@ import frc.lib.util.FieldConstants;
 import frc.robot.Constants;
 import frc.robot.subsystems.swerve.Swerve;
 
+/**
+ * Shooting while moving command
+ */
 public class ShootWhileMoving extends Command {
 
     private Swerve swerveDrive;
@@ -20,14 +23,19 @@ public class ShootWhileMoving extends Command {
     private PIDController pidController = new PIDController(Constants.Swerve.AUTO_ROTATION_KP,
         Constants.Swerve.AUTO_ROTATION_KI, Constants.Swerve.AUTO_ROTATION_KD);
 
+    /**
+     * Shoot while moving comand
+     *
+     * @param swerveDrive Swerve Drive subsystem
+     * @param controller Driver Controller
+     */
     public ShootWhileMoving(Swerve swerveDrive, CommandXboxController controller) {
         this.swerveDrive = swerveDrive;
         addRequirements(swerveDrive);
         this.controller = controller;
-        pidController.enableContinuousInput(-Math.PI, Math.PI); // We use radians here because
-                                                                // PathPlanner uses radians
-                                                                // internally. That way we can reuse
-                                                                // PID gains from autonomous.
+        // We use radians here because PathPlanner uses radians internally. That way we can reuse
+        // PID gains from autonomous.
+        pidController.enableContinuousInput(-Math.PI, Math.PI);
         pidController.setTolerance(Math.toRadians(.5));
     }
 

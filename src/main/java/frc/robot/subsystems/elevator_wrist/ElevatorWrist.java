@@ -192,6 +192,12 @@ public class ElevatorWrist extends SubsystemBase {
                 + Constants.ElevatorWristConstants.WRIST_B);
     }
 
+    /**
+     * Determine the angle of wrist based on the distance from the shooter
+     *
+     * @param position Position of the robot
+     * @return Rotation of the wrist
+     */
     public Rotation2d getAngleFromDistance(Pose2d position) {
         double distFromSpeaker = position.getTranslation()
             .minus(FieldConstants.Speaker.centerSpeakerOpening.getTranslation()).getNorm();
@@ -199,6 +205,11 @@ public class ElevatorWrist extends SubsystemBase {
         return Rotation2d.fromDegrees(radiusToAngle.get(distFromSpeaker));
     }
 
+    /**
+     * Set the Wrist to a specified angle
+     * 
+     * @param angle Angle of the wrist
+     */
     public void setWristAngle(Rotation2d angle) {
         wristPIDController.setSetpoint(angle.getRotations());
         wristProfiledPIDController.setSetpoint(angle.getRotations());
