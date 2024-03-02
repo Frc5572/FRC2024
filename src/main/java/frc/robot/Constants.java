@@ -60,7 +60,8 @@ public final class Constants {
          * Intake and indexer motor constants
          */
         public static final class Intake {
-            public static final int INTAKE_MOTOR_ID = 14;
+            public static final int INTAKE_MOTOR_ID_LEFT = 14;
+            public static final int INTAKE_MOTOR_ID_RIGHT = 61;
             public static final int INDEXER_MOTOR_ID = 32;
         }
 
@@ -150,7 +151,7 @@ public final class Constants {
     public static final class Swerve {
         public static final edu.wpi.first.wpilibj.SPI.Port navXID =
             edu.wpi.first.wpilibj.SPI.Port.kMXP;
-        public static final boolean invertGyro = false;
+        public static final boolean invertGyro = true;
         public static final boolean isFieldRelative = true;
         public static final boolean isOpenLoop = false;
 
@@ -221,7 +222,7 @@ public final class Constants {
 
         /* Swerve Profiling Values */
         /** Meters per Second */
-        public static final double maxSpeed = 1.5;
+        public static final double maxSpeed = 3.5;
         /** Radians per Second */
         public static final double maxAngularVelocity = 10.0;
 
@@ -322,6 +323,45 @@ public final class Constants {
      */
     public static final class ElevatorWristConstants {
 
+        public static final Rotation2d WRIST_REF_1_ANGLE_MEASURED = Rotation2d.fromRotations(0.116);
+        public static final Rotation2d WRIST_REF_2_ANGLE_MEASURED = Rotation2d.fromRotations(-.014);
+        public static final Rotation2d WRIST_REF_1_ANGLE_ACTUAL = Rotation2d.fromDegrees(0.0);
+        public static final Rotation2d WRIST_REF_2_ANGLE_ACTUAL = Rotation2d.fromDegrees(45.0);
+
+        public static final double WRIST_M;
+        public static final double WRIST_B;
+
+        static {
+            WRIST_M =
+                (WRIST_REF_2_ANGLE_ACTUAL.getRotations() - WRIST_REF_1_ANGLE_ACTUAL.getRotations())
+                    / (WRIST_REF_2_ANGLE_MEASURED.getRotations()
+                        - WRIST_REF_1_ANGLE_MEASURED.getRotations());
+            // meas_1 * m + b = act_1
+            // b = act_1 - meas_1 * m
+            WRIST_B = WRIST_REF_1_ANGLE_ACTUAL.getRotations()
+                - WRIST_REF_1_ANGLE_MEASURED.getRotations() * WRIST_M;
+        }
+
+        public static final Rotation2d ELEVATOR_REF_1_ANGLE_MEASURED =
+            Rotation2d.fromRotations(0.0);
+        public static final Rotation2d ELEVATOR_REF_2_ANGLE_MEASURED =
+            Rotation2d.fromRotations(-973);
+        public static final double ELEVATOR_REF_1_HEIGHT = 24.0;
+        public static final double ELEVATOR_REF_2_HEIGHT = 44.125;
+
+        public static final double ELEVATOR_M;
+        public static final double ELEVATOR_B;
+
+        static {
+            ELEVATOR_M = (ELEVATOR_REF_2_HEIGHT - ELEVATOR_REF_1_HEIGHT)
+                / (ELEVATOR_REF_2_ANGLE_MEASURED.getRotations()
+                    - ELEVATOR_REF_1_ANGLE_MEASURED.getRotations());
+            // meas_1 * m + b = act_1
+            // b = act_1 - meas_1 * m
+            ELEVATOR_B =
+                ELEVATOR_REF_1_HEIGHT - ELEVATOR_REF_1_ANGLE_MEASURED.getRotations() * ELEVATOR_M;
+        }
+
         /**
          * Sensor Constants
          */
@@ -338,20 +378,21 @@ public final class Constants {
          */
         public static final class PID {
 
-            public static final double ELEVATOR_KP = 0;
+            public static final double ELEVATOR_KP = 1.6;
             public static final double ELEVATOR_KI = 0;
             public static final double ELEVATOR_KD = 0;
-            public static final double ELEVATOR_MAX_VELOCITY = 0;
-            public static final double ELEVATOR_MAX_ACCELERATION = 0;
+            public static final double ELEVATOR_MAX_VELOCITY = 20;
+            public static final double ELEVATOR_MAX_ACCELERATION = 50;
             public static final double ELEVATOR_KS = 0;
             public static final double ELEVATOR_KG = 0;
             public static final double ELEVATOR_KV = 0;
 
-            public static final double WRIST_KP = 0;
-            public static final double WRIST_KI = 0;
+            public static final double WRIST_KP = 105;
+            public static final double WRIST_LARGE_KP = 45;
+            public static final double WRIST_KI = 60;
             public static final double WRIST_KD = 0;
-            public static final double WRIST_MAX_VELOCITY = 0;
-            public static final double WRIST_MAX_ACCELERATION = 0;
+            public static final double WRIST_MAX_VELOCITY = 0.000001;
+            public static final double WRIST_MAX_ACCELERATION = 0.0000000001;
             public static final double WRIST_KS = 0;
             public static final double WRIST_KG = 0;
             public static final double WRIST_KV = 0;
@@ -362,19 +403,23 @@ public final class Constants {
          */
         public static final class SetPoints {
 
-            public static final double HOME_HEIGHT = 0;
-            public static final Rotation2d HOME_ANGLE = Rotation2d.fromDegrees(40);
-            public static final double AMP_HEIGHT = Units.inchesToMeters(34);
-            public static final Rotation2d AMP_ANGLE = Rotation2d.fromDegrees(-10);
-            public static final double TRAP_HEIGHT = Units.inchesToMeters(40);
-            public static final Rotation2d TRAP_ANGLE = Rotation2d.fromDegrees(30);
-            public static final double MAX_EXTENSION = Units.inchesToMeters(48);
+            public static final double HOME_HEIGHT = 24;
+            public static final Rotation2d INTAKE_ANGLE = Rotation2d.fromDegrees(39);
+            public static final Rotation2d HOME_ANGLE = Rotation2d.fromDegrees(16.8);
+            // public static final double AMP_HEIGHT = Units.inchesToMeters(34);
+            public static final double AMP_HEIGHT = 44;
+            public static final Rotation2d AMP_ANGLE = Rotation2d.fromDegrees(-28);
+            // public static final double TRAP_HEIGHT = Units.inchesToMeters(40);
+            public static final double TRAP_HEIGHT = 44;
+            public static final Rotation2d TRAP_ANGLE = Rotation2d.fromDegrees(-10);
+            // public static final double MAX_EXTENSION = Units.inchesToMeters(48);
+            public static final double MAX_EXTENSION = 44;
             public static final double CLIMBING_HEIGHT = Units.inchesToMeters(15);
-            public static final Rotation2d CLIMBING_ANGLE = Rotation2d.fromDegrees(0);
+            public static final Rotation2d CLIMBING_ANGLE = Rotation2d.fromRotations(.280);
             public static final Rotation2d MAX_ANGLE_UP_HOME = Rotation2d.fromDegrees(75);
             public static final Rotation2d MAX_ANGLE_DOWN_HOME = Rotation2d.fromDegrees(0);
-            public static final Rotation2d MAX_ANGLE_UP_EXTENDED = Rotation2d.fromDegrees(75);
-            public static final Rotation2d MAX_ANGLE_DOWN_EXTENDED = Rotation2d.fromDegrees(-15);
+            public static final Rotation2d MAX_ANGLE_UP_EXTENDED = Rotation2d.fromRotations(.095);
+            public static final Rotation2d MAX_ANGLE_DOWN_EXTENDED = Rotation2d.fromRotations(.390);
 
             public static final double LINEAR_DISTANCE = Units.inchesToMeters(2 * Math.PI * 659);
 
@@ -395,17 +440,17 @@ public final class Constants {
      * Constants of Shooters
      */
     public static final class ShooterConstants {
-        public static final double KP = 0.00004;
+        public static final double KP = 0.0014;
         public static final double KI = 0;
         public static final double KD = 0;
         public static final double KS = 0;
-        public static final double KV = 0.00092;
+        public static final double TOP_KV = 0.00092;
+        public static final double BOTTOM_KV = 0.00092;
         public static final double GEAR_RATIO = 31.0 / 16.0;
         public static final double HEIGHT_FROM_LOWEST_POS = Units.inchesToMeters(32.0);
         public static final double HEIGHT_FROM_SPEAKER =
             FieldConstants.centerSpeaker - HEIGHT_FROM_LOWEST_POS;
-
-        public static final double SHOOT_SPEAKER_RPM = 11500.0;
+        public static final double SHOOT_SPEAKER_RPM = 11000.0;
     }
 
     /**

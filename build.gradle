@@ -1,6 +1,6 @@
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2024.2.1"
+    id "edu.wpi.first.GradleRIO" version "2024.3.1"
     id "com.peterabeles.gversion" version "1.10"
 }
 
@@ -28,6 +28,7 @@ deploy {
                 // getTargetTypeClass is a shortcut to get the class type using a string
 
                 frcJava(getArtifactTypeClass('FRCJavaArtifact')) {
+                    // jvmArgs.add("-XX:StartFlightRecording=duration=30s,filename=/home/lvuser/flight.jfr")
                 }
 
                 // Static files artifact

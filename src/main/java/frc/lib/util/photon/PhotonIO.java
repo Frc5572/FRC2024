@@ -50,8 +50,12 @@ public abstract class PhotonIO {
         @Override
         public void fromLog(LogTable table) {
             this.rawBytes = table.get("rawBytes", rawBytes);
-            Packet p = new Packet(rawBytes);
-            this.result = PhotonPipelineResult.serde.unpack(p);
+            if (rawBytes.length > 0) {
+                Packet p = new Packet(rawBytes);
+                this.result = PhotonPipelineResult.serde.unpack(p);
+            } else {
+                this.result = null;
+            }
 
             this.versionString = table.get("versionString", versionString);
             this.timeSinceLastHeartbeat =

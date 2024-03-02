@@ -7,6 +7,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
+import com.revrobotics.SparkRelativeEncoder;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants;
 
@@ -23,23 +24,20 @@ public class ElevatorWristReal implements ElevatorWristIO {
     public final DigitalInput bottomLimitSwitch =
         new DigitalInput(Constants.ElevatorWristConstants.Sensors.BOTTOM_LIMIT_SWITCH_PORT);
 
-    public final AbsoluteEncoder wristAbsoluteEnc;
-    public final RelativeEncoder elevatorRelativeEnc;
+    public final AbsoluteEncoder wristAbsoluteEnc = wristMotor.getAbsoluteEncoder(Type.kDutyCycle);
+    public final RelativeEncoder elevatorRelativeEnc =
+        elevatorMotor.getEncoder(SparkRelativeEncoder.Type.kHallSensor, 42);
 
 
     /**
      * Constructor for elevator wrist real class
      */
     public ElevatorWristReal() {
-        wristAbsoluteEnc = wristMotor.getAbsoluteEncoder(Type.kDutyCycle);
-        wristAbsoluteEnc.setPositionConversionFactor(1);
-
-        elevatorRelativeEnc = elevatorMotor.getEncoder();
         elevatorRelativeEnc.setPositionConversionFactor(25);
-
         elevatorMotor.setIdleMode(IdleMode.kBrake);
         elevatorMotor.setInverted(false);
 
+        wristAbsoluteEnc.setPositionConversionFactor(1);
         wristMotor.setIdleMode(IdleMode.kBrake);
         wristMotor.setInverted(false);
     }
@@ -51,12 +49,12 @@ public class ElevatorWristReal implements ElevatorWristIO {
         inputs.bottomLimitSwitch = bottomLimitSwitch.get();
         inputs.elevatorRelativeEncRawValue = elevatorRelativeEnc.getPosition();
         inputs.wristAbsoluteEncRawValue = wristAbsoluteEnc.getPosition();
-        inputs.elevatorMotorSupplyVoltage = elevatorMotor.getBusVoltage();
-        inputs.elevatorMotorVoltage = elevatorMotor.getOutputCurrent();
-        inputs.elevatorMotorTemp = elevatorMotor.getMotorTemperature();
-        inputs.wristMotorVoltage = wristMotor.getBusVoltage();
-        inputs.wristMotorAmp = wristMotor.getOutputCurrent();
-        inputs.wristMotorTemp = wristMotor.getMotorTemperature();
+        // inputs.elevatorMotorSupplyVoltage = elevatorMotor.getBusVoltage();
+        // inputs.elevatorMotorVoltage = elevatorMotor.getOutputCurrent();
+        // inputs.elevatorMotorTemp = elevatorMotor.getMotorTemperature();
+        // inputs.wristMotorVoltage = wristMotor.getBusVoltage();
+        // inputs.wristMotorAmp = wristMotor.getOutputCurrent();
+        // inputs.wristMotorTemp = wristMotor.getMotorTemperature();
     }
 
     @Override
