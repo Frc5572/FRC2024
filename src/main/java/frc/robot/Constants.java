@@ -282,9 +282,8 @@ public final class Constants {
         }
 
         public static final HolonomicPathFollowerConfig pathFollowerConfig =
-            new HolonomicPathFollowerConfig(new PIDConstants(5.0, 0, 0), // Translation constants
-                new PIDConstants(AUTO_ROTATION_KP, AUTO_ROTATION_KI, AUTO_ROTATION_KD), // Rotation
-                                                                                        // constants
+            new HolonomicPathFollowerConfig(new PIDConstants(5.0, 0, 0),
+                new PIDConstants(AUTO_ROTATION_KP, AUTO_ROTATION_KI, AUTO_ROTATION_KD),
                 // Drive base radius (distance from center to furthest module)
                 maxSpeed, MOD0_MODOFFSET.getNorm(), new ReplanningConfig());
     }
