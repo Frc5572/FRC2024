@@ -14,6 +14,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -222,16 +223,18 @@ public class Swerve extends SubsystemBase {
         }
     }
 
+    public void resetPvInitialization() {
+        hasInitialized = false;
+    }
+
     @Override
     public void periodic() {
-        swerveOdometry.update(getGyroYaw(), getModulePositions());
         swerveIO.updateInputs(inputs, swerveOdometry.getEstimatedPosition());
+        swerveOdometry.update(getGyroYaw(), getModulePositions());
         Logger.processInputs("Swerve", inputs);
         for (int i = 0; i < cameras.length; i++) {
             cameras[i].periodic();
         }
-        Rotation2d yaw = Rotation2d.fromDegrees(inputs.yaw);
-        swerveOdometry.update(yaw, getSwerveModulePositions());
 
         Logger.recordOutput("/Swerve/hasInitialized", hasInitialized);
 
@@ -248,12 +251,11 @@ public class Swerve extends SubsystemBase {
             }
         } else {
             for (int i = 0; i < cameras.length; i++) {
-                var result =
-                    cameras[i].getEstimatedGlobalPose(swerveOdometry.getEstimatedPosition());
+                var result = cameras[i].getInitialPose();
                 if (result.isPresent()) {
-                    var camPose = result.get();
-                    swerveOdometry.addVisionMeasurement(camPose.estimatedPose.toPose2d(),
-                        camPose.timestampSeconds);
+                    Pose2d camPose = result.get();
+                    swerveOdometry.addVisionMeasurement(camPose,
+                        Timer.getFPGATimestamp() - cameras[i].latency());
                 }
             }
         }
@@ -267,7 +269,7 @@ public class Swerve extends SubsystemBase {
         SmartDashboard.putNumber("Robot X", getPose().getX());
         SmartDashboard.putNumber("Robot Y", getPose().getY());
         SmartDashboard.putNumber("Robot Rotation", getPose().getRotation().getDegrees());
-        SmartDashboard.putNumber("Gyro Yaw", yaw.getDegrees());
+        SmartDashboard.putNumber("Gyro Yaw", getGyroYaw().getDegrees());
         SmartDashboard.putNumber("Field Offset", fieldOffset);
         SmartDashboard.putNumber("Gyro Yaw - Offset", getFieldRelativeHeading().getDegrees());
         SmartDashboard.putNumber("Gyro roll", inputs.roll);
