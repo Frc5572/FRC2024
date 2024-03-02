@@ -30,9 +30,10 @@ public class IntakeIOFalcon implements IntakeIO {
      * Intake IO Layer with real motors and sensors
      */
     public IntakeIOFalcon() {
+        intakeMotorLeft.restoreFactoryDefaults();
+        intakeMotorRight.restoreFactoryDefaults();
         intakeMotorLeft.setInverted(Constants.IntakeConstants.INTAKE_MOTOR_INVERTED);
         intakeMotorLeft.setIdleMode(IdleMode.kCoast);
-        intakeMotorRight.restoreFactoryDefaults();
         intakeMotorRight.setInverted(false);
         indexerMotor.setInverted(true);
     }
@@ -42,17 +43,17 @@ public class IntakeIOFalcon implements IntakeIO {
         inputs.intakeSupplyVoltage = intakeMotorLeft.getBusVoltage();
         inputs.intakeAmps = intakeMotorLeft.getOutputCurrent();
         inputs.intakeRPM = intakeRelativeEnc.getVelocity();
-        // inputs.intakeTemp = intakeMotorLeft.getMotorTemperature();
         inputs.indexerSupplyVoltage = indexerMotor.getSupplyVoltage().getValueAsDouble();
         inputs.indexerMotorVoltage = indexerMotor.getMotorVoltage().getValueAsDouble();
         inputs.indexerAmps = indexerMotor.getSupplyCurrent().getValueAsDouble();
         inputs.indexerRPM = indexerMotor.getVelocity().getValueAsDouble();
-        // inputs.indexerTemp = indexerMotor.getDeviceTemp().getValueAsDouble();
         inputs.sensorStatus = beamBrake.get(); // true == no game piece
     }
 
     @Override
     public void setIntakeMotorPercentage(double percent) {
+        // Left ratio is 60:30
+        // Right ratio is 32:30
         intakeMotorLeft.set(percent);
         intakeMotorRight.set(percent);
     }
