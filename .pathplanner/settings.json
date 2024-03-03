@@ -3,8 +3,9 @@
   "robotLength": 0.74,
   "holonomicMode": true,
   "pathFolders": [
-    "Resnick 2",
-    "Resnick 1"
+    "Resnick 3",
+    "Resnick 1",
+    "Resnick 2"
   ],
   "autoFolders": [
     "3 Ball Autos",

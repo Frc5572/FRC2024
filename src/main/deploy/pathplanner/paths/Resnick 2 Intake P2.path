@@ -8,33 +8,27 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.4215496089971915,
-        "y": 5.156490760221213
+        "x": 2.225051550033219,
+        "y": 5.208504952299911
       },
       "isLocked": false,
       "linkedName": "resnick 2 shoot p3"
     },
     {
       "anchor": {
-        "x": 2.1903754219807534,
-        "y": 5.55526623282457
+        "x": 2.5486954118562326,
+        "y": 5.61305977957868
       },
       "prevControl": {
-        "x": 2.883922063256497,
-        "y": 5.55526623282457
+        "x": 2.1788167126299314,
+        "y": 5.647735907631145
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "resnick 2 shoot p2"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.05,
-      "rotationDegrees": -130.0,
-      "rotateFast": true
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [
     {

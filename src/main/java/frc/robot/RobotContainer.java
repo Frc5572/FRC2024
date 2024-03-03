@@ -20,6 +20,7 @@ import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
 import frc.robot.autos.Resnick1;
+import frc.robot.autos.Resnick3;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.ShootWhileMoving;
 import frc.robot.commands.TeleopSwerve;
@@ -71,6 +72,7 @@ public class RobotContainer {
         autoChooser.setDefaultOption("Wait 1 Second", "wait");
         autoChooser.addOption("Resnick 1", "Resnick 1");
         autoChooser.addOption("Resnick 2", "Resnick 2");
+        autoChooser.addOption("Resnick 3", "Resnick 3");
         SmartDashboard.putNumber("Intake Power", 0);
         SmartDashboard.putNumber("Left Climber Power", 0);
         SmartDashboard.putNumber("Right Climber Power", 0);
@@ -258,6 +260,14 @@ public class RobotContainer {
                     FieldConstants.allianceFlip(pathList.get(0).getPreviewStartingHolonomicPose());
                 s_Swerve.resetOdometry(initialState);
                 autocommand = new PathPlannerAuto("Resnick 2");
+                break;
+            case "Resnick 3":
+                // pathList = PathPlannerAuto.getPathGroupFromAutoFile("Resnick 3");
+                // initialState =
+                // FieldConstants.allianceFlip(pathList.get(0).getPreviewStartingHolonomicPose());
+                // s_Swerve.resetOdometry(initialState);
+                // autocommand = new PathPlannerAuto("Resnick 3");
+                autocommand = new Resnick3(s_Swerve, elevatorWrist, intake, shooter);
                 break;
             default:
                 autocommand = new WaitCommand(1.0);
