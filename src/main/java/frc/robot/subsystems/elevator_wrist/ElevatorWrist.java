@@ -199,10 +199,12 @@ public class ElevatorWrist extends SubsystemBase {
      * @return Rotation of the wrist
      */
     public Rotation2d getAngleFromDistance(Pose2d position) {
-        double distFromSpeaker = position.getTranslation()
-            .minus(FieldConstants.Speaker.centerSpeakerOpening.getTranslation()).getNorm();
-        SmartDashboard.putNumber("Dist from speaker", distFromSpeaker);
-        return Rotation2d.fromDegrees(radiusToAngle.get(distFromSpeaker));
+        Pose2d speakerPos =
+            FieldConstants.allianceFlip(FieldConstants.Speaker.centerSpeakerOpening);
+        double distFromSpeaker =
+            position.getTranslation().minus(speakerPos.getTranslation()).getNorm();
+        SmartDashboard.putNumber("Dist from speaker", Math.abs(distFromSpeaker));
+        return Rotation2d.fromDegrees(radiusToAngle.get(Math.abs(distFromSpeaker)));
     }
 
     /**
