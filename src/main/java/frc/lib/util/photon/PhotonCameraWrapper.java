@@ -60,11 +60,13 @@ public class PhotonCameraWrapper {
         return inputs.result.hasTargets();
     }
 
+    /** A PhotonVision tag solve. */
     public static class VisionObservation {
         public int fudicialId;
         public Pose2d robotPose;
         public Matrix<N3, N1> stdDev;
 
+        /** All fields constructor. */
         public VisionObservation(int fudicialId, Pose2d robotPose, Matrix<N3, N1> stdDev) {
             this.fudicialId = fudicialId;
             this.robotPose = robotPose;
