@@ -1,0 +1,18 @@
+{
+  "robotWidth": 0.74,
+  "robotLength": 0.74,
+  "holonomicMode": true,
+  "pathFolders": [
+    "Resnick 2",
+    "Resnick 1"
+  ],
+  "autoFolders": [
+    "3 Ball Autos",
+    "resnick"
+  ],
+  "defaultMaxVel": 5.0,
+  "defaultMaxAccel": 4.0,
+  "defaultMaxAngVel": 540.0,
+  "defaultMaxAngAccel": 720.0,
+  "maxModuleSpeed": 4.5
+}

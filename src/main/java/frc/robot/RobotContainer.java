@@ -1,6 +1,7 @@
 package frc.robot;
 
 import java.util.List;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -13,10 +14,12 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.lib.util.FieldConstants;
 import frc.lib.util.MatchCommand;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
+import frc.robot.autos.Resnick1;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.ShootWhileMoving;
 import frc.robot.commands.TeleopSwerve;
@@ -35,6 +38,7 @@ import frc.robot.subsystems.shooter.ShooterVortex;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.SwerveIO;
 import frc.robot.subsystems.swerve.SwerveReal;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -57,7 +61,7 @@ public class RobotContainer {
     private Shooter shooter;
     private Intake intake;
     private PhotonCameraWrapper[] cameras;
-    public ElevatorWrist elevatorWrist;
+    private ElevatorWrist elevatorWrist;
     public Climber climber;
 
     /**
@@ -65,6 +69,8 @@ public class RobotContainer {
     public RobotContainer(RobotRunType runtimeType) {
         SmartDashboard.putData("Choose Auto: ", autoChooser);
         autoChooser.setDefaultOption("Wait 1 Second", "wait");
+        autoChooser.addOption("Resnick 1", "Resnick 1");
+        autoChooser.addOption("Resnick 2", "Resnick 2");
         SmartDashboard.putNumber("Intake Power", 0);
         SmartDashboard.putNumber("Left Climber Power", 0);
         SmartDashboard.putNumber("Right Climber Power", 0);
@@ -218,15 +224,40 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         Command autocommand;
-        String stuff = autoChooser.getSelected();
-        switch (stuff) {
-            case "Test Auto":
-                List<PathPlannerPath> paths = PathPlannerAuto.getPathGroupFromAutoFile("New Auto");
-                Pose2d initialState = paths.get(0).getPreviewStartingHolonomicPose();
-                s_Swerve.resetOdometry(initialState);
-                autocommand = new InstantCommand(() -> s_Swerve.resetOdometry(initialState))
-                    .andThen(new PathPlannerAuto("New Auto"));
+        Command readytoShoot =
+            Commands.waitUntil(() -> shooter.readyToShoot() && elevatorWrist.atGoal());
+        Command runIndexer = intake.runIndexerMotor(1);
+        Command runIntake = intake.runIntakeMotor(1, .2);
+        Command runshooter = shooter.shootSpeaker();
+        Command autoAngleWrist = elevatorWrist.followPosition(
+            () -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
+            () -> elevatorWrist.getAngleFromDistance(s_Swerve.getPose()));
 
+        NamedCommands.registerCommand("Wrist Auto Angle", autoAngleWrist);
+        NamedCommands.registerCommand("Run Shooter", runshooter);
+        NamedCommands.registerCommand("Run Intake", runIntake);
+        NamedCommands.registerCommand("Run Indexer",
+            readytoShoot.andThen(runIndexer.withTimeout(.7)));
+
+
+        String stuff = autoChooser.getSelected();
+        List<PathPlannerPath> pathList;
+        Pose2d initialState;
+        switch (stuff) {
+            case "Resnick 1":
+                // pathList = PathPlannerAuto.getPathGroupFromAutoFile("Resnick 1");
+                // initialState =
+                // FieldConstants.allianceFlip(pathList.get(0).getPreviewStartingHolonomicPose());
+                // s_Swerve.resetOdometry(initialState);
+                // autocommand = new PathPlannerAuto("Resnick 1");
+                autocommand = new Resnick1(s_Swerve, elevatorWrist, intake, shooter);
+                break;
+            case "Resnick 2":
+                pathList = PathPlannerAuto.getPathGroupFromAutoFile("Resnick 2");
+                initialState =
+                    FieldConstants.allianceFlip(pathList.get(0).getPreviewStartingHolonomicPose());
+                s_Swerve.resetOdometry(initialState);
+                autocommand = new PathPlannerAuto("Resnick 2");
                 break;
             default:
                 autocommand = new WaitCommand(1.0);

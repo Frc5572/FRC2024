@@ -1,0 +1,70 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.1903754219807534,
+        "y": 5.55526623282457
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.1210231658758216,
+        "y": 6.138981055041076
+      },
+      "isLocked": false,
+      "linkedName": "resnick 2 shoot p2"
+    },
+    {
+      "anchor": {
+        "x": 2.5949302492595203,
+        "y": 6.792048133362514
+      },
+      "prevControl": {
+        "x": 2.155699293928288,
+        "y": 6.300802985952584
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "Intake",
+      "waypointRelativePos": 0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Run Intake"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 5.0,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -145.0,
+    "rotateFast": true
+  },
+  "reversed": false,
+  "folder": "Resnick 2",
+  "previewStartingState": {
+    "rotation": 180.0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}
