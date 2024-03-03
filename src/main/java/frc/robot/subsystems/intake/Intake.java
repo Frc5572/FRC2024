@@ -1,10 +1,13 @@
 package frc.robot.subsystems.intake;
 
+import java.util.Map;
 import org.littletonrobotics.junction.Logger;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 
 /**
  * Intake Subsystem
@@ -12,6 +15,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Intake extends SubsystemBase {
     private IntakeIO io;
     private IntakeInputsAutoLogged intakeAutoLogged = new IntakeInputsAutoLogged();
+
+    private GenericEntry beamBrake =
+        RobotContainer.mainDriverTab.add("Have Note", false).withWidget(BuiltInWidgets.kBooleanBox)
+            .withProperties(Map.of("Color when true", "green", "Color when false", "red"))
+            .withPosition(8, 1).withSize(2, 1).getEntry();
 
     public Intake(IntakeIO io) {
         this.io = io;
@@ -23,7 +31,7 @@ public class Intake extends SubsystemBase {
         io.updateInputs(intakeAutoLogged);
         Logger.processInputs("Intake", intakeAutoLogged);
 
-        SmartDashboard.putBoolean("beamBreak", intakeAutoLogged.sensorStatus);
+        beamBrake.setBoolean(getSensorStatus());
     }
 
     public void setIntakeMotor(double percentage) {

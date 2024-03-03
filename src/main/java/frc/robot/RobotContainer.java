@@ -1,11 +1,17 @@
 package frc.robot;
 
 import java.util.List;
+import java.util.Map;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -43,14 +49,27 @@ import frc.robot.subsystems.swerve.SwerveReal;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+    /* Shuffleboard */
+    public static ShuffleboardTab mainDriverTab = Shuffleboard.getTab("Main Driver");
+
+    // Initialize AutoChooser Sendable
+    private final SendableChooser<String> autoChooser = new SendableChooser<>();
+    public ComplexWidget autoChooserWidget = mainDriverTab.add("Auto Chooser", autoChooser)
+        .withWidget(BuiltInWidgets.kComboBoxChooser).withPosition(8, 2).withSize(2, 1);
+    public GenericEntry operatorState =
+        mainDriverTab.add("Operator State", OperatorState.getCurrentState().displayName)
+            .withWidget(BuiltInWidgets.kTextView).withPosition(10, 0).withSize(2, 1).getEntry();
+    public GenericEntry operatorManualMode = RobotContainer.mainDriverTab.add("Manual Mode", false)
+        .withWidget(BuiltInWidgets.kBooleanBox)
+        .withProperties(Map.of("Color when true", "cyan", "Color when false", "#840000"))
+        .withPosition(10, 1).withSize(2, 1).getEntry();
+
     /* Controllers */
     public final CommandXboxController driver = new CommandXboxController(Constants.DRIVER_ID);
     private final CommandXboxController operator = new CommandXboxController(Constants.OPERATOR_ID);
     // private final CommandXboxController test = new CommandXboxController(4);
 
 
-    // Initialize AutoChooser Sendable
-    private final SendableChooser<String> autoChooser = new SendableChooser<>();
 
     /* Subsystems */
     private Swerve s_Swerve;
@@ -63,7 +82,6 @@ public class RobotContainer {
     /**
      */
     public RobotContainer(RobotRunType runtimeType) {
-        SmartDashboard.putData("Choose Auto: ", autoChooser);
         autoChooser.setDefaultOption("Wait 1 Second", "wait");
         SmartDashboard.putNumber("Intake Power", 0);
         SmartDashboard.putNumber("Left Climber Power", 0);
