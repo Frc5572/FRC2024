@@ -55,7 +55,8 @@ public class ShootWhileMoving extends Command {
         Pose2d futurePose = swerveDrive.getPose().plus(
             new Transform2d(translation.times(Constants.LEAD_GAIN), Rotation2d.fromRotations(0)));
 
-        Rotation2d desiredRotation = FieldConstants.Speaker.centerSpeakerOpening.getTranslation()
+        Rotation2d desiredRotation = FieldConstants
+            .allianceFlip(FieldConstants.Speaker.centerSpeakerOpening).getTranslation()
             .minus(futurePose.getTranslation()).getAngle().plus(Rotation2d.fromDegrees(5));
 
         SmartDashboard.putNumber("Move Shoot Desired Rotation", desiredRotation.getDegrees());
