@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.LEDs;
 
+/** Command to flash LEDs on and off once per second. */
 public class FlashingLEDColor extends Command {
     private LEDs leds;
     private int ledLength;
