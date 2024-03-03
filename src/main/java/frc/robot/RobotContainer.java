@@ -152,14 +152,14 @@ public class RobotContainer {
         // reset apriltag vision
         operator.b().onTrue(new InstantCommand(() -> s_Swerve.resetPvInitialization()));
         // spin up shooter
-        operator.leftTrigger().whileTrue(new ConditionalCommand(new StartEndCommand(() -> {
+        operator.leftTrigger().whileTrue(Commands.either(Commands.startEnd(() -> {
             climber.setLeftPower(SmartDashboard.getNumber("Left Climber Power", 0));
         }, () -> {
             climber.setLeftPower(0);
         }), shooter.shootSpeaker(),
             () -> OperatorState.getCurrentState() == OperatorState.State.kClimb));
         // shoot note to speaker after being intaked
-        operator.rightTrigger().whileTrue(new ConditionalCommand(new StartEndCommand(() -> {
+        operator.rightTrigger().whileTrue(Commands.either(Commands.startEnd(() -> {
             climber.setRightPower(SmartDashboard.getNumber("Left Climber Power", 0));
         }, () -> {
             climber.setRightPower(0);
@@ -170,11 +170,11 @@ public class RobotContainer {
         // increment once through states list to next state
         operator.povRight().onTrue(Commands.runOnce(() -> {
             OperatorState.increment();
-        }));
+        }).ignoringDisable(true));
         // go back one through the states list to the previous state
         operator.povLeft().onTrue(Commands.runOnce(() -> {
             OperatorState.decrement();
-        }));
+        }).ignoringDisable(true));
         // run action based on current state as incremented through operator states list
         operator.a()
             .whileTrue(new MatchCommand<OperatorState.State>(
@@ -189,7 +189,7 @@ public class RobotContainer {
         // Toggle manual mode
         operator.start().onTrue(Commands.runOnce(() -> {
             OperatorState.toggleManualMode();
-        }));
+        }).ignoringDisable(true));
         // Flash LEDS to request amplify
         operator.povDown().onTrue(new FlashingLEDColor(leds, Color.kYellow));
         // Flash LEDs to request (TODO)
