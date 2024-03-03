@@ -160,9 +160,9 @@ public class RobotContainer {
             () -> OperatorState.getCurrentState() == OperatorState.State.kClimb));
         // shoot note to speaker after being intaked
         operator.rightTrigger().whileTrue(new ConditionalCommand(new StartEndCommand(() -> {
-            climber.setLeftPower(SmartDashboard.getNumber("Left Climber Power", 0));
+            climber.setRightPower(SmartDashboard.getNumber("Left Climber Power", 0));
         }, () -> {
-            climber.setLeftPower(0);
+            climber.setRightPower(0);
         }), CommandFactory.shootSpeaker(shooter, intake),
             () -> OperatorState.getCurrentState() == OperatorState.State.kClimb));
         // set shooter to home preset position
