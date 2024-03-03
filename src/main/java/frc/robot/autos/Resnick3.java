@@ -4,12 +4,12 @@ import java.util.function.Supplier;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.lib.util.FieldConstants;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
@@ -41,15 +41,15 @@ public class Resnick3 extends SequentialCommandGroup {
         this.shooter = shooter;
         addRequirements(swerveDrive);
 
-        double numNotes = SmartDashboard.getNumber("Number of Notes", 6);
+        Supplier<Integer> numNotes = () -> RobotContainer.numNoteChooser.getSelected();
 
-        PathPlannerPath path0 = PathPlannerPath.fromPathFile("Resnick 2 Shoot Initial Note");
-        PathPlannerPath path1 = PathPlannerPath.fromPathFile("Resnick 2 Intake P1");
-        PathPlannerPath path2 = PathPlannerPath.fromPathFile("Resnick 2 Intake P2");
-        PathPlannerPath path3 = PathPlannerPath.fromPathFile("Resnick 2 Intake P3");
-        PathPlannerPath path4 = PathPlannerPath.fromPathFile("Resnick 3 Intake P4");
-        PathPlannerPath path5 = PathPlannerPath.fromPathFile("Resnick 3 Intake P5");
-        PathPlannerPath path6 = PathPlannerPath.fromPathFile("Resnick 3 Intake P6");
+        PathPlannerPath path0 = PathPlannerPath.fromPathFile("1 - Resnick 2 Shoot Initial Note");
+        PathPlannerPath path1 = PathPlannerPath.fromPathFile("2 - Resnick 2 Intake P1");
+        PathPlannerPath path2 = PathPlannerPath.fromPathFile("3 - Resnick 2 Intake P2");
+        PathPlannerPath path3 = PathPlannerPath.fromPathFile("4 - Resnick 2 Intake P3");
+        PathPlannerPath path4 = PathPlannerPath.fromPathFile("1 - Resnick 3 Intake P4");
+        PathPlannerPath path5 = PathPlannerPath.fromPathFile("2 - Resnick 3 Intake P5");
+        PathPlannerPath path6 = PathPlannerPath.fromPathFile("3 - Resnick 3 Intake P6");
 
         Command followPath0 = AutoBuilder.followPath(path0);
         Command followPath1 = AutoBuilder.followPath(path1);
@@ -74,25 +74,19 @@ public class Resnick3 extends SequentialCommandGroup {
         });
 
         SequentialCommandGroup part0 = followPath0.andThen(shootNote.get());
-        SequentialCommandGroup part1 =
-            followPath1.deadlineWith(intake.runIntakeMotor(1, .2)).andThen(shootNote.get());
-        SequentialCommandGroup part2 =
-            followPath2.deadlineWith(intake.runIntakeMotor(1, .2)).andThen(shootNote.get());
-        SequentialCommandGroup part3 =
-            followPath3.deadlineWith(intake.runIntakeMotor(1, .2)).andThen(shootNote.get());
-        SequentialCommandGroup part4 =
-            followPath4.deadlineWith(intake.runIntakeMotor(1, .2)).andThen(shootNote.get());
-        SequentialCommandGroup part5 =
-            followPath5.deadlineWith(intake.runIntakeMotor(1, .2)).andThen(shootNote.get());
-        SequentialCommandGroup part6 =
-            followPath6.deadlineWith(intake.runIntakeMotor(1, .2)).andThen(shootNote.get());
+        SequentialCommandGroup part1 = followPath1.andThen(shootNote.get());
+        SequentialCommandGroup part2 = followPath2.andThen(shootNote.get());
+        SequentialCommandGroup part3 = followPath3.andThen(shootNote.get());
+        SequentialCommandGroup part4 = followPath4.andThen(shootNote.get());
+        SequentialCommandGroup part5 = followPath5.andThen(shootNote.get());
+        SequentialCommandGroup part6 = followPath6.andThen(shootNote.get());
 
-        Command runPart1 = Commands.either(part1, Commands.none(), () -> numNotes > 1);
-        Command runPart2 = Commands.either(part2, Commands.none(), () -> numNotes > 2);
-        Command runPart3 = Commands.either(part3, Commands.none(), () -> numNotes > 3);
-        Command runPart4 = Commands.either(part4, Commands.none(), () -> numNotes > 4);
-        Command runPart5 = Commands.either(part5, Commands.none(), () -> numNotes > 5);
-        Command runPart6 = Commands.either(part6, Commands.none(), () -> numNotes > 6);
+        Command runPart1 = Commands.either(part1, Commands.none(), () -> numNotes.get() > 0);
+        Command runPart2 = Commands.either(part2, Commands.none(), () -> numNotes.get() > 1);
+        Command runPart3 = Commands.either(part3, Commands.none(), () -> numNotes.get() > 2);
+        Command runPart4 = Commands.either(part4, Commands.none(), () -> numNotes.get() > 3);
+        Command runPart5 = Commands.either(part5, Commands.none(), () -> numNotes.get() > 4);
+        Command runPart6 = Commands.either(part6, Commands.none(), () -> numNotes.get() > 5);
 
         SequentialCommandGroup followPaths = part0.andThen(runPart1).andThen(runPart2)
             .andThen(runPart3).andThen(runPart4).andThen(runPart5).andThen(runPart6);

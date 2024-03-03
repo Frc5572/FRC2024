@@ -41,10 +41,10 @@ public class Resnick1 extends SequentialCommandGroup {
         addRequirements(swerveDrive);
 
 
-        PathPlannerPath path1 = PathPlannerPath.fromPathFile("Resnick 1 Shoot Initial Note");
-        PathPlannerPath path2 = PathPlannerPath.fromPathFile("Resnick 1 Intake P1");
-        PathPlannerPath path3 = PathPlannerPath.fromPathFile("Resnick 1 Intake P2");
-        PathPlannerPath path4 = PathPlannerPath.fromPathFile("Resnick 1 Intake P3");
+        PathPlannerPath path1 = PathPlannerPath.fromPathFile("1 - Resnick 1 Shoot Initial Note");
+        PathPlannerPath path2 = PathPlannerPath.fromPathFile("2 - Resnick 1 Intake P1");
+        PathPlannerPath path3 = PathPlannerPath.fromPathFile("3 - Resnick 1 Intake P2");
+        PathPlannerPath path4 = PathPlannerPath.fromPathFile("4 - Resnick 1 Intake P3");
 
         Command followPath1 = AutoBuilder.followPath(path1);
         Command followPath2 = AutoBuilder.followPath(path2);
@@ -59,12 +59,12 @@ public class Resnick1 extends SequentialCommandGroup {
         });
         SequentialCommandGroup part1 =
             followPath1.andThen(CommandFactory.shootSpeaker(shooter, intake).withTimeout(1.5));
-        SequentialCommandGroup part2 = followPath2.deadlineWith(intake.runIntakeMotor(1, .2))
-            .andThen(CommandFactory.shootSpeaker(shooter, intake).withTimeout(1.5));
-        SequentialCommandGroup part3 = followPath3.deadlineWith(intake.runIntakeMotor(1, .2))
-            .andThen(CommandFactory.shootSpeaker(shooter, intake).withTimeout(1.5));
-        SequentialCommandGroup part4 = followPath4.deadlineWith(intake.runIntakeMotor(1, .2))
-            .andThen(CommandFactory.shootSpeaker(shooter, intake).withTimeout(1.5));
+        SequentialCommandGroup part2 =
+            followPath2.andThen(CommandFactory.shootSpeaker(shooter, intake).withTimeout(1.5));
+        SequentialCommandGroup part3 =
+            followPath3.andThen(CommandFactory.shootSpeaker(shooter, intake).withTimeout(1.5));
+        SequentialCommandGroup part4 =
+            followPath4.andThen(CommandFactory.shootSpeaker(shooter, intake).withTimeout(1.5));
 
         SequentialCommandGroup followPaths = part1.andThen(part2).andThen(part3).andThen(part4);
 

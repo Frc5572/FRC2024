@@ -56,6 +56,7 @@ public class RobotContainer {
 
     // Initialize AutoChooser Sendable
     private final SendableChooser<String> autoChooser = new SendableChooser<>();
+    public static final SendableChooser<Integer> numNoteChooser = new SendableChooser<>();
 
     /* Subsystems */
     private Swerve s_Swerve;
@@ -69,15 +70,15 @@ public class RobotContainer {
      */
     public RobotContainer(RobotRunType runtimeType) {
         SmartDashboard.putData("Choose Auto: ", autoChooser);
+        SmartDashboard.putData("Number of Notes to Shoot in Auto: ", numNoteChooser);
         autoChooser.setDefaultOption("Wait 1 Second", "wait");
         autoChooser.addOption("Resnick 1", "Resnick 1");
         autoChooser.addOption("Resnick 2", "Resnick 2");
         autoChooser.addOption("Resnick 3", "Resnick 3");
-        SmartDashboard.putNumber("Intake Power", 0);
-        SmartDashboard.putNumber("Left Climber Power", 0);
-        SmartDashboard.putNumber("Right Climber Power", 0);
-        SmartDashboard.putNumber("Elevator Power", 0);
-        SmartDashboard.putNumber("Wrist Power", 0);
+        numNoteChooser.setDefaultOption("0", 0);
+        for (int i = 0; i < 7; i++) {
+            numNoteChooser.addOption(String.valueOf(i), i);
+        }
 
         cameras =
             /*
