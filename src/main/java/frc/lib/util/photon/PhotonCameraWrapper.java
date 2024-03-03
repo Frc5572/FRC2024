@@ -6,11 +6,18 @@ import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lib.util.photon.PhotonIO.PhotonInputs;
+import frc.robot.Constants;
 
 /**
  * PhotonCamera-based Pose Estimator.
@@ -53,12 +60,24 @@ public class PhotonCameraWrapper {
         return inputs.result.hasTargets();
     }
 
+    public static class VisionObservation {
+        public int fudicialId;
+        public Pose2d robotPose;
+        public Matrix<N3, N1> stdDev;
+
+        public VisionObservation(int fudicialId, Pose2d robotPose, Matrix<N3, N1> stdDev) {
+            this.fudicialId = fudicialId;
+            this.robotPose = robotPose;
+            this.stdDev = stdDev;
+        }
+    }
+
     /**
      * Get estimated pose without a prior.
      *
      * @return an estimated Pose2d based solely on apriltags
      */
-    public Optional<Pose2d> getInitialPose() {
+    public Optional<VisionObservation> getInitialPose() {
         var res = inputs.result;
         SmartDashboard.putNumber("Heartbeat", inputs.timeSinceLastHeartbeat);
         if (inputs.timeSinceLastHeartbeat > 0.5) {
@@ -74,7 +93,15 @@ public class PhotonCameraWrapper {
                 var camPose = aprilTagPose.get().transformBy(camToTargetTrans.inverse());
                 var robotPose =
                     camPose.transformBy(photonPoseEstimator.getRobotToCameraTransform()).toPose2d();
-                return Optional.of(robotPose);
+
+                Translation2d toTarget =
+                    new Pose3d().plus(camToTargetTrans).toPose2d().getTranslation();
+                double stdDev =
+                    toTarget.getX() * toTarget.getX() + toTarget.getY() * toTarget.getY();
+                return Optional.of(new VisionObservation(target.getFiducialId(), robotPose,
+                    VecBuilder.fill(stdDev * Constants.CameraConstants.XY_STD_DEV_COEFF,
+                        stdDev * Constants.CameraConstants.XY_STD_DEV_COEFF,
+                        stdDev * Constants.CameraConstants.THETA_STD_DEV_COEFF)));
             }
         }
         return Optional.empty();
