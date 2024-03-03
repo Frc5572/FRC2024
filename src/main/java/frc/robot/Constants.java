@@ -475,4 +475,13 @@ public final class Constants {
         public static final boolean INTAKE_MOTOR_INVERTED = true;
 
     }
+
+    /**
+     * LED constants.
+     */
+    public static final class LEDConstants {
+        public static final int PWM_PORT = 9;
+        public static final int LED_COUNT = 60;
+    }
+
 }

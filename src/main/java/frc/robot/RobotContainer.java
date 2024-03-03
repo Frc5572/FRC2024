@@ -8,9 +8,12 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.util.MatchCommand;
@@ -18,8 +21,10 @@ import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
 import frc.robot.commands.CommandFactory;
+import frc.robot.commands.FlashingLEDColor;
 import frc.robot.commands.ShootWhileMoving;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberNEO;
@@ -59,6 +64,7 @@ public class RobotContainer {
     private PhotonCameraWrapper[] cameras;
     public ElevatorWrist elevatorWrist;
     public Climber climber;
+    private LEDs leds = new LEDs(Constants.LEDConstants.LED_COUNT, Constants.LEDConstants.PWM_PORT);
 
     /**
      */
@@ -133,12 +139,27 @@ public class RobotContainer {
         // intake forward
         driver.rightTrigger().whileTrue(intake.runIntakeMotor(1, .20));
         // intake backward
-        driver.leftTrigger().whileTrue(intake.runIndexerMotor(-.1));
+        driver.leftTrigger().whileTrue(intake.runIntakeMotorNonStop(-1, -.20));
 
+        /* Operator Buttons */
         // spit note currently in robot through shooter
         operator.x().whileTrue(CommandFactory.spit(shooter, intake));
+        // reset apriltag vision
+        operator.b().onTrue(new InstantCommand(() -> s_Swerve.resetPvInitialization()));
+        // spin up shooter
+        operator.leftTrigger().whileTrue(new ConditionalCommand(new StartEndCommand(() -> {
+            climber.setLeftPower(SmartDashboard.getNumber("Left Climber Power", 0));
+        }, () -> {
+            climber.setLeftPower(0);
+        }), shooter.shootSpeaker(),
+            () -> OperatorState.getCurrentState() == OperatorState.State.kClimb));
         // shoot note to speaker after being intaked
-        operator.rightTrigger().whileTrue(CommandFactory.shootSpeaker(shooter, intake));
+        operator.rightTrigger().whileTrue(new ConditionalCommand(new StartEndCommand(() -> {
+            climber.setLeftPower(SmartDashboard.getNumber("Left Climber Power", 0));
+        }, () -> {
+            climber.setLeftPower(0);
+        }), CommandFactory.shootSpeaker(shooter, intake),
+            () -> OperatorState.getCurrentState() == OperatorState.State.kClimb));
         // set shooter to home preset position
         operator.y().onTrue(elevatorWrist.homePosition());
         // increment once through states list to next state
@@ -149,64 +170,25 @@ public class RobotContainer {
         operator.povLeft().onTrue(Commands.runOnce(() -> {
             OperatorState.decrement();
         }));
-        // go to current state as incremented through operator states list
+        // run action based on current state as incremented through operator states list
         operator.a()
             .whileTrue(new MatchCommand<OperatorState.State>(
                 List.of(OperatorState.State.kAmp, OperatorState.State.kShootWhileMove,
                     OperatorState.State.kClimb),
                 List.of(elevatorWrist.ampPosition(),
                     new ShootWhileMoving(s_Swerve, driver).alongWith(elevatorWrist.followPosition(
-                        () -> 0, () -> elevatorWrist.getAngleFromDistance(s_Swerve.getPose())))),
+                        () -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
+                        () -> elevatorWrist.getAngleFromDistance(s_Swerve.getPose()))),
+                    elevatorWrist.ampPosition()),
                 OperatorState::getCurrentState));
-        //
+        // Toggle manual mode
         operator.start().onTrue(Commands.runOnce(() -> {
             OperatorState.toggleManualMode();
         }));
-
-        // operator.povDown().whileTrue(
-        // elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.AMP_HEIGHT,
-        // Constants.ElevatorWristConstants.SetPoints.AMP_ANGLE));
-        // operator.povUp().whileTrue(
-        // elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.TRAP_HEIGHT,
-        // Constants.ElevatorWristConstants.SetPoints.TRAP_ANGLE));
-
-        // // climber forward
-        // operator.a().whileTrue(new StartEndCommand(() -> {
-        // climber.setLeftPower(SmartDashboard.getNumber("Left Climber Power", 0));
-        // climber.setRightPower(SmartDashboard.getNumber("Right Climber Power", 0));
-        // }, () -> {
-        // climber.setLeftPower(0);
-        // climber.setRightPower(0);
-        // }, climber));
-        // // // climber backward
-        // operator.b().whileTrue(new StartEndCommand(() -> {
-        // climber.setLeftPower(-SmartDashboard.getNumber("Left Climber Power", 0));
-        // climber.setRightPower(-SmartDashboard.getNumber("Right Climber Power", 0));
-        // }, () -> {
-        // climber.setLeftPower(0);
-        // climber.setRightPower(0);
-        // }, climber));
-        // // // climber left
-        // operator.x().whileTrue(new StartEndCommand(() -> {
-        // climber.setLeftPower(-SmartDashboard.getNumber("Left Climber Power", 0));
-        // }, () -> {
-        // climber.setLeftPower(0);
-        // climber.setRightPower(0);
-        // }, climber));
-        // // // climber right
-        // operator.y().whileTrue(new StartEndCommand(() -> {
-        // climber.setRightPower(-SmartDashboard.getNumber("Right Climber Power", 0));
-        // }, () -> {
-        // climber.setLeftPower(0);
-        // climber.setRightPower(0);
-        // }, climber));
-
-        // // elevator forward
-        // driver.leftBumper().whileTrue(new StartEndCommand(() -> {
-        // elevatorWrist.setElevatorPower(-0.2);
-        // }, () -> {
-        // elevatorWrist.setElevatorPower(0.0);
-        // }));
+        // Flash LEDS to request amplify
+        operator.povDown().onTrue(new FlashingLEDColor(leds, Color.kYellow));
+        // Flash LEDs to request (TODO)
+        operator.povUp().onTrue(new FlashingLEDColor(leds, Color.kPurple));
     }
 
     /**
