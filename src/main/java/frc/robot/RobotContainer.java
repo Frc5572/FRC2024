@@ -61,33 +61,33 @@ public class RobotContainer {
     // Initialize AutoChooser Sendable
     private final SendableChooser<String> autoChooser = new SendableChooser<>();
     public ComplexWidget autoChooserWidget = mainDriverTab.add("Auto Chooser", autoChooser)
-        .withWidget(BuiltInWidgets.kComboBoxChooser).withPosition(12, 0).withSize(2, 1);
+        .withWidget(BuiltInWidgets.kComboBoxChooser).withPosition(4, 6).withSize(3, 2);
     public GenericEntry operatorState =
         mainDriverTab.add("Operator State", OperatorState.getCurrentState().displayName)
-            .withWidget(BuiltInWidgets.kTextView).withPosition(8, 0).withSize(2, 1).getEntry();
+            .withWidget(BuiltInWidgets.kTextView).withPosition(8, 0).withSize(3, 2).getEntry();
     public GenericEntry operatorManualMode = RobotContainer.mainDriverTab.add("Manual Mode", false)
         .withWidget(BuiltInWidgets.kBooleanBox)
         .withProperties(Map.of("true_color", 0xff00ffff, "false_color", 0xff770000))
-        .withPosition(10, 0).withSize(1, 1).getEntry();
+        .withPosition(13, 0).withSize(2, 2).getEntry();
     public static GenericEntry readyShoot = RobotContainer.mainDriverTab
         .add("Ready To Shoot", false).withWidget(BuiltInWidgets.kBooleanBox)
         .withProperties(Map.of("true_color", 0xff00ffff, "false_color", 0xff770000))
-        .withPosition(11, 0).withSize(1, 1).getEntry();
+        .withPosition(12, 2).withSize(3, 2).getEntry();
 
     public static final SendableChooser<Integer> numNoteChooser = new SendableChooser<>();
     public ComplexWidget numNoteChooserrWidget =
         mainDriverTab.add("Number of Additional Auto Notes", numNoteChooser)
-            .withWidget(BuiltInWidgets.kComboBoxChooser).withPosition(12, 1).withSize(2, 1);
+            .withWidget(BuiltInWidgets.kComboBoxChooser).withPosition(7, 6).withSize(3, 2);
     public SimpleWidget fmsInfo =
         RobotContainer.mainDriverTab.add("FMS Info", 0).withWidget("FMSInfo")
-            .withProperties(Map.of("topic", "/FMSInfo")).withPosition(4, 4).withSize(3, 1);
+            .withProperties(Map.of("topic", "/FMSInfo")).withPosition(3, 4).withSize(6, 2);
     public GenericEntry matchTime = RobotContainer.mainDriverTab.add("Match Time", 0)
         .withWidget("Match Time").withProperties(Map.of("time_display_mode", "Minutes and Seconds"))
-        .withPosition(1, 4).withSize(3, 1).getEntry();
+        .withPosition(0, 4).withSize(3, 2).getEntry();
     public SimpleWidget voltageInfo =
         RobotContainer.mainDriverTab.add("Battery Voltage", 0).withWidget("Voltage View")
             .withProperties(Map.of("topic", "/AdvantageKit/SystemStats/BatteryVoltage"))
-            .withPosition(2, 5).withSize(4, 1);
+            .withPosition(0, 6).withSize(4, 2);
     /* Controllers */
     public final CommandXboxController driver = new CommandXboxController(Constants.DRIVER_ID);
     private final CommandXboxController operator = new CommandXboxController(Constants.OPERATOR_ID);
@@ -166,13 +166,13 @@ public class RobotContainer {
         // Configure the button bindings
         configureButtonBindings();
         Trigger gotNote = new Trigger(() -> !this.intake.getSensorStatus());
-        gotNote.whileTrue(new FlashingLEDColor(leds, Color.kGreen));
+        gotNote.onTrue(new FlashingLEDColor(leds, Color.kGreen).withTimeout(3));
     }
 
     /**
-     * Use this method to define your button->command mappings. Buttons can be created by
-     * instantiating a {@link GenericHID} or one of its subclasses
-     * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a
+     * Use this method to vol your button->command mappings. Buttons can be created by instantiating
+     * a {@link GenericHID} or one of its subclasses ({@link edu.wpi.first.wpilibj.Joystick} or
+     * {@link XboxController}), and then passing it to a
      * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
@@ -240,9 +240,9 @@ public class RobotContainer {
             OperatorState.toggleManualMode();
         }).ignoringDisable(true));
         // Flash LEDS to request amplify
-        operator.povDown().onTrue(new FlashingLEDColor(leds, Color.kOrange).withTimeout(5));
+        operator.povUp().onTrue(new FlashingLEDColor(leds, Color.kGold).withTimeout(5));
         // Flash LEDs to request (TODO)
-        operator.povUp().onTrue(new FlashingLEDColor(leds, Color.kBlue).withTimeout(5));
+        operator.povDown().onTrue(new FlashingLEDColor(leds, Color.kBlue).withTimeout(5));
     }
 
     /**

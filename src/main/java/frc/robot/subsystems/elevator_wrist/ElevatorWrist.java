@@ -54,14 +54,14 @@ public class ElevatorWrist extends SubsystemBase {
 
     private GenericEntry wristAngle = RobotContainer.mainDriverTab.add("Wrist Angle", 0)
         .withWidget("Radial Gauge").withProperties(Map.of("min_value", -180, "max_value", 180))
-        .withPosition(8, 1).withSize(2, 2).getEntry();
+        .withPosition(8, 2).withSize(2, 2).getEntry();
 
     private GenericEntry elevatorHeight = RobotContainer.mainDriverTab.add("Elevator Height", 0)
         .withWidget(BuiltInWidgets.kNumberBar)
         .withProperties(Map.of("min_value", Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
             "max_value", Constants.ElevatorWristConstants.SetPoints.MAX_EXTENSION, "orientation",
             "vertical"))
-        .withPosition(10, 1).withSize(2, 2).getEntry();
+        .withPosition(10, 2).withSize(2, 2).getEntry();
 
 
     // private ElevatorFeedforward elevatorFeedForward =
