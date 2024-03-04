@@ -68,11 +68,11 @@ public class RobotContainer {
     public GenericEntry operatorManualMode = RobotContainer.mainDriverTab.add("Manual Mode", false)
         .withWidget(BuiltInWidgets.kBooleanBox)
         .withProperties(Map.of("true_color", 0xff00ffff, "false_color", 0xff770000))
-        .withPosition(13, 0).withSize(2, 2).getEntry();
+        .withPosition(10, 6).withSize(2, 2).getEntry();
     public static GenericEntry readyShoot = RobotContainer.mainDriverTab
         .add("Ready To Shoot", false).withWidget(BuiltInWidgets.kBooleanBox)
         .withProperties(Map.of("true_color", 0xff00ffff, "false_color", 0xff770000))
-        .withPosition(12, 2).withSize(3, 2).getEntry();
+        .withPosition(10, 2).withSize(3, 2).getEntry();
 
     public static final SendableChooser<Integer> numNoteChooser = new SendableChooser<>();
     public ComplexWidget numNoteChooserrWidget =
