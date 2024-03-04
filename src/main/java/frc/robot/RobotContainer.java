@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -55,19 +56,33 @@ public class RobotContainer {
     // Initialize AutoChooser Sendable
     private final SendableChooser<String> autoChooser = new SendableChooser<>();
     public ComplexWidget autoChooserWidget = mainDriverTab.add("Auto Chooser", autoChooser)
-        .withWidget(BuiltInWidgets.kComboBoxChooser).withPosition(8, 2).withSize(2, 1);
+        .withWidget(BuiltInWidgets.kComboBoxChooser).withPosition(12, 0).withSize(2, 1);
     public GenericEntry operatorState =
         mainDriverTab.add("Operator State", OperatorState.getCurrentState().displayName)
-            .withWidget(BuiltInWidgets.kTextView).withPosition(10, 0).withSize(2, 1).getEntry();
+            .withWidget(BuiltInWidgets.kTextView).withPosition(8, 0).withSize(2, 1).getEntry();
     public GenericEntry operatorManualMode = RobotContainer.mainDriverTab.add("Manual Mode", false)
         .withWidget(BuiltInWidgets.kBooleanBox)
-        .withProperties(Map.of("Color when true", "cyan", "Color when false", "#840000"))
-        .withPosition(10, 1).withSize(2, 1).getEntry();
+        .withProperties(Map.of("true_color", 0xff00ffff, "false_color", 0xff770000))
+        .withPosition(10, 0).withSize(1, 1).getEntry();
+    public static GenericEntry readyShoot = RobotContainer.mainDriverTab
+        .add("Ready To Shoot", false).withWidget(BuiltInWidgets.kBooleanBox)
+        .withProperties(Map.of("true_color", 0xff00ffff, "false_color", 0xff770000))
+        .withPosition(11, 0).withSize(1, 1).getEntry();
 
     public static final SendableChooser<Integer> numNoteChooser = new SendableChooser<>();
     public ComplexWidget numNoteChooserrWidget =
         mainDriverTab.add("Number of Additional Auto Notes", numNoteChooser)
-            .withWidget(BuiltInWidgets.kComboBoxChooser).withPosition(10, 2).withSize(2, 1);
+            .withWidget(BuiltInWidgets.kComboBoxChooser).withPosition(12, 1).withSize(2, 1);
+    public SimpleWidget fmsInfo =
+        RobotContainer.mainDriverTab.add("FMS Info", 0).withWidget("FMSInfo")
+            .withProperties(Map.of("topic", "/FMSInfo")).withPosition(4, 4).withSize(3, 1);
+    public GenericEntry matchTime = RobotContainer.mainDriverTab.add("Match Time", 0)
+        .withWidget("Match Time").withProperties(Map.of("time_display_mode", "Minutes and Seconds"))
+        .withPosition(1, 4).withSize(3, 1).getEntry();
+    public SimpleWidget voltageInfo =
+        RobotContainer.mainDriverTab.add("Battery Voltage", 0).withWidget("Voltage View")
+            .withProperties(Map.of("topic", "/AdvantageKit/SystemStats/BatteryVoltage"))
+            .withPosition(2, 5).withSize(4, 1);
     /* Controllers */
     public final CommandXboxController driver = new CommandXboxController(Constants.DRIVER_ID);
     private final CommandXboxController operator = new CommandXboxController(Constants.OPERATOR_ID);
