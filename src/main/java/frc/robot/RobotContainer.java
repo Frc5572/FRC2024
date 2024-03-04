@@ -64,6 +64,10 @@ public class RobotContainer {
         .withProperties(Map.of("Color when true", "cyan", "Color when false", "#840000"))
         .withPosition(10, 1).withSize(2, 1).getEntry();
 
+    public static final SendableChooser<Integer> numNoteChooser = new SendableChooser<>();
+    public ComplexWidget numNoteChooserrWidget =
+        mainDriverTab.add("Number of Additional Auto Notes", numNoteChooser)
+            .withWidget(BuiltInWidgets.kComboBoxChooser).withPosition(10, 2).withSize(2, 1);
     /* Controllers */
     public final CommandXboxController driver = new CommandXboxController(Constants.DRIVER_ID);
     private final CommandXboxController operator = new CommandXboxController(Constants.OPERATOR_ID);
@@ -88,6 +92,10 @@ public class RobotContainer {
         SmartDashboard.putNumber("Right Climber Power", 0);
         SmartDashboard.putNumber("Elevator Power", 0);
         SmartDashboard.putNumber("Wrist Power", 0);
+        numNoteChooser.setDefaultOption("0", 0);
+        for (int i = 0; i < 7; i++) {
+            numNoteChooser.addOption(String.valueOf(i), i);
+        }
 
         cameras =
             /*

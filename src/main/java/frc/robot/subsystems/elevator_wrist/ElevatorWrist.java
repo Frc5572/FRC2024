@@ -53,7 +53,7 @@ public class ElevatorWrist extends SubsystemBase {
     private InterpolatingDoubleTreeMap radiusToAngle = new InterpolatingDoubleTreeMap();
 
     private GenericEntry wristAngle = RobotContainer.mainDriverTab.add("Wrist Angle", 0)
-        .withWidget(BuiltInWidgets.kDial).withProperties(Map.of("Min", 0, "Max", 360))
+        .withWidget(BuiltInWidgets.kDial).withProperties(Map.of("Min", -180, "Max", 180))
         .withPosition(8, 3).withSize(2, 2).getEntry();
 
     private GenericEntry elevatorHeight = RobotContainer.mainDriverTab.add("Elevator Height", 0)
