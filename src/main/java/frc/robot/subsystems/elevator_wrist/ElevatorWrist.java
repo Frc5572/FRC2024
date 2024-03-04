@@ -1,5 +1,6 @@
 package frc.robot.subsystems.elevator_wrist;
 
+import java.util.Map;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
@@ -9,6 +10,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -17,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.util.FieldConstants;
 import frc.robot.Constants;
 import frc.robot.OperatorState;
+import frc.robot.RobotContainer;
 
 /**
  * Elevator and Wrist Subsystem
@@ -47,6 +51,17 @@ public class ElevatorWrist extends SubsystemBase {
             Constants.ElevatorWristConstants.PID.WRIST_KD);
 
     private InterpolatingDoubleTreeMap radiusToAngle = new InterpolatingDoubleTreeMap();
+
+    private GenericEntry wristAngle = RobotContainer.mainDriverTab.add("Wrist Angle", 0)
+        .withWidget("Radial Gauge").withProperties(Map.of("min_value", -180, "max_value", 180))
+        .withPosition(8, 1).withSize(2, 2).getEntry();
+
+    private GenericEntry elevatorHeight = RobotContainer.mainDriverTab.add("Elevator Height", 0)
+        .withWidget(BuiltInWidgets.kNumberBar)
+        .withProperties(Map.of("min_value", Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
+            "max_value", Constants.ElevatorWristConstants.SetPoints.MAX_EXTENSION, "orientation",
+            "vertical"))
+        .withPosition(10, 1).withSize(2, 2).getEntry();
 
 
     // private ElevatorFeedforward elevatorFeedForward =
@@ -110,8 +125,8 @@ public class ElevatorWrist extends SubsystemBase {
 
         double calculatedHeight = getHeight();
 
-        SmartDashboard.putNumber("calculatedHeight", calculatedHeight);
-        SmartDashboard.putNumber("calculatedWristAngle", calculatedWristAngle.getDegrees());
+        wristAngle.setDouble(calculatedWristAngle.getDegrees());
+        elevatorHeight.setDouble(calculatedHeight);
 
         double wristPIDValue = wristPIDController.calculate(calculatedWristAngle.getRotations());
 
@@ -199,8 +214,10 @@ public class ElevatorWrist extends SubsystemBase {
      * @return Rotation of the wrist
      */
     public Rotation2d getAngleFromDistance(Pose2d position) {
-        double distFromSpeaker = position.getTranslation()
-            .minus(FieldConstants.Speaker.centerSpeakerOpening.getTranslation()).getNorm();
+        Pose2d speakerPos =
+            FieldConstants.allianceFlip(FieldConstants.Speaker.centerSpeakerOpening);
+        double distFromSpeaker =
+            position.getTranslation().minus(speakerPos.getTranslation()).getNorm();
         SmartDashboard.putNumber("Dist from speaker", distFromSpeaker);
         return Rotation2d.fromDegrees(radiusToAngle.get(distFromSpeaker));
     }
