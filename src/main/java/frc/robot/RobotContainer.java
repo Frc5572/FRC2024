@@ -1,6 +1,7 @@
 package frc.robot;
 
 import java.util.List;
+import java.util.Map;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -11,13 +12,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.lib.util.MatchCommand;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
@@ -176,16 +175,26 @@ public class RobotContainer {
             OperatorState.decrement();
         }).ignoringDisable(true));
         // run action based on current state as incremented through operator states list
-        operator.a()
-            .whileTrue(new MatchCommand<OperatorState.State>(
-                List.of(OperatorState.State.kAmp, OperatorState.State.kShootWhileMove,
-                    OperatorState.State.kClimb),
-                List.of(elevatorWrist.ampPosition(),
-                    new ShootWhileMoving(s_Swerve, driver).alongWith(elevatorWrist.followPosition(
-                        () -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-                        () -> elevatorWrist.getAngleFromDistance(s_Swerve.getPose()))),
-                    elevatorWrist.ampPosition()),
-                OperatorState::getCurrentState));
+        operator.a().whileTrue(new SelectCommand<OperatorState.State>(Map.of(
+            //
+            OperatorState.State.kAmp, elevatorWrist.ampPosition(),
+            //
+            OperatorState.State.kShootWhileMove,
+            new ShootWhileMoving(s_Swerve, driver).alongWith(elevatorWrist.followPosition(
+                () -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
+                () -> elevatorWrist.getAngleFromDistance(s_Swerve.getPose())))
+        //
+        ), OperatorState::getCurrentState));
+
+        /*
+         * <OperatorState.State>( List.of(OperatorState.State.kAmp,
+         * OperatorState.State.kShootWhileMove, OperatorState.State.kClimb),
+         * List.of(elevatorWrist.ampPosition(), new ShootWhileMoving(s_Swerve,
+         * driver).alongWith(elevatorWrist.followPosition( () ->
+         * Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT, () ->
+         * elevatorWrist.getAngleFromDistance(s_Swerve.getPose()))), elevatorWrist.ampPosition()),
+         * )));
+         */
         // Toggle manual mode
         operator.start().onTrue(Commands.runOnce(() -> {
             OperatorState.toggleManualMode();
