@@ -240,9 +240,9 @@ public class RobotContainer {
             OperatorState.toggleManualMode();
         }).ignoringDisable(true));
         // Flash LEDS to request amplify
-        operator.povDown().onTrue(new FlashingLEDColor(leds, Color.kYellow));
+        operator.povDown().onTrue(new FlashingLEDColor(leds, Color.kOrange).withTimeout(5));
         // Flash LEDs to request (TODO)
-        operator.povUp().onTrue(new FlashingLEDColor(leds, Color.kPurple));
+        operator.povUp().onTrue(new FlashingLEDColor(leds, Color.kBlue).withTimeout(5));
     }
 
     /**
