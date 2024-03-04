@@ -1,5 +1,7 @@
 package frc.robot.subsystems.swerve;
 
+import java.util.Arrays;
+import java.util.Map;
 import java.util.Optional;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -12,9 +14,11 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -22,6 +26,7 @@ import frc.lib.util.FieldConstants;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.swerve.SwerveModule;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 
 /**
  * Swerve Subsystem
@@ -35,12 +40,12 @@ public class Swerve extends SubsystemBase {
     private SwerveIO swerveIO;
     private boolean hasInitialized = false;
     private PhotonCameraWrapper[] cameras;
+    private Boolean[] cameraSeesTarget = {false, false, false, false};
 
-    // private GenericEntry aprilTagTarget =
-    // RobotContainer.autoTab.add("Currently Seeing At Least One April Tag", false)
-    // .withWidget(BuiltInWidgets.kBooleanBox)
-    // .withProperties(Map.of("Color when true", "green", "Color when false", "red"))
-    // .withPosition(8, 4).withSize(2, 2).getEntry();
+    private GenericEntry aprilTagTarget = RobotContainer.mainDriverTab.add("See April Tag", false)
+        .withWidget(BuiltInWidgets.kBooleanBox)
+        .withProperties(Map.of("Color when true", "green", "Color when false", "red"))
+        .withPosition(13, 2).withSize(1, 1).getEntry();
 
     /**
      * Swerve Subsystem
@@ -71,13 +76,10 @@ public class Swerve extends SubsystemBase {
         AutoBuilder.configureHolonomic(this::getPose, this::resetOdometry, this::getChassisSpeeds,
             this::setModuleStates, Constants.Swerve.pathFollowerConfig, () -> shouldFlipPath(),
             this);
-        SmartDashboard.putBoolean("Currently Seeing At Least One April Tag", false);
 
-
-        // RobotContainer.autoTab.add("Field Pos", field).withWidget(BuiltInWidgets.kField)
-        // .withSize(8, 6) // make the widget 2x1
-        // .withPosition(0, 0); // place it in the top-left corner
-        SmartDashboard.putData("Field Pos", field);
+        RobotContainer.mainDriverTab.add("Field Pos", field).withWidget(BuiltInWidgets.kField)
+            .withSize(8, 4) // make the widget 2x1
+            .withPosition(0, 0); // place it in the top-left corner
     }
 
     /**
@@ -234,6 +236,7 @@ public class Swerve extends SubsystemBase {
         Logger.processInputs("Swerve", inputs);
         for (int i = 0; i < cameras.length; i++) {
             cameras[i].periodic();
+            cameraSeesTarget[i] = cameras[i].seesTarget();
         }
 
         Logger.recordOutput("/Swerve/hasInitialized", hasInitialized);
@@ -261,6 +264,8 @@ public class Swerve extends SubsystemBase {
         }
 
         field.setRobotPose(getPose());
+        aprilTagTarget
+            .setBoolean(Arrays.asList(cameraSeesTarget).stream().anyMatch(val -> val == true));
 
         SmartDashboard.putNumber("Distance to Speaker", FieldConstants.Speaker.centerSpeakerOpening
             .getTranslation().minus(getPose().getTranslation()).getNorm());

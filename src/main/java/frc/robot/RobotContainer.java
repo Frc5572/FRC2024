@@ -1,11 +1,18 @@
 package frc.robot;
 
 import java.util.List;
+import java.util.Map;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
@@ -50,14 +57,45 @@ import frc.robot.subsystems.swerve.SwerveReal;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+    /* Shuffleboard */
+    public static ShuffleboardTab mainDriverTab = Shuffleboard.getTab("Main Driver");
+
+    // Initialize AutoChooser Sendable
+    private final SendableChooser<String> autoChooser = new SendableChooser<>();
+    public ComplexWidget autoChooserWidget = mainDriverTab.add("Auto Chooser", autoChooser)
+        .withWidget(BuiltInWidgets.kComboBoxChooser).withPosition(12, 0).withSize(2, 1);
+    public GenericEntry operatorState =
+        mainDriverTab.add("Operator State", OperatorState.getCurrentState().displayName)
+            .withWidget(BuiltInWidgets.kTextView).withPosition(8, 0).withSize(2, 1).getEntry();
+    public GenericEntry operatorManualMode = RobotContainer.mainDriverTab.add("Manual Mode", false)
+        .withWidget(BuiltInWidgets.kBooleanBox)
+        .withProperties(Map.of("true_color", 0xff00ffff, "false_color", 0xff770000))
+        .withPosition(10, 0).withSize(1, 1).getEntry();
+    public static GenericEntry readyShoot = RobotContainer.mainDriverTab
+        .add("Ready To Shoot", false).withWidget(BuiltInWidgets.kBooleanBox)
+        .withProperties(Map.of("true_color", 0xff00ffff, "false_color", 0xff770000))
+        .withPosition(11, 0).withSize(1, 1).getEntry();
+
+    public static final SendableChooser<Integer> numNoteChooser = new SendableChooser<>();
+    public ComplexWidget numNoteChooserrWidget =
+        mainDriverTab.add("Number of Additional Auto Notes", numNoteChooser)
+            .withWidget(BuiltInWidgets.kComboBoxChooser).withPosition(12, 1).withSize(2, 1);
+    public SimpleWidget fmsInfo =
+        RobotContainer.mainDriverTab.add("FMS Info", 0).withWidget("FMSInfo")
+            .withProperties(Map.of("topic", "/FMSInfo")).withPosition(4, 4).withSize(3, 1);
+    public GenericEntry matchTime = RobotContainer.mainDriverTab.add("Match Time", 0)
+        .withWidget("Match Time").withProperties(Map.of("time_display_mode", "Minutes and Seconds"))
+        .withPosition(1, 4).withSize(3, 1).getEntry();
+    public SimpleWidget voltageInfo =
+        RobotContainer.mainDriverTab.add("Battery Voltage", 0).withWidget("Voltage View")
+            .withProperties(Map.of("topic", "/AdvantageKit/SystemStats/BatteryVoltage"))
+            .withPosition(2, 5).withSize(4, 1);
     /* Controllers */
     public final CommandXboxController driver = new CommandXboxController(Constants.DRIVER_ID);
     private final CommandXboxController operator = new CommandXboxController(Constants.OPERATOR_ID);
     // private final CommandXboxController test = new CommandXboxController(4);
 
 
-    // Initialize AutoChooser Sendable
-    private final SendableChooser<String> autoChooser = new SendableChooser<>();
 
     /* Subsystems */
     private Swerve s_Swerve;
@@ -71,13 +109,16 @@ public class RobotContainer {
     /**
      */
     public RobotContainer(RobotRunType runtimeType) {
-        SmartDashboard.putData("Choose Auto: ", autoChooser);
         autoChooser.setDefaultOption("Wait 1 Second", "wait");
         SmartDashboard.putNumber("Intake Power", 0);
         SmartDashboard.putNumber("Left Climber Power", 0);
         SmartDashboard.putNumber("Right Climber Power", 0);
         SmartDashboard.putNumber("Elevator Power", 0);
         SmartDashboard.putNumber("Wrist Power", 0);
+        numNoteChooser.setDefaultOption("0", 0);
+        for (int i = 0; i < 7; i++) {
+            numNoteChooser.addOption(String.valueOf(i), i);
+        }
 
         cameras =
             /*
