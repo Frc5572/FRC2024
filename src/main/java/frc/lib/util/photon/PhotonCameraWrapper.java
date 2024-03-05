@@ -40,8 +40,8 @@ public class PhotonCameraWrapper {
         // field.
         AprilTagFieldLayout fieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
         // Create pose estimator
-        photonPoseEstimator = new PhotonIOPoseEstimator(fieldLayout,
-            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, this.inputs, robotToCam);
+        photonPoseEstimator = new PhotonIOPoseEstimator(fieldLayout, PoseStrategy.LOWEST_AMBIGUITY,
+            this.inputs, robotToCam);
         photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.CLOSEST_TO_CAMERA_HEIGHT);
     }
 
