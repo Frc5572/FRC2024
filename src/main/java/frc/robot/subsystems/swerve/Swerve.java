@@ -47,7 +47,7 @@ public class Swerve extends SubsystemBase {
     private GenericEntry aprilTagTarget = RobotContainer.mainDriverTab.add("See April Tag", false)
         .withWidget(BuiltInWidgets.kBooleanBox)
         .withProperties(Map.of("Color when true", "green", "Color when false", "red"))
-        .withPosition(13, 2).withSize(1, 1).getEntry();
+        .withPosition(11, 0).withSize(2, 2).getEntry();
 
     /**
      * Swerve Subsystem
