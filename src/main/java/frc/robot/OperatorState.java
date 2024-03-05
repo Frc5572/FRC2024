@@ -79,10 +79,8 @@ public class OperatorState {
                 break;
             case kShootWhileMove:
                 switch (id) {
-                    case 3:
                     case 4:
                     case 7:
-                    case 8:
                         return true;
                     default:
                         break;
