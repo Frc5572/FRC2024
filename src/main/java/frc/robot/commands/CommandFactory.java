@@ -120,6 +120,9 @@ public class CommandFactory {
             () -> elevatorWrist.getAngleFromDistance(swerveDrive.getPose()));
     }
 
+    /**
+     * Command Factory for Auto Specific Commands
+     */
     public class Auto {
 
         /**
