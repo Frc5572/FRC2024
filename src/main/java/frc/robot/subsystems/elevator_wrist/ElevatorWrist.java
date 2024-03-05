@@ -288,7 +288,7 @@ public class ElevatorWrist extends SubsystemBase {
             // elevatorPIDController.setGoal(height.getAsDouble());
             wristPIDController.setSetpoint(angle.get().getRotations());
             wristProfiledPIDController.setSetpoint(angle.get().getRotations());
-        }).finallyDo(() -> pidEnabled = false);
+        }).beforeStarting(() -> pidEnabled = true).finallyDo(() -> pidEnabled = false);
     }
 
     /**
