@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.3233005795152053,
-        "y": 4.549658519303062
+        "x": 1.8528739808145098,
+        "y": 4.428795228486641
       },
       "isLocked": false,
       "linkedName": "resnick 1 shoot p2"
     },
     {
       "anchor": {
-        "x": 2.5429160571808214,
-        "y": 4.301146268260392
+        "x": 2.6322836674067314,
+        "y": 4.414226823129778
       },
       "prevControl": {
-        "x": 2.3290799341906165,
-        "y": 4.555437873978474
+        "x": 2.2535051281282685,
+        "y": 4.545342471341553
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,25 +30,7 @@
   ],
   "rotationTargets": [],
   "constraintZones": [],
-  "eventMarkers": [
-    {
-      "name": "New Event Marker",
-      "waypointRelativePos": 0,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "Run Intake"
-              }
-            }
-          ]
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 5.0,
     "maxAcceleration": 4.0,
@@ -61,7 +43,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Resnick 1",
+  "folder": null,
   "previewStartingState": {
     "rotation": 160.0,
     "velocity": 0

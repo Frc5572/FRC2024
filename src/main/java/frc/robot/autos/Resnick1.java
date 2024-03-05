@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.lib.util.FieldConstants;
 import frc.robot.Constants;
-import frc.robot.commands.CommandFactory;
 import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
@@ -58,13 +57,16 @@ public class Resnick1 extends SequentialCommandGroup {
             swerveDrive.resetOdometry(initialState);
         });
         SequentialCommandGroup part1 =
-            followPath1.andThen(CommandFactory.shootSpeaker(shooter, intake).withTimeout(1.5));
-        SequentialCommandGroup part2 =
-            followPath2.andThen(CommandFactory.shootSpeaker(shooter, intake).withTimeout(1.5));
-        SequentialCommandGroup part3 =
-            followPath3.andThen(CommandFactory.shootSpeaker(shooter, intake).withTimeout(1.5));
-        SequentialCommandGroup part4 =
-            followPath4.andThen(CommandFactory.shootSpeaker(shooter, intake).withTimeout(1.5));
+            followPath1.andThen(intake.runIndexerMotor(1).withTimeout(.7));
+        SequentialCommandGroup part2 = followPath2.alongWith(intake.runIntakeMotor(1, .2))
+            .andThen(Commands.waitUntil(() -> !intake.getSensorStatus()))
+            .andThen(intake.runIndexerMotor(1).withTimeout(.7));
+        SequentialCommandGroup part3 = followPath3.alongWith(intake.runIntakeMotor(1, .2))
+            .andThen(Commands.waitUntil(() -> !intake.getSensorStatus()))
+            .andThen(intake.runIndexerMotor(1).withTimeout(.7));
+        SequentialCommandGroup part4 = followPath4.alongWith(intake.runIntakeMotor(1, .2))
+            .andThen(Commands.waitUntil(() -> !intake.getSensorStatus()))
+            .andThen(intake.runIndexerMotor(1).withTimeout(.7));
 
         SequentialCommandGroup followPaths = part1.andThen(part2).andThen(part3).andThen(part4);
 
@@ -72,7 +74,9 @@ public class Resnick1 extends SequentialCommandGroup {
             () -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
             () -> elevatorWrist.getAngleFromDistance(swerveDrive.getPose()));
 
-        addCommands(resetPosition, autoAlignWrist.alongWith(followPaths));
+        Command shootCommand = shooter.shootSpeaker();
+
+        addCommands(resetPosition, followPaths.alongWith(autoAlignWrist, shootCommand));
     }
 
 }

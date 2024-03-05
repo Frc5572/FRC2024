@@ -273,6 +273,8 @@ public class RobotContainer {
         NamedCommands.registerCommand("Run Intake", runIntake);
         NamedCommands.registerCommand("Run Indexer",
             readytoShoot.andThen(runIndexer.withTimeout(.7)));
+        NamedCommands.registerCommand("Wait For Intake",
+            Commands.waitUntil(() -> !intake.getSensorStatus()));
 
 
         String stuff = autoChooser.getSelected();

@@ -84,7 +84,7 @@ public class ElevatorWrist extends SubsystemBase {
         wristPIDController
             .setSetpoint(Constants.ElevatorWristConstants.SetPoints.AMP_ANGLE.getRotations());
         wristPIDController.setTolerance(Rotation2d.fromDegrees(0.1).getRotations());
-        elevatorPIDController.setGoal(36);
+        elevatorPIDController.setGoal(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT);
         wristPIDController.setIZone(Rotation2d.fromDegrees(5).getRotations());
         wristProfiledPIDController.setIZone(Rotation2d.fromDegrees(1).getRotations());
         radiusToAngle.put(4.32, 33.43);
@@ -284,12 +284,11 @@ public class ElevatorWrist extends SubsystemBase {
      * @return A {@link Command}
      */
     public Command followPosition(DoubleSupplier height, Supplier<Rotation2d> angle) {
-        return homePosition().andThen(Commands.runOnce(() -> pidEnabled = true))
-            .andThen(Commands.run(() -> {
-                // elevatorPIDController.setGoal(height.getAsDouble());
-                wristPIDController.setSetpoint(angle.get().getRotations());
-                wristProfiledPIDController.setSetpoint(angle.get().getRotations());
-            })).finallyDo(() -> pidEnabled = false);
+        return Commands.runOnce(() -> pidEnabled = true).andThen(Commands.run(() -> {
+            elevatorPIDController.setGoal(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT);
+            wristPIDController.setSetpoint(angle.get().getRotations());
+            wristProfiledPIDController.setSetpoint(angle.get().getRotations());
+        })).finallyDo(() -> pidEnabled = false);
     }
 
     /**

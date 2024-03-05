@@ -3,15 +3,15 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.48,
+        "x": 0.46159126923400234,
         "y": 7.011663611028131
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.306827496717365,
+        "x": 1.2884187659513648,
         "y": 7.011663611028131
       },
-      "isLocked": true,
+      "isLocked": false,
       "linkedName": "resnick 1 start"
     },
     {
@@ -43,7 +43,7 @@
     "rotateFast": true
   },
   "reversed": false,
-  "folder": "Resnick 1",
+  "folder": null,
   "previewStartingState": {
     "rotation": 180.0,
     "velocity": 0
