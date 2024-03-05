@@ -1,6 +1,5 @@
 package frc.robot;
 
-import java.util.List;
 import java.util.Map;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -11,12 +10,15 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.lib.util.MatchCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
@@ -24,8 +26,11 @@ import frc.robot.autos.Resnick1;
 import frc.robot.autos.Resnick2;
 import frc.robot.autos.Resnick3;
 import frc.robot.commands.CommandFactory;
+import frc.robot.commands.FlashingLEDColor;
+import frc.robot.commands.MovingColorLEDs;
 import frc.robot.commands.ShootWhileMoving;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberNEO;
@@ -56,33 +61,33 @@ public class RobotContainer {
     // Initialize AutoChooser Sendable
     private final SendableChooser<String> autoChooser = new SendableChooser<>();
     public ComplexWidget autoChooserWidget = mainDriverTab.add("Auto Chooser", autoChooser)
-        .withWidget(BuiltInWidgets.kComboBoxChooser).withPosition(12, 0).withSize(2, 1);
+        .withWidget(BuiltInWidgets.kComboBoxChooser).withPosition(4, 6).withSize(3, 2);
     public GenericEntry operatorState =
         mainDriverTab.add("Operator State", OperatorState.getCurrentState().displayName)
-            .withWidget(BuiltInWidgets.kTextView).withPosition(8, 0).withSize(2, 1).getEntry();
+            .withWidget(BuiltInWidgets.kTextView).withPosition(8, 0).withSize(3, 2).getEntry();
     public GenericEntry operatorManualMode = RobotContainer.mainDriverTab.add("Manual Mode", false)
         .withWidget(BuiltInWidgets.kBooleanBox)
         .withProperties(Map.of("true_color", 0xff00ffff, "false_color", 0xff770000))
-        .withPosition(10, 0).withSize(1, 1).getEntry();
+        .withPosition(10, 6).withSize(2, 2).getEntry();
     public static GenericEntry readyShoot = RobotContainer.mainDriverTab
         .add("Ready To Shoot", false).withWidget(BuiltInWidgets.kBooleanBox)
         .withProperties(Map.of("true_color", 0xff00ffff, "false_color", 0xff770000))
-        .withPosition(11, 0).withSize(1, 1).getEntry();
+        .withPosition(10, 2).withSize(3, 2).getEntry();
 
     public static final SendableChooser<Integer> numNoteChooser = new SendableChooser<>();
     public ComplexWidget numNoteChooserrWidget =
         mainDriverTab.add("Number of Additional Auto Notes", numNoteChooser)
-            .withWidget(BuiltInWidgets.kComboBoxChooser).withPosition(12, 1).withSize(2, 1);
+            .withWidget(BuiltInWidgets.kComboBoxChooser).withPosition(7, 6).withSize(3, 2);
     public SimpleWidget fmsInfo =
         RobotContainer.mainDriverTab.add("FMS Info", 0).withWidget("FMSInfo")
-            .withProperties(Map.of("topic", "/FMSInfo")).withPosition(4, 4).withSize(3, 1);
+            .withProperties(Map.of("topic", "/FMSInfo")).withPosition(3, 4).withSize(6, 2);
     public GenericEntry matchTime = RobotContainer.mainDriverTab.add("Match Time", 0)
         .withWidget("Match Time").withProperties(Map.of("time_display_mode", "Minutes and Seconds"))
-        .withPosition(1, 4).withSize(3, 1).getEntry();
+        .withPosition(0, 4).withSize(3, 2).getEntry();
     public SimpleWidget voltageInfo =
         RobotContainer.mainDriverTab.add("Battery Voltage", 0).withWidget("Voltage View")
             .withProperties(Map.of("topic", "/AdvantageKit/SystemStats/BatteryVoltage"))
-            .withPosition(2, 5).withSize(4, 1);
+            .withPosition(0, 6).withSize(4, 2);
     /* Controllers */
     public final CommandXboxController driver = new CommandXboxController(Constants.DRIVER_ID);
     private final CommandXboxController operator = new CommandXboxController(Constants.OPERATOR_ID);
@@ -97,6 +102,7 @@ public class RobotContainer {
     private PhotonCameraWrapper[] cameras;
     private ElevatorWrist elevatorWrist;
     public Climber climber;
+    private LEDs leds = new LEDs(Constants.LEDConstants.LED_COUNT, Constants.LEDConstants.PWM_PORT);
 
     /**
      */
@@ -152,14 +158,17 @@ public class RobotContainer {
         }
         s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, driver,
             Constants.Swerve.isFieldRelative, Constants.Swerve.isOpenLoop));
+        leds.setDefaultCommand(new MovingColorLEDs(leds, Color.kRed, 4, false));
         // Configure the button bindings
         configureButtonBindings();
+        Trigger gotNote = new Trigger(() -> !this.intake.getSensorStatus());
+        gotNote.onTrue(new FlashingLEDColor(leds, Color.kGreen).withTimeout(3));
     }
 
     /**
-     * Use this method to define your button->command mappings. Buttons can be created by
-     * instantiating a {@link GenericHID} or one of its subclasses
-     * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a
+     * Use this method to vol your button->command mappings. Buttons can be created by instantiating
+     * a {@link GenericHID} or one of its subclasses ({@link edu.wpi.first.wpilibj.Joystick} or
+     * {@link XboxController}), and then passing it to a
      * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
@@ -170,37 +179,66 @@ public class RobotContainer {
         // intake forward
         driver.rightTrigger().whileTrue(CommandFactory.intakeNote(intake));
         // intake backward
-        driver.b().whileTrue(intake.runIndexerMotor(-.1));
-        // intake and shoot as fast as possible
-        driver.x().whileTrue(CommandFactory.passThroughShoot(shooter, intake));
-        // toggle shooting while moving
-        driver.a().toggleOnTrue(
-            new ShootWhileMoving(s_Swerve, driver).alongWith(elevatorWrist.followPosition(() -> 0,
-                () -> elevatorWrist.getAngleFromDistance(s_Swerve.getPose()))));
+        driver.leftTrigger().whileTrue(intake.runIntakeMotorNonStop(-1, -.20));
 
+        /* Operator Buttons */
         // spit note currently in robot through shooter
         operator.x().whileTrue(CommandFactory.spit(shooter, intake));
+        // reset apriltag vision
+        operator.b().onTrue(new InstantCommand(() -> s_Swerve.resetPvInitialization()));
+        // spin up shooter
+        operator.leftTrigger().whileTrue(Commands.either(Commands.startEnd(() -> {
+            climber.setLeftPower(SmartDashboard.getNumber("Left Climber Power", 0));
+        }, () -> {
+            climber.setLeftPower(0);
+        }), shooter.shootSpeaker(),
+            () -> OperatorState.getCurrentState() == OperatorState.State.kClimb));
         // shoot note to speaker after being intaked
-        operator.rightTrigger().whileTrue(CommandFactory.shootSpeaker(shooter, intake));
-        // set shooter to amp scoring preset position
-        operator.start().onTrue(elevatorWrist.ampPosition());
+        operator.rightTrigger().whileTrue(Commands.either(Commands.startEnd(() -> {
+            climber.setRightPower(SmartDashboard.getNumber("Left Climber Power", 0));
+        }, () -> {
+            climber.setRightPower(0);
+        }), CommandFactory.shootSpeaker(shooter, intake),
+            () -> OperatorState.getCurrentState() == OperatorState.State.kClimb));
         // set shooter to home preset position
-        operator.back().onTrue(elevatorWrist.homePosition());
+        operator.y().onTrue(elevatorWrist.homePosition());
         // increment once through states list to next state
         operator.povRight().onTrue(Commands.runOnce(() -> {
             OperatorState.increment();
-        }));
+        }).ignoringDisable(true));
         // go back one through the states list to the previous state
         operator.povLeft().onTrue(Commands.runOnce(() -> {
             OperatorState.decrement();
-        }));
-        // go to current state as incremented through operator states list
-        operator.a().onTrue(new MatchCommand<OperatorState.State>(List.of(OperatorState.State.kAmp),
-            List.of(elevatorWrist.ampPosition()), OperatorState::getCurrentState));
+        }).ignoringDisable(true));
+        // run action based on current state as incremented through operator states list
+        operator.a().whileTrue(new SelectCommand<OperatorState.State>(Map.of(
+            //
+            OperatorState.State.kAmp, elevatorWrist.ampPosition(),
+            //
+            OperatorState.State.kShootWhileMove,
+            new ShootWhileMoving(s_Swerve, driver).alongWith(elevatorWrist.followPosition(
+                () -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
+                () -> elevatorWrist.getAngleFromDistance(s_Swerve.getPose())))
         //
+        ), OperatorState::getCurrentState));
+
+        /*
+         * <OperatorState.State>( List.of(OperatorState.State.kAmp,
+         * OperatorState.State.kShootWhileMove, OperatorState.State.kClimb),
+         * List.of(elevatorWrist.ampPosition(), new ShootWhileMoving(s_Swerve,
+         * driver).alongWith(elevatorWrist.followPosition( () ->
+         * Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT, () ->
+         * elevatorWrist.getAngleFromDistance(s_Swerve.getPose()))), elevatorWrist.ampPosition()),
+         * )));
+         */
+        // Toggle manual mode
         operator.start().onTrue(Commands.runOnce(() -> {
             OperatorState.toggleManualMode();
-        }));
+        }).ignoringDisable(true));
+        // Flash LEDS to request amplify
+        operator.povUp().onTrue(new FlashingLEDColor(leds, Color.kGold).withTimeout(5));
+        // Flash LEDs to request (TODO)
+        operator.povDown().onTrue(new FlashingLEDColor(leds, Color.kBlue).withTimeout(5));
     }
 
     /**

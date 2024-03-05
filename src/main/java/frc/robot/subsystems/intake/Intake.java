@@ -24,7 +24,7 @@ public class Intake extends SubsystemBase {
 
     private GenericEntry beamBrake =
         RobotContainer.mainDriverTab.add("Have Note", Color.kBlack.toHexString())
-            .withWidget("Single Color View").withPosition(12, 2).withSize(1, 1).getEntry();
+            .withWidget("Single Color View").withPosition(9, 4).withSize(3, 2).getEntry();
 
     public Intake(IntakeIO io) {
         this.io = io;
