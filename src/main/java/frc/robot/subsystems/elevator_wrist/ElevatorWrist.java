@@ -284,11 +284,11 @@ public class ElevatorWrist extends SubsystemBase {
      * @return A {@link Command}
      */
     public Command followPosition(DoubleSupplier height, Supplier<Rotation2d> angle) {
-        return Commands.runOnce(() -> pidEnabled = true).andThen(Commands.run(() -> {
+        return Commands.run(() -> {
             elevatorPIDController.setGoal(height.getAsDouble());
             wristPIDController.setSetpoint(angle.get().getRotations());
             wristProfiledPIDController.setSetpoint(angle.get().getRotations());
-        })).finallyDo(() -> pidEnabled = false);
+        }).beforeStarting(() -> pidEnabled = true).finallyDo(() -> pidEnabled = false);
     }
 
     /**
