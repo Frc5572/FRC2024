@@ -8,6 +8,7 @@ import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.swerve.Swerve;
 
 /**
  * File to create commands using factories
@@ -91,5 +92,24 @@ public class CommandFactory {
 
     public static Command intakeNote(Intake intake) {
         return intake.runIntakeMotor(1, .2);
+    }
+
+    public static Command autoAngleWristSpeaker(ElevatorWrist elevatorWrist, Swerve swerveDrive) {
+        return elevatorWrist.followPosition(
+            () -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
+            () -> elevatorWrist.getAngleFromDistance(swerveDrive.getPose()));
+    }
+
+    public class Auto {
+
+        public static Command runIndexer(Intake intake) {
+            return Commands.waitUntil(() -> intake.getSensorStatus())
+                .andThen(Commands.waitSeconds(.25)).deadlineWith(intake.runIndexerMotor(1));
+        }
+
+        public static Command waitForIntake(Intake intake) {
+            return Commands.waitUntil(() -> !intake.getSensorStatus());
+        }
+
     }
 }

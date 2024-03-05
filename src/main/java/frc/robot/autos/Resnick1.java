@@ -1,6 +1,5 @@
 package frc.robot.autos;
 
-import java.util.function.Supplier;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -8,7 +7,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.lib.util.FieldConstants;
-import frc.robot.Constants;
 import frc.robot.commands.CommandFactory;
 import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
 import frc.robot.subsystems.intake.Intake;
@@ -52,35 +50,27 @@ public class Resnick1 extends SequentialCommandGroup {
         Command followPath3 = AutoBuilder.followPath(path3);
         Command followPath4 = AutoBuilder.followPath(path4);
 
-        Supplier<Command> runIndexer = () -> Commands.waitUntil(() -> intake.getSensorStatus())
-            .andThen(Commands.waitSeconds(.25)).deadlineWith(intake.runIndexerMotor(1));
-        Supplier<Command> waitForIntake = () -> Commands.waitUntil(() -> !intake.getSensorStatus());
-
-
         Command resetPosition = Commands.runOnce(() -> {
             Pose2d initialState =
                 FieldConstants.allianceFlip(path1.getPreviewStartingHolonomicPose());
             swerveDrive.resetOdometry(initialState);
         });
-        SequentialCommandGroup part1 = followPath1.andThen(runIndexer.get());
+        SequentialCommandGroup part1 = followPath1.andThen(CommandFactory.Auto.runIndexer(intake));
         SequentialCommandGroup part2 = followPath2.alongWith(CommandFactory.intakeNote(intake))
-            .andThen(waitForIntake.get()).andThen(runIndexer.get());
+            // .andThen(CommandFactory.Auto.waitForIntake(intake))
+            .andThen(CommandFactory.Auto.runIndexer(intake));
         SequentialCommandGroup part3 = followPath3.alongWith(CommandFactory.intakeNote(intake))
-            .andThen(waitForIntake.get()).andThen(runIndexer.get());
+            // .andThen(CommandFactory.Auto.waitForIntake(intake))
+            .andThen(CommandFactory.Auto.runIndexer(intake));
         SequentialCommandGroup part4 = followPath4.alongWith(CommandFactory.intakeNote(intake))
-            .andThen(waitForIntake.get()).andThen(runIndexer.get());
+            // .andThen(CommandFactory.Auto.waitForIntake(intake))
+            .andThen(CommandFactory.Auto.runIndexer(intake));
 
         SequentialCommandGroup followPaths = part1.andThen(part2).andThen(part3).andThen(part4);
 
-        Command autoAlignWrist = elevatorWrist.followPosition(
-            () -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-            () -> elevatorWrist.getAngleFromDistance(swerveDrive.getPose()));
-
+        Command autoAlignWrist = CommandFactory.autoAngleWristSpeaker(elevatorWrist, swerveDrive);
         Command shootCommand = shooter.shootSpeaker();
 
         addCommands(resetPosition, followPaths.alongWith(autoAlignWrist, shootCommand));
     }
-
-
-
 }
