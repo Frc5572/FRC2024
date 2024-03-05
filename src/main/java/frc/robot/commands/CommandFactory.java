@@ -88,4 +88,8 @@ public class CommandFactory {
     public static Command spit(Shooter shooter, Intake intake) {
         return shooter.spit().alongWith(intake.runIndexerMotor(1.0));
     }
+
+    public static Command intakeNote(Intake intake) {
+        return intake.runIntakeMotor(1, .2);
+    }
 }

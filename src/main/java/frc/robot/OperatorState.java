@@ -63,4 +63,9 @@ public class OperatorState {
         currentState = currentState.decrement();
     }
 
+    /** Set State */
+    public static void setState(State state) {
+        currentState = state;
+    }
+
 }

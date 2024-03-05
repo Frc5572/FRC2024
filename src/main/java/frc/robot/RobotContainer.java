@@ -2,10 +2,6 @@ package frc.robot;
 
 import java.util.List;
 import java.util.Map;
-import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.path.PathPlannerPath;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -20,12 +16,12 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.lib.util.FieldConstants;
 import frc.lib.util.MatchCommand;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
 import frc.robot.autos.Resnick1;
+import frc.robot.autos.Resnick2;
 import frc.robot.autos.Resnick3;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.ShootWhileMoving;
@@ -172,7 +168,7 @@ public class RobotContainer {
         driver.start().onTrue(
             new InstantCommand(() -> s_Swerve.resetPvInitialization()).ignoringDisable(true));
         // intake forward
-        driver.rightTrigger().whileTrue(intake.runIntakeMotor(1, .20));
+        driver.rightTrigger().whileTrue(CommandFactory.intakeNote(intake));
         // intake backward
         driver.b().whileTrue(intake.runIndexerMotor(-.1));
         // intake and shoot as fast as possible
@@ -205,51 +201,6 @@ public class RobotContainer {
         operator.start().onTrue(Commands.runOnce(() -> {
             OperatorState.toggleManualMode();
         }));
-
-        // operator.povDown().whileTrue(
-        // elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.AMP_HEIGHT,
-        // Constants.ElevatorWristConstants.SetPoints.AMP_ANGLE));
-        // operator.povUp().whileTrue(
-        // elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.TRAP_HEIGHT,
-        // Constants.ElevatorWristConstants.SetPoints.TRAP_ANGLE));
-
-        // // climber forward
-        // operator.a().whileTrue(new StartEndCommand(() -> {
-        // climber.setLeftPower(SmartDashboard.getNumber("Left Climber Power", 0));
-        // climber.setRightPower(SmartDashboard.getNumber("Right Climber Power", 0));
-        // }, () -> {
-        // climber.setLeftPower(0);
-        // climber.setRightPower(0);
-        // }, climber));
-        // // // climber backward
-        // operator.b().whileTrue(new StartEndCommand(() -> {
-        // climber.setLeftPower(-SmartDashboard.getNumber("Left Climber Power", 0));
-        // climber.setRightPower(-SmartDashboard.getNumber("Right Climber Power", 0));
-        // }, () -> {
-        // climber.setLeftPower(0);
-        // climber.setRightPower(0);
-        // }, climber));
-        // // // climber left
-        // operator.x().whileTrue(new StartEndCommand(() -> {
-        // climber.setLeftPower(-SmartDashboard.getNumber("Left Climber Power", 0));
-        // }, () -> {
-        // climber.setLeftPower(0);
-        // climber.setRightPower(0);
-        // }, climber));
-        // // // climber right
-        // operator.y().whileTrue(new StartEndCommand(() -> {
-        // climber.setRightPower(-SmartDashboard.getNumber("Right Climber Power", 0));
-        // }, () -> {
-        // climber.setLeftPower(0);
-        // climber.setRightPower(0);
-        // }, climber));
-
-        // // elevator forward
-        // driver.leftBumper().whileTrue(new StartEndCommand(() -> {
-        // elevatorWrist.setElevatorPower(-0.2);
-        // }, () -> {
-        // elevatorWrist.setElevatorPower(0.0);
-        // }));
     }
 
     /**
@@ -258,50 +209,17 @@ public class RobotContainer {
      * @return Returns autonomous command selected.
      */
     public Command getAutonomousCommand() {
+        OperatorState.setState(OperatorState.State.kShootWhileMove);
         Command autocommand;
-        Command readytoShoot =
-            Commands.waitUntil(() -> shooter.readyToShoot() && elevatorWrist.atGoal());
-        Command runIndexer = intake.runIndexerMotor(1);
-        Command runIntake = intake.runIntakeMotor(1, .2);
-        Command runshooter = shooter.shootSpeaker();
-        Command autoAngleWrist = elevatorWrist.followPosition(
-            () -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-            () -> elevatorWrist.getAngleFromDistance(s_Swerve.getPose()));
-
-        NamedCommands.registerCommand("Wrist Auto Angle", autoAngleWrist);
-        NamedCommands.registerCommand("Run Shooter", runshooter);
-        NamedCommands.registerCommand("Run Intake", runIntake);
-        NamedCommands.registerCommand("Run Indexer",
-            readytoShoot.andThen(runIndexer.withTimeout(.7)));
-        NamedCommands.registerCommand("Wait For Intake",
-            Commands.waitUntil(() -> !intake.getSensorStatus()));
-
-
         String stuff = autoChooser.getSelected();
-        List<PathPlannerPath> pathList;
-        Pose2d initialState;
         switch (stuff) {
             case "Resnick 1":
-                // pathList = PathPlannerAuto.getPathGroupFromAutoFile("Resnick 1");
-                // initialState =
-                // FieldConstants.allianceFlip(pathList.get(0).getPreviewStartingHolonomicPose());
-                // s_Swerve.resetOdometry(initialState);
-                // autocommand = new PathPlannerAuto("Resnick 1");
                 autocommand = new Resnick1(s_Swerve, elevatorWrist, intake, shooter);
                 break;
             case "Resnick 2":
-                pathList = PathPlannerAuto.getPathGroupFromAutoFile("Resnick 2");
-                initialState =
-                    FieldConstants.allianceFlip(pathList.get(0).getPreviewStartingHolonomicPose());
-                s_Swerve.resetOdometry(initialState);
-                autocommand = new PathPlannerAuto("Resnick 2");
+                autocommand = new Resnick2(s_Swerve, elevatorWrist, intake, shooter);
                 break;
             case "Resnick 3":
-                // pathList = PathPlannerAuto.getPathGroupFromAutoFile("Resnick 3");
-                // initialState =
-                // FieldConstants.allianceFlip(pathList.get(0).getPreviewStartingHolonomicPose());
-                // s_Swerve.resetOdometry(initialState);
-                // autocommand = new PathPlannerAuto("Resnick 3");
                 autocommand = new Resnick3(s_Swerve, elevatorWrist, intake, shooter);
                 break;
             default:
