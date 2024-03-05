@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.lib.util.FieldConstants;
-import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.commands.CommandFactory;
 import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
@@ -44,9 +44,9 @@ public class Resnick3 extends SequentialCommandGroup {
         Supplier<Integer> numNotes = () -> RobotContainer.numNoteChooser.getSelected();
 
         PathPlannerPath path0 = PathPlannerPath.fromPathFile("1 - Resnick 2 Shoot Initial Note");
-        PathPlannerPath path1 = PathPlannerPath.fromPathFile("2 - Resnick 2 Intake P1");
+        PathPlannerPath path1 = PathPlannerPath.fromPathFile("2 - Resnick 2 Intake P3");
         PathPlannerPath path2 = PathPlannerPath.fromPathFile("3 - Resnick 2 Intake P2");
-        PathPlannerPath path3 = PathPlannerPath.fromPathFile("4 - Resnick 2 Intake P3");
+        PathPlannerPath path3 = PathPlannerPath.fromPathFile("4 - Resnick 2 Intake P1");
         PathPlannerPath path4 = PathPlannerPath.fromPathFile("1 - Resnick 3 Intake P4");
         PathPlannerPath path5 = PathPlannerPath.fromPathFile("2 - Resnick 3 Intake P5");
         PathPlannerPath path6 = PathPlannerPath.fromPathFile("3 - Resnick 3 Intake P6");
@@ -59,27 +59,25 @@ public class Resnick3 extends SequentialCommandGroup {
         Command followPath5 = AutoBuilder.followPath(path5);
         Command followPath6 = AutoBuilder.followPath(path6);
 
-
-        // Supplier<Command> readytoShoot =
-        // () -> Commands.waitUntil(() -> shooter.readyToShoot() && elevatorWrist.atGoal());
-        Command runshooter = shooter.shootSpeaker();
-        Supplier<Command> shootNote =
-            () -> Commands.waitUntil(() -> shooter.readyToShoot() && elevatorWrist.atGoal())
-                .andThen(intake.runIndexerMotor(1).withTimeout(.7));
-
         Command resetPosition = Commands.runOnce(() -> {
             Pose2d initialState =
                 FieldConstants.allianceFlip(path0.getPreviewStartingHolonomicPose());
             swerveDrive.resetOdometry(initialState);
         });
 
-        SequentialCommandGroup part0 = followPath0.andThen(shootNote.get());
-        SequentialCommandGroup part1 = followPath1.andThen(shootNote.get());
-        SequentialCommandGroup part2 = followPath2.andThen(shootNote.get());
-        SequentialCommandGroup part3 = followPath3.andThen(shootNote.get());
-        SequentialCommandGroup part4 = followPath4.andThen(shootNote.get());
-        SequentialCommandGroup part5 = followPath5.andThen(shootNote.get());
-        SequentialCommandGroup part6 = followPath6.andThen(shootNote.get());
+        SequentialCommandGroup part0 = followPath0.andThen(CommandFactory.Auto.runIndexer(intake));
+        SequentialCommandGroup part1 = followPath1.alongWith(CommandFactory.intakeNote(intake))
+            .andThen(CommandFactory.Auto.runIndexer(intake));
+        SequentialCommandGroup part2 = followPath2.alongWith(CommandFactory.intakeNote(intake))
+            .andThen(CommandFactory.Auto.runIndexer(intake));
+        SequentialCommandGroup part3 = followPath3.alongWith(CommandFactory.intakeNote(intake))
+            .andThen(CommandFactory.Auto.runIndexer(intake));
+        SequentialCommandGroup part4 = followPath4.alongWith(CommandFactory.intakeNote(intake))
+            .andThen(CommandFactory.Auto.runIndexer(intake));
+        SequentialCommandGroup part5 = followPath5.alongWith(CommandFactory.intakeNote(intake))
+            .andThen(CommandFactory.Auto.runIndexer(intake));
+        SequentialCommandGroup part6 = followPath6.alongWith(CommandFactory.intakeNote(intake))
+            .andThen(CommandFactory.Auto.runIndexer(intake));
 
         Command runPart1 = Commands.either(part1, Commands.none(), () -> numNotes.get() > 0);
         Command runPart2 = Commands.either(part2, Commands.none(), () -> numNotes.get() > 1);
@@ -91,11 +89,10 @@ public class Resnick3 extends SequentialCommandGroup {
         SequentialCommandGroup followPaths = part0.andThen(runPart1).andThen(runPart2)
             .andThen(runPart3).andThen(runPart4).andThen(runPart5).andThen(runPart6);
 
-        Command autoAlignWrist = elevatorWrist.followPosition(
-            () -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-            () -> elevatorWrist.getAngleFromDistance(swerveDrive.getPose()));
+        Command autoAlignWrist = CommandFactory.autoAngleWristSpeaker(elevatorWrist, swerveDrive);
+        Command shootCommand = shooter.shootSpeaker();
 
-        addCommands(resetPosition, followPaths.alongWith(autoAlignWrist, runshooter));
+        addCommands(resetPosition, followPaths.alongWith(autoAlignWrist, shootCommand));
     }
 
 }
