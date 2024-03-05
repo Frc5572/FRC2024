@@ -29,6 +29,7 @@ import frc.robot.Robot.RobotRunType;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.FlashingLEDColor;
 import frc.robot.commands.MovingColorLEDs;
+import frc.robot.commands.RumblePulse;
 import frc.robot.commands.ShootWhileMoving;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.LEDs;
@@ -161,12 +162,11 @@ public class RobotContainer {
         s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, driver,
             Constants.Swerve.isFieldRelative, Constants.Swerve.isOpenLoop));
         leds.setDefaultCommand(new MovingColorLEDs(leds, Color.kRed, 4, false));
-        // autoChooser.addOption(resnickAuto, new ResnickAuto(s_Swerve));
-        SmartDashboard.putData("Choose Auto: ", autoChooser);
         // Configure the button bindings
         configureButtonBindings();
         Trigger gotNote = new Trigger(() -> !this.intake.getSensorStatus());
-        gotNote.onTrue(new FlashingLEDColor(leds, Color.kGreen).withTimeout(3));
+        gotNote.onTrue(new FlashingLEDColor(leds, Color.kGreen).withTimeout(3))
+            .whileTrue(new RumblePulse(driver, 5));
     }
 
     /**
