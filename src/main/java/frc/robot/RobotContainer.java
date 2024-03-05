@@ -25,6 +25,7 @@ import frc.robot.Robot.RobotRunType;
 import frc.robot.autos.Resnick1;
 import frc.robot.autos.Resnick2;
 import frc.robot.autos.Resnick3;
+import frc.robot.autos.Resnick4;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.FlashingLEDColor;
 import frc.robot.commands.MovingColorLEDs;
@@ -259,6 +260,9 @@ public class RobotContainer {
                 break;
             case "Resnick 3":
                 autocommand = new Resnick3(s_Swerve, elevatorWrist, intake, shooter);
+                break;
+            case "Resnick 4":
+                autocommand = new Resnick4(s_Swerve, elevatorWrist, intake, shooter);
                 break;
             default:
                 autocommand = new WaitCommand(1.0);
