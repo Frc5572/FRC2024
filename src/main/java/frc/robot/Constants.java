@@ -84,6 +84,9 @@ public final class Constants {
      */
     public static class CameraConstants {
 
+        public static double XY_STD_DEV_COEFF = 0.005;
+        public static double THETA_STD_DEV_COEFF = 0.01;
+
         /**
          * Constants for Front Left Camera
          */

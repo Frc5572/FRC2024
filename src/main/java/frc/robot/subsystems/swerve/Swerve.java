@@ -25,8 +25,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.FieldConstants;
 import frc.lib.util.photon.PhotonCameraWrapper;
+import frc.lib.util.photon.PhotonCameraWrapper.VisionObservation;
 import frc.lib.util.swerve.SwerveModule;
 import frc.robot.Constants;
+import frc.robot.OperatorState;
 import frc.robot.RobotContainer;
 
 /**
@@ -260,7 +262,7 @@ public class Swerve extends SubsystemBase {
                 Logger.recordOutput("/Swerve/hasInitialPose[" + i + "]", robotPose.isPresent());
                 if (robotPose.isPresent()) {
                     swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(),
-                        robotPose.get());
+                        robotPose.get().robotPose);
                     hasInitialized = true;
                     break;
                 }
@@ -269,9 +271,11 @@ public class Swerve extends SubsystemBase {
             for (int i = 0; i < cameras.length; i++) {
                 var result = cameras[i].getInitialPose();
                 if (result.isPresent()) {
-                    Pose2d camPose = result.get();
-                    swerveOdometry.addVisionMeasurement(camPose,
-                        Timer.getFPGATimestamp() - cameras[i].latency());
+                    VisionObservation camPose = result.get();
+                    if (OperatorState.tagFilter(camPose.fudicialId)) {
+                        swerveOdometry.addVisionMeasurement(camPose.robotPose,
+                            Timer.getFPGATimestamp() - cameras[i].latency(), camPose.stdDev);
+                    }
                 }
             }
         }
