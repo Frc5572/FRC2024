@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -62,17 +63,6 @@ public class ElevatorWrist extends SubsystemBase {
             "max_value", Constants.ElevatorWristConstants.SetPoints.MAX_EXTENSION, "orientation",
             "vertical"))
         .withPosition(8, 2).withSize(2, 2).getEntry();
-
-
-    // private ElevatorFeedforward elevatorFeedForward =
-    // new ElevatorFeedforward(Constants.ElevatorWristConstants.PID.ELEVATOR_KS,
-    // Constants.ElevatorWristConstants.PID.ELEVATOR_KG,
-    // Constants.ElevatorWristConstants.PID.ELEVATOR_KV);
-
-    // private ArmFeedforward wristFeedForward =
-    // new ArmFeedforward(Constants.ElevatorWristConstants.PID.WRIST_KS,
-    // Constants.ElevatorWristConstants.PID.WRIST_KG,
-    // Constants.ElevatorWristConstants.PID.WRIST_KV);
 
     /**
      * Create new ElevatorWrist.
@@ -161,11 +151,6 @@ public class ElevatorWrist extends SubsystemBase {
             io.setElevatorVoltage(-elevatorFeedForward);
         }
 
-        // Logger.recordOutput("/ElevatorWrist/Elevator/PID Voltage", elevatorPIDValue);
-        // Logger.recordOutput("/ElevatorWrist/Elevator/Feedforward", elevatorFeedForwardValue);
-        // Logger.recordOutput("/ElevatorWrist/Elevator/Combined Voltage",
-        // elevatorPIDValue + elevatorFeedForwardValue);
-
         Logger.recordOutput("/ElevatorWrist/Wrist/PID Voltage", elevatorPIDValue);
         Logger.recordOutput("/ElevatorWrist/Wrist/PID setpoint",
             elevatorPIDController.getSetpoint().position);
@@ -250,10 +235,13 @@ public class ElevatorWrist extends SubsystemBase {
      * colliding with electronics box.
      */
     public Command homePosition() {
-        return goToPosition(36, Rotation2d.fromDegrees(24))
-            .until(() -> getWristAngle().getDegrees() > 15).withTimeout(2)
-            .andThen(goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-                Constants.ElevatorWristConstants.SetPoints.HOME_ANGLE).withTimeout(2));
+        Command checkHome = Commands.either(
+            goToPosition(36, Rotation2d.fromDegrees(24))
+                .until(() -> getWristAngle().getDegrees() > 15).withTimeout(2),
+            Commands.none(), () -> !elevatorAtHome());
+        Command goHome = goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
+            Constants.ElevatorWristConstants.SetPoints.HOME_ANGLE).withTimeout(2);
+        return checkHome.andThen(goHome);
     }
 
     /**
@@ -336,7 +324,8 @@ public class ElevatorWrist extends SubsystemBase {
      * @return True if the elevator is home
      */
     public boolean elevatorAtHome() {
-        return getHeight() < 30;
+        return MathUtil.isNear(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT, getHeight(),
+            6);
     }
 
 }
