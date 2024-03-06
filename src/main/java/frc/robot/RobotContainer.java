@@ -181,7 +181,8 @@ public class RobotContainer {
         driver.start().onTrue(
             new InstantCommand(() -> s_Swerve.resetPvInitialization()).ignoringDisable(true));
         // intake forward
-        driver.rightTrigger().whileTrue(intake.runIntakeMotor(1, .20));
+        driver.rightTrigger()
+            .whileTrue(intake.runIntakeMotor(1, .20).onlyIf(() -> elevatorWrist.elevatorAtHome()));
         // intake backward
         driver.leftTrigger().whileTrue(intake.runIntakeMotorNonStop(-1, -.20));
 
@@ -218,7 +219,10 @@ public class RobotContainer {
         operator.a().whileTrue(new SelectCommand<OperatorState.State>(Map.of(
             //
             OperatorState.State.kAmp,
-            elevatorWrist.ampPosition().alongWith(new TeleopSwerve(s_Swerve, driver, true, false)),
+            Commands
+                .either(elevatorWrist.ampPosition(), Commands.none(),
+                    () -> !intake.getSensorStatus())
+                .alongWith(new TeleopSwerve(s_Swerve, driver, true, false)),
             //
             OperatorState.State.kShootWhileMove,
             new ShootWhileMoving(s_Swerve, driver).alongWith(elevatorWrist.followPosition(

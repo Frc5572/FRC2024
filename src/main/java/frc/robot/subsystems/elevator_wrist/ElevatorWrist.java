@@ -330,4 +330,13 @@ public class ElevatorWrist extends SubsystemBase {
         io.setElevatorPower(power);
     }
 
+    /**
+     * Check if the elevator is at the home position
+     *
+     * @return True if the elevator is home
+     */
+    public boolean elevatorAtHome() {
+        return getHeight() < 30;
+    }
+
 }
