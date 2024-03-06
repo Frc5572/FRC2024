@@ -1,6 +1,6 @@
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2024.2.1"
+    id "edu.wpi.first.GradleRIO" version "2024.3.1"
     id "com.peterabeles.gversion" version "1.10"
 }
 
@@ -94,7 +94,7 @@ dependencies {
     nativeRelease wpi.java.vendor.jniRelease(wpi.platforms.desktop)
     simulationRelease wpi.sim.enableRelease()
 
-    annotationProcessor 'com.github.Frc5572:RobotTools:v1.1.0'
+    annotationProcessor 'com.github.Frc5572:RobotTools:v1.1.1'
 }
 
 // Simulation configuration (e.g. environment variables).

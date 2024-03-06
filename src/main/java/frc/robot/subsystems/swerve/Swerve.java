@@ -1,5 +1,7 @@
 package frc.robot.subsystems.swerve;
 
+import java.util.Arrays;
+import java.util.Map;
 import java.util.Optional;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -12,15 +14,21 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.FieldConstants;
 import frc.lib.util.photon.PhotonCameraWrapper;
+import frc.lib.util.photon.PhotonCameraWrapper.VisionObservation;
 import frc.lib.util.swerve.SwerveModule;
 import frc.robot.Constants;
+import frc.robot.OperatorState;
+import frc.robot.RobotContainer;
 
 /**
  * Swerve Subsystem
@@ -34,12 +42,12 @@ public class Swerve extends SubsystemBase {
     private SwerveIO swerveIO;
     private boolean hasInitialized = false;
     private PhotonCameraWrapper[] cameras;
+    private Boolean[] cameraSeesTarget = {false, false, false, false};
 
-    // private GenericEntry aprilTagTarget =
-    // RobotContainer.autoTab.add("Currently Seeing At Least One April Tag", false)
-    // .withWidget(BuiltInWidgets.kBooleanBox)
-    // .withProperties(Map.of("Color when true", "green", "Color when false", "red"))
-    // .withPosition(8, 4).withSize(2, 2).getEntry();
+    private GenericEntry aprilTagTarget = RobotContainer.mainDriverTab.add("See April Tag", false)
+        .withWidget(BuiltInWidgets.kBooleanBox)
+        .withProperties(Map.of("Color when true", "green", "Color when false", "red"))
+        .withPosition(11, 0).withSize(2, 2).getEntry();
 
     /**
      * Swerve Subsystem
@@ -70,13 +78,10 @@ public class Swerve extends SubsystemBase {
         AutoBuilder.configureHolonomic(this::getPose, this::resetOdometry, this::getChassisSpeeds,
             this::setModuleStates, Constants.Swerve.pathFollowerConfig, () -> shouldFlipPath(),
             this);
-        SmartDashboard.putBoolean("Currently Seeing At Least One April Tag", false);
 
-
-        // RobotContainer.autoTab.add("Field Pos", field).withWidget(BuiltInWidgets.kField)
-        // .withSize(8, 6) // make the widget 2x1
-        // .withPosition(0, 0); // place it in the top-left corner
-        SmartDashboard.putData("Field Pos", field);
+        RobotContainer.mainDriverTab.add("Field Pos", field).withWidget(BuiltInWidgets.kField)
+            .withSize(8, 4) // make the widget 2x1
+            .withPosition(0, 0); // place it in the top-left corner
     }
 
     /**
@@ -210,7 +215,7 @@ public class Swerve extends SubsystemBase {
      */
     public void resetFieldRelativeOffset() {
         // gyro.zeroYaw();
-        fieldOffset = getGyroYaw().getDegrees();
+        fieldOffset = getGyroYaw().getDegrees() + 180;
     }
 
     /**
@@ -222,16 +227,19 @@ public class Swerve extends SubsystemBase {
         }
     }
 
+    public void resetPvInitialization() {
+        hasInitialized = false;
+    }
+
     @Override
     public void periodic() {
-        swerveOdometry.update(getGyroYaw(), getModulePositions());
         swerveIO.updateInputs(inputs, swerveOdometry.getEstimatedPosition());
+        swerveOdometry.update(getGyroYaw(), getModulePositions());
         Logger.processInputs("Swerve", inputs);
         for (int i = 0; i < cameras.length; i++) {
             cameras[i].periodic();
+            cameraSeesTarget[i] = cameras[i].seesTarget();
         }
-        Rotation2d yaw = Rotation2d.fromDegrees(inputs.yaw);
-        swerveOdometry.update(yaw, getSwerveModulePositions());
 
         Logger.recordOutput("/Swerve/hasInitialized", hasInitialized);
 
@@ -241,24 +249,27 @@ public class Swerve extends SubsystemBase {
                 Logger.recordOutput("/Swerve/hasInitialPose[" + i + "]", robotPose.isPresent());
                 if (robotPose.isPresent()) {
                     swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(),
-                        robotPose.get());
+                        robotPose.get().robotPose);
                     hasInitialized = true;
                     break;
                 }
             }
         } else {
             for (int i = 0; i < cameras.length; i++) {
-                var result =
-                    cameras[i].getEstimatedGlobalPose(swerveOdometry.getEstimatedPosition());
+                var result = cameras[i].getInitialPose();
                 if (result.isPresent()) {
-                    var camPose = result.get();
-                    swerveOdometry.addVisionMeasurement(camPose.estimatedPose.toPose2d(),
-                        camPose.timestampSeconds);
+                    VisionObservation camPose = result.get();
+                    if (OperatorState.tagFilter(camPose.fudicialId)) {
+                        swerveOdometry.addVisionMeasurement(camPose.robotPose,
+                            Timer.getFPGATimestamp() - cameras[i].latency(), camPose.stdDev);
+                    }
                 }
             }
         }
 
         field.setRobotPose(getPose());
+        aprilTagTarget
+            .setBoolean(Arrays.asList(cameraSeesTarget).stream().anyMatch(val -> val == true));
 
         SmartDashboard.putNumber("Distance to Speaker", FieldConstants.Speaker.centerSpeakerOpening
             .getTranslation().minus(getPose().getTranslation()).getNorm());
@@ -267,7 +278,7 @@ public class Swerve extends SubsystemBase {
         SmartDashboard.putNumber("Robot X", getPose().getX());
         SmartDashboard.putNumber("Robot Y", getPose().getY());
         SmartDashboard.putNumber("Robot Rotation", getPose().getRotation().getDegrees());
-        SmartDashboard.putNumber("Gyro Yaw", yaw.getDegrees());
+        SmartDashboard.putNumber("Gyro Yaw", getGyroYaw().getDegrees());
         SmartDashboard.putNumber("Field Offset", fieldOffset);
         SmartDashboard.putNumber("Gyro Yaw - Offset", getFieldRelativeHeading().getDegrees());
         SmartDashboard.putNumber("Gyro roll", inputs.roll);

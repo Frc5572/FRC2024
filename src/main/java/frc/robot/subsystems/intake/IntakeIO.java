@@ -12,16 +12,14 @@ public interface IntakeIO {
      */
     @AutoLog
     public static class IntakeInputs {
-        public double intakeSupplyVoltage;
-        public double indexerSupplyVoltage;
-        public double intakeMotorVoltage;
-        public double indexerMotorVoltage;
-        public double intakeAmps;
-        public double intakeTemp;
-        public double indexerAmps;
-        public double intakeRPM;
-        public double indexerRPM;
-        public double indexerTemp;
+        // public double intakeSupplyVoltage;
+        // public double indexerSupplyVoltage;
+        // public double intakeMotorVoltage;
+        // public double indexerMotorVoltage;
+        // public double intakeAmps;
+        // public double indexerAmps;
+        // public double intakeRPM;
+        // public double indexerRPM;
         public boolean sensorStatus;
     }
 

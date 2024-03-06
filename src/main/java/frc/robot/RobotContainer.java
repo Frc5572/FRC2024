@@ -1,22 +1,37 @@
 package frc.robot;
 
 import java.util.List;
+import java.util.Map;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
 import frc.robot.commands.CommandFactory;
+import frc.robot.commands.FlashingLEDColor;
+import frc.robot.commands.MovingColorLEDs;
+import frc.robot.commands.ShootWhileMoving;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberNEO;
@@ -40,14 +55,45 @@ import frc.robot.subsystems.swerve.SwerveReal;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+    /* Shuffleboard */
+    public static ShuffleboardTab mainDriverTab = Shuffleboard.getTab("Main Driver");
+
+    // Initialize AutoChooser Sendable
+    private final SendableChooser<String> autoChooser = new SendableChooser<>();
+    public ComplexWidget autoChooserWidget = mainDriverTab.add("Auto Chooser", autoChooser)
+        .withWidget(BuiltInWidgets.kComboBoxChooser).withPosition(4, 6).withSize(3, 2);
+    public GenericEntry operatorState =
+        mainDriverTab.add("Operator State", OperatorState.getCurrentShootingState().displayName)
+            .withWidget(BuiltInWidgets.kTextView).withPosition(8, 0).withSize(3, 2).getEntry();
+    public GenericEntry operatorManualMode = RobotContainer.mainDriverTab.add("Manual Mode", false)
+        .withWidget(BuiltInWidgets.kBooleanBox)
+        .withProperties(Map.of("true_color", 0xff00ffff, "false_color", 0xff770000))
+        .withPosition(10, 6).withSize(2, 2).getEntry();
+    public static GenericEntry readyShoot = RobotContainer.mainDriverTab
+        .add("Ready To Shoot", false).withWidget(BuiltInWidgets.kBooleanBox)
+        .withProperties(Map.of("true_color", 0xff00ffff, "false_color", 0xff770000))
+        .withPosition(10, 2).withSize(3, 2).getEntry();
+
+    public static final SendableChooser<Integer> numNoteChooser = new SendableChooser<>();
+    public ComplexWidget numNoteChooserrWidget =
+        mainDriverTab.add("Number of Additional Auto Notes", numNoteChooser)
+            .withWidget(BuiltInWidgets.kComboBoxChooser).withPosition(7, 6).withSize(3, 2);
+    public SimpleWidget fmsInfo =
+        RobotContainer.mainDriverTab.add("FMS Info", 0).withWidget("FMSInfo")
+            .withProperties(Map.of("topic", "/FMSInfo")).withPosition(3, 4).withSize(6, 2);
+    public GenericEntry matchTime = RobotContainer.mainDriverTab.add("Match Time", 0)
+        .withWidget("Match Time").withProperties(Map.of("time_display_mode", "Minutes and Seconds"))
+        .withPosition(0, 4).withSize(3, 2).getEntry();
+    public SimpleWidget voltageInfo =
+        RobotContainer.mainDriverTab.add("Battery Voltage", 0).withWidget("Voltage View")
+            .withProperties(Map.of("topic", "/AdvantageKit/SystemStats/BatteryVoltage"))
+            .withPosition(0, 6).withSize(4, 2);
     /* Controllers */
     public final CommandXboxController driver = new CommandXboxController(Constants.DRIVER_ID);
     private final CommandXboxController operator = new CommandXboxController(Constants.OPERATOR_ID);
     // private final CommandXboxController test = new CommandXboxController(4);
 
 
-    // Initialize AutoChooser Sendable
-    private final SendableChooser<String> autoChooser = new SendableChooser<>();
 
     /* Subsystems */
     private Swerve s_Swerve;
@@ -56,35 +102,39 @@ public class RobotContainer {
     private PhotonCameraWrapper[] cameras;
     public ElevatorWrist elevatorWrist;
     public Climber climber;
+    private LEDs leds = new LEDs(Constants.LEDConstants.LED_COUNT, Constants.LEDConstants.PWM_PORT);
 
     /**
      */
     public RobotContainer(RobotRunType runtimeType) {
-        SmartDashboard.putData("Choose Auto: ", autoChooser);
         autoChooser.setDefaultOption("Wait 1 Second", "wait");
         SmartDashboard.putNumber("Intake Power", 0);
         SmartDashboard.putNumber("Left Climber Power", 0);
         SmartDashboard.putNumber("Right Climber Power", 0);
         SmartDashboard.putNumber("Elevator Power", 0);
         SmartDashboard.putNumber("Wrist Power", 0);
+        numNoteChooser.setDefaultOption("0", 0);
+        for (int i = 0; i < 7; i++) {
+            numNoteChooser.addOption(String.valueOf(i), i);
+        }
 
         cameras =
             /*
              * Camera Order: 0 - Front Left 1 - Front RIght 2 - Back Left 3 - Back Right
              */
             new PhotonCameraWrapper[] {
-                new PhotonCameraWrapper(
-                    new PhotonReal(Constants.CameraConstants.FrontLeftFacingCamera.CAMERA_NAME),
-                    Constants.CameraConstants.FrontLeftFacingCamera.KCAMERA_TO_ROBOT),
+                // new PhotonCameraWrapper(
+                // new PhotonReal(Constants.CameraConstants.FrontLeftFacingCamera.CAMERA_NAME),
+                // Constants.CameraConstants.FrontLeftFacingCamera.KCAMERA_TO_ROBOT),
                 new PhotonCameraWrapper(
                     new PhotonReal(Constants.CameraConstants.FrontRightFacingCamera.CAMERA_NAME),
-                    Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT),
-                new PhotonCameraWrapper(
-                    new PhotonReal(Constants.CameraConstants.BackLeftFacingCamera.CAMERA_NAME),
-                    Constants.CameraConstants.BackLeftFacingCamera.KCAMERA_TO_ROBOT),
-                new PhotonCameraWrapper(
-                    new PhotonReal(Constants.CameraConstants.BackRightFacingCamera.CAMERA_NAME),
-                    Constants.CameraConstants.BackRightFacingCamera.KCAMERA_TO_ROBOT)};
+                    Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT)};
+        // new PhotonCameraWrapper(
+        // new PhotonReal(Constants.CameraConstants.BackLeftFacingCamera.CAMERA_NAME),
+        // Constants.CameraConstants.BackLeftFacingCamera.KCAMERA_TO_ROBOT),
+        // new PhotonCameraWrapper(
+        // new PhotonReal(Constants.CameraConstants.BackRightFacingCamera.CAMERA_NAME),
+        // Constants.CameraConstants.BackRightFacingCamera.KCAMERA_TO_ROBOT)};
 
         switch (runtimeType) {
             case kReal:
@@ -110,76 +160,90 @@ public class RobotContainer {
         }
         s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, driver,
             Constants.Swerve.isFieldRelative, Constants.Swerve.isOpenLoop));
+        leds.setDefaultCommand(new MovingColorLEDs(leds, Color.kRed, 4, false));
         // autoChooser.addOption(resnickAuto, new ResnickAuto(s_Swerve));
         SmartDashboard.putData("Choose Auto: ", autoChooser);
         // Configure the button bindings
         configureButtonBindings();
+        Trigger gotNote = new Trigger(() -> !this.intake.getSensorStatus());
+        gotNote.onTrue(new FlashingLEDColor(leds, Color.kGreen).withTimeout(3));
     }
 
     /**
-     * Use this method to define your button->command mappings. Buttons can be created by
-     * instantiating a {@link GenericHID} or one of its subclasses
-     * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a
+     * Use this method to vol your button->command mappings. Buttons can be created by instantiating
+     * a {@link GenericHID} or one of its subclasses ({@link edu.wpi.first.wpilibj.Joystick} or
+     * {@link XboxController}), and then passing it to a
      * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
         /* Driver Buttons */
         driver.y().onTrue(new InstantCommand(() -> s_Swerve.resetFieldRelativeOffset()));
+        driver.start().onTrue(
+            new InstantCommand(() -> s_Swerve.resetPvInitialization()).ignoringDisable(true));
         // intake forward
         driver.rightTrigger().whileTrue(intake.runIntakeMotor(1, .20));
         // intake backward
-        driver.b().whileTrue(intake.runIndexerMotor(-.1));
-        driver.x().whileTrue(CommandFactory.passThroughShoot(shooter, intake));
+        driver.leftTrigger().whileTrue(intake.runIntakeMotorNonStop(-1, -.20));
 
+        /* Operator Buttons */
+        // spit note currently in robot through shooter
         operator.x().whileTrue(CommandFactory.spit(shooter, intake));
-        operator.rightTrigger().whileTrue(CommandFactory.shootSpeaker(shooter, intake));
-        operator.start().onTrue(elevatorWrist.ampPosition());
-        operator.back().onTrue(elevatorWrist.homePosition());
+        // reset apriltag vision
+        operator.b().onTrue(new InstantCommand(() -> s_Swerve.resetPvInitialization()));
+        // spin up shooter
+        operator.leftTrigger().whileTrue(Commands.either(Commands.startEnd(() -> {
+            climber.setLeftPower(SmartDashboard.getNumber("Left Climber Power", 0));
+        }, () -> {
+            climber.setLeftPower(0);
+        }), shooter.shootSpeaker(),
+            () -> OperatorState.getCurrentShootingState() == OperatorState.ShootingState.kClimb));
+        // shoot note to speaker after being intaked
+        operator.rightTrigger().whileTrue(Commands.either(Commands.startEnd(() -> {
+            climber.setRightPower(SmartDashboard.getNumber("Left Climber Power", 0));
+        }, () -> {
+            climber.setRightPower(0);
+        }), CommandFactory.shootSpeaker(shooter, intake),
+            () -> OperatorState.getCurrentShootingState() == OperatorState.ShootingState.kClimb));
+        // set shooter to home preset position
+        operator.y().onTrue(elevatorWrist.homePosition());
+        // increment once through states list to next state
+        operator.povRight().onTrue(Commands.runOnce(() -> {
+            OperatorState.shootingIncrement();
+        }).ignoringDisable(true));
+        // go back one through the states list to the previous state
+        operator.povLeft().onTrue(Commands.runOnce(() -> {
+            OperatorState.shootingDecrement();
+        }).ignoringDisable(true));
+        // run action based on current state as incremented through operator states list
+        operator.a().whileTrue(new SelectCommand<OperatorState.ShootingState>(Map.of(
+            //
+            OperatorState.ShootingState.kAmp,
+            elevatorWrist.ampPosition().alongWith(new TeleopSwerve(s_Swerve, driver, true, false)),
+            //
+            OperatorState.ShootingState.kShootWhileMove,
+            new ShootWhileMoving(s_Swerve, driver).alongWith(elevatorWrist.followPosition(
+                () -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
+                () -> elevatorWrist.getAngleFromDistance(s_Swerve.getPose())))
+        //
+        ), OperatorState::getCurrentShootingState));
 
-        // operator.povDown().whileTrue(
-        // elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.AMP_HEIGHT,
-        // Constants.ElevatorWristConstants.SetPoints.AMP_ANGLE));
-        // operator.povUp().whileTrue(
-        // elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.TRAP_HEIGHT,
-        // Constants.ElevatorWristConstants.SetPoints.TRAP_ANGLE));
-
-        // // climber forward
-        // operator.a().whileTrue(new StartEndCommand(() -> {
-        // climber.setLeftPower(SmartDashboard.getNumber("Left Climber Power", 0));
-        // climber.setRightPower(SmartDashboard.getNumber("Right Climber Power", 0));
-        // }, () -> {
-        // climber.setLeftPower(0);
-        // climber.setRightPower(0);
-        // }, climber));
-        // // // climber backward
-        // operator.b().whileTrue(new StartEndCommand(() -> {
-        // climber.setLeftPower(-SmartDashboard.getNumber("Left Climber Power", 0));
-        // climber.setRightPower(-SmartDashboard.getNumber("Right Climber Power", 0));
-        // }, () -> {
-        // climber.setLeftPower(0);
-        // climber.setRightPower(0);
-        // }, climber));
-        // // // climber left
-        // operator.x().whileTrue(new StartEndCommand(() -> {
-        // climber.setLeftPower(-SmartDashboard.getNumber("Left Climber Power", 0));
-        // }, () -> {
-        // climber.setLeftPower(0);
-        // climber.setRightPower(0);
-        // }, climber));
-        // // // climber right
-        // operator.y().whileTrue(new StartEndCommand(() -> {
-        // climber.setRightPower(-SmartDashboard.getNumber("Right Climber Power", 0));
-        // }, () -> {
-        // climber.setLeftPower(0);
-        // climber.setRightPower(0);
-        // }, climber));
-
-        // // elevator forward
-        // driver.leftBumper().whileTrue(new StartEndCommand(() -> {
-        // elevatorWrist.setElevatorPower(-0.2);
-        // }, () -> {
-        // elevatorWrist.setElevatorPower(0.0);
-        // }));
+        /*
+         * <OperatorState.State>( List.of(OperatorState.State.kAmp,
+         * OperatorState.State.kShootWhileMove, OperatorState.State.kClimb),
+         * List.of(elevatorWrist.ampPosition(), new ShootWhileMoving(s_Swerve,
+         * driver).alongWith(elevatorWrist.followPosition( () ->
+         * Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT, () ->
+         * elevatorWrist.getAngleFromDistance(s_Swerve.getPose()))), elevatorWrist.ampPosition()),
+         * )));
+         */
+        // Toggle manual mode
+        operator.start().onTrue(Commands.runOnce(() -> {
+            OperatorState.toggleManualMode();
+        }).ignoringDisable(true));
+        // Flash LEDS to request amplify
+        operator.povUp().onTrue(new FlashingLEDColor(leds, Color.kGold).withTimeout(5));
+        // Flash LEDs to request (TODO)
+        operator.povDown().onTrue(new FlashingLEDColor(leds, Color.kBlue).withTimeout(5));
     }
 
     /**

@@ -37,6 +37,11 @@ public final class Constants {
     public static final int OPERATOR_ID = 1;
 
     /**
+     * How far in the future we should "lead" the aiming of the shooter for shooting while moving.
+     */
+    public static final double LEAD_GAIN = 0.3;
+
+    /**
      * Motor CAN id's.
      */
     public static final class Motors {
@@ -60,7 +65,8 @@ public final class Constants {
          * Intake and indexer motor constants
          */
         public static final class Intake {
-            public static final int INTAKE_MOTOR_ID = 14;
+            public static final int INTAKE_MOTOR_ID_LEFT = 14;
+            public static final int INTAKE_MOTOR_ID_RIGHT = 61;
             public static final int INDEXER_MOTOR_ID = 32;
         }
 
@@ -77,6 +83,9 @@ public final class Constants {
      * Camera offset constants.
      */
     public static class CameraConstants {
+
+        public static double XY_STD_DEV_COEFF = 0.005;
+        public static double THETA_STD_DEV_COEFF = 0.01;
 
         /**
          * Constants for Front Left Camera
@@ -102,8 +111,8 @@ public final class Constants {
             public static final double PITCH = Math.toRadians(5);
             public static final double YAW = Math.toRadians(-10);
             public static final Transform3d KCAMERA_TO_ROBOT =
-                new Transform3d(new Translation3d(Units.inchesToMeters(3.96),
-                    Units.inchesToMeters(11.013), Units.inchesToMeters(18.074)),
+                new Transform3d(new Translation3d(Units.inchesToMeters(11.013),
+                    Units.inchesToMeters(-10.96), Units.inchesToMeters(18.074)),
                     new Rotation3d(ROLL, PITCH, YAW)).inverse();
 
             public static final String CAMERA_NAME = "front-right";
@@ -148,6 +157,10 @@ public final class Constants {
      * Swerve Constants
      */
     public static final class Swerve {
+        public static final double AUTO_ROTATION_KP = 5.0;
+        public static final double AUTO_ROTATION_KI = 0.0;
+        public static final double AUTO_ROTATION_KD = 0.0;
+
 
         /**
          * Motor CAN id's. PID constants for Swerve Auto Holonomic Drive Controller.
@@ -241,7 +254,7 @@ public final class Constants {
 
         /* Swerve Profiling Values */
         /** Meters per Second */
-        public static final double maxSpeed = 3.5;
+        public static final double maxSpeed = 4;
         /** Radians per Second */
         public static final double maxAngularVelocity = 10.0;
 
@@ -292,8 +305,8 @@ public final class Constants {
         }
 
         public static final HolonomicPathFollowerConfig pathFollowerConfig =
-            new HolonomicPathFollowerConfig(new PIDConstants(5.0, 0, 0), // Translation constants
-                new PIDConstants(5.0, 0, 0), // Rotation constants
+            new HolonomicPathFollowerConfig(new PIDConstants(5.0, 0, 0),
+                new PIDConstants(AUTO_ROTATION_KP, AUTO_ROTATION_KI, AUTO_ROTATION_KD),
                 // Drive base radius (distance from center to furthest module)
                 maxSpeed, MOD0_MODOFFSET.getNorm(), new ReplanningConfig());
     }
@@ -484,6 +497,14 @@ public final class Constants {
         public static final double INDEX_MOTOR_STOP = 0;
         public static final boolean INTAKE_MOTOR_INVERTED = true;
 
+    }
+
+    /**
+     * LED constants.
+     */
+    public static final class LEDConstants {
+        public static final int PWM_PORT = 9;
+        public static final int LED_COUNT = 60;
     }
 
 }

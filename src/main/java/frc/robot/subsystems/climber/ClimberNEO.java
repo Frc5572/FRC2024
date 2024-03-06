@@ -3,6 +3,7 @@ package frc.robot.subsystems.climber;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkRelativeEncoder;
 import frc.robot.Constants;
 
 /**
@@ -13,8 +14,10 @@ public class ClimberNEO implements ClimberIO {
         new CANSparkMax(Constants.Motors.Climber.LEFT_MOTOR_ID, MotorType.kBrushless);
     public final CANSparkMax rightMotor =
         new CANSparkMax(Constants.Motors.Climber.RIGHT_MOTOR_ID, MotorType.kBrushless);
-    public final RelativeEncoder leftRelativeEncoder = leftMotor.getEncoder();
-    public final RelativeEncoder rightRelativeEncoder = rightMotor.getEncoder();
+    public final RelativeEncoder leftRelativeEncoder =
+        leftMotor.getEncoder(SparkRelativeEncoder.Type.kHallSensor, 42);
+    public final RelativeEncoder rightRelativeEncoder =
+        rightMotor.getEncoder(SparkRelativeEncoder.Type.kHallSensor, 42);
 
 
     /**
@@ -32,12 +35,12 @@ public class ClimberNEO implements ClimberIO {
 
     @Override
     public void updateInputs(ClimberInputs inputs) {
-        inputs.climberLeftMotorVoltage = leftMotor.getBusVoltage();
-        inputs.climberLeftMotorAmp = leftMotor.getOutputCurrent();
-        inputs.climberLeftMotorTemp = leftMotor.getMotorTemperature();
-        inputs.climberRightMotorVoltage = rightMotor.getBusVoltage();
-        inputs.climberRightMotorAmp = rightMotor.getOutputCurrent();
-        inputs.climberRightMotorTemp = rightMotor.getMotorTemperature();
+        // inputs.climberLeftMotorVoltage = leftMotor.getBusVoltage();
+        // inputs.climberLeftMotorAmp = leftMotor.getOutputCurrent();
+        // inputs.climberLeftMotorTemp = leftMotor.getMotorTemperature();
+        // inputs.climberRightMotorVoltage = rightMotor.getBusVoltage();
+        // inputs.climberRightMotorAmp = rightMotor.getOutputCurrent();
+        // inputs.climberRightMotorTemp = rightMotor.getMotorTemperature();
         inputs.leftMotorEncoderValue = leftRelativeEncoder.getPosition();
         inputs.rightMotorEncoderValue = rightRelativeEncoder.getPosition();
 
