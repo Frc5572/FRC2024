@@ -111,7 +111,7 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void robotPeriodic() {
-        robotContainer.operatorState.setString(OperatorState.getCurrentState().displayName);
+        robotContainer.operatorState.setString(OperatorState.getCurrentShootingState().displayName);
         robotContainer.operatorManualMode.setBoolean(OperatorState.manualModeEnabled());
         robotContainer.matchTime.setDouble(Timer.getMatchTime());
 
