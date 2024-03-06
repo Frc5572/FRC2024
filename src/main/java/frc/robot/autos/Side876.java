@@ -14,6 +14,7 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
 
+/** Auto which gets the 8, 7, and 6 note. */
 public class Side876 extends ParallelCommandGroup {
 
     private double wristTarget = 0.0;
@@ -24,6 +25,7 @@ public class Side876 extends ParallelCommandGroup {
         });
     }
 
+    /** Auto which gets the 8, 7, and 6 note. */
     public Side876(Swerve swerve, Shooter shooter, Intake intake, ElevatorWrist elevatorWrist) {
         addRequirements(swerve, shooter, intake, elevatorWrist);
 
