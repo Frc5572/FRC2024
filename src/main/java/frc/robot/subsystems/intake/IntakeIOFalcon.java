@@ -1,7 +1,10 @@
 package frc.robot.subsystems.intake;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
@@ -25,6 +28,7 @@ public class IntakeIOFalcon implements IntakeIO {
 
     private final DutyCycleOut indexerDutyCycleOut = new DutyCycleOut(0);
     private final DigitalInput beamBrake = new DigitalInput(8);
+    private TalonFXConfiguration indexerConfig = new TalonFXConfiguration();
 
     /**
      * Intake IO Layer with real motors and sensors
@@ -35,7 +39,10 @@ public class IntakeIOFalcon implements IntakeIO {
         intakeMotorLeft.setInverted(Constants.IntakeConstants.INTAKE_MOTOR_INVERTED);
         intakeMotorLeft.setIdleMode(IdleMode.kCoast);
         intakeMotorRight.setInverted(false);
-        indexerMotor.setInverted(true);
+        indexerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        indexerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        indexerMotor.getConfigurator().apply(indexerConfig);
+
     }
 
     @Override

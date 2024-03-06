@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.4679560875543836,
+        "x": 2.8492218549776025,
         "y": 5.5696358
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.4679560875543833,
-        "y": 5.5696358
+        "x": 2.4331083183480136,
+        "y": 6.234261587672259
       },
-      "isLocked": true,
-      "linkedName": null
+      "isLocked": false,
+      "linkedName": "resnick 4 shoot p2"
     },
     {
       "anchor": {
-        "x": 2.5891508945841095,
-        "y": 5.572604296850804
+        "x": 2.5949302492595203,
+        "y": 6.792048133362514
       },
       "prevControl": {
-        "x": 1.5891508945841095,
-        "y": 5.572604296850804
+        "x": 2.1961547766561638,
+        "y": 6.491521690241145
       },
       "nextControl": null,
-      "isLocked": true,
-      "linkedName": "resnick 4 shoot p2"
+      "isLocked": false,
+      "linkedName": "resnick 2 shoot p1"
     }
   ],
   "rotationTargets": [],
@@ -39,7 +39,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0,
+    "rotation": -150.0,
     "rotateFast": false
   },
   "reversed": false,

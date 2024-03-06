@@ -43,11 +43,13 @@ public class Resnick4 extends SequentialCommandGroup {
 
         Supplier<Integer> numNotes = () -> RobotContainer.numNoteChooser.getSelected();
 
-        PathPlannerPath path1 = PathPlannerPath.fromPathFile("1 - Resnick 4 Intake P2");
-        PathPlannerPath path2 = PathPlannerPath.fromPathFile("2 - Resnick 4 Intake P1");
+        PathPlannerPath path1 = PathPlannerPath.fromPathFile("1 - Resnick 4 Shoot Initial");
+        PathPlannerPath path2 = PathPlannerPath.fromPathFile("2 - Resnick 4 Intake P2");
+        PathPlannerPath path3 = PathPlannerPath.fromPathFile("3 - Resnick 4 Intake P1");
 
         Command followPath1 = AutoBuilder.followPath(path1);
         Command followPath2 = AutoBuilder.followPath(path2);
+        Command followPath3 = AutoBuilder.followPath(path3);
 
         Command resetPosition = Commands.runOnce(() -> {
             Pose2d initialState =
@@ -55,18 +57,17 @@ public class Resnick4 extends SequentialCommandGroup {
             swerveDrive.resetOdometry(initialState);
         });
 
-        SequentialCommandGroup part0 = Commands.waitUntil(() -> elevatorWrist.atGoal())
-            .andThen(CommandFactory.Auto.runIndexer(intake));
-        SequentialCommandGroup part1 = followPath1.andThen(CommandFactory.Auto.runIndexer(intake));
-        SequentialCommandGroup part2 = followPath2.alongWith(CommandFactory.intakeNote(intake))
-            // .andThen(CommandFactory.Auto.waitForIntake(intake))
-            .andThen(CommandFactory.Auto.runIndexer(intake));
-
-        SequentialCommandGroup followPaths = part0.andThen(part1).andThen(part2);
 
         Command autoAlignWrist = CommandFactory.autoAngleWristSpeaker(elevatorWrist, swerveDrive);
         Command shootCommand = shooter.shootSpeaker();
 
+        SequentialCommandGroup part1 = followPath1.andThen(Commands.waitSeconds(1))
+            .andThen(CommandFactory.Auto.runIndexer(intake));
+
+        SequentialCommandGroup part2 = followPath2.alongWith(CommandFactory.intakeNote(intake))
+            .andThen(CommandFactory.Auto.runIndexer(intake));
+
+        SequentialCommandGroup followPaths = part1.andThen(part2).andThen(Commands.waitSeconds(5));
         addCommands(resetPosition, followPaths.alongWith(autoAlignWrist, shootCommand));
     }
 

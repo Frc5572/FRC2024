@@ -112,6 +112,7 @@ public class RobotContainer {
         autoChooser.addOption("Resnick 1", "Resnick 1");
         autoChooser.addOption("Resnick 2", "Resnick 2");
         autoChooser.addOption("Resnick 3", "Resnick 3");
+        autoChooser.addOption("Resnick 4", "Resnick 4");
         numNoteChooser.setDefaultOption("0", 0);
         for (int i = 0; i < 7; i++) {
             numNoteChooser.addOption(String.valueOf(i), i);
