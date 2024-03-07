@@ -38,6 +38,7 @@ public class Resnick1 extends SequentialCommandGroup {
         this.intake = intake;
         this.shooter = shooter;
         addRequirements(swerveDrive);
+        // SmartDashboard.putBoolean("Auto Status", false);
 
 
         PathPlannerPath path1 = PathPlannerPath.fromPathFile("1 - Resnick 1 Shoot Initial Note");
@@ -55,7 +56,9 @@ public class Resnick1 extends SequentialCommandGroup {
                 FieldConstants.allianceFlip(path1.getPreviewStartingHolonomicPose());
             swerveDrive.resetOdometry(initialState);
         });
-        SequentialCommandGroup part1 = followPath1.andThen(CommandFactory.Auto.runIndexer(intake));
+        SequentialCommandGroup part1 = followPath1
+            // .andThen(Commands.runOnce(() -> SmartDashboard.putBoolean("Auto Status", true)))
+            .andThen(CommandFactory.Auto.runIndexer(intake));
         SequentialCommandGroup part2 = followPath2.alongWith(CommandFactory.intakeNote(intake))
             // .andThen(CommandFactory.Auto.waitForIntake(intake))
             .andThen(CommandFactory.Auto.runIndexer(intake));

@@ -80,7 +80,7 @@ public class ElevatorWrist extends SubsystemBase {
         radiusToAngle.put(4.32, 33.43);
         radiusToAngle.put(4.21, 34.11);
         radiusToAngle.put(3.99, 33.76);
-        radiusToAngle.put(2.59, 40.7);
+        radiusToAngle.put(2.59, 40.0);
         radiusToAngle.put(1.72, 48.75);
     }
 
