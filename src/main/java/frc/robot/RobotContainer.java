@@ -91,7 +91,7 @@ public class RobotContainer {
     /* Controllers */
     public final CommandXboxController driver = new CommandXboxController(Constants.DRIVER_ID);
     private final CommandXboxController operator = new CommandXboxController(Constants.OPERATOR_ID);
-    private final CommandXboxController test = new CommandXboxController(4);
+    // private final CommandXboxController test = new CommandXboxController(4);
 
 
 
@@ -176,6 +176,10 @@ public class RobotContainer {
      * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
+        Trigger climbState =
+            new Trigger(() -> OperatorState.getCurrentState() == OperatorState.State.kClimb);
+        Trigger mannualMode = new Trigger(() -> OperatorState.manualModeEnabled());
+
         /* Driver Buttons */
         driver.y().onTrue(new InstantCommand(() -> s_Swerve.resetFieldRelativeOffset()));
         driver.start().onTrue(
@@ -192,19 +196,28 @@ public class RobotContainer {
         // reset apriltag vision
         operator.b().onTrue(new InstantCommand(() -> s_Swerve.resetPvInitialization()));
         // spin up shooter
-        operator.leftTrigger().whileTrue(Commands.either(Commands.startEnd(() -> {
-            climber.setLeftPower(0.4);
+        operator.leftTrigger().and(climbState).and(mannualMode).whileTrue(Commands.startEnd(() -> {
+            climber.setLeftPower(0.8);
         }, () -> {
             climber.setLeftPower(0);
-        }), shooter.shootSpeaker(),
-            () -> OperatorState.getCurrentState() == OperatorState.State.kClimb));
+        }));
+        operator.leftTrigger().and(climbState.negate()).whileTrue(shooter.shootSpeaker());
         // shoot note to speaker after being intaked
-        operator.rightTrigger().whileTrue(Commands.either(Commands.startEnd(() -> {
-            climber.setRightPower(0.4);
+        operator.rightTrigger().and(climbState).and(mannualMode).whileTrue(Commands.startEnd(() -> {
+            climber.setRightPower(0.8);
         }, () -> {
             climber.setRightPower(0);
-        }), CommandFactory.shootSpeaker(shooter, intake),
-            () -> OperatorState.getCurrentState() == OperatorState.State.kClimb));
+        }));
+        operator.rightTrigger().and(climbState.negate())
+            .whileTrue(CommandFactory.shootSpeaker(shooter, intake));
+        operator.rightTrigger().and(climbState).and(mannualMode.negate())
+            .whileTrue(Commands.startEnd(() -> {
+                climber.setRightPower(0.8);
+                climber.setLeftPower(0.8);
+            }, () -> {
+                climber.setRightPower(0);
+                climber.setLeftPower(0);
+            }));
         // set shooter to home preset position
         operator.y().onTrue(elevatorWrist.homePosition());
         // increment once through states list to next state
@@ -255,19 +268,17 @@ public class RobotContainer {
 
 
 
-        test.leftTrigger().whileTrue(Commands.either(Commands.startEnd(() -> {
-            climber.setLeftPower(-0.4);
-        }, () -> {
-            climber.setLeftPower(0);
-        }), shooter.shootSpeaker(),
-            () -> OperatorState.getCurrentState() == OperatorState.State.kClimb));
-        // shoot note to speaker after being intaked
-        test.rightTrigger().whileTrue(Commands.either(Commands.startEnd(() -> {
-            climber.setRightPower(-0.4);
-        }, () -> {
-            climber.setRightPower(0);
-        }), CommandFactory.shootSpeaker(shooter, intake),
-            () -> OperatorState.getCurrentState() == OperatorState.State.kClimb));
+        // test.leftTrigger().whileTrue(Commands.startEnd(() -> {
+        // climber.setLeftPower(-1);
+        // }, () -> {
+        // climber.setLeftPower(0);
+        // }));
+        // // shoot note to speaker after being intaked
+        // test.rightTrigger().whileTrue(Commands.startEnd(() -> {
+        // climber.setRightPower(-1);
+        // }, () -> {
+        // climber.setRightPower(0);
+        // }));
     }
 
     /**
