@@ -5,6 +5,9 @@ import java.util.Map;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -17,15 +20,21 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.lib.util.FieldConstants;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
+import frc.robot.commands.CommandFactory;
 import frc.robot.commands.FlashingLEDColor;
+import frc.robot.commands.MoveToPos;
 import frc.robot.commands.MovingColorLEDs;
+import frc.robot.commands.ShootWhileMoving;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.climber.Climber;
@@ -87,7 +96,7 @@ public class RobotContainer {
     /* Controllers */
     public final CommandXboxController driver = new CommandXboxController(Constants.DRIVER_ID);
     private final CommandXboxController operator = new CommandXboxController(Constants.OPERATOR_ID);
-    // private final CommandXboxController test = new CommandXboxController(4);
+    private final CommandXboxController test = new CommandXboxController(4);
 
 
 
@@ -177,7 +186,8 @@ public class RobotContainer {
         driver.start().onTrue(
             new InstantCommand(() -> s_Swerve.resetPvInitialization()).ignoringDisable(true));
         // intake forward
-        driver.rightTrigger().whileTrue(intake.runIntakeMotor(1, .20));
+        driver.rightTrigger()
+            .whileTrue(intake.runIntakeMotor(1, .20).onlyIf(() -> elevatorWrist.elevatorAtHome()));
         // intake backward
         driver.leftTrigger().whileTrue(intake.runIntakeMotorNonStop(-1, -.20));
 
@@ -188,14 +198,14 @@ public class RobotContainer {
         operator.b().onTrue(new InstantCommand(() -> s_Swerve.resetPvInitialization()));
         // spin up shooter
         operator.leftTrigger().whileTrue(Commands.either(Commands.startEnd(() -> {
-            climber.setLeftPower(SmartDashboard.getNumber("Left Climber Power", 0));
+            climber.setLeftPower(0.4);
         }, () -> {
             climber.setLeftPower(0);
         }), shooter.shootSpeaker(),
             () -> OperatorState.getCurrentState() == OperatorState.State.kClimb));
         // shoot note to speaker after being intaked
         operator.rightTrigger().whileTrue(Commands.either(Commands.startEnd(() -> {
-            climber.setRightPower(SmartDashboard.getNumber("Left Climber Power", 0));
+            climber.setRightPower(0.4);
         }, () -> {
             climber.setRightPower(0);
         }), CommandFactory.shootSpeaker(shooter, intake),
@@ -220,7 +230,11 @@ public class RobotContainer {
                         FieldConstants.ampCenter.plus(
                             new Translation2d(-Units.inchesToMeters(5), -Units.inchesToMeters(11))),
                         Rotation2d.fromDegrees(90)),
-                    true));
+                    true)),
+            //
+            OperatorState.State.kClimb,
+            elevatorWrist.climbPosition()
+                .alongWith(new TeleopSwerve(s_Swerve, driver, true, false)),
             //
             OperatorState.State.kShootWhileMove,
             new ShootWhileMoving(s_Swerve, driver).alongWith(elevatorWrist.followPosition(
@@ -246,6 +260,22 @@ public class RobotContainer {
         operator.povUp().onTrue(new FlashingLEDColor(leds, Color.kGold).withTimeout(5));
         // Flash LEDs to request (TODO)
         operator.povDown().onTrue(new FlashingLEDColor(leds, Color.kBlue).withTimeout(5));
+
+
+
+        test.leftTrigger().whileTrue(Commands.either(Commands.startEnd(() -> {
+            climber.setLeftPower(-0.4);
+        }, () -> {
+            climber.setLeftPower(0);
+        }), shooter.shootSpeaker(),
+            () -> OperatorState.getCurrentState() == OperatorState.State.kClimb));
+        // shoot note to speaker after being intaked
+        test.rightTrigger().whileTrue(Commands.either(Commands.startEnd(() -> {
+            climber.setRightPower(-0.4);
+        }, () -> {
+            climber.setRightPower(0);
+        }), CommandFactory.shootSpeaker(shooter, intake),
+            () -> OperatorState.getCurrentState() == OperatorState.State.kClimb));
     }
 
     /**
