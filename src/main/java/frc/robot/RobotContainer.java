@@ -1,6 +1,10 @@
 package frc.robot;
 
 import java.util.Map;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -18,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.lib.util.FieldConstants;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
@@ -27,6 +32,7 @@ import frc.robot.autos.Resnick3;
 import frc.robot.autos.Resnick4;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.FlashingLEDColor;
+import frc.robot.commands.MoveToPos;
 import frc.robot.commands.MovingColorLEDs;
 import frc.robot.commands.ShootWhileMoving;
 import frc.robot.commands.TeleopSwerve;
@@ -216,10 +222,13 @@ public class RobotContainer {
         operator.a().whileTrue(new SelectCommand<OperatorState.State>(Map.of(
             //
             OperatorState.State.kAmp,
-            Commands
-                .either(elevatorWrist.ampPosition(), Commands.none(),
-                    () -> !intake.getSensorStatus())
-                .alongWith(new TeleopSwerve(s_Swerve, driver, true, false)),
+            elevatorWrist.ampPosition()
+                .alongWith(new MoveToPos(s_Swerve,
+                    () -> new Pose2d(
+                        FieldConstants.ampCenter.plus(
+                            new Translation2d(-Units.inchesToMeters(5), -Units.inchesToMeters(11))),
+                        Rotation2d.fromDegrees(90)),
+                    true)),
             //
             OperatorState.State.kClimb,
             elevatorWrist.climbPosition()
