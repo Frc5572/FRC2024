@@ -231,6 +231,18 @@ public class ElevatorWrist extends SubsystemBase {
     }
 
     /**
+     * Set elevator and wrist to amp position. Performs two steps to avoid colliding with
+     * electronics box.
+     */
+    public Command climbPosition() {
+        return goToPosition(Constants.ElevatorWristConstants.SetPoints.CLIMBING_HEIGHT,
+            Constants.ElevatorWristConstants.SetPoints.HOME_ANGLE).until(() -> getHeight() > 32)
+                .withTimeout(2)
+                .andThen(goToPosition(Constants.ElevatorWristConstants.SetPoints.CLIMBING_HEIGHT,
+                    Constants.ElevatorWristConstants.SetPoints.CLIMBING_ANGLE).withTimeout(2));
+    }
+
+    /**
      * Set elevator to home position which can fit under the stage. Performs two steps to avoid
      * colliding with electronics box.
      */
