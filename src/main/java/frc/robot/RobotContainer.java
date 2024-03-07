@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -92,7 +91,7 @@ public class RobotContainer {
     /* Controllers */
     public final CommandXboxController driver = new CommandXboxController(Constants.DRIVER_ID);
     private final CommandXboxController operator = new CommandXboxController(Constants.OPERATOR_ID);
-    // private final CommandXboxController test = new CommandXboxController(4);
+    private final CommandXboxController test = new CommandXboxController(4);
 
 
 
@@ -179,7 +178,8 @@ public class RobotContainer {
         driver.start().onTrue(
             new InstantCommand(() -> s_Swerve.resetPvInitialization()).ignoringDisable(true));
         // intake forward
-        driver.rightTrigger().whileTrue(CommandFactory.intakeNote(intake));
+        driver.rightTrigger().whileTrue(
+            CommandFactory.intakeNote(intake).onlyIf(() -> elevatorWrist.elevatorAtHome()));
         // intake backward
         driver.leftTrigger().whileTrue(intake.runIntakeMotorNonStop(-1, -.20));
 
@@ -190,14 +190,14 @@ public class RobotContainer {
         operator.b().onTrue(new InstantCommand(() -> s_Swerve.resetPvInitialization()));
         // spin up shooter
         operator.leftTrigger().whileTrue(Commands.either(Commands.startEnd(() -> {
-            climber.setLeftPower(SmartDashboard.getNumber("Left Climber Power", 0));
+            climber.setLeftPower(0.4);
         }, () -> {
             climber.setLeftPower(0);
         }), shooter.shootSpeaker(),
             () -> OperatorState.getCurrentState() == OperatorState.State.kClimb));
         // shoot note to speaker after being intaked
         operator.rightTrigger().whileTrue(Commands.either(Commands.startEnd(() -> {
-            climber.setRightPower(SmartDashboard.getNumber("Left Climber Power", 0));
+            climber.setRightPower(0.4);
         }, () -> {
             climber.setRightPower(0);
         }), CommandFactory.shootSpeaker(shooter, intake),
@@ -216,7 +216,14 @@ public class RobotContainer {
         operator.a().whileTrue(new SelectCommand<OperatorState.State>(Map.of(
             //
             OperatorState.State.kAmp,
-            elevatorWrist.ampPosition().alongWith(new TeleopSwerve(s_Swerve, driver, true, false)),
+            Commands
+                .either(elevatorWrist.ampPosition(), Commands.none(),
+                    () -> !intake.getSensorStatus())
+                .alongWith(new TeleopSwerve(s_Swerve, driver, true, false)),
+            //
+            OperatorState.State.kClimb,
+            elevatorWrist.climbPosition()
+                .alongWith(new TeleopSwerve(s_Swerve, driver, true, false)),
             //
             OperatorState.State.kShootWhileMove,
             new ShootWhileMoving(s_Swerve, driver).alongWith(elevatorWrist.followPosition(
@@ -242,6 +249,22 @@ public class RobotContainer {
         operator.povUp().onTrue(new FlashingLEDColor(leds, Color.kGold).withTimeout(5));
         // Flash LEDs to request (TODO)
         operator.povDown().onTrue(new FlashingLEDColor(leds, Color.kBlue).withTimeout(5));
+
+
+
+        test.leftTrigger().whileTrue(Commands.either(Commands.startEnd(() -> {
+            climber.setLeftPower(-0.4);
+        }, () -> {
+            climber.setLeftPower(0);
+        }), shooter.shootSpeaker(),
+            () -> OperatorState.getCurrentState() == OperatorState.State.kClimb));
+        // shoot note to speaker after being intaked
+        test.rightTrigger().whileTrue(Commands.either(Commands.startEnd(() -> {
+            climber.setRightPower(-0.4);
+        }, () -> {
+            climber.setRightPower(0);
+        }), CommandFactory.shootSpeaker(shooter, intake),
+            () -> OperatorState.getCurrentState() == OperatorState.State.kClimb));
     }
 
     /**

@@ -27,6 +27,7 @@ public class IntakeIOFalcon implements IntakeIO {
     private final TalonFX indexerMotor = new TalonFX(Constants.Motors.Intake.INDEXER_MOTOR_ID);
 
     private final DutyCycleOut indexerDutyCycleOut = new DutyCycleOut(0);
+    private final TalonFXConfiguration indexerConfig = new TalonFXConfiguration();
     private final DigitalInput beamBrake = new DigitalInput(8);
     private TalonFXConfiguration indexerConfig = new TalonFXConfiguration();
 
@@ -42,7 +43,6 @@ public class IntakeIOFalcon implements IntakeIO {
         indexerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         indexerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         indexerMotor.getConfigurator().apply(indexerConfig);
-
     }
 
     @Override
