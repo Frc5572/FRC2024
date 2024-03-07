@@ -4,6 +4,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -27,7 +28,6 @@ public class Side876 extends ParallelCommandGroup {
 
     /** Auto which gets the 8, 7, and 6 note. */
     public Side876(Swerve swerve, Shooter shooter, Intake intake, ElevatorWrist elevatorWrist) {
-        addRequirements(swerve, shooter, intake, elevatorWrist);
 
         PathPlannerPath path1 = PathPlannerPath.fromChoreoTrajectory("876p1");
         PathPlannerPath path2 = PathPlannerPath.fromChoreoTrajectory("876p2");
@@ -41,7 +41,8 @@ public class Side876 extends ParallelCommandGroup {
 
         Command resetPosition = Commands.runOnce(() -> {
             Pose2d initialState =
-                FieldConstants.allianceFlip(path1.getPreviewStartingHolonomicPose());
+                FieldConstants.allianceFlip(path1.getPreviewStartingHolonomicPose()
+                    .plus(new Transform2d(0, 0, Rotation2d.fromDegrees(180))));
             swerve.resetOdometry(initialState);
         });
 

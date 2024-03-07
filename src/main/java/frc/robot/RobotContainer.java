@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
+import frc.robot.autos.Side876;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.FlashingLEDColor;
 import frc.robot.commands.MovingColorLEDs;
@@ -108,6 +109,7 @@ public class RobotContainer {
      */
     public RobotContainer(RobotRunType runtimeType) {
         autoChooser.setDefaultOption("Wait 1 Second", "wait");
+        autoChooser.addOption("wilson test", "wilson");
         SmartDashboard.putNumber("Intake Power", 0);
         SmartDashboard.putNumber("Left Climber Power", 0);
         SmartDashboard.putNumber("Right Climber Power", 0);
@@ -262,6 +264,9 @@ public class RobotContainer {
                 autocommand = new InstantCommand(() -> s_Swerve.resetOdometry(initialState))
                     .andThen(new PathPlannerAuto("New Auto"));
 
+                break;
+            case "wilson":
+                autocommand = new Side876(s_Swerve, shooter, intake, elevatorWrist);
                 break;
             default:
                 autocommand = new WaitCommand(1.0);
