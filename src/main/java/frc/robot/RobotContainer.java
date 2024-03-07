@@ -5,9 +5,6 @@ import java.util.Map;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -20,21 +17,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.lib.util.FieldConstants;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
-import frc.robot.commands.CommandFactory;
 import frc.robot.commands.FlashingLEDColor;
-import frc.robot.commands.MoveToPos;
 import frc.robot.commands.MovingColorLEDs;
-import frc.robot.commands.ShootWhileMoving;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.climber.Climber;
@@ -223,11 +214,13 @@ public class RobotContainer {
         operator.a().whileTrue(new SelectCommand<OperatorState.State>(Map.of(
             //
             OperatorState.State.kAmp,
-            elevatorWrist.ampPosition().alongWith(new MoveToPos(s_Swerve,
-                () -> new Pose2d(
-                    FieldConstants.ampCenter.plus(new Translation2d(0, -Units.inchesToMeters(20))),
-                    Rotation2d.fromDegrees(90)),
-                true)).andThen(CommandFactory.spit(shooter, intake).withTimeout(0.5)),
+            elevatorWrist.ampPosition()
+                .alongWith(new MoveToPos(s_Swerve,
+                    () -> new Pose2d(
+                        FieldConstants.ampCenter.plus(
+                            new Translation2d(-Units.inchesToMeters(5), -Units.inchesToMeters(11))),
+                        Rotation2d.fromDegrees(90)),
+                    true));
             //
             OperatorState.State.kShootWhileMove,
             new ShootWhileMoving(s_Swerve, driver).alongWith(elevatorWrist.followPosition(
