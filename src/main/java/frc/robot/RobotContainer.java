@@ -2,9 +2,6 @@ package frc.robot;
 
 import java.util.Map;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -22,7 +19,6 @@ import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.lib.util.FieldConstants;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
@@ -32,7 +28,6 @@ import frc.robot.autos.Resnick3;
 import frc.robot.autos.Resnick4;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.FlashingLEDColor;
-import frc.robot.commands.MoveToPos;
 import frc.robot.commands.MovingColorLEDs;
 import frc.robot.commands.ShootWhileMoving;
 import frc.robot.commands.TeleopSwerve;
@@ -97,7 +92,7 @@ public class RobotContainer {
     /* Controllers */
     public final CommandXboxController driver = new CommandXboxController(Constants.DRIVER_ID);
     private final CommandXboxController operator = new CommandXboxController(Constants.OPERATOR_ID);
-    private final CommandXboxController test = new CommandXboxController(4);
+    // private final CommandXboxController test = new CommandXboxController(4);
 
 
 
@@ -179,6 +174,10 @@ public class RobotContainer {
      * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
+        Trigger climbState =
+            new Trigger(() -> OperatorState.getCurrentState() == OperatorState.State.kClimb);
+        Trigger mannualMode = new Trigger(() -> OperatorState.manualModeEnabled());
+
         /* Driver Buttons */
         driver.y().onTrue(new InstantCommand(() -> s_Swerve.resetFieldRelativeOffset()));
         driver.start().onTrue(
@@ -195,19 +194,28 @@ public class RobotContainer {
         // reset apriltag vision
         operator.b().onTrue(new InstantCommand(() -> s_Swerve.resetPvInitialization()));
         // spin up shooter
-        operator.leftTrigger().whileTrue(Commands.either(Commands.startEnd(() -> {
-            climber.setLeftPower(0.4);
+        operator.leftTrigger().and(climbState).and(mannualMode).whileTrue(Commands.startEnd(() -> {
+            climber.setLeftPower(0.8);
         }, () -> {
             climber.setLeftPower(0);
-        }), shooter.shootSpeaker(),
-            () -> OperatorState.getCurrentState() == OperatorState.State.kClimb));
+        }));
+        operator.leftTrigger().and(climbState.negate()).whileTrue(shooter.shootSpeaker());
         // shoot note to speaker after being intaked
-        operator.rightTrigger().whileTrue(Commands.either(Commands.startEnd(() -> {
-            climber.setRightPower(0.4);
+        operator.rightTrigger().and(climbState).and(mannualMode).whileTrue(Commands.startEnd(() -> {
+            climber.setRightPower(0.8);
         }, () -> {
             climber.setRightPower(0);
-        }), CommandFactory.shootSpeaker(shooter, intake),
-            () -> OperatorState.getCurrentState() == OperatorState.State.kClimb));
+        }));
+        operator.rightTrigger().and(climbState.negate())
+            .whileTrue(CommandFactory.shootSpeaker(shooter, intake));
+        operator.rightTrigger().and(climbState).and(mannualMode.negate())
+            .whileTrue(Commands.startEnd(() -> {
+                climber.setRightPower(0.8);
+                climber.setLeftPower(0.8);
+            }, () -> {
+                climber.setRightPower(0);
+                climber.setLeftPower(0);
+            }));
         // set shooter to home preset position
         operator.y().onTrue(elevatorWrist.homePosition());
         // increment once through states list to next state
@@ -222,13 +230,10 @@ public class RobotContainer {
         operator.a().whileTrue(new SelectCommand<OperatorState.State>(Map.of(
             //
             OperatorState.State.kAmp,
-            elevatorWrist.ampPosition()
-                .alongWith(new MoveToPos(s_Swerve,
-                    () -> new Pose2d(
-                        FieldConstants.ampCenter.plus(
-                            new Translation2d(-Units.inchesToMeters(5), -Units.inchesToMeters(11))),
-                        Rotation2d.fromDegrees(90)),
-                    true)),
+            Commands
+                .either(elevatorWrist.ampPosition(), Commands.none(),
+                    () -> !intake.getSensorStatus())
+                .alongWith(new TeleopSwerve(s_Swerve, driver, true, false)),
             //
             OperatorState.State.kClimb,
             elevatorWrist.climbPosition()
@@ -261,19 +266,17 @@ public class RobotContainer {
 
 
 
-        test.leftTrigger().whileTrue(Commands.either(Commands.startEnd(() -> {
-            climber.setLeftPower(-0.4);
-        }, () -> {
-            climber.setLeftPower(0);
-        }), shooter.shootSpeaker(),
-            () -> OperatorState.getCurrentState() == OperatorState.State.kClimb));
-        // shoot note to speaker after being intaked
-        test.rightTrigger().whileTrue(Commands.either(Commands.startEnd(() -> {
-            climber.setRightPower(-0.4);
-        }, () -> {
-            climber.setRightPower(0);
-        }), CommandFactory.shootSpeaker(shooter, intake),
-            () -> OperatorState.getCurrentState() == OperatorState.State.kClimb));
+        // test.leftTrigger().whileTrue(Commands.startEnd(() -> {
+        // climber.setLeftPower(-1);
+        // }, () -> {
+        // climber.setLeftPower(0);
+        // }));
+        // // shoot note to speaker after being intaked
+        // test.rightTrigger().whileTrue(Commands.startEnd(() -> {
+        // climber.setRightPower(-1);
+        // }, () -> {
+        // climber.setRightPower(0);
+        // }));
     }
 
     /**
