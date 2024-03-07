@@ -323,6 +323,7 @@ public final class Constants {
         public static final double CLIMBER_KS = 0.1;
         public static final double CLIMBER_KG = 0.1;
         public static final double CLIMBER_KV = 0.1;
+        public static final double CLIMBER_POWER = 0.8;
 
         public static final double CLIMBING_DISTANCE = Units.inchesToMeters(15);
         public static final double MAX_CLIMBING_DISTANCE = Units.inchesToMeters(21);

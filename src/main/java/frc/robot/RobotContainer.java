@@ -1,7 +1,6 @@
 package frc.robot;
 
 import java.util.Map;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -105,6 +104,11 @@ public class RobotContainer {
     public Climber climber;
     private LEDs leds = new LEDs(Constants.LEDConstants.LED_COUNT, Constants.LEDConstants.PWM_PORT);
 
+    private Trigger gotNote = new Trigger(() -> !this.intake.getSensorStatus());
+    private Trigger climbState =
+        new Trigger(() -> OperatorState.getCurrentState() == OperatorState.State.kClimb);
+    private Trigger mannualMode = new Trigger(() -> OperatorState.manualModeEnabled());
+
     /**
      */
     public RobotContainer(RobotRunType runtimeType) {
@@ -163,8 +167,6 @@ public class RobotContainer {
         leds.setDefaultCommand(new MovingColorLEDs(leds, Color.kRed, 4, false));
         // Configure the button bindings
         configureButtonBindings();
-        Trigger gotNote = new Trigger(() -> !this.intake.getSensorStatus());
-        gotNote.onTrue(new FlashingLEDColor(leds, Color.kGreen).withTimeout(3));
     }
 
     /**
@@ -174,9 +176,7 @@ public class RobotContainer {
      * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
-        Trigger climbState =
-            new Trigger(() -> OperatorState.getCurrentState() == OperatorState.State.kClimb);
-        Trigger mannualMode = new Trigger(() -> OperatorState.manualModeEnabled());
+        gotNote.onTrue(new FlashingLEDColor(leds, Color.kGreen).withTimeout(3));
 
         /* Driver Buttons */
         driver.y().onTrue(new InstantCommand(() -> s_Swerve.resetFieldRelativeOffset()));
@@ -195,14 +195,14 @@ public class RobotContainer {
         operator.b().onTrue(new InstantCommand(() -> s_Swerve.resetPvInitialization()));
         // spin up shooter
         operator.leftTrigger().and(climbState).and(mannualMode).whileTrue(Commands.startEnd(() -> {
-            climber.setLeftPower(0.8);
+            climber.setLeftPower(Constants.ClimberConstants.CLIMBER_POWER);
         }, () -> {
             climber.setLeftPower(0);
         }));
         operator.leftTrigger().and(climbState.negate()).whileTrue(shooter.shootSpeaker());
         // shoot note to speaker after being intaked
         operator.rightTrigger().and(climbState).and(mannualMode).whileTrue(Commands.startEnd(() -> {
-            climber.setRightPower(0.8);
+            climber.setRightPower(Constants.ClimberConstants.CLIMBER_POWER);
         }, () -> {
             climber.setRightPower(0);
         }));
@@ -210,8 +210,8 @@ public class RobotContainer {
             .whileTrue(CommandFactory.shootSpeaker(shooter, intake));
         operator.rightTrigger().and(climbState).and(mannualMode.negate())
             .whileTrue(Commands.startEnd(() -> {
-                climber.setRightPower(0.8);
-                climber.setLeftPower(0.8);
+                climber.setRightPower(Constants.ClimberConstants.CLIMBER_POWER);
+                climber.setLeftPower(Constants.ClimberConstants.CLIMBER_POWER);
             }, () -> {
                 climber.setRightPower(0);
                 climber.setLeftPower(0);
@@ -266,13 +266,13 @@ public class RobotContainer {
 
 
 
-        // test.leftTrigger().whileTrue(Commands.startEnd(() -> {
+        // operator.leftTrigger().and(operator.back()).whileTrue(Commands.startEnd(() -> {
         // climber.setLeftPower(-1);
         // }, () -> {
         // climber.setLeftPower(0);
         // }));
         // // shoot note to speaker after being intaked
-        // test.rightTrigger().whileTrue(Commands.startEnd(() -> {
+        // operator.rightTrigger().and(operator.back()).whileTrue(Commands.startEnd(() -> {
         // climber.setRightPower(-1);
         // }, () -> {
         // climber.setRightPower(0);

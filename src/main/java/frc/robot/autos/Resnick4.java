@@ -4,12 +4,14 @@ import java.util.function.Supplier;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.lib.util.FieldConstants;
 import frc.robot.RobotContainer;
 import frc.robot.commands.CommandFactory;
+import frc.robot.commands.MoveToPos;
 import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
@@ -39,13 +41,17 @@ public class Resnick4 extends SequentialCommandGroup {
         this.elevatorWrist = elevatorWrist;
         this.intake = intake;
         this.shooter = shooter;
-        addRequirements(swerveDrive);
+        // addRequirements(swerveDrive);
 
         Supplier<Integer> numNotes = () -> RobotContainer.numNoteChooser.getSelected();
 
         PathPlannerPath path1 = PathPlannerPath.fromPathFile("1 - Resnick 4 Shoot Initial");
         PathPlannerPath path2 = PathPlannerPath.fromPathFile("2 - Resnick 4 Intake P2");
         PathPlannerPath path3 = PathPlannerPath.fromPathFile("3 - Resnick 4 Intake P1");
+
+        Command moveToPose1 = new MoveToPos(swerveDrive, () -> new Pose2d(1.94,
+            FieldConstants.Speaker.centerSpeakerOpening.getY(), Rotation2d.fromDegrees(180.00)),
+            true);
 
         Command followPath1 = AutoBuilder.followPath(path1);
         Command followPath2 = AutoBuilder.followPath(path2);

@@ -3,11 +3,13 @@ package frc.robot.autos;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.lib.util.FieldConstants;
 import frc.robot.commands.CommandFactory;
+import frc.robot.commands.MoveToPos;
 import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
@@ -37,7 +39,7 @@ public class Resnick1 extends SequentialCommandGroup {
         this.elevatorWrist = elevatorWrist;
         this.intake = intake;
         this.shooter = shooter;
-        addRequirements(swerveDrive);
+        // addRequirements(swerveDrive);
         // SmartDashboard.putBoolean("Auto Status", false);
 
 
@@ -46,6 +48,8 @@ public class Resnick1 extends SequentialCommandGroup {
         PathPlannerPath path3 = PathPlannerPath.fromPathFile("3 - Resnick 1 Intake P2");
         PathPlannerPath path4 = PathPlannerPath.fromPathFile("4 - Resnick 1 Intake P3");
 
+        Command moveToPose1 = new MoveToPos(swerveDrive,
+            () -> new Pose2d(2.10, 7.01, Rotation2d.fromDegrees(-140.00)), true);
         Command followPath1 = AutoBuilder.followPath(path1);
         Command followPath2 = AutoBuilder.followPath(path2);
         Command followPath3 = AutoBuilder.followPath(path3);
@@ -60,13 +64,10 @@ public class Resnick1 extends SequentialCommandGroup {
             // .andThen(Commands.runOnce(() -> SmartDashboard.putBoolean("Auto Status", true)))
             .andThen(CommandFactory.Auto.runIndexer(intake));
         SequentialCommandGroup part2 = followPath2.alongWith(CommandFactory.intakeNote(intake))
-            // .andThen(CommandFactory.Auto.waitForIntake(intake))
             .andThen(CommandFactory.Auto.runIndexer(intake));
         SequentialCommandGroup part3 = followPath3.alongWith(CommandFactory.intakeNote(intake))
-            // .andThen(CommandFactory.Auto.waitForIntake(intake))
             .andThen(CommandFactory.Auto.runIndexer(intake));
         SequentialCommandGroup part4 = followPath4.alongWith(CommandFactory.intakeNote(intake))
-            // .andThen(CommandFactory.Auto.waitForIntake(intake))
             .andThen(CommandFactory.Auto.runIndexer(intake));
 
         SequentialCommandGroup followPaths = part1.andThen(part2).andThen(part3).andThen(part4);
