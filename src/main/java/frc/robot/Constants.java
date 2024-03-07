@@ -447,7 +447,7 @@ public final class Constants {
             // public static final double MAX_EXTENSION = Units.inchesToMeters(48);
             public static final double MAX_EXTENSION = 44;
             public static final double CLIMBING_HEIGHT = 43.34;
-            public static final Rotation2d CLIMBING_ANGLE = Rotation2d.fromDegrees(45.5);
+            public static final Rotation2d CLIMBING_ANGLE = Rotation2d.fromDegrees(-54);
             public static final Rotation2d MAX_ANGLE_UP_HOME = Rotation2d.fromDegrees(75);
             public static final Rotation2d MAX_ANGLE_DOWN_HOME = Rotation2d.fromDegrees(0);
             public static final Rotation2d MAX_ANGLE_UP_EXTENDED = Rotation2d.fromRotations(.095);
