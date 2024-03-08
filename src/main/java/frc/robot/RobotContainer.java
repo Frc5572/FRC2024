@@ -23,8 +23,7 @@ import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
 import frc.robot.autos.Resnick1;
 import frc.robot.autos.Resnick2;
-import frc.robot.autos.Resnick3;
-import frc.robot.autos.Resnick4;
+import frc.robot.autos.Resnick5;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.FlashingLEDColor;
 import frc.robot.commands.MovingColorLEDs;
@@ -113,8 +112,8 @@ public class RobotContainer {
      */
     public RobotContainer(RobotRunType runtimeType) {
         autoChooser.setDefaultOption("Wait 1 Second", "wait");
-        autoChooser.addOption("Resnick 1", "P123");
-        autoChooser.addOption("Resnick 2", "P321");
+        autoChooser.addOption("P123", "P123");
+        autoChooser.addOption("P321", "P321");
         autoChooser.addOption("Resnick 5", "Resnick 5");
         // autoChooser.addOption("Resnick 3", "Resnick 3");
         // autoChooser.addOption("Resnick 4", "Resnick 4");
@@ -267,13 +266,13 @@ public class RobotContainer {
 
 
 
-        // operator.leftTrigger().and(operator.back()).whileTrue(Commands.startEnd(() -> {
+        // test.leftTrigger().whileTrue(Commands.startEnd(() -> {
         // climber.setLeftPower(-1);
         // }, () -> {
         // climber.setLeftPower(0);
         // }));
         // // shoot note to speaker after being intaked
-        // operator.rightTrigger().and(operator.back()).whileTrue(Commands.startEnd(() -> {
+        // test.rightTrigger().whileTrue(Commands.startEnd(() -> {
         // climber.setRightPower(-1);
         // }, () -> {
         // climber.setRightPower(0);
@@ -290,17 +289,20 @@ public class RobotContainer {
         Command autocommand;
         String stuff = autoChooser.getSelected();
         switch (stuff) {
-            case "Resnick 1":
+            case "P123":
                 autocommand = new Resnick1(s_Swerve, elevatorWrist, intake, shooter);
                 break;
-            case "Resnick 2":
+            case "P321":
                 autocommand = new Resnick2(s_Swerve, elevatorWrist, intake, shooter);
                 break;
-            case "Resnick 3":
-                autocommand = new Resnick3(s_Swerve, elevatorWrist, intake, shooter);
-                break;
-            case "Resnick 4":
-                autocommand = new Resnick4(s_Swerve, elevatorWrist, intake, shooter);
+            // case "Resnick 3":
+            // autocommand = new Resnick3(s_Swerve, elevatorWrist, intake, shooter);
+            // break;
+            // case "Resnick 4":
+            // autocommand = new Resnick4(s_Swerve, elevatorWrist, intake, shooter);
+            // break;
+            case "Resnick 5":
+                autocommand = new Resnick5(s_Swerve, elevatorWrist, intake, shooter);
                 break;
             default:
                 autocommand = new WaitCommand(1.0);
