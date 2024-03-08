@@ -1,0 +1,74 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 4.548352129548424,
+        "y": 6.976987482975666
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 5.623312099174862,
+        "y": 6.6128881384247755
+      },
+      "isLocked": false,
+      "linkedName": "resnick 3 shoot p4"
+    },
+    {
+      "anchor": {
+        "x": 7.894598486611368,
+        "y": 5.792219774516419
+      },
+      "prevControl": {
+        "x": 7.466926240630958,
+        "y": 5.977159124129569
+      },
+      "nextControl": {
+        "x": 7.9863841902073816,
+        "y": 5.752528659447873
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.8546579273452055,
+        "y": 6.034952670883679
+      },
+      "prevControl": {
+        "x": 5.282330173325616,
+        "y": 6.595550074398542
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "resnick 3 shoot p5"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": 180.0,
+      "rotateFast": true
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 5.0,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -170.0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Resnick 3",
+  "previewStartingState": {
+    "rotation": -155.0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

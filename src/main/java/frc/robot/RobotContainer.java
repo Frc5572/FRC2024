@@ -1,10 +1,6 @@
 package frc.robot;
 
-import java.util.List;
 import java.util.Map;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.path.PathPlannerPath;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -14,7 +10,6 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -26,6 +21,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
+import frc.robot.autos.Resnick1;
+import frc.robot.autos.Resnick2;
+import frc.robot.autos.Resnick3;
+import frc.robot.autos.Resnick4;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.FlashingLEDColor;
 import frc.robot.commands.MovingColorLEDs;
@@ -47,6 +46,7 @@ import frc.robot.subsystems.shooter.ShooterVortex;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.SwerveIO;
 import frc.robot.subsystems.swerve.SwerveReal;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -100,19 +100,24 @@ public class RobotContainer {
     private Shooter shooter;
     private Intake intake;
     private PhotonCameraWrapper[] cameras;
-    public ElevatorWrist elevatorWrist;
+    private ElevatorWrist elevatorWrist;
     public Climber climber;
     private LEDs leds = new LEDs(Constants.LEDConstants.LED_COUNT, Constants.LEDConstants.PWM_PORT);
+
+    private Trigger gotNote = new Trigger(() -> !this.intake.getSensorStatus());
+    private Trigger climbState =
+        new Trigger(() -> OperatorState.getCurrentState() == OperatorState.State.kClimb);
+    private Trigger mannualMode = new Trigger(() -> OperatorState.manualModeEnabled());
 
     /**
      */
     public RobotContainer(RobotRunType runtimeType) {
         autoChooser.setDefaultOption("Wait 1 Second", "wait");
-        SmartDashboard.putNumber("Intake Power", 0);
-        SmartDashboard.putNumber("Left Climber Power", 0);
-        SmartDashboard.putNumber("Right Climber Power", 0);
-        SmartDashboard.putNumber("Elevator Power", 0);
-        SmartDashboard.putNumber("Wrist Power", 0);
+        autoChooser.addOption("Resnick 1", "P123");
+        autoChooser.addOption("Resnick 2", "P321");
+        autoChooser.addOption("Resnick 5", "Resnick 5");
+        // autoChooser.addOption("Resnick 3", "Resnick 3");
+        // autoChooser.addOption("Resnick 4", "Resnick 4");
         numNoteChooser.setDefaultOption("0", 0);
         for (int i = 0; i < 7; i++) {
             numNoteChooser.addOption(String.valueOf(i), i);
@@ -161,12 +166,8 @@ public class RobotContainer {
         s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, driver,
             Constants.Swerve.isFieldRelative, Constants.Swerve.isOpenLoop));
         leds.setDefaultCommand(new MovingColorLEDs(leds, Color.kRed, 4, false));
-        // autoChooser.addOption(resnickAuto, new ResnickAuto(s_Swerve));
-        SmartDashboard.putData("Choose Auto: ", autoChooser);
         // Configure the button bindings
         configureButtonBindings();
-        Trigger gotNote = new Trigger(() -> !this.intake.getSensorStatus());
-        gotNote.onTrue(new FlashingLEDColor(leds, Color.kGreen).withTimeout(3));
     }
 
     /**
@@ -176,17 +177,15 @@ public class RobotContainer {
      * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
-        Trigger climbState =
-            new Trigger(() -> OperatorState.getCurrentState() == OperatorState.State.kClimb);
-        Trigger mannualMode = new Trigger(() -> OperatorState.manualModeEnabled());
+        gotNote.onTrue(new FlashingLEDColor(leds, Color.kGreen).withTimeout(3));
 
         /* Driver Buttons */
         driver.y().onTrue(new InstantCommand(() -> s_Swerve.resetFieldRelativeOffset()));
         driver.start().onTrue(
             new InstantCommand(() -> s_Swerve.resetPvInitialization()).ignoringDisable(true));
         // intake forward
-        driver.rightTrigger()
-            .whileTrue(intake.runIntakeMotor(1, .20).onlyIf(() -> elevatorWrist.elevatorAtHome()));
+        driver.rightTrigger().whileTrue(
+            CommandFactory.intakeNote(intake).onlyIf(() -> elevatorWrist.elevatorAtHome()));
         // intake backward
         driver.leftTrigger().whileTrue(intake.runIntakeMotorNonStop(-1, -.20));
 
@@ -197,14 +196,14 @@ public class RobotContainer {
         operator.b().onTrue(new InstantCommand(() -> s_Swerve.resetPvInitialization()));
         // spin up shooter
         operator.leftTrigger().and(climbState).and(mannualMode).whileTrue(Commands.startEnd(() -> {
-            climber.setLeftPower(0.8);
+            climber.setLeftPower(Constants.ClimberConstants.CLIMBER_POWER);
         }, () -> {
             climber.setLeftPower(0);
         }));
         operator.leftTrigger().and(climbState.negate()).whileTrue(shooter.shootSpeaker());
         // shoot note to speaker after being intaked
         operator.rightTrigger().and(climbState).and(mannualMode).whileTrue(Commands.startEnd(() -> {
-            climber.setRightPower(0.8);
+            climber.setRightPower(Constants.ClimberConstants.CLIMBER_POWER);
         }, () -> {
             climber.setRightPower(0);
         }));
@@ -212,8 +211,8 @@ public class RobotContainer {
             .whileTrue(CommandFactory.shootSpeaker(shooter, intake));
         operator.rightTrigger().and(climbState).and(mannualMode.negate())
             .whileTrue(Commands.startEnd(() -> {
-                climber.setRightPower(0.8);
-                climber.setLeftPower(0.8);
+                climber.setRightPower(Constants.ClimberConstants.CLIMBER_POWER);
+                climber.setLeftPower(Constants.ClimberConstants.CLIMBER_POWER);
             }, () -> {
                 climber.setRightPower(0);
                 climber.setLeftPower(0);
@@ -268,13 +267,13 @@ public class RobotContainer {
 
 
 
-        // test.leftTrigger().whileTrue(Commands.startEnd(() -> {
+        // operator.leftTrigger().and(operator.back()).whileTrue(Commands.startEnd(() -> {
         // climber.setLeftPower(-1);
         // }, () -> {
         // climber.setLeftPower(0);
         // }));
         // // shoot note to speaker after being intaked
-        // test.rightTrigger().whileTrue(Commands.startEnd(() -> {
+        // operator.rightTrigger().and(operator.back()).whileTrue(Commands.startEnd(() -> {
         // climber.setRightPower(-1);
         // }, () -> {
         // climber.setRightPower(0);
@@ -287,16 +286,21 @@ public class RobotContainer {
      * @return Returns autonomous command selected.
      */
     public Command getAutonomousCommand() {
+        OperatorState.setState(OperatorState.State.kShootWhileMove);
         Command autocommand;
         String stuff = autoChooser.getSelected();
         switch (stuff) {
-            case "Test Auto":
-                List<PathPlannerPath> paths = PathPlannerAuto.getPathGroupFromAutoFile("New Auto");
-                Pose2d initialState = paths.get(0).getPreviewStartingHolonomicPose();
-                s_Swerve.resetOdometry(initialState);
-                autocommand = new InstantCommand(() -> s_Swerve.resetOdometry(initialState))
-                    .andThen(new PathPlannerAuto("New Auto"));
-
+            case "Resnick 1":
+                autocommand = new Resnick1(s_Swerve, elevatorWrist, intake, shooter);
+                break;
+            case "Resnick 2":
+                autocommand = new Resnick2(s_Swerve, elevatorWrist, intake, shooter);
+                break;
+            case "Resnick 3":
+                autocommand = new Resnick3(s_Swerve, elevatorWrist, intake, shooter);
+                break;
+            case "Resnick 4":
+                autocommand = new Resnick4(s_Swerve, elevatorWrist, intake, shooter);
                 break;
             default:
                 autocommand = new WaitCommand(1.0);

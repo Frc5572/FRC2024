@@ -63,6 +63,15 @@ public class OperatorState {
     }
 
     /**
+     * Set Operator State
+     *
+     * @param state Operator State
+     */
+    public static void setState(State state) {
+        currentState = state;
+    }
+
+    /**
      * Only use certain tags in certain modes. Helps for incorrect field layouts during practice.
      */
     public static boolean tagFilter(int id) {

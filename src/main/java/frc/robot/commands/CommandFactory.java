@@ -8,6 +8,7 @@ import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.swerve.Swerve;
 
 /**
  * File to create commands using factories
@@ -81,7 +82,66 @@ public class CommandFactory {
         return initialExtension.andThen(hooksAttach).andThen(climb).andThen(extendToTrap);
     }
 
+    /**
+     * Command to spit out the notes
+     *
+     * @param shooter Shooter Subsystem
+     * @param intake Intake Subsystem
+     * @return Command
+     */
     public static Command spit(Shooter shooter, Intake intake) {
         return shooter.spit().alongWith(intake.runIndexerMotor(1.0));
+    }
+
+    /**
+     * Command to run the intake and indexer at the proper speed to intake a note
+     *
+     * @param intake Intake Subsystem
+     * @return Command
+     */
+    public static Command intakeNote(Intake intake) {
+        return intake.runIntakeMotor(1, .2);
+    }
+
+    /**
+     * Command to auto angle the wirst for the speaker opening based on distance from the speaker
+     *
+     * @param elevatorWrist Elevator Wrist Subsystem
+     * @param swerveDrive Swerve Drive Subsystem
+     * @return Command
+     */
+    public static Command autoAngleWristSpeaker(ElevatorWrist elevatorWrist, Swerve swerveDrive) {
+        return elevatorWrist.followPosition(
+            () -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
+            () -> elevatorWrist.getAngleFromDistance(swerveDrive.getPose()));
+    }
+
+    /**
+     * Command Factory for Auto Specific Commands
+     */
+    public class Auto {
+
+        /**
+         * Command to run the indexer to shoot a note until .25 seconds after the beam brake is no
+         * longer broken
+         *
+         * @param intake Intake Subsystem
+         * @return Command
+         */
+        public static Command runIndexer(Intake intake) {
+            return Commands.waitUntil(() -> intake.getSensorStatus())
+                .andThen(Commands.waitSeconds(.25)).deadlineWith(intake.runIndexerMotor(1));
+        }
+
+        /**
+         * Command to wait for Intake beam brake is tripped
+         *
+         * @param intake Intake Subsystem
+         * @return Command
+         */
+        public static Command waitForIntake(Intake intake) {
+            return Commands.waitUntil(() -> !intake.getSensorStatus());
+        }
+
     }
 }

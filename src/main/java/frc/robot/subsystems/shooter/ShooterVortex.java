@@ -4,7 +4,6 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkRelativeEncoder;
 import frc.robot.Constants;
 
 /**
@@ -15,10 +14,8 @@ public class ShooterVortex implements ShooterIO {
         new CANSparkFlex(Constants.Motors.Shooter.SHOOTER_TOP_ID, MotorType.kBrushless);
     public final CANSparkFlex bottomShooterMotor =
         new CANSparkFlex(Constants.Motors.Shooter.SHOOTER_BOTTOM_ID, MotorType.kBrushless);
-    private RelativeEncoder topEncoder =
-        topShooterMotor.getEncoder(SparkRelativeEncoder.Type.kQuadrature, 7168);
-    private RelativeEncoder bottomEncoder =
-        bottomShooterMotor.getEncoder(SparkRelativeEncoder.Type.kQuadrature, 7168);
+    private RelativeEncoder topEncoder = topShooterMotor.getEncoder();
+    private RelativeEncoder bottomEncoder = bottomShooterMotor.getEncoder();
 
     /**
      * Constructor Shooter Subsystem - sets motor and encoder preferences

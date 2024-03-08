@@ -190,7 +190,7 @@ public final class Constants {
         /* Drivetrain Constants */
         public static final double trackWidth = Units.inchesToMeters(23.75);
         public static final double wheelBase = Units.inchesToMeters(17.75);
-        public static final double wheelDiameter = Units.inchesToMeters(4.0);
+        public static final double wheelDiameter = Units.inchesToMeters(3.8);
         public static final double wheelCircumference = wheelDiameter * Math.PI;
         public static final Translation2d MOD0_MODOFFSET =
             new Translation2d(wheelBase / 2.0, trackWidth / 2.0);
@@ -323,6 +323,7 @@ public final class Constants {
         public static final double CLIMBER_KS = 0.1;
         public static final double CLIMBER_KG = 0.1;
         public static final double CLIMBER_KV = 0.1;
+        public static final double CLIMBER_POWER = 0.8;
 
         public static final double CLIMBING_DISTANCE = Units.inchesToMeters(15);
         public static final double MAX_CLIMBING_DISTANCE = Units.inchesToMeters(21);
