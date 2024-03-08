@@ -1,12 +1,13 @@
 {
-  "robotWidth": 0.74,
-  "robotLength": 0.74,
+  "robotWidth": 0.876,
+  "robotLength": 0.876,
   "holonomicMode": true,
   "pathFolders": [
-    "Resnick 4",
+    "Resnick 5",
     "Resnick 1",
     "Resnick 2",
-    "Resnick 3"
+    "Resnick 3",
+    "Resnick 4"
   ],
   "autoFolders": [],
   "defaultMaxVel": 5.0,

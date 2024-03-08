@@ -4,14 +4,12 @@ import java.util.function.Supplier;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.lib.util.FieldConstants;
 import frc.robot.RobotContainer;
 import frc.robot.commands.CommandFactory;
-import frc.robot.commands.MoveToPos;
 import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
@@ -53,8 +51,7 @@ public class Resnick3 extends SequentialCommandGroup {
         PathPlannerPath path5 = PathPlannerPath.fromPathFile("2 - Resnick 3 Intake P5");
         PathPlannerPath path6 = PathPlannerPath.fromPathFile("3 - Resnick 3 Intake P6");
 
-        Command moveToPose1 = new MoveToPos(swerveDrive,
-            () -> new Pose2d(2.0, 4.10, Rotation2d.fromDegrees(145.00)), true);
+        Command wait = Commands.waitSeconds(.5);
         Command followPath0 = AutoBuilder.followPath(path0);
         Command followPath1 = AutoBuilder.followPath(path1);
         Command followPath2 = AutoBuilder.followPath(path2);

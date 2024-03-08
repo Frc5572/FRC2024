@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.0,
-        "y": 4.104648209296419
+        "x": 2.271286387436507,
+        "y": 4.555437873978474
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.2,
-        "y": 4.104648209296419
+        "x": 2.471286387436507,
+        "y": 4.555437873978474
       },
       "isLocked": false,
       "linkedName": "resnick 2 shoot initial"
@@ -20,12 +20,12 @@
         "y": 4.15
       },
       "prevControl": {
-        "x": 2.399999999999997,
-        "y": 4.15
+        "x": 1.9765392989905477,
+        "y": 4.347381105663679
       },
       "nextControl": {
-        "x": 2.629606377311986,
-        "y": 4.15
+        "x": 2.6282256365033607,
+        "y": 4.141064060121073
       },
       "isLocked": false,
       "linkedName": null
@@ -40,7 +40,7 @@
         "y": 4.416733361768611
       },
       "nextControl": null,
-      "isLocked": true,
+      "isLocked": false,
       "linkedName": "resnick 2 shoot p3"
     }
   ],
@@ -61,7 +61,7 @@
   "reversed": false,
   "folder": "Resnick 2",
   "previewStartingState": {
-    "rotation": 145.0,
+    "rotation": 150.0,
     "velocity": 0
   },
   "useDefaultConstraints": true

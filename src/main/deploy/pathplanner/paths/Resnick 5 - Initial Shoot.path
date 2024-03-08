@@ -3,45 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.5429160571808214,
-        "y": 5.543707523473747
+        "x": 0.43923095533123285,
+        "y": 2.029859880823885
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.3637560622430818,
-        "y": 5.8789100946475825
-      },
-      "isLocked": false,
-      "linkedName": "resnick 2 shoot p2"
-    },
-    {
-      "anchor": {
-        "x": 2.5949302492595203,
-        "y": 6.792048133362514
-      },
-      "prevControl": {
-        "x": 2.1788167126299314,
-        "y": 6.57821201037231
-      },
-      "nextControl": {
-        "x": 3.0110437858891093,
-        "y": 7.005884256352719
+        "x": 0.820668363908356,
+        "y": 2.758058569925666
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.357976707567671,
-        "y": 6.6533436211526515
+        "x": 1.49,
+        "y": 3.63
       },
       "prevControl": {
-        "x": 2.8550012096530137,
-        "y": 6.936532000247787
+        "x": 1.0276516259671233,
+        "y": 3.080961305835959
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Resnick 5 - Initial Shoot"
     }
   ],
   "rotationTargets": [],
@@ -55,11 +39,11 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -150.0,
+    "rotation": 125.0,
     "rotateFast": true
   },
   "reversed": false,
-  "folder": "Resnick 2",
+  "folder": "Resnick 5",
   "previewStartingState": {
     "rotation": 180.0,
     "velocity": 0
