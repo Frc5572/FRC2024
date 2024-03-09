@@ -40,6 +40,7 @@ public class Robot extends LoggedRobot {
     }
 
     public RobotRunType robotRunType = RobotRunType.kReal;
+    private Timer gcTimer = new Timer();
 
     // private Ultrasonic ultrasonic = new Ultrasonic();
     /**
@@ -123,6 +124,9 @@ public class Robot extends LoggedRobot {
         // order for
         // anything in the Command-based framework to work.
         CommandScheduler.getInstance().run();
+        if (gcTimer.advanceIfElapsed(5)) {
+            System.gc();
+        }
     }
 
     @Override

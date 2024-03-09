@@ -68,7 +68,7 @@ public class Resnick5 extends SequentialCommandGroup {
 
         SequentialCommandGroup followPaths =
             part1.andThen(part2).andThen(Commands.runOnce(() -> this.cancel()));
-        addCommands(resetPosition, followPaths.alongWith(autoAlignWrist, shootCommand));
+        addCommands(resetPosition, wait, followPaths.alongWith(autoAlignWrist, shootCommand));
     }
 
 }

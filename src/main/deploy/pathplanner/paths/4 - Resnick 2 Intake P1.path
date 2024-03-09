@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.5429160571808214,
-        "y": 5.543707523473747
+        "x": 2.219755423410669,
+        "y": 5.609930647410491
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.3637560622430818,
-        "y": 5.8789100946475825
+        "x": 2.0405954284729293,
+        "y": 5.945133218584326
       },
       "isLocked": false,
       "linkedName": "resnick 2 shoot p2"
@@ -59,7 +59,7 @@
     "rotateFast": true
   },
   "reversed": false,
-  "folder": "Resnick 2",
+  "folder": "P321",
   "previewStartingState": {
     "rotation": 180.0,
     "velocity": 0

@@ -130,7 +130,8 @@ public class CommandFactory {
          */
         public static Command runIndexer(Intake intake) {
             return Commands.waitUntil(() -> intake.getSensorStatus())
-                .andThen(Commands.waitSeconds(.25)).deadlineWith(intake.runIndexerMotor(1));
+                .andThen(Commands.waitSeconds(.25)).deadlineWith(intake.runIndexerMotor(1))
+                .withTimeout(5);
         }
 
         /**

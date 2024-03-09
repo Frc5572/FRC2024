@@ -72,7 +72,6 @@ public class Resnick2 extends SequentialCommandGroup {
         Command autoAlignWrist = CommandFactory.autoAngleWristSpeaker(elevatorWrist, swerveDrive);
         Command shootCommand = shooter.shootSpeaker();
 
-        addCommands(resetPosition, wait, followPaths.deadlineWith(autoAlignWrist, shootCommand),
-            elevatorWrist.homePosition());
+        addCommands(resetPosition, wait, followPaths.alongWith(autoAlignWrist, shootCommand));
     }
 }
