@@ -133,8 +133,15 @@ public class ElevatorWrist extends SubsystemBase {
         double elevatorFeedForward = 0.4;
 
         if (OperatorState.manualModeEnabled()) {
+            double manualElevatorPower = 0;
             io.setWristVoltage(operator.getLeftY() * 4.0);
-            io.setElevatorVoltage(-elevatorFeedForward + operator.getRightY() * 4.0);
+            if ((getHeight() <= Constants.ElevatorWristConstants.SetPoints.MAX_EXTENSION
+                && operator.getRightY() > 0)
+                || (getHeight() > Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT
+                    && operator.getRightY() < 0)) {
+                manualElevatorPower = operator.getRightY() * 4.0;
+            }
+            io.setElevatorVoltage(-elevatorFeedForward + manualElevatorPower);
         } else if (pidEnabled) {
             if (calculatedHeight > 24.7 && calculatedHeight < 30) { // Getting around a bearing that
                 // prevents us from moving without
@@ -337,7 +344,7 @@ public class ElevatorWrist extends SubsystemBase {
      */
     public boolean elevatorAtHome() {
         return MathUtil.isNear(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT, getHeight(),
-            6);
+            0.7);
     }
 
 }

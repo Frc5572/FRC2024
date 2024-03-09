@@ -1,6 +1,7 @@
 package frc.robot;
 
 import java.util.Map;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -104,9 +105,10 @@ public class RobotContainer {
     private LEDs leds = new LEDs(Constants.LEDConstants.LED_COUNT, Constants.LEDConstants.PWM_PORT);
 
     private Trigger gotNote = new Trigger(() -> !this.intake.getSensorStatus());
-    private Trigger climbState =
-        new Trigger(() -> OperatorState.getCurrentState() == OperatorState.State.kClimb);
+    private Trigger climbState = new Trigger(() -> false);
+    // new Trigger(() -> OperatorState.getCurrentState() == OperatorState.State.kClimb);
     private Trigger mannualMode = new Trigger(() -> OperatorState.manualModeEnabled());
+    private Trigger atHome = new Trigger(() -> elevatorWrist.elevatorAtHome());
 
     /**
      */
@@ -177,14 +179,13 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
         gotNote.onTrue(new FlashingLEDColor(leds, Color.kGreen).withTimeout(3));
-
         /* Driver Buttons */
         driver.y().onTrue(new InstantCommand(() -> s_Swerve.resetFieldRelativeOffset()));
         driver.start().onTrue(
             new InstantCommand(() -> s_Swerve.resetPvInitialization()).ignoringDisable(true));
         // intake forward
         driver.rightTrigger().whileTrue(
-            CommandFactory.intakeNote(intake).onlyIf(() -> elevatorWrist.elevatorAtHome()));
+            CommandFactory.intakeNote(intake).onlyIf(atHome.debounce(0.5)).onlyWhile(atHome));
         // intake backward
         driver.leftTrigger().whileTrue(intake.runIntakeMotorNonStop(-1, -.20));
 
@@ -232,12 +233,12 @@ public class RobotContainer {
             OperatorState.State.kAmp,
             Commands
                 .either(elevatorWrist.ampPosition(), Commands.none(),
-                    () -> !intake.getSensorStatus())
+                    gotNote.debounce(0.5, Debouncer.DebounceType.kFalling))
                 .alongWith(new TeleopSwerve(s_Swerve, driver, true, false)),
             //
-            OperatorState.State.kClimb,
-            elevatorWrist.climbPosition()
-                .alongWith(new TeleopSwerve(s_Swerve, driver, true, false)),
+            // OperatorState.State.kClimb,
+            // elevatorWrist.climbPosition()
+            // .alongWith(new TeleopSwerve(s_Swerve, driver, true, false)),
             //
             OperatorState.State.kShootWhileMove,
             new ShootWhileMoving(s_Swerve, driver).alongWith(elevatorWrist.followPosition(
