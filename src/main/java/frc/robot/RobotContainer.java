@@ -23,8 +23,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
-import frc.robot.autos.Resnick1;
-import frc.robot.autos.Resnick2;
+import frc.robot.autos.P123;
+import frc.robot.autos.P32;
+import frc.robot.autos.P321;
 import frc.robot.autos.Resnick5;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.FlashingLEDColor;
@@ -124,6 +125,7 @@ public class RobotContainer {
         autoChooser.setDefaultOption("Wait 1 Second", "wait");
         autoChooser.addOption("P123", "P123");
         autoChooser.addOption("P321", "P321");
+        autoChooser.addOption("P32", "P32");
         autoChooser.addOption("Resnick 5", "Resnick 5");
         // autoChooser.addOption("Resnick 3", "Resnick 3");
         // autoChooser.addOption("Resnick 4", "Resnick 4");
@@ -299,10 +301,13 @@ public class RobotContainer {
         String stuff = autoChooser.getSelected();
         switch (stuff) {
             case "P123":
-                autocommand = new Resnick1(s_Swerve, elevatorWrist, intake, shooter);
+                autocommand = new P123(s_Swerve, elevatorWrist, intake, shooter);
                 break;
             case "P321":
-                autocommand = new Resnick2(s_Swerve, elevatorWrist, intake, shooter);
+                autocommand = new P321(s_Swerve, elevatorWrist, intake, shooter);
+                break;
+            case "P32":
+                autocommand = new P32(s_Swerve, elevatorWrist, intake, shooter);
                 break;
             // case "Resnick 3":
             // autocommand = new Resnick3(s_Swerve, elevatorWrist, intake, shooter);
