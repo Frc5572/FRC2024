@@ -252,7 +252,7 @@ public class RobotContainer {
             OperatorState.State.kShootWhileMove,
             new ShootWhileMoving(s_Swerve, driver).alongWith(elevatorWrist.followPosition(
                 () -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT, () -> elevatorWrist
-                    .getAngleFromDistance(s_Swerve.getPose()).plus(Rotation2d.fromDegrees(0.5))))
+                    .getAngleFromDistance(s_Swerve.getPose()).plus(Rotation2d.fromDegrees(0.0))))
         //
         ), OperatorState::getCurrentState));
 
