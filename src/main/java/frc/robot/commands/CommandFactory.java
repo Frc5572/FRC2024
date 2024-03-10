@@ -135,6 +135,18 @@ public class CommandFactory {
         }
 
         /**
+         * Command to run the indexer to shoot a note until .25 seconds after the beam brake is no
+         * longer broken
+         *
+         * @param intake Intake Subsystem
+         * @return Command
+         */
+        public static Command runIndexer(Intake intake, Shooter shooter) {
+            return Commands.waitUntil(() -> shooter.readyToShoot()).withTimeout(2)
+                .andThen(CommandFactory.Auto.runIndexer(intake));
+        }
+
+        /**
          * Command to wait for Intake beam brake is tripped
          *
          * @param intake Intake Subsystem

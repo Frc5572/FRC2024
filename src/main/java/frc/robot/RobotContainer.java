@@ -1,7 +1,6 @@
 package frc.robot;
 
 import java.util.Map;
-import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -240,11 +239,11 @@ public class RobotContainer {
         // run action based on current state as incremented through operator states list
         operator.a().whileTrue(new SelectCommand<OperatorState.State>(Map.of(
             //
-            OperatorState.State.kAmp,
-            Commands
-                .either(elevatorWrist.ampPosition(), Commands.none(),
-                    gotNote.debounce(0.5, Debouncer.DebounceType.kFalling))
-                .alongWith(new TeleopSwerve(s_Swerve, driver, true, false)),
+            // OperatorState.State.kAmp,
+            // Commands
+            // .either(elevatorWrist.ampPosition(), Commands.none(),
+            // gotNote.debounce(0.5, Debouncer.DebounceType.kFalling))
+            // .alongWith(new TeleopSwerve(s_Swerve, driver, true, false)),
             //
             // OperatorState.State.kClimb,
             // elevatorWrist.climbPosition()

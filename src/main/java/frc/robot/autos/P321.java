@@ -36,8 +36,6 @@ public class P321 extends SequentialCommandGroup {
         this.elevatorWrist = elevatorWrist;
         this.intake = intake;
         this.shooter = shooter;
-        // addRequirements(swerveDrive);
-
 
         PathPlannerPath path1 = PathPlannerPath.fromPathFile("1 - Resnick 2 Shoot Initial Note");
         PathPlannerPath path2 = PathPlannerPath.fromPathFile("2 - Resnick 2 Intake P3");
@@ -57,13 +55,10 @@ public class P321 extends SequentialCommandGroup {
         });
         SequentialCommandGroup part1 = followPath1.andThen(CommandFactory.Auto.runIndexer(intake));
         SequentialCommandGroup part2 = followPath2.alongWith(CommandFactory.intakeNote(intake))
-            // .andThen(CommandFactory.Auto.waitForIntake(intake))
             .andThen(CommandFactory.Auto.runIndexer(intake));
         SequentialCommandGroup part3 = followPath3.alongWith(CommandFactory.intakeNote(intake))
-            // .andThen(CommandFactory.Auto.waitForIntake(intake))
             .andThen(CommandFactory.Auto.runIndexer(intake));
         SequentialCommandGroup part4 = followPath4.alongWith(CommandFactory.intakeNote(intake))
-            // .andThen(CommandFactory.Auto.waitForIntake(intake))
             .andThen(CommandFactory.Auto.runIndexer(intake));
 
         SequentialCommandGroup followPaths = part1.andThen(part2).andThen(part3).andThen(part4);
