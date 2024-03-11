@@ -8,20 +8,36 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8782902695085617,
-        "y": 5.225843016326145
+        "x": 1.7938706360418095,
+        "y": 5.345588365595336
       },
       "isLocked": false,
       "linkedName": "resnick 2 shoot p3"
     },
     {
       "anchor": {
-        "x": 2.5429160571808214,
-        "y": 5.543707523473747
+        "x": 3.1155820451175793,
+        "y": 5.507130871149041
       },
       "prevControl": {
-        "x": 1.8378347867806846,
-        "y": 5.509031395421281
+        "x": 1.9093803104681228,
+        "y": 5.599915619968228
+      },
+      "nextControl": {
+        "x": 3.306495915317413,
+        "y": 5.492445188825977
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.219755423410669,
+        "y": 5.609930647410491
+      },
+      "prevControl": {
+        "x": 2.189048100952031,
+        "y": 5.5794714671452885
       },
       "nextControl": null,
       "isLocked": false,
@@ -40,10 +56,10 @@
   "goalEndState": {
     "velocity": 0,
     "rotation": 180.0,
-    "rotateFast": false
+    "rotateFast": true
   },
   "reversed": false,
-  "folder": "Resnick 2",
+  "folder": "P321",
   "previewStartingState": {
     "rotation": 165.0,
     "velocity": 0

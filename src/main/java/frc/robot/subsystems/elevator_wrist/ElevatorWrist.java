@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -77,11 +78,16 @@ public class ElevatorWrist extends SubsystemBase {
         elevatorPIDController.setGoal(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT);
         wristPIDController.setIZone(Rotation2d.fromDegrees(5).getRotations());
         wristProfiledPIDController.setIZone(Rotation2d.fromDegrees(1).getRotations());
-        radiusToAngle.put(4.32, 33.43);
-        radiusToAngle.put(4.21, 34.11);
-        radiusToAngle.put(3.99, 33.76);
-        radiusToAngle.put(2.59, 40.0);
-        radiusToAngle.put(1.72, 48.75);
+        // radiusToAngle.put(4.32, 33.43);
+        // radiusToAngle.put(4.21, 34.11);
+        // radiusToAngle.put(3.99, 34.0);
+        // radiusToAngle.put(2.59, 40.5);
+        // radiusToAngle.put(1.72, 49.25);
+        radiusToAngle.put(Units.inchesToMeters(92), 43.2);
+        radiusToAngle.put(Units.inchesToMeters(98), 42.0);
+        radiusToAngle.put(Units.inchesToMeters(134), 39.16);
+        radiusToAngle.put(Units.inchesToMeters(144), 36.13);
+        radiusToAngle.put(Units.inchesToMeters(163), 32.41);
     }
 
     @Override
@@ -133,15 +139,8 @@ public class ElevatorWrist extends SubsystemBase {
         double elevatorFeedForward = 0.4;
 
         if (OperatorState.manualModeEnabled()) {
-            double manualElevatorPower = 0;
             io.setWristVoltage(operator.getLeftY() * 4.0);
-            if ((getHeight() <= Constants.ElevatorWristConstants.SetPoints.MAX_EXTENSION
-                && operator.getRightY() > 0)
-                || (getHeight() > Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT
-                    && operator.getRightY() < 0)) {
-                manualElevatorPower = operator.getRightY() * 4.0;
-            }
-            io.setElevatorVoltage(-elevatorFeedForward + manualElevatorPower);
+            io.setElevatorVoltage(-elevatorFeedForward + operator.getRightY() * 4.0);
         } else if (pidEnabled) {
             if (calculatedHeight > 24.7 && calculatedHeight < 30) { // Getting around a bearing that
                 // prevents us from moving without
@@ -344,7 +343,7 @@ public class ElevatorWrist extends SubsystemBase {
      */
     public boolean elevatorAtHome() {
         return MathUtil.isNear(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT, getHeight(),
-            0.7);
+            6);
     }
 
 }

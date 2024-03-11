@@ -17,7 +17,7 @@ import frc.robot.subsystems.swerve.Swerve;
 /**
  * Resnick 1 Custom Auto
  */
-public class Resnick1 extends SequentialCommandGroup {
+public class P123 extends SequentialCommandGroup {
 
     Swerve swerveDrive;
     ElevatorWrist elevatorWrist;
@@ -32,8 +32,7 @@ public class Resnick1 extends SequentialCommandGroup {
      * @param intake Intake Subsystem
      * @param shooter Shooter Subsystem
      */
-    public Resnick1(Swerve swerveDrive, ElevatorWrist elevatorWrist, Intake intake,
-        Shooter shooter) {
+    public P123(Swerve swerveDrive, ElevatorWrist elevatorWrist, Intake intake, Shooter shooter) {
         this.swerveDrive = swerveDrive;
         this.elevatorWrist = elevatorWrist;
         this.intake = intake;
@@ -77,7 +76,6 @@ public class Resnick1 extends SequentialCommandGroup {
         Command autoAlignWrist = CommandFactory.autoAngleWristSpeaker(elevatorWrist, swerveDrive);
         Command shootCommand = shooter.shootSpeaker();
 
-        addCommands(resetPosition, wait, followPaths.deadlineWith(autoAlignWrist, shootCommand),
-            elevatorWrist.homePosition());
+        addCommands(resetPosition, wait, followPaths.alongWith(autoAlignWrist, shootCommand));
     }
 }

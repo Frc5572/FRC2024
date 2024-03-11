@@ -1,7 +1,7 @@
 package frc.robot;
 
 import java.util.Map;
-import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -22,8 +22,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
-import frc.robot.autos.Resnick1;
-import frc.robot.autos.Resnick2;
+import frc.robot.autos.P123;
+import frc.robot.autos.P32;
+import frc.robot.autos.P321;
 import frc.robot.autos.Resnick5;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.FlashingLEDColor;
@@ -68,16 +69,21 @@ public class RobotContainer {
     public GenericEntry operatorManualMode = RobotContainer.mainDriverTab.add("Manual Mode", false)
         .withWidget(BuiltInWidgets.kBooleanBox)
         .withProperties(Map.of("true_color", 0xff00ffff, "false_color", 0xff770000))
-        .withPosition(10, 6).withSize(2, 2).getEntry();
+        .withPosition(7, 6).withSize(2, 2).getEntry();
     public static GenericEntry readyShoot = RobotContainer.mainDriverTab
         .add("Ready To Shoot", false).withWidget(BuiltInWidgets.kBooleanBox)
         .withProperties(Map.of("true_color", 0xff00ffff, "false_color", 0xff770000))
         .withPosition(10, 2).withSize(3, 2).getEntry();
+    public SimpleWidget backLeftCameraWidget = RobotContainer.mainDriverTab
+        .add("Back Left Camera", "/CameraPublisher/back-left_Port_1182_Output_MJPEG_Server")
+        .withWidget(BuiltInWidgets.kCameraStream)
+        .withProperties(Map.of("topic", "/CameraPublisher/back-left_Port_1182_Output_MJPEG_Server"))
+        .withPosition(12, 4).withSize(7, 6);
 
     public static final SendableChooser<Integer> numNoteChooser = new SendableChooser<>();
-    public ComplexWidget numNoteChooserrWidget =
-        mainDriverTab.add("Number of Additional Auto Notes", numNoteChooser)
-            .withWidget(BuiltInWidgets.kComboBoxChooser).withPosition(7, 6).withSize(3, 2);
+    // public ComplexWidget numNoteChooserrWidget =
+    // mainDriverTab.add("Number of Additional Auto Notes", numNoteChooser)
+    // .withWidget(BuiltInWidgets.kComboBoxChooser).withPosition(7, 6).withSize(3, 2);
     public SimpleWidget fmsInfo =
         RobotContainer.mainDriverTab.add("FMS Info", 0).withWidget("FMSInfo")
             .withProperties(Map.of("topic", "/FMSInfo")).withPosition(3, 4).withSize(6, 2);
@@ -103,6 +109,8 @@ public class RobotContainer {
     private ElevatorWrist elevatorWrist;
     public Climber climber;
     private LEDs leds = new LEDs(Constants.LEDConstants.LED_COUNT, Constants.LEDConstants.PWM_PORT);
+    // private PhotonCamera backLeftCamera = new PhotonCamera("back-left");
+
 
     private Trigger gotNote = new Trigger(() -> !this.intake.getSensorStatus());
     private Trigger climbState = new Trigger(() -> false);
@@ -116,6 +124,7 @@ public class RobotContainer {
         autoChooser.setDefaultOption("Wait 1 Second", "wait");
         autoChooser.addOption("P123", "P123");
         autoChooser.addOption("P321", "P321");
+        autoChooser.addOption("P32", "P32");
         autoChooser.addOption("Resnick 5", "Resnick 5");
         // autoChooser.addOption("Resnick 3", "Resnick 3");
         // autoChooser.addOption("Resnick 4", "Resnick 4");
@@ -123,7 +132,7 @@ public class RobotContainer {
         for (int i = 0; i < 7; i++) {
             numNoteChooser.addOption(String.valueOf(i), i);
         }
-
+        // backLeftCamera.setDriverMode(true);
         cameras =
             /*
              * Camera Order: 0 - Front Left 1 - Front RIght 2 - Back Left 3 - Back Right
@@ -230,11 +239,11 @@ public class RobotContainer {
         // run action based on current state as incremented through operator states list
         operator.a().whileTrue(new SelectCommand<OperatorState.State>(Map.of(
             //
-            OperatorState.State.kAmp,
-            Commands
-                .either(elevatorWrist.ampPosition(), Commands.none(),
-                    gotNote.debounce(0.5, Debouncer.DebounceType.kFalling))
-                .alongWith(new TeleopSwerve(s_Swerve, driver, true, false)),
+            // OperatorState.State.kAmp,
+            // Commands
+            // .either(elevatorWrist.ampPosition(), Commands.none(),
+            // gotNote.debounce(0.5, Debouncer.DebounceType.kFalling))
+            // .alongWith(new TeleopSwerve(s_Swerve, driver, true, false)),
             //
             // OperatorState.State.kClimb,
             // elevatorWrist.climbPosition()
@@ -242,8 +251,8 @@ public class RobotContainer {
             //
             OperatorState.State.kShootWhileMove,
             new ShootWhileMoving(s_Swerve, driver).alongWith(elevatorWrist.followPosition(
-                () -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-                () -> elevatorWrist.getAngleFromDistance(s_Swerve.getPose())))
+                () -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT, () -> elevatorWrist
+                    .getAngleFromDistance(s_Swerve.getPose()).plus(Rotation2d.fromDegrees(0.0))))
         //
         ), OperatorState::getCurrentState));
 
@@ -291,10 +300,13 @@ public class RobotContainer {
         String stuff = autoChooser.getSelected();
         switch (stuff) {
             case "P123":
-                autocommand = new Resnick1(s_Swerve, elevatorWrist, intake, shooter);
+                autocommand = new P123(s_Swerve, elevatorWrist, intake, shooter);
                 break;
             case "P321":
-                autocommand = new Resnick2(s_Swerve, elevatorWrist, intake, shooter);
+                autocommand = new P321(s_Swerve, elevatorWrist, intake, shooter);
+                break;
+            case "P32":
+                autocommand = new P32(s_Swerve, elevatorWrist, intake, shooter);
                 break;
             // case "Resnick 3":
             // autocommand = new Resnick3(s_Swerve, elevatorWrist, intake, shooter);
