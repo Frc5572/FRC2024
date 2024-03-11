@@ -243,9 +243,14 @@ public class RobotContainer {
             OperatorState.State.kShootWhileMove,
             new ShootWhileMoving(s_Swerve, driver).alongWith(elevatorWrist.followPosition(
                 () -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-                () -> elevatorWrist.getAngleFromDistance(s_Swerve.getPose())))
-        //
-        ), OperatorState::getCurrentState));
+                () -> elevatorWrist.getAngleFromDistance(s_Swerve.getPose()))),
+            //
+            OperatorState.State.kAmpNoElevator,
+            Commands
+                .either(elevatorWrist.ampNoElevatorPosition(), Commands.none(),
+                    gotNote.debounce(0.5, Debouncer.DebounceType.kFalling))
+                .alongWith(new TeleopSwerve(s_Swerve, driver, true, false))),
+            OperatorState::getCurrentState));
 
         /*
          * <OperatorState.State>( List.of(OperatorState.State.kAmp,

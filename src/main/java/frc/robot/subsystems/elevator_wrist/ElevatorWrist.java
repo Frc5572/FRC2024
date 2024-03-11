@@ -237,6 +237,12 @@ public class ElevatorWrist extends SubsystemBase {
                     Constants.ElevatorWristConstants.SetPoints.AMP_ANGLE).withTimeout(2));
     }
 
+    public Command ampNoElevatorPosition() {
+        return goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
+            Constants.ElevatorWristConstants.SetPoints.NO_ELEVATOR_AMP_SCORING_ANGLE)
+                .withTimeout(2);
+    }
+
     /**
      * Set elevator and wrist to amp position. Performs two steps to avoid colliding with
      * electronics box.

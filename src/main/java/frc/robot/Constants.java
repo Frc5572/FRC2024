@@ -453,6 +453,7 @@ public final class Constants {
             public static final Rotation2d MAX_ANGLE_DOWN_HOME = Rotation2d.fromDegrees(0);
             public static final Rotation2d MAX_ANGLE_UP_EXTENDED = Rotation2d.fromRotations(.095);
             public static final Rotation2d MAX_ANGLE_DOWN_EXTENDED = Rotation2d.fromRotations(.390);
+            public static final Rotation2d NO_ELEVATOR_AMP_SCORING_ANGLE = Rotation2d.fromDegrees(75);
 
             public static final double LINEAR_DISTANCE = Units.inchesToMeters(2 * Math.PI * 659);
 
