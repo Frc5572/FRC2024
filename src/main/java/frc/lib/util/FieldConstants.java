@@ -116,4 +116,22 @@ public class FieldConstants {
         }
         return pose;
     }
+
+    /**
+     * Flips a pose to the correct side of the field based on the current alliance color. By
+     * default, all translations and poses in {@link FieldConstants} are stored with the origin at
+     * the rightmost point on the BLUE ALLIANCE wall.
+     *
+     * @param pose Initial Pose
+     * @return Pose2d flipped to Red Alliance
+     */
+    public static Translation2d allianceFlip(Translation2d pose) {
+        Optional<Alliance> ally = DriverStation.getAlliance();
+        if (ally.isPresent()) {
+            if (ally.get() == Alliance.Red) {
+                pose = new Translation2d(fieldLength - pose.getX(), pose.getY());
+            }
+        }
+        return pose;
+    }
 }

@@ -30,8 +30,4 @@ public interface ElevatorWristIO {
 
     public default void setWristVoltage(double voltage) {}
 
-    public default void setWristPower(double power) {}
-
-    public default void setElevatorPower(double power) {}
-
 }

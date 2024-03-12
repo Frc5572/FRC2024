@@ -39,8 +39,12 @@ public class TeleopSwerve extends Command {
         double raxis = -controller.getRightX();
 
         /* Deadbands */
-        yaxis = (Math.abs(yaxis) < Constants.STICK_DEADBAND) ? 0 : yaxis;
-        xaxis = (Math.abs(xaxis) < Constants.STICK_DEADBAND) ? 0 : xaxis;
+        yaxis = (Math.abs(yaxis) < Constants.STICK_DEADBAND) ? 0
+            : (yaxis - Constants.STICK_DEADBAND) / (1.0 - Constants.STICK_DEADBAND);
+        xaxis = (Math.abs(xaxis) < Constants.STICK_DEADBAND) ? 0
+            : (xaxis - Constants.STICK_DEADBAND) / (1.0 - Constants.STICK_DEADBAND);
+        xaxis *= xaxis * Math.signum(xaxis);
+        yaxis *= yaxis * Math.signum(yaxis);
         raxis = (Math.abs(raxis) < Constants.STICK_DEADBAND) ? 0 : raxis;
         // System.out.println(swerveDrive.getStringYaw());
 

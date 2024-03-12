@@ -49,15 +49,15 @@ public class Shooter extends SubsystemBase {
         io.updateInputs(inputs);
         Logger.processInputs("Shooter", inputs);
 
-        SmartDashboard.putNumber("Top Target", topPid.getSetpoint());
-        SmartDashboard.putNumber("Top Current", inputs.topShooterVelocityRotPerMin);
-        SmartDashboard.putNumber("Top Error", topPid.getPositionError());
-        SmartDashboard.putNumber("Top Value", topValue);
+        // SmartDashboard.putNumber("Top Target", topPid.getSetpoint());
+        // SmartDashboard.putNumber("Top Current", inputs.topShooterVelocityRotPerMin);
+        // SmartDashboard.putNumber("Top Error", topPid.getPositionError());
+        // SmartDashboard.putNumber("Top Value", topValue);
 
-        SmartDashboard.putNumber("Bottom Target", bottomPid.getSetpoint());
-        SmartDashboard.putNumber("Bottom Current", inputs.bottomShooterVelocityRotPerMin);
-        SmartDashboard.putNumber("Bottom Error", bottomPid.getPositionError());
-        SmartDashboard.putNumber("Bottom Value", bottomValue);
+        // SmartDashboard.putNumber("Bottom Target", bottomPid.getSetpoint());
+        // SmartDashboard.putNumber("Bottom Current", inputs.bottomShooterVelocityRotPerMin);
+        // SmartDashboard.putNumber("Bottom Error", bottomPid.getPositionError());
+        // SmartDashboard.putNumber("Bottom Value", bottomValue);
 
         topShooterFeed.kv = SmartDashboard.getNumber("topShooterFeed", topShooterFeed.kv);
         bottomShooterFeed.kv = SmartDashboard.getNumber("bottomShooterFeed", bottomShooterFeed.kv);

@@ -254,7 +254,7 @@ public final class Constants {
 
         /* Swerve Profiling Values */
         /** Meters per Second */
-        public static final double maxSpeed = 5.0;
+        public static final double maxSpeed = 10.0;
         /** Radians per Second */
         public static final double maxAngularVelocity = 10.0;
 
@@ -477,8 +477,8 @@ public final class Constants {
         public static final double KI = 0;
         public static final double KD = 0;
         public static final double KS = 0;
-        public static final double TOP_KV = 0.00092;
-        public static final double BOTTOM_KV = 0.00092;
+        public static final double TOP_KV = 6.18e-4;
+        public static final double BOTTOM_KV = 6.18e-4;
         public static final double GEAR_RATIO = 3;
         public static final double HEIGHT_FROM_LOWEST_POS = Units.inchesToMeters(32.0);
         public static final double HEIGHT_FROM_SPEAKER =

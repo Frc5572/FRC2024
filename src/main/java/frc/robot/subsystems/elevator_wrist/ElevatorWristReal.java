@@ -66,14 +66,4 @@ public class ElevatorWristReal implements ElevatorWristIO {
     public void setWristVoltage(double v) {
         wristMotor.setVoltage(v);
     }
-
-    @Override
-    public void setWristPower(double power) {
-        wristMotor.set(power);
-    }
-
-    @Override
-    public void setElevatorPower(double power) {
-        elevatorMotor.set(power);
-    }
 }

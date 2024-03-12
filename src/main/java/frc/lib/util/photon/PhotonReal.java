@@ -93,28 +93,17 @@ public class PhotonReal extends PhotonIO implements AutoCloseable {
         InstanceCount++;
     }
 
-    /**
-     * Constructs a PhotonReal from the name of the camera.
-     *
-     * @param cameraName The nickname of the camera (found in the PhotonVision UI).
-     */
-    public PhotonReal(String cameraName) {
-        this(NetworkTableInstance.getDefault(), cameraName);
-    }
+    PhotonIO.PhotonInputs tempInputs = new PhotonInputs();
 
-    private static final double[] EMPTY = new double[0];
-
-    @Override
-    public void updateInputs(PhotonInputs inputs) {
-        super.updateInputs(inputs);
+    Thread thread = new Thread(() -> {
         var result = resultSubscriber.get();
         result.result.setTimestampSeconds((resultSubscriber.subscriber.getLastChange() / 1e6)
             - result.result.getLatencyMillis() / 1e3);
-        inputs.rawBytes = result.rawBytes;
-        inputs.result = result.result;
+        tempInputs.rawBytes = result.rawBytes;
+        tempInputs.result = result.result;
 
         String versionString = versionEntry.get("");
-        inputs.versionString = versionString;
+        tempInputs.versionString = versionString;
 
         var curHeartbeat = heartbeatEntry.get();
         var now = Timer.getFPGATimestamp();
@@ -124,10 +113,33 @@ public class PhotonReal extends PhotonIO implements AutoCloseable {
             prevHeartbeatValue = curHeartbeat;
         }
 
-        inputs.timeSinceLastHeartbeat = (now - prevHeartbeatChangeTime);
+        tempInputs.timeSinceLastHeartbeat = (now - prevHeartbeatChangeTime);
 
-        inputs.cameraMatrix = cameraIntrinsicsSubscriber.get(EMPTY);
-        inputs.distCoeffs = cameraDistortionSubscriber.get(EMPTY);
+        tempInputs.cameraMatrix = cameraIntrinsicsSubscriber.get(EMPTY);
+        tempInputs.distCoeffs = cameraDistortionSubscriber.get(EMPTY);
+    });
+
+    /**
+     * Constructs a PhotonReal from the name of the camera.
+     *
+     * @param cameraName The nickname of the camera (found in the PhotonVision UI).
+     */
+    public PhotonReal(String cameraName) {
+        this(NetworkTableInstance.getDefault(), cameraName);
+        thread.start();
+    }
+
+    private static final double[] EMPTY = new double[0];
+
+    @Override
+    public void updateInputs(PhotonInputs inputs) {
+        super.updateInputs(inputs);
+        inputs.cameraMatrix = tempInputs.cameraMatrix;
+        inputs.distCoeffs = tempInputs.distCoeffs;
+        inputs.rawBytes = tempInputs.rawBytes;
+        inputs.result = tempInputs.result;
+        inputs.timeSinceLastHeartbeat = tempInputs.timeSinceLastHeartbeat;
+        inputs.versionString = tempInputs.versionString;
     }
 
     @Override

@@ -15,7 +15,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lib.util.photon.PhotonIO.PhotonInputs;
 import frc.robot.Constants;
 
@@ -81,11 +80,11 @@ public class PhotonCameraWrapper {
      */
     public Optional<VisionObservation> getInitialPose() {
         var res = inputs.result;
-        SmartDashboard.putNumber("Heartbeat", inputs.timeSinceLastHeartbeat);
+        // SmartDashboard.putNumber("Heartbeat", inputs.timeSinceLastHeartbeat);
         if (inputs.timeSinceLastHeartbeat > 0.5) {
             return Optional.empty();
         }
-        SmartDashboard.putNumber("lastTimePhton", res.getTimestampSeconds());
+        // SmartDashboard.putNumber("lastTimePhton", res.getTimestampSeconds());
         if (res.hasTargets()) {
             var target = res.getBestTarget();
             var camToTargetTrans = target.getBestCameraToTarget();

@@ -73,7 +73,7 @@ public class ElevatorWrist extends SubsystemBase {
         this.io = io;
         io.updateInputs(inputs);
         wristPIDController
-            .setSetpoint(Constants.ElevatorWristConstants.SetPoints.AMP_ANGLE.getRotations());
+            .setSetpoint(Constants.ElevatorWristConstants.SetPoints.HOME_ANGLE.getRotations());
         wristPIDController.setTolerance(Rotation2d.fromDegrees(0.1).getRotations());
         elevatorPIDController.setGoal(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT);
         wristPIDController.setIZone(Rotation2d.fromDegrees(5).getRotations());
@@ -97,6 +97,13 @@ public class ElevatorWrist extends SubsystemBase {
 
         if (inputs.wristAbsoluteEncRawValue > 0.5) {
             inputs.wristAbsoluteEncRawValue -= 1.0;
+        }
+
+        if (OperatorState.manualModeEnabled()) {
+            elevatorPIDController.setGoal(
+                elevatorPIDController.getGoal().position + operator.getRightY() * 4.0 * 0.02);
+            wristPIDController.setSetpoint(wristProfiledPIDController.getSetpoint()
+                + operator.getLeftY() * Rotation2d.fromDegrees(5.0).getRotations() * 0.02);
         }
 
         wristProfiledPIDController.setSetpoint(wristPIDController.getSetpoint());
@@ -128,8 +135,8 @@ public class ElevatorWrist extends SubsystemBase {
 
         double profiledWristPIDValue =
             wristProfiledPIDController.calculate(calculatedWristAngle.getRotations());
-        SmartDashboard.putNumber("wristError",
-            Rotation2d.fromRotations(wristPIDController.getPositionError()).getDegrees());
+        // SmartDashboard.putNumber("wristError",
+        // Rotation2d.fromRotations(wristPIDController.getPositionError()).getDegrees());
         if (Math.abs(wristPIDController.getPositionError()) > Rotation2d.fromDegrees(5)
             .getRotations()) {
             wristPIDValue = profiledWristPIDValue;
@@ -138,24 +145,8 @@ public class ElevatorWrist extends SubsystemBase {
         double elevatorPIDValue = elevatorPIDController.calculate(calculatedHeight);
         double elevatorFeedForward = 0.4;
 
-        if (OperatorState.manualModeEnabled()) {
-            io.setWristVoltage(operator.getLeftY() * 4.0);
-            io.setElevatorVoltage(-elevatorFeedForward + operator.getRightY() * 4.0);
-        } else if (pidEnabled) {
-            if (calculatedHeight > 24.7 && calculatedHeight < 30) { // Getting around a bearing that
-                // prevents us from moving without
-                // considerable effort
-                if (elevatorPIDValue < 0.0) {
-                    elevatorFeedForward = -0.6;
-                } else {
-                    elevatorFeedForward = 3.0;
-                }
-            }
-            io.setElevatorVoltage(-elevatorFeedForward - elevatorPIDValue);
-            io.setWristVoltage(-wristPIDValue);
-        } else {
-            io.setElevatorVoltage(-elevatorFeedForward);
-        }
+        io.setElevatorVoltage(-elevatorFeedForward - elevatorPIDValue);
+        io.setWristVoltage(-wristPIDValue);
 
         Logger.recordOutput("/ElevatorWrist/Wrist/PID Voltage", elevatorPIDValue);
         Logger.recordOutput("/ElevatorWrist/Wrist/PID setpoint",
@@ -177,7 +168,7 @@ public class ElevatorWrist extends SubsystemBase {
         // Logger.recordOutput("/ElevatorWrist/Wrist/Feedforward", wristFeedForwardValue);
         // Logger.recordOutput("/ElevatorWrist/Wrist/Combined Voltage",
         // wristFeedForwardValue + wristPIDValue);
-        Logger.recordOutput("/ElevatorWrist/Wrist/Combined Voltage", wristPIDValue);
+        // Logger.recordOutput("/ElevatorWrist/Wrist/Combined Voltage", wristPIDValue);
 
     }
 
@@ -316,24 +307,6 @@ public class ElevatorWrist extends SubsystemBase {
         // return elevatorPIDController.atGoal() && wristPIDController.atGoal();
         return wristPIDController.atSetpoint();
         // return true;
-    }
-
-    /**
-     * Set power output for wrist
-     *
-     * @param power desired power output percentage
-     */
-    public void setWristPower(double power) {
-        io.setWristPower(power);
-    }
-
-    /**
-     * Set power output for elevator
-     *
-     * @param power desired power output percentage
-     */
-    public void setElevatorPower(double power) {
-        io.setElevatorPower(power);
     }
 
     /**
