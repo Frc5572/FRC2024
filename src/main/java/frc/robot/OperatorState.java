@@ -7,7 +7,8 @@ public class OperatorState {
 
     /** Operating state. */
     public static enum State {
-        kShootWhileMove("Speaker"); // , kClimb("Climb"); kAmp("Amp"),
+        kShootWhileMove("Shoot While Move"), kShootSpeaker("Speaker");
+        // , kClimb("Climb"); kAmp("Amp"),
 
         public final String displayName;
 

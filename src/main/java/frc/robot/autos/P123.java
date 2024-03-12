@@ -37,9 +37,6 @@ public class P123 extends SequentialCommandGroup {
         this.elevatorWrist = elevatorWrist;
         this.intake = intake;
         this.shooter = shooter;
-        // addRequirements(swerveDrive);
-        // SmartDashboard.putBoolean("Auto Status", false);
-
 
         PathPlannerPath path1 = PathPlannerPath.fromPathFile("1 - Resnick 1 Shoot Initial Note");
         PathPlannerPath path2 = PathPlannerPath.fromPathFile("2 - Resnick 1 Intake P1");

@@ -29,6 +29,7 @@ import frc.robot.autos.Resnick5;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.FlashingLEDColor;
 import frc.robot.commands.MovingColorLEDs;
+import frc.robot.commands.ShootFromSpeaker;
 import frc.robot.commands.ShootWhileMoving;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.LEDs;
@@ -238,6 +239,9 @@ public class RobotContainer {
         }).ignoringDisable(true));
         // run action based on current state as incremented through operator states list
         operator.a().whileTrue(new SelectCommand<OperatorState.State>(Map.of(
+            //
+            OperatorState.State.kShootSpeaker,
+            new ShootFromSpeaker(s_Swerve, shooter, elevatorWrist, intake),
             //
             // OperatorState.State.kAmp,
             // Commands
