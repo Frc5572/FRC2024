@@ -35,7 +35,7 @@ public class ElevatorWristReal implements ElevatorWristIO {
     public ElevatorWristReal() {
         elevatorRelativeEnc.setPositionConversionFactor(25);
         elevatorMotor.setIdleMode(IdleMode.kBrake);
-        elevatorMotor.setInverted(false);
+        elevatorMotor.setInverted(true);
 
         wristAbsoluteEnc.setPositionConversionFactor(1);
         wristMotor.setIdleMode(IdleMode.kBrake);
@@ -59,7 +59,7 @@ public class ElevatorWristReal implements ElevatorWristIO {
 
     @Override
     public void setElevatorVoltage(double v) {
-        // elevatorMotor.setVoltage(v);
+        elevatorMotor.setVoltage(v);
     }
 
     @Override
@@ -74,6 +74,6 @@ public class ElevatorWristReal implements ElevatorWristIO {
 
     @Override
     public void setElevatorPower(double power) {
-        // elevatorMotor.set(power);
+        elevatorMotor.set(power);
     }
 }
