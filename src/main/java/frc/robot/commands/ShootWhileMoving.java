@@ -71,7 +71,8 @@ public class ShootWhileMoving extends Command {
 
         SmartDashboard.putNumber("Move Shoot Desired Rotation", desiredRotation.getDegrees());
         pidController.setSetpoint(desiredRotation.getRadians());
-        double rotation = pidController.calculate(swerveDrive.getPose().getRotation().getRadians());
+        double rotation =
+            pidController.calculate(swervePoseSupplier.get().getRotation().getRadians());
         if (pidController.atSetpoint()) {
             rotation = 0;
         }

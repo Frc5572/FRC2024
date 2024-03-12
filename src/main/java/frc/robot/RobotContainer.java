@@ -260,7 +260,7 @@ public class RobotContainer {
                 () -> new Pose2d(
                     FieldConstants.allianceFlip(
                         new Translation2d(Units.inchesToMeters(154), Units.inchesToMeters(109))),
-                    s_Swerve.getFieldRelativeHeading()),
+                    s_Swerve.getFieldRelativeHeading().minus(Rotation2d.fromDegrees(180))),
                 () -> FieldConstants.allianceFlip(FieldConstants.Speaker.centerSpeakerOpening)
                     .getTranslation())
                         .alongWith(elevatorWrist.followPosition(
