@@ -16,6 +16,9 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
 
+/**
+ * Shoot From Speaker
+ */
 public class ShootFromSpeaker extends SequentialCommandGroup {
 
     Swerve swerveDrive;
@@ -24,7 +27,7 @@ public class ShootFromSpeaker extends SequentialCommandGroup {
     Shooter shooter;
 
     /**
-     * Resnick 2 Custom Auto
+     * Shoot from speaker
      *
      * @param swerveDrive Swerve Drive Subsystem
      * @param elevatorWrist Elevator Wrist Subsystem
