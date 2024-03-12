@@ -1,10 +1,6 @@
 package frc.robot;
 
-import java.util.List;
 import java.util.Map;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.path.PathPlannerPath;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -20,12 +16,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
+import frc.robot.autos.ChoreoTests;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.FlashingLEDColor;
 import frc.robot.commands.MovingColorLEDs;
@@ -185,8 +181,7 @@ public class RobotContainer {
         driver.start().onTrue(
             new InstantCommand(() -> s_Swerve.resetPvInitialization()).ignoringDisable(true));
         // intake forward
-        driver.rightTrigger()
-            .whileTrue(intake.runIntakeMotor(1, .20).onlyIf(() -> elevatorWrist.elevatorAtHome()));
+        driver.rightTrigger().whileTrue(intake.runIntakeMotor(1, .20));
         // intake backward
         driver.leftTrigger().whileTrue(intake.runIntakeMotorNonStop(-1, -.20));
 
@@ -287,21 +282,8 @@ public class RobotContainer {
      * @return Returns autonomous command selected.
      */
     public Command getAutonomousCommand() {
-        Command autocommand;
-        String stuff = autoChooser.getSelected();
-        switch (stuff) {
-            case "Test Auto":
-                List<PathPlannerPath> paths = PathPlannerAuto.getPathGroupFromAutoFile("New Auto");
-                Pose2d initialState = paths.get(0).getPreviewStartingHolonomicPose();
-                s_Swerve.resetOdometry(initialState);
-                autocommand = new InstantCommand(() -> s_Swerve.resetOdometry(initialState))
-                    .andThen(new PathPlannerAuto("New Auto"));
-
-                break;
-            default:
-                autocommand = new WaitCommand(1.0);
-        }
-        return autocommand;
+        return ChoreoTests.testPath(s_Swerve, intake, elevatorWrist)
+            .alongWith(shooter.shootSpeaker());
     }
 
 }

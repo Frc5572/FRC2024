@@ -1,6 +1,7 @@
 package frc.robot.subsystems.intake;
 
 import java.math.BigDecimal;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
@@ -98,6 +99,18 @@ public class Intake extends SubsystemBase {
             setIndexerMotor(speed);
         }, () -> {
             setIndexerMotor(0);
+        }, this);
+    }
+
+    public Command runIntakeFunctions(Supplier<Double> intakeSpeed, Supplier<Double> indexerSpeed,
+        Supplier<Boolean> shouldStop) {
+        return Commands.run(() -> {
+            setIntakeMotor(intakeSpeed.get());
+            if (!getSensorStatus() && shouldStop.get()) {
+                setIndexerMotor(0);
+            } else {
+                setIndexerMotor(indexerSpeed.get());
+            }
         }, this);
     }
 }

@@ -190,7 +190,7 @@ public final class Constants {
         /* Drivetrain Constants */
         public static final double trackWidth = Units.inchesToMeters(23.75);
         public static final double wheelBase = Units.inchesToMeters(17.75);
-        public static final double wheelDiameter = Units.inchesToMeters(4.0);
+        public static final double wheelDiameter = Units.inchesToMeters(3.7);
         public static final double wheelCircumference = wheelDiameter * Math.PI;
         public static final Translation2d MOD0_MODOFFSET =
             new Translation2d(wheelBase / 2.0, trackWidth / 2.0);
@@ -478,7 +478,7 @@ public final class Constants {
         public static final double KS = 0;
         public static final double TOP_KV = 0.00092;
         public static final double BOTTOM_KV = 0.00092;
-        public static final double GEAR_RATIO = 31.0 / 16.0;
+        public static final double GEAR_RATIO = 3;
         public static final double HEIGHT_FROM_LOWEST_POS = Units.inchesToMeters(32.0);
         public static final double HEIGHT_FROM_SPEAKER =
             FieldConstants.centerSpeaker - HEIGHT_FROM_LOWEST_POS;

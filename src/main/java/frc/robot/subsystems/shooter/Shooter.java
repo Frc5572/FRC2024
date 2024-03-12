@@ -124,11 +124,11 @@ public class Shooter extends SubsystemBase {
         return Commands
             .runOnce(() -> setSetpoint(Constants.ShooterConstants.SHOOT_SPEAKER_RPM), this)
             .andThen(Commands.run(() -> {
-                topValue = topPid.calculate(inputs.topShooterVelocityRotPerMin)
-                    + topShooterFeed.calculate(Constants.ShooterConstants.SHOOT_SPEAKER_RPM);
+                topValue = // topPid.calculate(inputs.topShooterVelocityRotPerMin)
+                    +topShooterFeed.calculate(Constants.ShooterConstants.SHOOT_SPEAKER_RPM);
                 setTopMotor(topValue);
-                bottomValue = bottomPid.calculate(inputs.bottomShooterVelocityRotPerMin)
-                    + bottomShooterFeed.calculate(Constants.ShooterConstants.SHOOT_SPEAKER_RPM);
+                bottomValue = // bottomPid.calculate(inputs.bottomShooterVelocityRotPerMin)
+                    +bottomShooterFeed.calculate(Constants.ShooterConstants.SHOOT_SPEAKER_RPM);
                 setBottomMotor(bottomValue);
                 if (!atSetpoint()) {
                     lastAtSetpoint = Timer.getFPGATimestamp();
