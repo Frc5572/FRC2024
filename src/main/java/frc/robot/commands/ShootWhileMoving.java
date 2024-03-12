@@ -5,6 +5,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -56,9 +58,14 @@ public class ShootWhileMoving extends Command {
         Pose2d futurePose = swerveDrive.getPose().plus(
             new Transform2d(translation.times(Constants.LEAD_GAIN), Rotation2d.fromRotations(0)));
 
-        Rotation2d desiredRotation = FieldConstants
-            .allianceFlip(FieldConstants.Speaker.centerSpeakerOpening).getTranslation()
-            .minus(futurePose.getTranslation()).getAngle().plus(Rotation2d.fromDegrees(5));
+        Rotation2d desiredRotation =
+            FieldConstants.allianceFlip(FieldConstants.Speaker.centerSpeakerOpening)
+                .getTranslation().minus(futurePose.getTranslation()).getAngle();
+        if (DriverStation.getAlliance().get() == Alliance.Red) {
+            desiredRotation = desiredRotation.minus(Rotation2d.fromDegrees(5));
+        } else {
+            desiredRotation = desiredRotation.plus(Rotation2d.fromDegrees(5));
+        }
 
         SmartDashboard.putNumber("Move Shoot Desired Rotation", desiredRotation.getDegrees());
         pidController.setSetpoint(desiredRotation.getRadians());

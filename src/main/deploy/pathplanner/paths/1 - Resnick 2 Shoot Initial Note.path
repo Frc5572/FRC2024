@@ -1,0 +1,52 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.4621767328789725,
+        "y": 4.104648209296419
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.941863170938082,
+        "y": 4.249132076181693
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.271286387436507,
+        "y": 4.555437873978474
+      },
+      "prevControl": {
+        "x": 1.8725109148331505,
+        "y": 4.249132076181693
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "resnick 2 shoot initial"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 5.0,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 157.0,
+    "rotateFast": true
+  },
+  "reversed": false,
+  "folder": "P321",
+  "previewStartingState": {
+    "rotation": 180.0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

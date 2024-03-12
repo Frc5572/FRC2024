@@ -1,6 +1,7 @@
 package frc.robot;
 
 import java.util.Map;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -10,7 +11,6 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -44,6 +44,7 @@ import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.SwerveIO;
 import frc.robot.subsystems.swerve.SwerveReal;
 
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -64,16 +65,21 @@ public class RobotContainer {
     public GenericEntry operatorManualMode = RobotContainer.mainDriverTab.add("Manual Mode", false)
         .withWidget(BuiltInWidgets.kBooleanBox)
         .withProperties(Map.of("true_color", 0xff00ffff, "false_color", 0xff770000))
-        .withPosition(10, 6).withSize(2, 2).getEntry();
+        .withPosition(7, 6).withSize(2, 2).getEntry();
     public static GenericEntry readyShoot = RobotContainer.mainDriverTab
         .add("Ready To Shoot", false).withWidget(BuiltInWidgets.kBooleanBox)
         .withProperties(Map.of("true_color", 0xff00ffff, "false_color", 0xff770000))
         .withPosition(10, 2).withSize(3, 2).getEntry();
+    public SimpleWidget backLeftCameraWidget = RobotContainer.mainDriverTab
+        .add("Back Left Camera", "/CameraPublisher/back-left_Port_1182_Output_MJPEG_Server")
+        .withWidget(BuiltInWidgets.kCameraStream)
+        .withProperties(Map.of("topic", "/CameraPublisher/back-left_Port_1182_Output_MJPEG_Server"))
+        .withPosition(12, 4).withSize(7, 6);
 
     public static final SendableChooser<Integer> numNoteChooser = new SendableChooser<>();
-    public ComplexWidget numNoteChooserrWidget =
-        mainDriverTab.add("Number of Additional Auto Notes", numNoteChooser)
-            .withWidget(BuiltInWidgets.kComboBoxChooser).withPosition(7, 6).withSize(3, 2);
+    // public ComplexWidget numNoteChooserrWidget =
+    // mainDriverTab.add("Number of Additional Auto Notes", numNoteChooser)
+    // .withWidget(BuiltInWidgets.kComboBoxChooser).withPosition(7, 6).withSize(3, 2);
     public SimpleWidget fmsInfo =
         RobotContainer.mainDriverTab.add("FMS Info", 0).withWidget("FMSInfo")
             .withProperties(Map.of("topic", "/FMSInfo")).withPosition(3, 4).withSize(6, 2);
@@ -96,24 +102,33 @@ public class RobotContainer {
     private Shooter shooter;
     private Intake intake;
     private PhotonCameraWrapper[] cameras;
-    public ElevatorWrist elevatorWrist;
+    private ElevatorWrist elevatorWrist;
     public Climber climber;
     private LEDs leds = new LEDs(Constants.LEDConstants.LED_COUNT, Constants.LEDConstants.PWM_PORT);
+    // private PhotonCamera backLeftCamera = new PhotonCamera("back-left");
+
+
+    private Trigger gotNote = new Trigger(() -> !this.intake.getSensorStatus());
+    private Trigger climbState = new Trigger(() -> false);
+    // new Trigger(() -> OperatorState.getCurrentState() == OperatorState.State.kClimb);
+    private Trigger mannualMode = new Trigger(() -> OperatorState.manualModeEnabled());
+    private Trigger atHome = new Trigger(() -> elevatorWrist.elevatorAtHome());
 
     /**
      */
     public RobotContainer(RobotRunType runtimeType) {
         autoChooser.setDefaultOption("Wait 1 Second", "wait");
-        SmartDashboard.putNumber("Intake Power", 0);
-        SmartDashboard.putNumber("Left Climber Power", 0);
-        SmartDashboard.putNumber("Right Climber Power", 0);
-        SmartDashboard.putNumber("Elevator Power", 0);
-        SmartDashboard.putNumber("Wrist Power", 0);
+        autoChooser.addOption("P123", "P123");
+        autoChooser.addOption("P321", "P321");
+        autoChooser.addOption("P32", "P32");
+        autoChooser.addOption("Resnick 5", "Resnick 5");
+        // autoChooser.addOption("Resnick 3", "Resnick 3");
+        // autoChooser.addOption("Resnick 4", "Resnick 4");
         numNoteChooser.setDefaultOption("0", 0);
         for (int i = 0; i < 7; i++) {
             numNoteChooser.addOption(String.valueOf(i), i);
         }
-
+        // backLeftCamera.setDriverMode(true);
         cameras =
             /*
              * Camera Order: 0 - Front Left 1 - Front RIght 2 - Back Left 3 - Back Right
@@ -157,12 +172,8 @@ public class RobotContainer {
         s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, driver,
             Constants.Swerve.isFieldRelative, Constants.Swerve.isOpenLoop));
         leds.setDefaultCommand(new MovingColorLEDs(leds, Color.kRed, 4, false));
-        // autoChooser.addOption(resnickAuto, new ResnickAuto(s_Swerve));
-        SmartDashboard.putData("Choose Auto: ", autoChooser);
         // Configure the button bindings
         configureButtonBindings();
-        Trigger gotNote = new Trigger(() -> !this.intake.getSensorStatus());
-        gotNote.onTrue(new FlashingLEDColor(leds, Color.kGreen).withTimeout(3));
     }
 
     /**
@@ -172,10 +183,7 @@ public class RobotContainer {
      * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
-        Trigger climbState =
-            new Trigger(() -> OperatorState.getCurrentState() == OperatorState.State.kClimb);
-        Trigger mannualMode = new Trigger(() -> OperatorState.manualModeEnabled());
-
+        gotNote.onTrue(new FlashingLEDColor(leds, Color.kGreen).withTimeout(3));
         /* Driver Buttons */
         driver.y().onTrue(new InstantCommand(() -> s_Swerve.resetFieldRelativeOffset()));
         driver.start().onTrue(
@@ -192,14 +200,14 @@ public class RobotContainer {
         operator.b().onTrue(new InstantCommand(() -> s_Swerve.resetPvInitialization()));
         // spin up shooter
         operator.leftTrigger().and(climbState).and(mannualMode).whileTrue(Commands.startEnd(() -> {
-            climber.setLeftPower(0.8);
+            climber.setLeftPower(Constants.ClimberConstants.CLIMBER_POWER);
         }, () -> {
             climber.setLeftPower(0);
         }));
         operator.leftTrigger().and(climbState.negate()).whileTrue(shooter.shootSpeaker());
         // shoot note to speaker after being intaked
         operator.rightTrigger().and(climbState).and(mannualMode).whileTrue(Commands.startEnd(() -> {
-            climber.setRightPower(0.8);
+            climber.setRightPower(Constants.ClimberConstants.CLIMBER_POWER);
         }, () -> {
             climber.setRightPower(0);
         }));
@@ -207,8 +215,8 @@ public class RobotContainer {
             .whileTrue(CommandFactory.shootSpeaker(shooter, intake));
         operator.rightTrigger().and(climbState).and(mannualMode.negate())
             .whileTrue(Commands.startEnd(() -> {
-                climber.setRightPower(0.8);
-                climber.setLeftPower(0.8);
+                climber.setRightPower(Constants.ClimberConstants.CLIMBER_POWER);
+                climber.setLeftPower(Constants.ClimberConstants.CLIMBER_POWER);
             }, () -> {
                 climber.setRightPower(0);
                 climber.setLeftPower(0);
@@ -226,20 +234,20 @@ public class RobotContainer {
         // run action based on current state as incremented through operator states list
         operator.a().whileTrue(new SelectCommand<OperatorState.State>(Map.of(
             //
-            OperatorState.State.kAmp,
-            Commands
-                .either(elevatorWrist.ampPosition(), Commands.none(),
-                    () -> !intake.getSensorStatus())
-                .alongWith(new TeleopSwerve(s_Swerve, driver, true, false)),
+            // OperatorState.State.kAmp,
+            // Commands
+            // .either(elevatorWrist.ampPosition(), Commands.none(),
+            // gotNote.debounce(0.5, Debouncer.DebounceType.kFalling))
+            // .alongWith(new TeleopSwerve(s_Swerve, driver, true, false)),
             //
-            OperatorState.State.kClimb,
-            elevatorWrist.climbPosition()
-                .alongWith(new TeleopSwerve(s_Swerve, driver, true, false)),
+            // OperatorState.State.kClimb,
+            // elevatorWrist.climbPosition()
+            // .alongWith(new TeleopSwerve(s_Swerve, driver, true, false)),
             //
             OperatorState.State.kShootWhileMove,
             new ShootWhileMoving(s_Swerve, driver).alongWith(elevatorWrist.followPosition(
-                () -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-                () -> elevatorWrist.getAngleFromDistance(s_Swerve.getPose())))
+                () -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT, () -> elevatorWrist
+                    .getAngleFromDistance(s_Swerve.getPose()).plus(Rotation2d.fromDegrees(0.0))))
         //
         ), OperatorState::getCurrentState));
 

@@ -1,0 +1,68 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.357976707567671,
+        "y": 4.855964317099843
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.7938706360418095,
+        "y": 5.345588365595336
+      },
+      "isLocked": false,
+      "linkedName": "resnick 2 shoot p3"
+    },
+    {
+      "anchor": {
+        "x": 3.1155820451175793,
+        "y": 5.507130871149041
+      },
+      "prevControl": {
+        "x": 1.9093803104681228,
+        "y": 5.599915619968228
+      },
+      "nextControl": {
+        "x": 3.306495915317413,
+        "y": 5.492445188825977
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.219755423410669,
+        "y": 5.609930647410491
+      },
+      "prevControl": {
+        "x": 2.189048100952031,
+        "y": 5.5794714671452885
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "resnick 2 shoot p2"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 5.0,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 180.0,
+    "rotateFast": true
+  },
+  "reversed": false,
+  "folder": "P321",
+  "previewStartingState": {
+    "rotation": 165.0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

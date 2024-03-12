@@ -1,0 +1,52 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.46159126923400234,
+        "y": 7.011663611028131
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.2884187659513648,
+        "y": 7.011663611028131
+      },
+      "isLocked": false,
+      "linkedName": "resnick 1 start"
+    },
+    {
+      "anchor": {
+        "x": 2.1,
+        "y": 7.011663611028131
+      },
+      "prevControl": {
+        "x": 1.6549896899933558,
+        "y": 7.011663611028131
+      },
+      "nextControl": null,
+      "isLocked": true,
+      "linkedName": "resnick 1 shoot initial"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 5.0,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -140.0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "P123",
+  "previewStartingState": {
+    "rotation": 180.0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}
