@@ -20,13 +20,17 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.util.FieldConstants;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
-import frc.robot.autos.ChoreoTests;
+import frc.robot.autos.P123;
+import frc.robot.autos.P32;
+import frc.robot.autos.P321;
+import frc.robot.autos.Resnick5;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.FlashingLEDColor;
 import frc.robot.commands.MovingColorLEDs;
@@ -307,8 +311,32 @@ public class RobotContainer {
      * @return Returns autonomous command selected.
      */
     public Command getAutonomousCommand() {
-        return ChoreoTests.testPath(s_Swerve, intake, elevatorWrist)
-            .alongWith(shooter.shootSpeaker());
+        OperatorState.setState(OperatorState.State.kShootWhileMove);
+        Command autocommand;
+        String stuff = autoChooser.getSelected();
+        switch (stuff) {
+            case "P123":
+                autocommand = new P123(s_Swerve, elevatorWrist, intake, shooter);
+                break;
+            case "P321":
+                autocommand = new P321(s_Swerve, elevatorWrist, intake, shooter);
+                break;
+            case "P32":
+                autocommand = new P32(s_Swerve, elevatorWrist, intake, shooter);
+                break;
+            // case "Resnick 3":
+            // autocommand = new Resnick3(s_Swerve, elevatorWrist, intake, shooter);
+            // break;
+            // case "Resnick 4":
+            // autocommand = new Resnick4(s_Swerve, elevatorWrist, intake, shooter);
+            // break;
+            case "Resnick 5":
+                autocommand = new Resnick5(s_Swerve, elevatorWrist, intake, shooter);
+                break;
+            default:
+                autocommand = new WaitCommand(1.0);
+        }
+        return autocommand;
     }
 
 }

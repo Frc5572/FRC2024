@@ -356,10 +356,10 @@ public final class Constants {
      */
     public static final class ElevatorWristConstants {
 
-        public static final Rotation2d WRIST_REF_1_ANGLE_MEASURED = Rotation2d.fromRotations(0.116);
-        public static final Rotation2d WRIST_REF_2_ANGLE_MEASURED = Rotation2d.fromRotations(-.014);
-        public static final Rotation2d WRIST_REF_1_ANGLE_ACTUAL = Rotation2d.fromDegrees(0.0);
-        public static final Rotation2d WRIST_REF_2_ANGLE_ACTUAL = Rotation2d.fromDegrees(45.0);
+        public static final Rotation2d WRIST_REF_1_ANGLE_MEASURED = Rotation2d.fromRotations(0.004);
+        public static final Rotation2d WRIST_REF_2_ANGLE_MEASURED = Rotation2d.fromRotations(-.105);
+        public static final Rotation2d WRIST_REF_1_ANGLE_ACTUAL = Rotation2d.fromDegrees(3.0);
+        public static final Rotation2d WRIST_REF_2_ANGLE_ACTUAL = Rotation2d.fromDegrees(43.0);
 
         public static final double WRIST_M;
         public static final double WRIST_B;
@@ -438,7 +438,7 @@ public final class Constants {
 
             public static final double HOME_HEIGHT = 24;
             public static final Rotation2d INTAKE_ANGLE = Rotation2d.fromDegrees(39);
-            public static final Rotation2d HOME_ANGLE = Rotation2d.fromDegrees(16.8);
+            public static final Rotation2d HOME_ANGLE = Rotation2d.fromDegrees(10);
             // public static final double AMP_HEIGHT = Units.inchesToMeters(34);
             public static final double AMP_HEIGHT = 44;
             public static final Rotation2d AMP_ANGLE = Rotation2d.fromDegrees(-28);
