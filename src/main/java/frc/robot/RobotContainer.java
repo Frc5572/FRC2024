@@ -1,7 +1,11 @@
 package frc.robot;
 
 import java.util.Map;
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -19,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.lib.util.FieldConstants;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
@@ -32,9 +37,6 @@ import frc.robot.commands.MovingColorLEDs;
 import frc.robot.commands.ShootWhileMoving;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.LEDs;
-import frc.robot.subsystems.climber.Climber;
-import frc.robot.subsystems.climber.ClimberIO;
-import frc.robot.subsystems.climber.ClimberNEO;
 import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
 import frc.robot.subsystems.elevator_wrist.ElevatorWristIO;
 import frc.robot.subsystems.elevator_wrist.ElevatorWristReal;
@@ -107,7 +109,6 @@ public class RobotContainer {
     private Intake intake;
     private PhotonCameraWrapper[] cameras;
     private ElevatorWrist elevatorWrist;
-    public Climber climber;
     private LEDs leds = new LEDs(Constants.LEDConstants.LED_COUNT, Constants.LEDConstants.PWM_PORT);
     // private PhotonCamera backLeftCamera = new PhotonCamera("back-left");
 
@@ -157,21 +158,18 @@ public class RobotContainer {
                 intake = new Intake(new IntakeIOFalcon());
                 s_Swerve = new Swerve(new SwerveReal(), cameras);
                 elevatorWrist = new ElevatorWrist(new ElevatorWristReal(), operator);
-                climber = new Climber(new ClimberNEO());
                 break;
             case kSimulation:
                 s_Swerve = new Swerve(new SwerveIO() {}, cameras);
                 shooter = new Shooter(new ShooterIO() {});
                 intake = new Intake(new IntakeIO() {});
                 elevatorWrist = new ElevatorWrist(new ElevatorWristIO() {}, operator);
-                climber = new Climber(new ClimberIO() {});
                 break;
             default:
                 s_Swerve = new Swerve(new SwerveIO() {}, cameras);
                 shooter = new Shooter(new ShooterIO() {});
                 intake = new Intake(new IntakeIO() {});
                 elevatorWrist = new ElevatorWrist(new ElevatorWristIO() {}, operator);
-                climber = new Climber(new ClimberIO() {});
         }
         s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, driver,
             Constants.Swerve.isFieldRelative, Constants.Swerve.isOpenLoop));
@@ -193,8 +191,7 @@ public class RobotContainer {
         driver.start().onTrue(
             new InstantCommand(() -> s_Swerve.resetPvInitialization()).ignoringDisable(true));
         // intake forward
-        driver.rightTrigger().whileTrue(
-            CommandFactory.intakeNote(intake).onlyIf(atHome.debounce(0.5)).onlyWhile(atHome));
+        driver.rightTrigger().whileTrue(intake.runIntakeMotor(1, .20));
         // intake backward
         driver.leftTrigger().whileTrue(intake.runIntakeMotorNonStop(-1, -.20));
 
@@ -204,28 +201,9 @@ public class RobotContainer {
         // reset apriltag vision
         operator.b().onTrue(new InstantCommand(() -> s_Swerve.resetPvInitialization()));
         // spin up shooter
-        operator.leftTrigger().and(climbState).and(mannualMode).whileTrue(Commands.startEnd(() -> {
-            climber.setLeftPower(Constants.ClimberConstants.CLIMBER_POWER);
-        }, () -> {
-            climber.setLeftPower(0);
-        }));
-        operator.leftTrigger().and(climbState.negate()).whileTrue(shooter.shootSpeaker());
+        operator.leftTrigger().whileTrue(shooter.shootSpeaker());
         // shoot note to speaker after being intaked
-        operator.rightTrigger().and(climbState).and(mannualMode).whileTrue(Commands.startEnd(() -> {
-            climber.setRightPower(Constants.ClimberConstants.CLIMBER_POWER);
-        }, () -> {
-            climber.setRightPower(0);
-        }));
-        operator.rightTrigger().and(climbState.negate())
-            .whileTrue(CommandFactory.shootSpeaker(shooter, intake));
-        operator.rightTrigger().and(climbState).and(mannualMode.negate())
-            .whileTrue(Commands.startEnd(() -> {
-                climber.setRightPower(Constants.ClimberConstants.CLIMBER_POWER);
-                climber.setLeftPower(Constants.ClimberConstants.CLIMBER_POWER);
-            }, () -> {
-                climber.setRightPower(0);
-                climber.setLeftPower(0);
-            }));
+        operator.rightTrigger().whileTrue(CommandFactory.shootSpeaker(shooter, intake));
         // set shooter to home preset position
         operator.y().onTrue(elevatorWrist.homePosition());
         // increment once through states list to next state
@@ -239,22 +217,37 @@ public class RobotContainer {
         // run action based on current state as incremented through operator states list
         operator.a().whileTrue(new SelectCommand<OperatorState.State>(Map.of(
             //
-            // OperatorState.State.kAmp,
-            // Commands
-            // .either(elevatorWrist.ampPosition(), Commands.none(),
-            // gotNote.debounce(0.5, Debouncer.DebounceType.kFalling))
-            // .alongWith(new TeleopSwerve(s_Swerve, driver, true, false)),
+            OperatorState.State.kAmp,
+            Commands
+                .either(elevatorWrist.ampPosition(), Commands.none(),
+                    gotNote.debounce(0.5, Debouncer.DebounceType.kFalling))
+                .alongWith(new TeleopSwerve(s_Swerve, driver, true, false)),
             //
             // OperatorState.State.kClimb,
             // elevatorWrist.climbPosition()
             // .alongWith(new TeleopSwerve(s_Swerve, driver, true, false)),
             //
             OperatorState.State.kShootWhileMove,
-            new ShootWhileMoving(s_Swerve, driver).alongWith(elevatorWrist.followPosition(
-                () -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT, () -> elevatorWrist
-                    .getAngleFromDistance(s_Swerve.getPose()).plus(Rotation2d.fromDegrees(0.0))))
-        //
-        ), OperatorState::getCurrentState));
+            new ShootWhileMoving(s_Swerve, driver, () -> s_Swerve.getPose(),
+                () -> FieldConstants.allianceFlip(FieldConstants.Speaker.centerSpeakerOpening)
+                    .getTranslation())
+                        .alongWith(elevatorWrist.followPosition(
+                            () -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
+                            () -> elevatorWrist.getAngleFromDistance(s_Swerve.getPose())
+                                .plus(Rotation2d.fromDegrees(0.0)))),
+            //
+            OperatorState.State.kPost,
+            new ShootWhileMoving(s_Swerve, driver,
+                () -> new Pose2d(
+                    FieldConstants.allianceFlip(
+                        new Translation2d(Units.inchesToMeters(154), Units.inchesToMeters(109))),
+                    s_Swerve.getFieldRelativeHeading().minus(Rotation2d.fromDegrees(180))),
+                () -> FieldConstants.allianceFlip(FieldConstants.Speaker.centerSpeakerOpening)
+                    .getTranslation())
+                        .alongWith(elevatorWrist.followPosition(
+                            () -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
+                            () -> Rotation2d.fromDegrees(42.0)))),
+            OperatorState::getCurrentState));
 
         /*
          * <OperatorState.State>( List.of(OperatorState.State.kAmp,

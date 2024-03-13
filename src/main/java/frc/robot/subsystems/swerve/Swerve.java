@@ -288,22 +288,7 @@ public class Swerve extends SubsystemBase {
             .getTranslation().minus(getPose().getTranslation()).getNorm());
 
         SmartDashboard.putBoolean("Has Initialized", hasInitialized);
-        SmartDashboard.putNumber("Robot X", getPose().getX());
-        SmartDashboard.putNumber("Robot Y", getPose().getY());
-        SmartDashboard.putNumber("Robot Rotation", getPose().getRotation().getDegrees());
         SmartDashboard.putNumber("Gyro Yaw", getGyroYaw().getDegrees());
-        SmartDashboard.putNumber("Field Offset", fieldOffset);
-        SmartDashboard.putNumber("Gyro Yaw - Offset", getFieldRelativeHeading().getDegrees());
-        SmartDashboard.putNumber("Gyro roll", inputs.roll);
-        for (SwerveModule mod : swerveMods) {
-            mod.periodic();
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " CANcoder",
-                mod.getCANcoder().getDegrees());
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle",
-                mod.getPosition().angle.getDegrees());
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity",
-                mod.getState().speedMetersPerSecond);
-        }
     }
 
     /**

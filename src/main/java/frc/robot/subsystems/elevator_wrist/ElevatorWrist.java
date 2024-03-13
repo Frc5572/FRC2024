@@ -78,11 +78,6 @@ public class ElevatorWrist extends SubsystemBase {
         elevatorPIDController.setGoal(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT);
         wristPIDController.setIZone(Rotation2d.fromDegrees(5).getRotations());
         wristProfiledPIDController.setIZone(Rotation2d.fromDegrees(1).getRotations());
-        // radiusToAngle.put(4.32, 33.43);
-        // radiusToAngle.put(4.21, 34.11);
-        // radiusToAngle.put(3.99, 34.0);
-        // radiusToAngle.put(2.59, 40.5);
-        // radiusToAngle.put(1.72, 49.25);
         radiusToAngle.put(Units.inchesToMeters(92), 43.2);
         radiusToAngle.put(Units.inchesToMeters(98), 42.0);
         radiusToAngle.put(Units.inchesToMeters(134), 39.16);
@@ -99,23 +94,9 @@ public class ElevatorWrist extends SubsystemBase {
             inputs.wristAbsoluteEncRawValue -= 1.0;
         }
 
+        SmartDashboard.putNumber("wristRawEncValue", inputs.wristAbsoluteEncRawValue);
+
         wristProfiledPIDController.setSetpoint(wristPIDController.getSetpoint());
-
-        // double elevatorPIDValue = elevatorPIDController.calculate(elevatorDistanceTraveled());
-
-        // double elevatorFeedForwardValue =
-        // elevatorFeedForward.calculate(0, 0, elevatorPIDController.getPeriod());
-
-        // double wristFeedForwardValue =
-        // wristFeedForward.calculate(0, 0, wristPIDController.getPeriod());
-
-        // if (inputs.topLimitSwitch && elevatorPIDValue > 0) {
-        // elevatorPIDValue = 0;
-        // }
-
-        // if (inputs.bottomLimitSwitch && elevatorPIDValue < 0) {
-        // elevatorPIDValue = 0;
-        // }
 
         Rotation2d calculatedWristAngle = getWristAngle();
 
@@ -142,15 +123,6 @@ public class ElevatorWrist extends SubsystemBase {
             io.setWristVoltage(operator.getLeftY() * 4.0);
             io.setElevatorVoltage(-elevatorFeedForward + operator.getRightY() * 4.0);
         } else if (pidEnabled) {
-            if (calculatedHeight > 24.7 && calculatedHeight < 30) { // Getting around a bearing that
-                // prevents us from moving without
-                // considerable effort
-                if (elevatorPIDValue < 0.0) {
-                    elevatorFeedForward = -0.6;
-                } else {
-                    elevatorFeedForward = 3.0;
-                }
-            }
             io.setElevatorVoltage(-elevatorFeedForward - elevatorPIDValue);
             io.setWristVoltage(-wristPIDValue);
         } else {
@@ -316,24 +288,6 @@ public class ElevatorWrist extends SubsystemBase {
         // return elevatorPIDController.atGoal() && wristPIDController.atGoal();
         return wristPIDController.atSetpoint();
         // return true;
-    }
-
-    /**
-     * Set power output for wrist
-     *
-     * @param power desired power output percentage
-     */
-    public void setWristPower(double power) {
-        io.setWristPower(power);
-    }
-
-    /**
-     * Set power output for elevator
-     *
-     * @param power desired power output percentage
-     */
-    public void setElevatorPower(double power) {
-        io.setElevatorPower(power);
     }
 
     /**
