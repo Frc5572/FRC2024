@@ -93,17 +93,28 @@ public class PhotonReal extends PhotonIO implements AutoCloseable {
         InstanceCount++;
     }
 
-    PhotonIO.PhotonInputs tempInputs = new PhotonInputs();
+    /**
+     * Constructs a PhotonReal from the name of the camera.
+     *
+     * @param cameraName The nickname of the camera (found in the PhotonVision UI).
+     */
+    public PhotonReal(String cameraName) {
+        this(NetworkTableInstance.getDefault(), cameraName);
+    }
 
-    Thread thread = new Thread(() -> {
+    private static final double[] EMPTY = new double[0];
+
+    @Override
+    public void updateInputs(PhotonInputs inputs) {
+        super.updateInputs(inputs);
         var result = resultSubscriber.get();
         result.result.setTimestampSeconds((resultSubscriber.subscriber.getLastChange() / 1e6)
             - result.result.getLatencyMillis() / 1e3);
-        tempInputs.rawBytes = result.rawBytes;
-        tempInputs.result = result.result;
+        inputs.rawBytes = result.rawBytes;
+        inputs.result = result.result;
 
         String versionString = versionEntry.get("");
-        tempInputs.versionString = versionString;
+        inputs.versionString = versionString;
 
         var curHeartbeat = heartbeatEntry.get();
         var now = Timer.getFPGATimestamp();
@@ -113,33 +124,10 @@ public class PhotonReal extends PhotonIO implements AutoCloseable {
             prevHeartbeatValue = curHeartbeat;
         }
 
-        tempInputs.timeSinceLastHeartbeat = (now - prevHeartbeatChangeTime);
+        inputs.timeSinceLastHeartbeat = (now - prevHeartbeatChangeTime);
 
-        tempInputs.cameraMatrix = cameraIntrinsicsSubscriber.get(EMPTY);
-        tempInputs.distCoeffs = cameraDistortionSubscriber.get(EMPTY);
-    });
-
-    /**
-     * Constructs a PhotonReal from the name of the camera.
-     *
-     * @param cameraName The nickname of the camera (found in the PhotonVision UI).
-     */
-    public PhotonReal(String cameraName) {
-        this(NetworkTableInstance.getDefault(), cameraName);
-        thread.start();
-    }
-
-    private static final double[] EMPTY = new double[0];
-
-    @Override
-    public void updateInputs(PhotonInputs inputs) {
-        super.updateInputs(inputs);
-        inputs.cameraMatrix = tempInputs.cameraMatrix;
-        inputs.distCoeffs = tempInputs.distCoeffs;
-        inputs.rawBytes = tempInputs.rawBytes;
-        inputs.result = tempInputs.result;
-        inputs.timeSinceLastHeartbeat = tempInputs.timeSinceLastHeartbeat;
-        inputs.versionString = tempInputs.versionString;
+        inputs.cameraMatrix = cameraIntrinsicsSubscriber.get(EMPTY);
+        inputs.distCoeffs = cameraDistortionSubscriber.get(EMPTY);
     }
 
     @Override

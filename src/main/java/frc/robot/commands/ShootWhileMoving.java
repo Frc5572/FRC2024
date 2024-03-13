@@ -86,7 +86,7 @@ public class ShootWhileMoving extends Command {
     public static Rotation2d getDesiredRotation(Pose2d swervePose, Translation2d target) {
         Rotation2d desiredRotation = target.minus(swervePose.getTranslation()).getAngle();
         if (DriverStation.getAlliance().get() == Alliance.Red) {
-            desiredRotation = desiredRotation.minus(Rotation2d.fromDegrees(5));
+            desiredRotation = desiredRotation.plus(Rotation2d.fromDegrees(5));
         } else {
             desiredRotation = desiredRotation.plus(Rotation2d.fromDegrees(5));
         }

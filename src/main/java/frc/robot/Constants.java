@@ -190,7 +190,7 @@ public final class Constants {
         /* Drivetrain Constants */
         public static final double trackWidth = Units.inchesToMeters(23.75);
         public static final double wheelBase = Units.inchesToMeters(17.75);
-        public static final double wheelDiameter = Units.inchesToMeters(3.7);
+        public static final double wheelDiameter = Units.inchesToMeters(3.84);
         public static final double wheelCircumference = wheelDiameter * Math.PI;
         public static final Translation2d MOD0_MODOFFSET =
             new Translation2d(wheelBase / 2.0, trackWidth / 2.0);
@@ -308,7 +308,7 @@ public final class Constants {
             new HolonomicPathFollowerConfig(new PIDConstants(5.0, 0, 0),
                 new PIDConstants(AUTO_ROTATION_KP, AUTO_ROTATION_KI, AUTO_ROTATION_KD),
                 // Drive base radius (distance from center to furthest module)
-                maxSpeed, MOD0_MODOFFSET.getNorm(), new ReplanningConfig());
+                5.0, MOD0_MODOFFSET.getNorm(), new ReplanningConfig());
     }
 
     /**

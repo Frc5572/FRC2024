@@ -87,6 +87,9 @@ public class PhotonCameraWrapper {
         // SmartDashboard.putNumber("lastTimePhton", res.getTimestampSeconds());
         if (res.hasTargets()) {
             var target = res.getBestTarget();
+            if (target.getPoseAmbiguity() > 0.3) {
+                return Optional.empty();
+            }
             var camToTargetTrans = target.getBestCameraToTarget();
             var aprilTagPose =
                 photonPoseEstimator.getFieldTags().getTagPose(target.getFiducialId());

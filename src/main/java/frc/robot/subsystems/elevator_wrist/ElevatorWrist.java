@@ -73,7 +73,7 @@ public class ElevatorWrist extends SubsystemBase {
         this.io = io;
         io.updateInputs(inputs);
         wristPIDController
-            .setSetpoint(Constants.ElevatorWristConstants.SetPoints.HOME_ANGLE.getRotations());
+            .setSetpoint(Constants.ElevatorWristConstants.SetPoints.AMP_ANGLE.getRotations());
         wristPIDController.setTolerance(Rotation2d.fromDegrees(0.1).getRotations());
         elevatorPIDController.setGoal(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT);
         wristPIDController.setIZone(Rotation2d.fromDegrees(5).getRotations());
@@ -97,13 +97,6 @@ public class ElevatorWrist extends SubsystemBase {
 
         if (inputs.wristAbsoluteEncRawValue > 0.5) {
             inputs.wristAbsoluteEncRawValue -= 1.0;
-        }
-
-        if (OperatorState.manualModeEnabled()) {
-            elevatorPIDController.setGoal(
-                elevatorPIDController.getGoal().position + operator.getRightY() * 4.0 * 0.02);
-            wristPIDController.setSetpoint(wristProfiledPIDController.getSetpoint()
-                + operator.getLeftY() * Rotation2d.fromDegrees(5.0).getRotations() * 0.02);
         }
 
         wristProfiledPIDController.setSetpoint(wristPIDController.getSetpoint());
@@ -145,8 +138,17 @@ public class ElevatorWrist extends SubsystemBase {
         double elevatorPIDValue = elevatorPIDController.calculate(calculatedHeight);
         double elevatorFeedForward = 0.4;
 
-        io.setElevatorVoltage(-elevatorFeedForward - elevatorPIDValue);
-        io.setWristVoltage(-wristPIDValue);
+        if (OperatorState.manualModeEnabled()) {
+            io.setWristVoltage(operator.getLeftY() * 4.0);
+            io.setElevatorVoltage(-elevatorFeedForward + operator.getRightY() * 4.0);
+            elevatorPIDController.reset(calculatedHeight);
+        } else if (pidEnabled) {
+            io.setElevatorVoltage(-elevatorFeedForward - elevatorPIDValue);
+            io.setWristVoltage(-wristPIDValue);
+        } else {
+            io.setElevatorVoltage(-elevatorFeedForward);
+            io.setWristVoltage(0.0);
+        }
 
         Logger.recordOutput("/ElevatorWrist/Wrist/PID Voltage", elevatorPIDValue);
         Logger.recordOutput("/ElevatorWrist/Wrist/PID setpoint",
