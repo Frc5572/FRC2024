@@ -33,8 +33,6 @@ public class TurnToAngle extends Command {
      *
      * @param swerve Swerve subsystem
      * @param angle Requested angle to turn to
-     * @param isRelative Whether the angle is relative to the current angle: true = relative, false
-     *        = absolute
      */
     public TurnToAngle(Swerve swerve, Rotation2d angle) {
         addRequirements(swerve);

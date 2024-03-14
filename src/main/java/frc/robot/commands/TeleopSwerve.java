@@ -39,7 +39,7 @@ public class TeleopSwerve extends Command {
      * @param swerveDrive The instance of the swerve drive subsystem
      * @param fieldRelative Whether the movement is relative to the field or absolute
      * @param openLoop Open or closed loop system
-     * @param speedMultiplier Speed multipler to increase or decrease speed
+     * @param speedMultiplier Speed multiplier to increase or decrease speed
      */
     public TeleopSwerve(Swerve swerveDrive, CommandXboxController controller, boolean fieldRelative,
         boolean openLoop, double speedMultiplier) {

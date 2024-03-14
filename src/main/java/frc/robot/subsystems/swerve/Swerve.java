@@ -297,9 +297,6 @@ public class Swerve extends SubsystemBase {
 
     /**
      * Sets motors to 0 or inactive.
-     *
-     * @param isOpenLoop Open or closed loop system
-     * @param fieldRelative Whether the movement is relative to the field or absolute
      */
     public void setMotorsZero() {
         System.out.println("Setting Zero!!!!!!");
