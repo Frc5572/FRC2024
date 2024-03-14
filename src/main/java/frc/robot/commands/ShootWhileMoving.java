@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.lib.util.FieldConstants;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.swerve.Swerve;
@@ -82,12 +83,15 @@ public class ShootWhileMoving extends Command {
      * Get target rotation for a given pose to shoot into the speaker.
      */
     public static Rotation2d getDesiredRotation(Pose2d swervePose, Translation2d target) {
+        Pose2d speakerPos =
+            FieldConstants.allianceFlip(FieldConstants.Speaker.centerSpeakerOpening);
         Rotation2d desiredRotation = target.minus(swervePose.getTranslation()).getAngle();
-        // if (DriverStation.getAlliance().get() == Alliance.Red) {
-        // desiredRotation = desiredRotation.minus(Rotation2d.fromDegrees(5));
-        // } else {
-        // desiredRotation = desiredRotation.plus(Rotation2d.fromDegrees(5));
-        // }
+        double angleFromSpeaker =
+            new Rotation2d(speakerPos.getTranslation().getX() - swervePose.getX(),
+                speakerPos.getTranslation().getY() - swervePose.getY()).getDegrees();
+        if (Math.abs(angleFromSpeaker) > 30) {
+            desiredRotation = desiredRotation.plus(Rotation2d.fromDegrees(3));
+        }
         return desiredRotation;
     }
 
