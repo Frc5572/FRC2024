@@ -209,12 +209,12 @@ public class ElevatorWrist extends SubsystemBase {
         double distFromSpeaker =
             position.getTranslation().minus(speakerPos.getTranslation()).getNorm();
         double wristAngle = radiusToAngle.get(distFromSpeaker);
-        // double angleFromSpeaker =
-        // new Rotation2d(speakerPos.getTranslation().getX() - position.getX(),
-        // speakerPos.getTranslation().getY() - position.getY()).getDegrees();
-        // if (Math.abs(angleFromSpeaker) > 30) {
-        // wristAngle += 2.5;
-        // }
+        double angleFromSpeaker =
+            new Rotation2d(speakerPos.getTranslation().getX() - position.getX(),
+                speakerPos.getTranslation().getY() - position.getY()).getDegrees();
+        if (Math.abs(angleFromSpeaker) > 30) {
+            wristAngle += 3.0;
+        }
         SmartDashboard.putNumber("Dist from speaker", distFromSpeaker);
         return Rotation2d.fromDegrees(wristAngle);
     }
