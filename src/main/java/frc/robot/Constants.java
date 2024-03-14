@@ -411,11 +411,11 @@ public final class Constants {
          */
         public static final class PID {
 
-            public static final double ELEVATOR_KP = 1.6;
+            public static final double ELEVATOR_KP = 2.2;
             public static final double ELEVATOR_KI = 0;
             public static final double ELEVATOR_KD = 0;
-            public static final double ELEVATOR_MAX_VELOCITY = 20;
-            public static final double ELEVATOR_MAX_ACCELERATION = 50;
+            public static final double ELEVATOR_MAX_VELOCITY = 40;
+            public static final double ELEVATOR_MAX_ACCELERATION = 100;
             public static final double ELEVATOR_KS = 0;
             public static final double ELEVATOR_KG = 0;
             public static final double ELEVATOR_KV = 0;
@@ -441,7 +441,7 @@ public final class Constants {
             public static final Rotation2d HOME_ANGLE = Rotation2d.fromDegrees(10);
             // public static final double AMP_HEIGHT = Units.inchesToMeters(34);
             public static final double AMP_HEIGHT = 44;
-            public static final Rotation2d AMP_ANGLE = Rotation2d.fromDegrees(-28);
+            public static final Rotation2d AMP_ANGLE = Rotation2d.fromDegrees(-38);
             // public static final double TRAP_HEIGHT = Units.inchesToMeters(40);
             public static final double TRAP_HEIGHT = 44;
             public static final Rotation2d TRAP_ANGLE = Rotation2d.fromDegrees(-10);
@@ -449,12 +449,12 @@ public final class Constants {
             public static final double MAX_EXTENSION = 44.7;
             public static final double CLIMBING_HEIGHT = 43.34;
             public static final Rotation2d CLIMBING_ANGLE = Rotation2d.fromDegrees(-54);
-            public static final Rotation2d MAX_ANGLE_UP_HOME = Rotation2d.fromDegrees(75);
-            public static final Rotation2d MAX_ANGLE_DOWN_HOME = Rotation2d.fromDegrees(0);
-            public static final Rotation2d MAX_ANGLE_UP_EXTENDED = Rotation2d.fromRotations(.095);
-            public static final Rotation2d MAX_ANGLE_DOWN_EXTENDED = Rotation2d.fromRotations(.390);
+            public static final Rotation2d MIN_ANGLE = Rotation2d.fromDegrees(-44);
+            public static final Rotation2d MAX_ANGLE = Rotation2d.fromDegrees(50);
 
             public static final double LINEAR_DISTANCE = Units.inchesToMeters(2 * Math.PI * 659);
+
+            public static final Rotation2d PODIUM_ANGLE = Rotation2d.fromDegrees(33.0);
 
         }
 

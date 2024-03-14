@@ -2,10 +2,7 @@ package frc.robot;
 
 import java.util.Map;
 import edu.wpi.first.math.filter.Debouncer;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -36,6 +33,7 @@ import frc.robot.commands.FlashingLEDColor;
 import frc.robot.commands.MovingColorLEDs;
 import frc.robot.commands.ShootWhileMoving;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.commands.TurnToAngle;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
 import frc.robot.subsystems.elevator_wrist.ElevatorWristIO;
@@ -113,7 +111,8 @@ public class RobotContainer {
     // private PhotonCamera backLeftCamera = new PhotonCamera("back-left");
 
 
-    private Trigger gotNote = new Trigger(() -> !this.intake.getSensorStatus());
+    private Trigger gotNote = new Trigger(() -> !this.intake.getSensorStatus()).debounce(0.5,
+        Debouncer.DebounceType.kFalling);
     private Trigger climbState = new Trigger(() -> false);
     // new Trigger(() -> OperatorState.getCurrentState() == OperatorState.State.kClimb);
     private Trigger mannualMode = new Trigger(() -> OperatorState.manualModeEnabled());
@@ -218,14 +217,8 @@ public class RobotContainer {
         operator.a().whileTrue(new SelectCommand<OperatorState.State>(Map.of(
             //
             OperatorState.State.kAmp,
-            Commands
-                .either(elevatorWrist.ampPosition(), Commands.none(),
-                    gotNote.debounce(0.5, Debouncer.DebounceType.kFalling))
-                .alongWith(new TeleopSwerve(s_Swerve, driver, true, false)),
-            //
-            // OperatorState.State.kClimb,
-            // elevatorWrist.climbPosition()
-            // .alongWith(new TeleopSwerve(s_Swerve, driver, true, false)),
+            Commands.either(elevatorWrist.ampPosition(), Commands.none(), gotNote)
+                .alongWith(new TeleopSwerve(s_Swerve, driver, true, false, 0.3)),
             //
             OperatorState.State.kShootWhileMove,
             new ShootWhileMoving(s_Swerve, driver, () -> s_Swerve.getPose(),
@@ -237,16 +230,9 @@ public class RobotContainer {
                                 .plus(Rotation2d.fromDegrees(0.0)))),
             //
             OperatorState.State.kPost,
-            new ShootWhileMoving(s_Swerve, driver,
-                () -> new Pose2d(
-                    FieldConstants.allianceFlip(
-                        new Translation2d(Units.inchesToMeters(154), Units.inchesToMeters(109))),
-                    s_Swerve.getFieldRelativeHeading().minus(Rotation2d.fromDegrees(180))),
-                () -> FieldConstants.allianceFlip(FieldConstants.Speaker.centerSpeakerOpening)
-                    .getTranslation())
-                        .alongWith(elevatorWrist.followPosition(
-                            () -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-                            () -> Rotation2d.fromDegrees(42.0)))),
+            new TurnToAngle(s_Swerve, Rotation2d.fromDegrees(25)).alongWith(elevatorWrist
+                .followPosition(() -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
+                    () -> Constants.ElevatorWristConstants.SetPoints.PODIUM_ANGLE))),
             OperatorState::getCurrentState));
 
         /*

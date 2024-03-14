@@ -80,7 +80,7 @@ public class PhotonCameraWrapper {
      */
     public Optional<VisionObservation> getInitialPose() {
         var res = inputs.result;
-        if (inputs.timeSinceLastHeartbeat > 0.5) {
+        if (res == null || inputs.timeSinceLastHeartbeat > 0.5) {
             return Optional.empty();
         }
         if (res.hasTargets()) {

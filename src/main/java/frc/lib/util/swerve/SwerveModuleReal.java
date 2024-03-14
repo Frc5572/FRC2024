@@ -1,5 +1,6 @@
 package frc.lib.util.swerve;
 
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -127,11 +128,12 @@ public class SwerveModuleReal implements SwerveModuleIO {
 
     @Override
     public void updateInputs(SwerveModuleInputs inputs) {
-        inputs.driveMotorSelectedPosition = driveMotorSelectedPosition.getValueAsDouble();
-        inputs.driveMotorSelectedSensorVelocity =
-            driveMotorSelectedSensorVelocity.getValueAsDouble();
-        inputs.angleMotorSelectedPosition = angleMotorSelectedPosition.getValueAsDouble();
-        inputs.absolutePositionAngleEncoder = absolutePositionAngleEncoder.getValueAsDouble();
+        BaseStatusSignal.refreshAll(driveMotorSelectedPosition, driveMotorSelectedSensorVelocity,
+            angleMotorSelectedPosition, absolutePositionAngleEncoder);
+        inputs.driveMotorSelectedPosition = driveMotorSelectedPosition.getValue();
+        inputs.driveMotorSelectedSensorVelocity = driveMotorSelectedSensorVelocity.getValue();
+        inputs.angleMotorSelectedPosition = angleMotorSelectedPosition.getValue();
+        inputs.absolutePositionAngleEncoder = absolutePositionAngleEncoder.getValue();
         // inputs.driveMotorTemp = mDriveMotor.getDeviceTemp().getValueAsDouble();
         // inputs.angleMotorTemp = mAngleMotor.getDeviceTemp().getValueAsDouble();
     }

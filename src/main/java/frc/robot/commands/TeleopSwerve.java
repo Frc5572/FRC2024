@@ -15,6 +15,7 @@ public class TeleopSwerve extends Command {
     private boolean openLoop;
     private Swerve swerveDrive;
     private CommandXboxController controller;
+    private double speedMultiplier = 1;
 
     /**
      * Creates a command for driving the swerve drive during tele-op
@@ -32,11 +33,25 @@ public class TeleopSwerve extends Command {
         this.controller = controller;
     }
 
+    /**
+     * Creates a command for driving the swerve drive during tele-op
+     *
+     * @param swerveDrive The instance of the swerve drive subsystem
+     * @param fieldRelative Whether the movement is relative to the field or absolute
+     * @param openLoop Open or closed loop system
+     * @param speedMultiplier Speed multipler to increase or decrease speed
+     */
+    public TeleopSwerve(Swerve swerveDrive, CommandXboxController controller, boolean fieldRelative,
+        boolean openLoop, double speedMultiplier) {
+        this(swerveDrive, controller, fieldRelative, openLoop);
+        this.speedMultiplier = speedMultiplier;
+    }
+
     @Override
     public void execute() {
-        double yaxis = -controller.getLeftY();
-        double xaxis = -controller.getLeftX();
-        double raxis = -controller.getRightX();
+        double yaxis = -controller.getLeftY() * speedMultiplier;
+        double xaxis = -controller.getLeftX() * speedMultiplier;
+        double raxis = -controller.getRightX() * speedMultiplier;
 
         /* Deadbands */
         yaxis = (Math.abs(yaxis) < Constants.STICK_DEADBAND) ? 0

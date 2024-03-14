@@ -7,7 +7,7 @@ public class OperatorState {
 
     /** Operating state. */
     public static enum State {
-        kShootWhileMove("Speaker"), kAmp("Amp"), kPost("Podium"); // , kClimb("Climb"); kAmp("Amp"),
+        kShootWhileMove("Speaker"), kAmp("Amp"), kPost("Podium");
 
         public final String displayName;
 
@@ -76,15 +76,15 @@ public class OperatorState {
      */
     public static boolean tagFilter(int id) {
         switch (getCurrentState()) {
-            // case kAmp:
-            // switch (id) {
-            // case 5:
-            // case 6:
-            // return true;
-            // default:
-            // break;
-            // }
-            // break;
+            case kAmp:
+                switch (id) {
+                    case 5:
+                    case 6:
+                        return true;
+                    default:
+                        break;
+                }
+                break;
             case kShootWhileMove:
                 switch (id) {
                     case 4:

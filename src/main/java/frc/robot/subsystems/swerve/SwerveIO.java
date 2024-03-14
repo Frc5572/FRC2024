@@ -19,7 +19,7 @@ public interface SwerveIO {
         public float pitch;
     }
 
-    public default void updateInputs(SwerveInputs inputs, Pose2d previousPose) {}
+    public default void updateInputs(SwerveInputs inputs) {}
 
     /** Instantiating SwerveModules */
     public default SwerveModule createSwerveModule(int moduleNumber, int driveMotorID,
