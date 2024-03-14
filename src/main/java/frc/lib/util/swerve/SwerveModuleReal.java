@@ -1,5 +1,7 @@
 package frc.lib.util.swerve;
 
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.ControlRequest;
@@ -20,6 +22,11 @@ public class SwerveModuleReal implements SwerveModuleIO {
     private TalonFXConfiguration swerveDriveFXConfig = new TalonFXConfiguration();
     private CANcoderConfiguration swerveCANcoderConfig = new CANcoderConfiguration();
 
+    private StatusSignal<Double> driveMotorSelectedPosition;
+    private StatusSignal<Double> driveMotorSelectedSensorVelocity;
+    private StatusSignal<Double> angleMotorSelectedPosition;
+    private StatusSignal<Double> absolutePositionAngleEncoder;
+
     /** Instantiating motors and Encoders */
     public SwerveModuleReal(int moduleNumber, int driveMotorID, int angleMotorID, int cancoderID,
         Rotation2d angleOffset) {
@@ -31,6 +38,11 @@ public class SwerveModuleReal implements SwerveModuleIO {
         configAngleEncoder();
         configAngleMotor();
         configDriveMotor();
+
+        driveMotorSelectedPosition = mDriveMotor.getPosition();
+        driveMotorSelectedSensorVelocity = mDriveMotor.getVelocity();
+        angleMotorSelectedPosition = mAngleMotor.getPosition();
+        absolutePositionAngleEncoder = angleEncoder.getAbsolutePosition();
     }
 
     private void configAngleMotor() {
@@ -116,10 +128,12 @@ public class SwerveModuleReal implements SwerveModuleIO {
 
     @Override
     public void updateInputs(SwerveModuleInputs inputs) {
-        inputs.driveMotorSelectedPosition = mDriveMotor.getPosition().getValueAsDouble();
-        inputs.driveMotorSelectedSensorVelocity = mDriveMotor.getVelocity().getValueAsDouble();
-        inputs.angleMotorSelectedPosition = mAngleMotor.getPosition().getValueAsDouble();
-        inputs.absolutePositionAngleEncoder = angleEncoder.getAbsolutePosition().getValueAsDouble();
+        BaseStatusSignal.refreshAll(driveMotorSelectedPosition, driveMotorSelectedSensorVelocity,
+            angleMotorSelectedPosition, absolutePositionAngleEncoder);
+        inputs.driveMotorSelectedPosition = driveMotorSelectedPosition.getValue();
+        inputs.driveMotorSelectedSensorVelocity = driveMotorSelectedSensorVelocity.getValue();
+        inputs.angleMotorSelectedPosition = angleMotorSelectedPosition.getValue();
+        inputs.absolutePositionAngleEncoder = absolutePositionAngleEncoder.getValue();
         // inputs.driveMotorTemp = mDriveMotor.getDeviceTemp().getValueAsDouble();
         // inputs.angleMotorTemp = mAngleMotor.getDeviceTemp().getValueAsDouble();
     }

@@ -112,7 +112,7 @@ public class MoveToPos extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        swerve.setMotorsZero(false, true);
+        swerve.setMotorsZero();
     }
 
     @Override

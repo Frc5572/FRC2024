@@ -1,7 +1,6 @@
 package frc.robot.subsystems.swerve;
 
 import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.lib.util.swerve.SwerveModule;
 import frc.lib.util.swerve.SwerveModuleReal;
@@ -16,7 +15,7 @@ public class SwerveReal implements SwerveIO {
     public SwerveReal() {}
 
     @Override
-    public void updateInputs(SwerveInputs inputs, Pose2d previousPose) {
+    public void updateInputs(SwerveInputs inputs) {
         inputs.yaw = gyro.getYaw();
         inputs.pitch = gyro.getPitch();
         inputs.roll = gyro.getRoll();

@@ -74,7 +74,7 @@ public class Swerve extends SubsystemBase {
         swerveOdometry = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics,
             getGyroYaw(), getModulePositions(), new Pose2d());
 
-        swerveIO.updateInputs(inputs, swerveOdometry.getEstimatedPosition());
+        swerveIO.updateInputs(inputs);
 
         AutoBuilder.configureHolonomic(this::getPose, this::resetOdometry, this::getChassisSpeeds,
             this::setModuleStates, Constants.Swerve.pathFollowerConfig, () -> shouldFlipPath(),
@@ -246,7 +246,10 @@ public class Swerve extends SubsystemBase {
 
     @Override
     public void periodic() {
-        swerveIO.updateInputs(inputs, swerveOdometry.getEstimatedPosition());
+        swerveIO.updateInputs(inputs);
+        for (var mod : swerveMods) {
+            mod.periodic();
+        }
         swerveOdometry.update(getGyroYaw(), getModulePositions());
         Logger.processInputs("Swerve", inputs);
         for (int i = 0; i < cameras.length; i++) {
@@ -284,35 +287,18 @@ public class Swerve extends SubsystemBase {
         aprilTagTarget
             .setBoolean(Arrays.asList(cameraSeesTarget).stream().anyMatch(val -> val == true));
 
-        SmartDashboard.putNumber("Distance to Speaker", FieldConstants.Speaker.centerSpeakerOpening
-            .getTranslation().minus(getPose().getTranslation()).getNorm());
+        SmartDashboard.putNumber("Distance to Speaker",
+            FieldConstants.allianceFlip(FieldConstants.Speaker.centerSpeakerOpening)
+                .getTranslation().minus(getPose().getTranslation()).getNorm());
 
         SmartDashboard.putBoolean("Has Initialized", hasInitialized);
-        SmartDashboard.putNumber("Robot X", getPose().getX());
-        SmartDashboard.putNumber("Robot Y", getPose().getY());
-        SmartDashboard.putNumber("Robot Rotation", getPose().getRotation().getDegrees());
         SmartDashboard.putNumber("Gyro Yaw", getGyroYaw().getDegrees());
-        SmartDashboard.putNumber("Field Offset", fieldOffset);
-        SmartDashboard.putNumber("Gyro Yaw - Offset", getFieldRelativeHeading().getDegrees());
-        SmartDashboard.putNumber("Gyro roll", inputs.roll);
-        for (SwerveModule mod : swerveMods) {
-            mod.periodic();
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " CANcoder",
-                mod.getCANcoder().getDegrees());
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle",
-                mod.getPosition().angle.getDegrees());
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity",
-                mod.getState().speedMetersPerSecond);
-        }
     }
 
     /**
      * Sets motors to 0 or inactive.
-     *
-     * @param isOpenLoop Open or closed loop system
-     * @param fieldRelative Whether the movement is relative to the field or absolute
      */
-    public void setMotorsZero(boolean isOpenLoop, boolean fieldRelative) {
+    public void setMotorsZero() {
         System.out.println("Setting Zero!!!!!!");
         setModuleStates(new ChassisSpeeds(0, 0, 0));
     }
@@ -326,7 +312,7 @@ public class Swerve extends SubsystemBase {
         swerveMods[2].setDesiredState(new SwerveModuleState(2, Rotation2d.fromDegrees(-45)), false);
         swerveMods[3].setDesiredState(new SwerveModuleState(2, Rotation2d.fromDegrees(-135)),
             false);
-        this.setMotorsZero(Constants.Swerve.isOpenLoop, Constants.Swerve.isFieldRelative);
+        this.setMotorsZero();
     }
 
     /**

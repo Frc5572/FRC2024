@@ -4,7 +4,6 @@ import java.util.function.BooleanSupplier;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
-import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
@@ -43,7 +42,7 @@ public class CommandFactory {
         Command runIndexer = intake.runIndexerMotor(1);
         Command runshooter = shooter.shootSpeaker();
         Command readytoShoot = Commands.waitUntil(() -> shooter.readyToShoot());
-        return runshooter.alongWith(readytoShoot.withTimeout(2).andThen(runIndexer));
+        return runshooter.alongWith(readytoShoot.withTimeout(0.8).andThen(runIndexer));
     }
 
     /**
@@ -59,27 +58,6 @@ public class CommandFactory {
         return runshooter
             .alongWith(readytoShoot.withTimeout(1).andThen(intake.runIntakeMotorNonStop(0, 1)
                 .withTimeout(1).andThen(intake.runIntakeMotorNonStop(1, 1))));
-    }
-
-    /**
-     * Command to climb robot, then set up position to score.
-     *
-     * @param climber Climber subsystem
-     * @param elevatorWrist Elevator and Wrist subsystem
-     * @return Returns auto climb command
-     */
-    public static Command autoClimb(Climber climber, ElevatorWrist elevatorWrist) {
-        Command initialExtension =
-            elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.CLIMBING_HEIGHT,
-                Constants.ElevatorWristConstants.SetPoints.HOME_ANGLE);
-        Command hooksAttach =
-            elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-                Constants.ElevatorWristConstants.SetPoints.HOME_ANGLE);
-        Command climb = climber.getToPosition(Constants.ClimberConstants.CLIMBING_DISTANCE);
-        Command extendToTrap =
-            elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.TRAP_HEIGHT,
-                Constants.ElevatorWristConstants.SetPoints.TRAP_ANGLE);
-        return initialExtension.andThen(hooksAttach).andThen(climb).andThen(extendToTrap);
     }
 
     /**

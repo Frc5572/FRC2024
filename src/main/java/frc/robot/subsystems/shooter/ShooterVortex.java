@@ -17,6 +17,20 @@ public class ShooterVortex implements ShooterIO {
     private RelativeEncoder topEncoder = topShooterMotor.getEncoder();
     private RelativeEncoder bottomEncoder = bottomShooterMotor.getEncoder();
 
+    private double topShooterMotorVoltage;
+    private double bottomShooterMotorVoltage;
+    private double topShooterVelocityRotPerMin = 0.0;
+    private double bottomShooterVelocityRotPerMin = 0.0;
+
+    private Thread thread = new Thread(() -> {
+        while (true) {
+            topShooterMotor.setVoltage(topShooterMotorVoltage);
+            bottomShooterMotor.setVoltage(bottomShooterMotorVoltage);
+            topShooterVelocityRotPerMin = topEncoder.getVelocity();
+            bottomShooterVelocityRotPerMin = bottomEncoder.getVelocity();
+        }
+    });
+
     /**
      * Constructor Shooter Subsystem - sets motor and encoder preferences
      */
@@ -24,7 +38,9 @@ public class ShooterVortex implements ShooterIO {
         topShooterMotor.setIdleMode(IdleMode.kCoast);
         bottomShooterMotor.setIdleMode(IdleMode.kCoast);
         topShooterMotor.setInverted(false);
-        bottomShooterMotor.setInverted(false);
+        bottomShooterMotor.setInverted(true);
+        topShooterMotor.enableVoltageCompensation(12);
+        bottomShooterMotor.enableVoltageCompensation(12);
         // gear ratio 31:16
         topEncoder.setPositionConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
         topEncoder.setVelocityConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
@@ -32,21 +48,23 @@ public class ShooterVortex implements ShooterIO {
         bottomEncoder.setVelocityConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
         bottomShooterMotor.burnFlash();
         topShooterMotor.burnFlash();
+
+        thread.start();
     }
 
     public void setTopMotor(double power) {
-        topShooterMotor.setVoltage(power);
+        topShooterMotorVoltage = power;
     }
 
     public void setBottomMotor(double power) {
-        bottomShooterMotor.setVoltage(power);
+        bottomShooterMotorVoltage = power;
     }
 
 
     @Override
     public void updateInputs(ShooterIOInputsAutoLogged inputs) {
-        inputs.topShooterVelocityRotPerMin = topEncoder.getVelocity();
-        inputs.bottomShooterVelocityRotPerMin = bottomEncoder.getVelocity();
+        inputs.topShooterVelocityRotPerMin = this.topShooterVelocityRotPerMin;
+        inputs.bottomShooterVelocityRotPerMin = this.bottomShooterVelocityRotPerMin;
         // inputs.topShooterPosition = topEncoder.getPosition();
         // inputs.bottomShooterPosition = bottomEncoder.getPosition();
         // inputs.topShooterSupplyVoltage = topShooterMotor.getBusVoltage();
