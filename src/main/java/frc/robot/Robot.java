@@ -39,6 +39,7 @@ public class Robot extends LoggedRobot {
         kReplay;
     }
 
+    public static boolean inAuto = false;
     public RobotRunType robotRunType = RobotRunType.kReal;
     private Timer gcTimer = new Timer();
 
@@ -140,6 +141,7 @@ public class Robot extends LoggedRobot {
      */
     @Override
     public void autonomousInit() {
+        inAuto = true;
         robotContainer.getAutonomousCommand().schedule();
         autoChooser = robotContainer.getAutonomousCommand();
 
@@ -155,6 +157,7 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void teleopInit() {
+        inAuto = false;
         if (autoChooser != null) {
             autoChooser.cancel();
         }

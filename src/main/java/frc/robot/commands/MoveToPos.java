@@ -44,7 +44,7 @@ public class MoveToPos extends Command {
      */
     public MoveToPos(Swerve swerve, Supplier<Pose2d> pose2dSupplier, boolean flipForRed,
         double tol) {
-        this(swerve, pose2dSupplier, flipForRed, 0.05, Constants.SwerveTransformPID.PID_TKP);
+        this(swerve, pose2dSupplier, flipForRed, tol, Constants.SwerveTransformPID.PID_TKP);
     }
 
     /**

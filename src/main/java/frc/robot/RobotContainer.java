@@ -27,6 +27,7 @@ import frc.robot.Robot.RobotRunType;
 import frc.robot.autos.P123;
 import frc.robot.autos.P32;
 import frc.robot.autos.P321;
+import frc.robot.autos.P675;
 import frc.robot.autos.Resnick5;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.FlashingLEDColor;
@@ -113,8 +114,6 @@ public class RobotContainer {
 
     private Trigger gotNote = new Trigger(() -> !this.intake.getSensorStatus()).debounce(0.5,
         Debouncer.DebounceType.kFalling);
-    private Trigger climbState = new Trigger(() -> false);
-    // new Trigger(() -> OperatorState.getCurrentState() == OperatorState.State.kClimb);
     private Trigger mannualMode = new Trigger(() -> OperatorState.manualModeEnabled());
     private Trigger atHome = new Trigger(() -> elevatorWrist.elevatorAtHome());
 
@@ -125,14 +124,12 @@ public class RobotContainer {
         autoChooser.addOption("P123", "P123");
         autoChooser.addOption("P321", "P321");
         autoChooser.addOption("P32", "P32");
+        autoChooser.addOption("P675", "P675");
         autoChooser.addOption("Resnick 5", "Resnick 5");
-        // autoChooser.addOption("Resnick 3", "Resnick 3");
-        // autoChooser.addOption("Resnick 4", "Resnick 4");
         numNoteChooser.setDefaultOption("0", 0);
         for (int i = 0; i < 7; i++) {
             numNoteChooser.addOption(String.valueOf(i), i);
         }
-        // backLeftCamera.setDriverMode(true);
         cameras =
             /*
              * Camera Order: 0 - Front Left 1 - Front RIght 2 - Back Left 3 - Back Right
@@ -286,6 +283,9 @@ public class RobotContainer {
                 break;
             case "P32":
                 autocommand = new P32(s_Swerve, elevatorWrist, intake, shooter);
+                break;
+            case "P675":
+                autocommand = new P675(s_Swerve, elevatorWrist, intake, shooter);
                 break;
             // case "Resnick 3":
             // autocommand = new Resnick3(s_Swerve, elevatorWrist, intake, shooter);
