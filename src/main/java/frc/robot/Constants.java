@@ -46,10 +46,10 @@ public final class Constants {
      * MoveToPos constants.
      */
     public static class SwerveTransformPID {
-        public static final double PID_XKP = 2;
+        public static final double PID_XKP = 3.5;
         public static final double PID_XKI = 0.0;
         public static final double PID_XKD = 0.0;
-        public static final double PID_YKP = 2;
+        public static final double PID_YKP = 3.5;
         public static final double PID_YKI = 0.0;
         public static final double PID_YKD = 0.0;
         public static final double PID_TKP = 3.0;
@@ -255,6 +255,7 @@ public final class Constants {
         /* Swerve Profiling Values */
         /** Meters per Second */
         public static final double maxSpeed = 10.0;
+        public static final double AUTO_MAX_SPEED = 3.0;
         /** Radians per Second */
         public static final double maxAngularVelocity = 10.0;
 
@@ -308,7 +309,7 @@ public final class Constants {
             new HolonomicPathFollowerConfig(new PIDConstants(5.0, 0, 0),
                 new PIDConstants(AUTO_ROTATION_KP, AUTO_ROTATION_KI, AUTO_ROTATION_KD),
                 // Drive base radius (distance from center to furthest module)
-                maxSpeed, MOD0_MODOFFSET.getNorm(), new ReplanningConfig());
+                AUTO_MAX_SPEED, MOD0_MODOFFSET.getNorm(), new ReplanningConfig());
     }
 
     /**
@@ -358,8 +359,8 @@ public final class Constants {
 
         public static final Rotation2d WRIST_REF_1_ANGLE_MEASURED = Rotation2d.fromRotations(0.004);
         public static final Rotation2d WRIST_REF_2_ANGLE_MEASURED = Rotation2d.fromRotations(-.105);
-        public static final Rotation2d WRIST_REF_1_ANGLE_ACTUAL = Rotation2d.fromDegrees(3.0);
-        public static final Rotation2d WRIST_REF_2_ANGLE_ACTUAL = Rotation2d.fromDegrees(43.0);
+        public static final Rotation2d WRIST_REF_1_ANGLE_ACTUAL = Rotation2d.fromDegrees(0.0);
+        public static final Rotation2d WRIST_REF_2_ANGLE_ACTUAL = Rotation2d.fromDegrees(41.0);
 
         public static final double WRIST_M;
         public static final double WRIST_B;

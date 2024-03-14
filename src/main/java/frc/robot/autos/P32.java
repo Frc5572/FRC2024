@@ -41,7 +41,7 @@ public class P32 extends SequentialCommandGroup {
         PathPlannerPath path2 = PathPlannerPath.fromPathFile("2 - Resnick 2 Intake P3");
         PathPlannerPath path3 = PathPlannerPath.fromPathFile("3 - Resnick 2 Intake P2");
 
-        Command wait = Commands.waitSeconds(.5);
+        Command wait = Commands.waitSeconds(.01);
         Command followPath1 = AutoBuilder.followPath(path1);
         Command followPath2 = AutoBuilder.followPath(path2);
         Command followPath3 = AutoBuilder.followPath(path3);

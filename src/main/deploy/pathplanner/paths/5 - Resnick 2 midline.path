@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.8492218549776025,
-        "y": 5.5696358
+        "x": 2.357976707567671,
+        "y": 6.6533436211526515
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.4331083183480136,
-        "y": 6.234261587672259
+        "x": 3.2768941009580135,
+        "y": 6.826724261414981
       },
       "isLocked": false,
-      "linkedName": "resnick 4 shoot p2"
+      "linkedName": "resnick 2 shoot p1"
     },
     {
       "anchor": {
-        "x": 2.5949302492595203,
-        "y": 6.792048133362514
+        "x": 7.935053969339246,
+        "y": 7.439335857008542
       },
       "prevControl": {
-        "x": 2.1961547766561638,
-        "y": 6.491521690241145
+        "x": 6.929446255817738,
+        "y": 7.375762955579021
       },
       "nextControl": null,
       "isLocked": false,
@@ -39,13 +39,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -150.0,
-    "rotateFast": false
+    "rotation": 180.0,
+    "rotateFast": true
   },
   "reversed": false,
-  "folder": "Resnick 4",
+  "folder": "P321",
   "previewStartingState": {
-    "rotation": 180.0,
+    "rotation": -150.0,
     "velocity": 0
   },
   "useDefaultConstraints": true

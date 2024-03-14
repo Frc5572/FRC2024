@@ -22,25 +22,29 @@ public class ShooterVortex implements ShooterIO {
     private double topShooterVelocityRotPerMin = 0.0;
     private double bottomShooterVelocityRotPerMin = 0.0;
 
-    private Thread thread = new Thread(() -> {
-        while (true) {
-            topShooterMotor.setVoltage(topShooterMotorVoltage);
-            bottomShooterMotor.setVoltage(bottomShooterMotorVoltage);
-            topShooterVelocityRotPerMin = topEncoder.getVelocity();
-            bottomShooterVelocityRotPerMin = bottomEncoder.getVelocity();
-        }
-    });
+    // private Thread thread = new Thread(() -> {
+    // while (true) {
+    // topShooterMotor.setVoltage(topShooterMotorVoltage);
+    // bottomShooterMotor.setVoltage(bottomShooterMotorVoltage);
+    // topShooterVelocityRotPerMin = topEncoder.getVelocity();
+    // bottomShooterVelocityRotPerMin = bottomEncoder.getVelocity();
+    // }
+    // });
 
     /**
      * Constructor Shooter Subsystem - sets motor and encoder preferences
      */
     public ShooterVortex() {
+        topShooterMotor.restoreFactoryDefaults();
+        bottomShooterMotor.restoreFactoryDefaults();
         topShooterMotor.setIdleMode(IdleMode.kCoast);
         bottomShooterMotor.setIdleMode(IdleMode.kCoast);
         topShooterMotor.setInverted(false);
         bottomShooterMotor.setInverted(true);
-        topShooterMotor.enableVoltageCompensation(12);
-        bottomShooterMotor.enableVoltageCompensation(12);
+        // topShooterMotor.setSmartCurrentLimit(20);
+        // bottomShooterMotor.setSmartCurrentLimit(20);
+        // topShooterMotor.enableVoltageCompensation(12);
+        // bottomShooterMotor.enableVoltageCompensation(12);
         // gear ratio 31:16
         topEncoder.setPositionConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
         topEncoder.setVelocityConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
@@ -49,22 +53,24 @@ public class ShooterVortex implements ShooterIO {
         bottomShooterMotor.burnFlash();
         topShooterMotor.burnFlash();
 
-        thread.start();
+        // thread.start();
     }
 
     public void setTopMotor(double power) {
-        topShooterMotorVoltage = power;
+        // topShooterMotorVoltage = power;
+        topShooterMotor.setVoltage(power);
     }
 
     public void setBottomMotor(double power) {
-        bottomShooterMotorVoltage = power;
+        // bottomShooterMotorVoltage = power;
+        bottomShooterMotor.setVoltage(power);
     }
 
 
     @Override
     public void updateInputs(ShooterIOInputsAutoLogged inputs) {
-        inputs.topShooterVelocityRotPerMin = this.topShooterVelocityRotPerMin;
-        inputs.bottomShooterVelocityRotPerMin = this.bottomShooterVelocityRotPerMin;
+        inputs.topShooterVelocityRotPerMin = topEncoder.getVelocity();
+        inputs.bottomShooterVelocityRotPerMin = bottomEncoder.getVelocity();
         // inputs.topShooterPosition = topEncoder.getPosition();
         // inputs.bottomShooterPosition = bottomEncoder.getPosition();
         // inputs.topShooterSupplyVoltage = topShooterMotor.getBusVoltage();

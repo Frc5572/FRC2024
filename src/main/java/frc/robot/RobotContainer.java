@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.util.FieldConstants;
@@ -27,6 +26,7 @@ import frc.robot.Robot.RobotRunType;
 import frc.robot.autos.P123;
 import frc.robot.autos.P32;
 import frc.robot.autos.P321;
+import frc.robot.autos.P675;
 import frc.robot.autos.Resnick5;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.FlashingLEDColor;
@@ -60,7 +60,7 @@ public class RobotContainer {
     public static ShuffleboardTab mainDriverTab = Shuffleboard.getTab("Main Driver");
 
     // Initialize AutoChooser Sendable
-    private final SendableChooser<String> autoChooser = new SendableChooser<>();
+    private final SendableChooser<Command> autoChooser = new SendableChooser<>();
     public ComplexWidget autoChooserWidget = mainDriverTab.add("Auto Chooser", autoChooser)
         .withWidget(BuiltInWidgets.kComboBoxChooser).withPosition(4, 6).withSize(3, 2);
     public GenericEntry operatorState =
@@ -113,26 +113,21 @@ public class RobotContainer {
 
     private Trigger gotNote = new Trigger(() -> !this.intake.getSensorStatus()).debounce(0.5,
         Debouncer.DebounceType.kFalling);
-    private Trigger climbState = new Trigger(() -> false);
-    // new Trigger(() -> OperatorState.getCurrentState() == OperatorState.State.kClimb);
     private Trigger mannualMode = new Trigger(() -> OperatorState.manualModeEnabled());
     private Trigger atHome = new Trigger(() -> elevatorWrist.elevatorAtHome());
 
     /**
      */
     public RobotContainer(RobotRunType runtimeType) {
-        autoChooser.setDefaultOption("Wait 1 Second", "wait");
-        autoChooser.addOption("P123", "P123");
-        autoChooser.addOption("P321", "P321");
-        autoChooser.addOption("P32", "P32");
-        autoChooser.addOption("Resnick 5", "Resnick 5");
-        // autoChooser.addOption("Resnick 3", "Resnick 3");
-        // autoChooser.addOption("Resnick 4", "Resnick 4");
+        // autoChooser.setDefaultOption("Wait 1 Second", "wait");
+        // autoChooser.addOption("P123", "P123");
+        // autoChooser.addOption("P321", "P321");
+        // autoChooser.addOption("P32", "P32");
+        // autoChooser.addOption("Resnick 5", "Resnick 5");
         numNoteChooser.setDefaultOption("0", 0);
         for (int i = 0; i < 7; i++) {
             numNoteChooser.addOption(String.valueOf(i), i);
         }
-        // backLeftCamera.setDriverMode(true);
         cameras =
             /*
              * Camera Order: 0 - Front Left 1 - Front RIght 2 - Back Left 3 - Back Right
@@ -170,6 +165,13 @@ public class RobotContainer {
                 intake = new Intake(new IntakeIO() {});
                 elevatorWrist = new ElevatorWrist(new ElevatorWristIO() {}, operator);
         }
+
+        autoChooser.addOption("P123", new P123(s_Swerve, elevatorWrist, intake, shooter));
+        autoChooser.addOption("P321", new P321(s_Swerve, elevatorWrist, intake, shooter));
+        autoChooser.addOption("P32", new P32(s_Swerve, elevatorWrist, intake, shooter));
+        autoChooser.addOption("P675", new P675(s_Swerve, elevatorWrist, intake, shooter));
+        autoChooser.addOption("Resnick 5", new Resnick5(s_Swerve, elevatorWrist, intake, shooter));
+
         s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, driver,
             Constants.Swerve.isFieldRelative, Constants.Swerve.isOpenLoop));
         leds.setDefaultCommand(new MovingColorLEDs(leds, Color.kRed, 4, false));
@@ -275,30 +277,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         OperatorState.setState(OperatorState.State.kShootWhileMove);
-        Command autocommand;
-        String stuff = autoChooser.getSelected();
-        switch (stuff) {
-            case "P123":
-                autocommand = new P123(s_Swerve, elevatorWrist, intake, shooter);
-                break;
-            case "P321":
-                autocommand = new P321(s_Swerve, elevatorWrist, intake, shooter);
-                break;
-            case "P32":
-                autocommand = new P32(s_Swerve, elevatorWrist, intake, shooter);
-                break;
-            // case "Resnick 3":
-            // autocommand = new Resnick3(s_Swerve, elevatorWrist, intake, shooter);
-            // break;
-            // case "Resnick 4":
-            // autocommand = new Resnick4(s_Swerve, elevatorWrist, intake, shooter);
-            // break;
-            case "Resnick 5":
-                autocommand = new Resnick5(s_Swerve, elevatorWrist, intake, shooter);
-                break;
-            default:
-                autocommand = new WaitCommand(1.0);
-        }
+        Command autocommand = autoChooser.getSelected();
         return autocommand;
     }
 

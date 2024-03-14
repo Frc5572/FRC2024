@@ -263,11 +263,14 @@ public class Swerve extends SubsystemBase {
             for (int i = 0; i < cameras.length; i++) {
                 var robotPose = cameras[i].getInitialPose();
                 Logger.recordOutput("/Swerve/hasInitialPose[" + i + "]", robotPose.isPresent());
+
                 if (robotPose.isPresent()) {
-                    swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(),
-                        robotPose.get().robotPose);
-                    hasInitialized = true;
-                    break;
+                    if (OperatorState.tagFilter(robotPose.get().fudicialId)) {
+                        swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(),
+                            robotPose.get().robotPose);
+                        hasInitialized = true;
+                        break;
+                    }
                 }
             }
         } else {

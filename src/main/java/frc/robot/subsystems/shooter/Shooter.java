@@ -49,8 +49,9 @@ public class Shooter extends SubsystemBase {
         io.updateInputs(inputs);
         Logger.processInputs("Shooter", inputs);
 
-        topShooterFeed.kv = SmartDashboard.getNumber("topShooterFeed", topShooterFeed.kv);
-        bottomShooterFeed.kv = SmartDashboard.getNumber("bottomShooterFeed", bottomShooterFeed.kv);
+        // topShooterFeed.kv = SmartDashboard.getNumber("topShooterFeed", topShooterFeed.kv);
+        // bottomShooterFeed.kv = SmartDashboard.getNumber("bottomShooterFeed",
+        // bottomShooterFeed.kv);
     }
 
     /**

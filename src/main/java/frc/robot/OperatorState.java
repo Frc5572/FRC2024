@@ -75,6 +75,9 @@ public class OperatorState {
      * Only use certain tags in certain modes. Helps for incorrect field layouts during practice.
      */
     public static boolean tagFilter(int id) {
+        if (Robot.inAuto) {
+            return false;
+        }
         switch (getCurrentState()) {
             case kAmp:
                 switch (id) {
