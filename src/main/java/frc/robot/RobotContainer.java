@@ -226,9 +226,7 @@ public class RobotContainer {
                     .getTranslation())
                         .alongWith(elevatorWrist.followPosition(
                             () -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-                            () -> elevatorWrist.getAngleFromDistance(s_Swerve.getPose())
-                                .plus(Rotation2d.fromDegrees(0.0)))),
-            //
+                            () -> elevatorWrist.getAngleFromDistance(s_Swerve.getPose()))),
             OperatorState.State.kPost,
             new TurnToAngle(s_Swerve, Rotation2d.fromDegrees(25)).alongWith(elevatorWrist
                 .followPosition(() -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
