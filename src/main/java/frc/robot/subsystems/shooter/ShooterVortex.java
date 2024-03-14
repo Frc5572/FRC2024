@@ -39,6 +39,8 @@ public class ShooterVortex implements ShooterIO {
         bottomShooterMotor.setIdleMode(IdleMode.kCoast);
         topShooterMotor.setInverted(false);
         bottomShooterMotor.setInverted(true);
+        topShooterMotor.enableVoltageCompensation(12);
+        bottomShooterMotor.enableVoltageCompensation(12);
         // gear ratio 31:16
         topEncoder.setPositionConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
         topEncoder.setVelocityConversionFactor(Constants.ShooterConstants.GEAR_RATIO);

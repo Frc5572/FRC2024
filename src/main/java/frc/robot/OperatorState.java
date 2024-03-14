@@ -86,6 +86,7 @@ public class OperatorState {
                 }
                 break;
             case kShootWhileMove:
+            case kPost:
                 switch (id) {
                     case 4:
                     case 7:
