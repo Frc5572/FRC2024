@@ -46,10 +46,10 @@ public final class Constants {
      * MoveToPos constants.
      */
     public static class SwerveTransformPID {
-        public static final double PID_XKP = 2;
+        public static final double PID_XKP = 3.5;
         public static final double PID_XKI = 0.0;
         public static final double PID_XKD = 0.0;
-        public static final double PID_YKP = 2;
+        public static final double PID_YKP = 3.5;
         public static final double PID_YKI = 0.0;
         public static final double PID_YKD = 0.0;
         public static final double PID_TKP = 3.0;
@@ -359,8 +359,8 @@ public final class Constants {
 
         public static final Rotation2d WRIST_REF_1_ANGLE_MEASURED = Rotation2d.fromRotations(0.004);
         public static final Rotation2d WRIST_REF_2_ANGLE_MEASURED = Rotation2d.fromRotations(-.105);
-        public static final Rotation2d WRIST_REF_1_ANGLE_ACTUAL = Rotation2d.fromDegrees(3.0);
-        public static final Rotation2d WRIST_REF_2_ANGLE_ACTUAL = Rotation2d.fromDegrees(43.0);
+        public static final Rotation2d WRIST_REF_1_ANGLE_ACTUAL = Rotation2d.fromDegrees(0.0);
+        public static final Rotation2d WRIST_REF_2_ANGLE_ACTUAL = Rotation2d.fromDegrees(41.0);
 
         public static final double WRIST_M;
         public static final double WRIST_B;

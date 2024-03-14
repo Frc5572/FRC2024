@@ -79,7 +79,7 @@ public class ElevatorWrist extends SubsystemBase {
         wristProfiledPIDController.setIZone(Rotation2d.fromDegrees(1).getRotations());
         radiusToAngle.put(1.55, 46.55);
         radiusToAngle.put(1.99, 39.35);
-        radiusToAngle.put(2.52, 34.55);
+        radiusToAngle.put(2.52, 35.55);
         radiusToAngle.put(3.15, 31.7);
         radiusToAngle.put(3.55, 31.3);
         radiusToAngle.put(4.3, 27.75);

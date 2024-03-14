@@ -37,8 +37,11 @@ public class IntakeIOFalcon implements IntakeIO {
         intakeMotorLeft.restoreFactoryDefaults();
         intakeMotorRight.restoreFactoryDefaults();
         intakeMotorLeft.setInverted(Constants.IntakeConstants.INTAKE_MOTOR_INVERTED);
-        intakeMotorLeft.setIdleMode(IdleMode.kCoast);
         intakeMotorRight.setInverted(false);
+        intakeMotorLeft.setIdleMode(IdleMode.kCoast);
+        intakeMotorRight.setIdleMode(IdleMode.kCoast);
+        intakeMotorLeft.setSmartCurrentLimit(40);
+        intakeMotorRight.setSmartCurrentLimit(40);
         indexerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         indexerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         indexerMotor.getConfigurator().apply(indexerConfig);
