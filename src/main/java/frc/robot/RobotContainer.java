@@ -224,24 +224,13 @@ public class RobotContainer {
             new ShootWhileMoving(s_Swerve, driver, () -> s_Swerve.getPose(),
                 () -> FieldConstants.allianceFlip(FieldConstants.Speaker.centerSpeakerOpening)
                     .getTranslation())
-                        .alongWith(elevatorWrist.followPosition(
-                            () -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-                            () -> elevatorWrist.getAngleFromDistance(s_Swerve.getPose()))),
+                        .alongWith(CommandFactory.autoAngleWristSpeaker(elevatorWrist, s_Swerve)),
             OperatorState.State.kPost,
             new TurnToAngle(s_Swerve, Rotation2d.fromDegrees(25)).alongWith(elevatorWrist
                 .followPosition(() -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
                     () -> Constants.ElevatorWristConstants.SetPoints.PODIUM_ANGLE))),
             OperatorState::getCurrentState));
 
-        /*
-         * <OperatorState.State>( List.of(OperatorState.State.kAmp,
-         * OperatorState.State.kShootWhileMove, OperatorState.State.kClimb),
-         * List.of(elevatorWrist.ampPosition(), new ShootWhileMoving(s_Swerve,
-         * driver).alongWith(elevatorWrist.followPosition( () ->
-         * Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT, () ->
-         * elevatorWrist.getAngleFromDistance(s_Swerve.getPose()))), elevatorWrist.ampPosition()),
-         * )));
-         */
         // Toggle manual mode
         operator.start().onTrue(Commands.runOnce(() -> {
             OperatorState.toggleManualMode();
