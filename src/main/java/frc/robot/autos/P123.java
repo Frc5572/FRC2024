@@ -3,11 +3,13 @@ package frc.robot.autos;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.lib.util.FieldConstants;
+import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.commands.CommandFactory;
 import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
 import frc.robot.subsystems.intake.Intake;
@@ -59,23 +61,36 @@ public class P123 extends SequentialCommandGroup {
                 FieldConstants.allianceFlip(path1.getPreviewStartingHolonomicPose());
             swerveDrive.resetOdometry(initialState);
         });
+
         SequentialCommandGroup part1 = followPath1
-            // .andThen(Commands.runOnce(() -> SmartDashboard.putBoolean("Auto Status", true)))
+            .alongWith(
+                elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
+                    Rotation2d.fromDegrees(37.0)).withTimeout(1))
             .andThen(CommandFactory.Auto.runIndexer(intake));
-        SequentialCommandGroup part2 = followPath2.alongWith(CommandFactory.intakeNote(intake))
+        SequentialCommandGroup part2 = followPath2
+            .alongWith(CommandFactory.intakeNote(intake),
+                elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
+                    Rotation2d.fromDegrees(37.0)).withTimeout(.5))
             .andThen(CommandFactory.Auto.runIndexer(intake));
-        SequentialCommandGroup part3 = followPath3.alongWith(CommandFactory.intakeNote(intake))
+        SequentialCommandGroup part3 = followPath3
+            .alongWith(CommandFactory.intakeNote(intake),
+                elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
+                    Rotation2d.fromDegrees(37.5)).withTimeout(.5))
             .andThen(CommandFactory.Auto.runIndexer(intake));
-        SequentialCommandGroup part4 = followPath4.alongWith(CommandFactory.intakeNote(intake))
+        SequentialCommandGroup part4 = followPath4
+            .alongWith(CommandFactory.intakeNote(intake),
+                elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
+                    Rotation2d.fromDegrees(37.0)).withTimeout(.5))
             .andThen(CommandFactory.Auto.runIndexer(intake));
-        ParallelCommandGroup part5 =
-            followPath5.alongWith(elevatorWrist.homePosition(), CommandFactory.intakeNote(intake));
+        Command part5 = Commands.either(followPath5.alongWith(CommandFactory.intakeNote(intake)),
+            Commands.none(), () -> RobotContainer.goToCenter.getEntry().getBoolean(false));
 
         SequentialCommandGroup followPaths = part1.andThen(part2).andThen(part3).andThen(part4);
 
-        Command autoAlignWrist = CommandFactory.autoAngleWristSpeaker(elevatorWrist, swerveDrive);
+        // Command autoAlignWrist = CommandFactory.autoAngleWristSpeaker(elevatorWrist,
+        // swerveDrive);
         Command shootCommand = shooter.shootSpeaker();
 
-        addCommands(resetPosition, wait, followPaths.alongWith(autoAlignWrist, shootCommand));
+        addCommands(resetPosition, wait, followPaths.alongWith(shootCommand));
     }
 }
