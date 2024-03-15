@@ -5,8 +5,10 @@ import java.util.Map;
 import java.util.Optional;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+import org.photonvision.EstimatedRobotPose;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.PathPlannerLogging;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -15,6 +17,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -25,10 +28,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.FieldConstants;
 import frc.lib.util.photon.PhotonCameraWrapper;
-import frc.lib.util.photon.PhotonCameraWrapper.VisionObservation;
 import frc.lib.util.swerve.SwerveModule;
 import frc.robot.Constants;
-import frc.robot.OperatorState;
 import frc.robot.RobotContainer;
 
 /**
@@ -41,7 +42,6 @@ public class Swerve extends SubsystemBase {
     private double fieldOffset;
     private SwerveInputsAutoLogged inputs = new SwerveInputsAutoLogged();
     private SwerveIO swerveIO;
-    private boolean hasInitialized = false;
     private PhotonCameraWrapper[] cameras;
     private Boolean[] cameraSeesTarget = {false, false, false, false};
 
@@ -72,7 +72,9 @@ public class Swerve extends SubsystemBase {
                 Constants.Swerve.Mod3.angleOffset)};
 
         swerveOdometry = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics,
-            getGyroYaw(), getModulePositions(), new Pose2d());
+            getGyroYaw(), getModulePositions(), new Pose2d(),
+            VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
+            VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
 
         swerveIO.updateInputs(inputs);
 
@@ -240,10 +242,6 @@ public class Swerve extends SubsystemBase {
         }
     }
 
-    public void resetPvInitialization() {
-        hasInitialized = false;
-    }
-
     @Override
     public void periodic() {
         swerveIO.updateInputs(inputs);
@@ -257,31 +255,22 @@ public class Swerve extends SubsystemBase {
             cameraSeesTarget[i] = cameras[i].seesTarget();
         }
 
-        Logger.recordOutput("/Swerve/hasInitialized", hasInitialized);
-
-        if (!hasInitialized) {
-            for (int i = 0; i < cameras.length; i++) {
-                var robotPose = cameras[i].getInitialPose();
-                Logger.recordOutput("/Swerve/hasInitialPose[" + i + "]", robotPose.isPresent());
-
-                if (robotPose.isPresent()) {
-                    if (OperatorState.tagFilter(robotPose.get().fudicialId)) {
-                        swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(),
-                            robotPose.get().robotPose);
-                        hasInitialized = true;
-                        break;
+        cameras: for (int i = 0; i < cameras.length; i++) {
+            var result = cameras[i].getEstimatedGlobalPose(getPose());
+            if (result.isPresent()) {
+                EstimatedRobotPose camPose = result.get();
+                Pose2d newPose = camPose.estimatedPose.toPose2d();
+                for (var target : camPose.targetsUsed) {
+                    if (target.getPoseAmbiguity() < 0.2
+                        && target.getBestCameraToTarget().getTranslation().getNorm() < 2) {
+                        swerveOdometry.resetPosition(getFieldRelativeHeading(),
+                            getModulePositions(), newPose);
                     }
+                    continue cameras;
                 }
-            }
-        } else {
-            for (int i = 0; i < cameras.length; i++) {
-                var result = cameras[i].getInitialPose();
-                if (result.isPresent()) {
-                    VisionObservation camPose = result.get();
-                    if (OperatorState.tagFilter(camPose.fudicialId)) {
-                        swerveOdometry.addVisionMeasurement(camPose.robotPose,
-                            Timer.getFPGATimestamp() - cameras[i].latency(), camPose.stdDev);
-                    }
+                if (newPose.minus(getPose()).getTranslation().getNorm() < 1) {
+                    swerveOdometry.addVisionMeasurement(camPose.estimatedPose.toPose2d(),
+                        Timer.getFPGATimestamp() - cameras[i].latency());
                 }
             }
         }
@@ -294,7 +283,6 @@ public class Swerve extends SubsystemBase {
             FieldConstants.allianceFlip(FieldConstants.Speaker.centerSpeakerOpening)
                 .getTranslation().minus(getPose().getTranslation()).getNorm());
 
-        SmartDashboard.putBoolean("Has Initialized", hasInitialized);
         SmartDashboard.putNumber("Gyro Yaw", getGyroYaw().getDegrees());
     }
 

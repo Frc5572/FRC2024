@@ -75,33 +75,33 @@ public class OperatorState {
      * Only use certain tags in certain modes. Helps for incorrect field layouts during practice.
      */
     public static boolean tagFilter(int id) {
-        if (Robot.inAuto) {
-            return false;
-        }
-        switch (getCurrentState()) {
-            case kAmp:
-                switch (id) {
-                    case 5:
-                    case 6:
-                        return true;
-                    default:
-                        break;
-                }
-                break;
-            case kShootWhileMove:
-            case kPost:
-                switch (id) {
-                    case 4:
-                    case 7:
-                        return true;
-                    default:
-                        break;
-                }
-                break;
-            default:
-                return true;
-        }
-        return false;
+        // if (Robot.inAuto) {
+        //     return false;
+        // }
+        // switch (getCurrentState()) {
+        //     case kAmp:
+        //         switch (id) {
+        //             case 5:
+        //             case 6:
+        //                 return true;
+        //             default:
+        //                 break;
+        //         }
+        //         break;
+        //     case kShootWhileMove:
+        //     case kPost:
+        //         switch (id) {
+        //             case 4:
+        //             case 7:
+        //                 return true;
+        //             default:
+        //                 break;
+        //         }
+        //         break;
+        //     default:
+        //         return true;
+        // }
+        return true;
     }
 
 }

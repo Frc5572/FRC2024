@@ -189,8 +189,8 @@ public class RobotContainer {
         gotNote.onTrue(new FlashingLEDColor(leds, Color.kGreen).withTimeout(3));
         /* Driver Buttons */
         driver.y().onTrue(new InstantCommand(() -> s_Swerve.resetFieldRelativeOffset()));
-        driver.start().onTrue(
-            new InstantCommand(() -> s_Swerve.resetPvInitialization()).ignoringDisable(true));
+        // driver.start().onTrue(
+        // new InstantCommand(() -> s_Swerve.resetPvInitialization()).ignoringDisable(true));
         // intake forward
         driver.rightTrigger().whileTrue(intake.runIntakeMotor(1, .20));
         // intake backward
@@ -200,7 +200,7 @@ public class RobotContainer {
         // spit note currently in robot through shooter
         operator.x().whileTrue(CommandFactory.spit(shooter, intake));
         // reset apriltag vision
-        operator.b().onTrue(new InstantCommand(() -> s_Swerve.resetPvInitialization()));
+        // operator.b().onTrue(new InstantCommand(() -> s_Swerve.resetPvInitialization()));
         // spin up shooter
         operator.leftTrigger().whileTrue(shooter.shootSpeaker());
         // shoot note to speaker after being intaked
