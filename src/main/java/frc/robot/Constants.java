@@ -257,7 +257,7 @@ public final class Constants {
         public static final double maxSpeed = 10.0;
         public static final double AUTO_MAX_SPEED = 3.0;
         /** Radians per Second */
-        public static final double maxAngularVelocity = 10.0;
+        public static final double maxAngularVelocity = 15.0;
 
         /* Neutral Modes */
         public static final NeutralModeValue angleNeutralMode = NeutralModeValue.Coast;
