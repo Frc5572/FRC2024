@@ -26,6 +26,7 @@ import frc.robot.Robot.RobotRunType;
 import frc.robot.autos.P123;
 import frc.robot.autos.P32;
 import frc.robot.autos.P321;
+import frc.robot.autos.P3675;
 import frc.robot.autos.P675;
 import frc.robot.autos.Resnick5;
 import frc.robot.commands.CommandFactory;
@@ -173,6 +174,7 @@ public class RobotContainer {
         autoChooser.addOption("P321", new P321(s_Swerve, elevatorWrist, intake, shooter));
         autoChooser.addOption("P32", new P32(s_Swerve, elevatorWrist, intake, shooter));
         autoChooser.addOption("P675", new P675(s_Swerve, elevatorWrist, intake, shooter));
+        autoChooser.addOption("P3675", new P3675(s_Swerve, elevatorWrist, intake, shooter));
         autoChooser.addOption("Resnick 5", new Resnick5(s_Swerve, elevatorWrist, intake, shooter));
 
         s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, driver,
