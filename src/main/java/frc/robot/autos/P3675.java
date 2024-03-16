@@ -70,14 +70,15 @@ public class P3675 extends SequentialCommandGroup {
             .alongWith(CommandFactory.intakeNote(intake),
                 elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
                     Rotation2d.fromDegrees(37.0)).withTimeout(.5))
-            .andThen(CommandFactory.Auto.runIndexer(intake));
+            .andThen(CommandFactory.Auto.runIndexer(intake))
+            .andThen(elevatorWrist.homePosition().withTimeout(1));
 
         Command part3 = followPath3.alongWith(CommandFactory.intakeNote(intake))
             .andThen(
                 elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
                     Rotation2d.fromDegrees(32.5)).withTimeout(1.3))
             .andThen(CommandFactory.Auto.runIndexer(intake))
-            .andThen(elevatorWrist.homePosition().withTimeout(.5));
+            .andThen(elevatorWrist.homePosition().withTimeout(1));
 
         Command part4 = followPath4.alongWith(CommandFactory.intakeNote(intake))
             .andThen(
