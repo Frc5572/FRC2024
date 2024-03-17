@@ -1,12 +1,19 @@
 package frc.robot.subsystems.intake;
 
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import frc.robot.Constants;
 
 /**
  * Intake IO Layer for simulation
  */
 public class IntakeIOSim implements IntakeIO {
+
+    private final FlywheelSim intakeMotorLeft = new FlywheelSim(DCMotor.getNEO(1), 5, 1);
+    private final FlywheelSim intakeMotorRight = new FlywheelSim(DCMotor.getNEO(1), 5, 1);
+    private final FlywheelSim indexerMotor = new FlywheelSim(DCMotor.getFalcon500(1), 1, 1);
 
     private final DigitalInput indexerBeamBrake =
         new DigitalInput(Constants.IntakeConstants.INDEXER_BEAM_BRAKE_DIO_PORT);
@@ -25,8 +32,13 @@ public class IntakeIOSim implements IntakeIO {
     }
 
     @Override
-    public void setIntakeMotorPercentage(double percent) {}
+    public void setIntakeMotorPercentage(double percent) {
+        intakeMotorLeft.setInputVoltage(percent * RobotController.getBatteryVoltage());
+        intakeMotorRight.setInputVoltage(percent * RobotController.getBatteryVoltage());
+    }
 
     @Override
-    public void setIndexerMotorPercentage(double percent) {}
+    public void setIndexerMotorPercentage(double percent) {
+        indexerMotor.setInputVoltage(percent * RobotController.getBatteryVoltage());
+    }
 }
