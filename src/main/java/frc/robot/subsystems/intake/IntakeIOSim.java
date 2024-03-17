@@ -3,6 +3,9 @@ package frc.robot.subsystems.intake;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants;
 
+/**
+ * Intake IO Layer for simulation
+ */
 public class IntakeIOSim implements IntakeIO {
 
     private final DigitalInput indexerBeamBrake =
