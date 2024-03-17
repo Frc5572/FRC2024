@@ -134,7 +134,9 @@ public class Robot extends LoggedRobot {
     public void disabledInit() {}
 
     @Override
-    public void disabledPeriodic() {}
+    public void disabledPeriodic() {
+        robotContainer.updatSelectedeAuto();
+    }
 
     /**
      * This autonomous runs the autonomous command selected by your {@link RobotContainer} class.
@@ -142,7 +144,6 @@ public class Robot extends LoggedRobot {
     @Override
     public void autonomousInit() {
         inAuto = true;
-        robotContainer.getAutonomousCommand().schedule();
         autoChooser = robotContainer.getAutonomousCommand();
 
         // schedule the autonomous command (example)
@@ -165,10 +166,7 @@ public class Robot extends LoggedRobot {
 
     /** This function is called periodically during operator control. */
     @Override
-    public void teleopPeriodic() {
-        // robotContainer.elevatorWrist.setWristPower(robotContainer.driver.getRightY() * 0.2);
-        // vision.update();
-    }
+    public void teleopPeriodic() {}
 
     @Override
     public void testInit() {
