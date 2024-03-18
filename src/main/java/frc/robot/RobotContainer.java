@@ -117,9 +117,9 @@ public class RobotContainer {
 
 
     private Trigger noteInIndexer = new Trigger(() -> this.intake.getIndexerBeamBrakeStatus())
-        .debounce(0.5, Debouncer.DebounceType.kRising);
+        .debounce(0.25, Debouncer.DebounceType.kRising);
     private Trigger noteInIntake = new Trigger(() -> this.intake.getintakeBeamBrakeStatus())
-        .debounce(0.5, Debouncer.DebounceType.kRising);
+        .debounce(0.25, Debouncer.DebounceType.kRising);
     private Trigger mannualMode = new Trigger(() -> OperatorState.manualModeEnabled());
     private Trigger atHome = new Trigger(() -> elevatorWrist.elevatorAtHome());
 
@@ -196,9 +196,9 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
         noteInIndexer.and(noteInIntake.negate())
-            .onTrue(new FlashingLEDColor(leds, Color.kGreen).withTimeout(3));
+            .onTrue(new FlashingLEDColor(leds, Color.kPurple).withTimeout(3));
         noteInIntake.and(noteInIndexer.negate())
-            .onTrue(new FlashingLEDColor(leds, Color.kBlue).withTimeout(3));
+            .onTrue(new FlashingLEDColor(leds, Color.kGreen).withTimeout(3));
         noteInIntake.and(noteInIndexer).whileTrue(new FlashingLEDColor(leds, Color.kRed));
 
 

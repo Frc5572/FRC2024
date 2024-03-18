@@ -34,9 +34,9 @@ public class Intake extends SubsystemBase {
         if (getIndexerBeamBrakeStatus() && getintakeBeamBrakeStatus()) {
             haveNote.setString(Color.kRed.toHexString());
         } else if (getIndexerBeamBrakeStatus()) {
-            haveNote.setString(Color.kGreen.toHexString());
+            haveNote.setString(Color.kPurple.toHexString());
         } else if (getintakeBeamBrakeStatus()) {
-            haveNote.setString(Color.kBlue.toHexString());
+            haveNote.setString(Color.kGreen.toHexString());
         } else {
             haveNote.setString(Color.kBlack.toHexString());
         }
