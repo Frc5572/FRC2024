@@ -6,10 +6,10 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.lib.util.FieldConstants;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.commands.CommandFactory;
 import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
 import frc.robot.subsystems.intake.Intake;
@@ -78,7 +78,8 @@ public class P321 extends SequentialCommandGroup {
                 elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
                     Rotation2d.fromDegrees(37.0)).withTimeout(.5))
             .andThen(CommandFactory.Auto.runIndexer(intake));
-        ParallelCommandGroup part5 = followPath5.alongWith(CommandFactory.intakeNote(intake));
+        Command part5 = Commands.either(followPath5.alongWith(CommandFactory.intakeNote(intake)),
+            Commands.none(), () -> RobotContainer.goToCenter.getEntry().getBoolean(false));
 
         SequentialCommandGroup followPaths =
             part1.andThen(part2).andThen(part3).andThen(part4).andThen(part5);
