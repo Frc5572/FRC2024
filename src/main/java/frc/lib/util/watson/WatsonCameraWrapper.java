@@ -9,7 +9,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lib.util.watson.WatsonIO.WatsonInputs;
 import frc.robot.Constants;
 
@@ -27,11 +26,6 @@ public class WatsonCameraWrapper {
     public void periodic() {
         this.io.updateInputs(this.inputs);
         Logger.processInputs("Watson/" + inputs.name, inputs);
-
-        if (inputs.result != null) {
-            SmartDashboard.putNumber("watson/x", inputs.result.getX());
-            SmartDashboard.putNumber("watson/y", inputs.result.getY());
-        }
     }
 
     public static class VisionObservation {
@@ -47,15 +41,19 @@ public class WatsonCameraWrapper {
         }
     }
 
-    public Optional<VisionObservation> getMultiTagPose(Rotation2d gyroYaw) {
+    public Optional<VisionObservation> getMultiTagPose(Rotation2d gyroYaw, double speed_mps) {
         if (this.inputs.result == null || !this.inputs.isMultiTag) {
             return Optional.empty();
         }
+
         Pose2d res = new Pose2d(this.inputs.result.minus(this.offset.rotateBy(gyroYaw)), gyroYaw);
         this.inputs.rawBytes = new byte[] {};
         return Optional.of(new VisionObservation(0, res,
-            VecBuilder.fill(Constants.CameraConstants.XY_STD_DEV_COEFF,
-                Constants.CameraConstants.XY_STD_DEV_COEFF,
+            VecBuilder.fill(
+                Constants.CameraConstants.XY_STD_DEV_COEFF
+                    + Constants.CameraConstants.SPEED_STD_DEV_COEFF * speed_mps,
+                Constants.CameraConstants.XY_STD_DEV_COEFF
+                    + Constants.CameraConstants.SPEED_STD_DEV_COEFF * speed_mps,
                 Constants.CameraConstants.THETA_STD_DEV_COEFF)));
     }
 

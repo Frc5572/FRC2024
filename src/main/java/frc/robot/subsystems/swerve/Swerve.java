@@ -42,6 +42,7 @@ public class Swerve extends SubsystemBase {
     private boolean hasInitialized = false;
     private WatsonCameraWrapper[] cameras;
     private Boolean[] cameraSeesTarget = {false, false, false, false};
+    private Pose2d prevPose = new Pose2d();
 
     private GenericEntry aprilTagTarget = RobotContainer.mainDriverTab.add("See April Tag", false)
         .withWidget(BuiltInWidgets.kBooleanBox)
@@ -93,6 +94,8 @@ public class Swerve extends SubsystemBase {
             // Do whatever you want with the poses here
             field.getObject("path").setPoses(poses);
         });
+
+        prevPose = getPose();
     }
 
     /**
@@ -244,11 +247,12 @@ public class Swerve extends SubsystemBase {
 
     @Override
     public void periodic() {
+        prevPose = getPose();
         swerveIO.updateInputs(inputs);
         for (var mod : swerveMods) {
             mod.periodic();
         }
-        swerveOdometry.update(getGyroYaw(), getModulePositions());
+        swerveOdometry.update(getFieldRelativeHeading(), getModulePositions());
         Logger.processInputs("Swerve", inputs);
         for (int i = 0; i < cameras.length; i++) {
             cameras[i].periodic();
@@ -257,8 +261,10 @@ public class Swerve extends SubsystemBase {
 
         Logger.recordOutput("/Swerve/hasInitialized", hasInitialized);
 
+        double speed = getPose().getTranslation().minus(prevPose.getTranslation()).getNorm() / 0.02;
+
         for (int i = 0; i < cameras.length; i++) {
-            var robotPose = cameras[i].getMultiTagPose(getFieldRelativeHeading());
+            var robotPose = cameras[i].getMultiTagPose(getFieldRelativeHeading(), speed);
             Logger.recordOutput("/Swerve/hasPose[" + i + "]", robotPose.isPresent());
 
             if (robotPose.isPresent()) {
