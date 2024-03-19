@@ -24,11 +24,9 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.FieldConstants;
-import frc.lib.util.photon.PhotonCameraWrapper;
-import frc.lib.util.photon.PhotonCameraWrapper.VisionObservation;
 import frc.lib.util.swerve.SwerveModule;
+import frc.lib.util.watson.WatsonCameraWrapper;
 import frc.robot.Constants;
-import frc.robot.OperatorState;
 import frc.robot.RobotContainer;
 
 /**
@@ -42,7 +40,7 @@ public class Swerve extends SubsystemBase {
     private SwerveInputsAutoLogged inputs = new SwerveInputsAutoLogged();
     private SwerveIO swerveIO;
     private boolean hasInitialized = false;
-    private PhotonCameraWrapper[] cameras;
+    private WatsonCameraWrapper[] cameras;
     private Boolean[] cameraSeesTarget = {false, false, false, false};
 
     private GenericEntry aprilTagTarget = RobotContainer.mainDriverTab.add("See April Tag", false)
@@ -53,7 +51,7 @@ public class Swerve extends SubsystemBase {
     /**
      * Swerve Subsystem
      */
-    public Swerve(SwerveIO swerveIO, PhotonCameraWrapper[] cameras) {
+    public Swerve(SwerveIO swerveIO, WatsonCameraWrapper[] cameras) {
         this.swerveIO = swerveIO;
         this.cameras = cameras;
         fieldOffset = getGyroYaw().getDegrees();
@@ -254,35 +252,19 @@ public class Swerve extends SubsystemBase {
         Logger.processInputs("Swerve", inputs);
         for (int i = 0; i < cameras.length; i++) {
             cameras[i].periodic();
-            cameraSeesTarget[i] = cameras[i].seesTarget();
+            // cameraSeesTarget[i] = cameras[i].seesTarget();
         }
 
         Logger.recordOutput("/Swerve/hasInitialized", hasInitialized);
 
-        if (!hasInitialized) {
-            for (int i = 0; i < cameras.length; i++) {
-                var robotPose = cameras[i].getInitialPose();
-                Logger.recordOutput("/Swerve/hasInitialPose[" + i + "]", robotPose.isPresent());
+        for (int i = 0; i < cameras.length; i++) {
+            var robotPose = cameras[i].getMultiTagPose(getFieldRelativeHeading());
+            Logger.recordOutput("/Swerve/hasPose[" + i + "]", robotPose.isPresent());
 
-                if (robotPose.isPresent()) {
-                    if (OperatorState.tagFilter(robotPose.get().fudicialId)) {
-                        swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(),
-                            robotPose.get().robotPose);
-                        hasInitialized = true;
-                        break;
-                    }
-                }
-            }
-        } else {
-            for (int i = 0; i < cameras.length; i++) {
-                var result = cameras[i].getInitialPose();
-                if (result.isPresent()) {
-                    VisionObservation camPose = result.get();
-                    if (OperatorState.tagFilter(camPose.fudicialId)) {
-                        swerveOdometry.addVisionMeasurement(camPose.robotPose,
-                            Timer.getFPGATimestamp() - cameras[i].latency(), camPose.stdDev);
-                    }
-                }
+            if (robotPose.isPresent()) {
+                swerveOdometry.addVisionMeasurement(robotPose.get().robotPose,
+                    Timer.getFPGATimestamp() - 0.08, robotPose.get().stdDev);
+                hasInitialized = true;
             }
         }
 

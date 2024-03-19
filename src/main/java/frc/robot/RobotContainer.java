@@ -20,8 +20,8 @@ import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.util.FieldConstants;
-import frc.lib.util.photon.PhotonCameraWrapper;
-import frc.lib.util.photon.PhotonReal;
+import frc.lib.util.watson.WatsonCamera;
+import frc.lib.util.watson.WatsonCameraWrapper;
 import frc.robot.Robot.RobotRunType;
 import frc.robot.autos.P123;
 import frc.robot.autos.P32;
@@ -105,7 +105,9 @@ public class RobotContainer {
     private Swerve s_Swerve;
     private Shooter shooter;
     private Intake intake;
-    private PhotonCameraWrapper[] cameras;
+    private WatsonCameraWrapper[] cameras = new WatsonCameraWrapper[] {new WatsonCameraWrapper(
+        new WatsonCamera(Constants.CameraConstants.FrontLeftFacingCamera.CAMERA_NAME),
+        Constants.CameraConstants.FrontLeftFacingCamera.translationOffset),};
     private ElevatorWrist elevatorWrist;
     private LEDs leds = new LEDs(Constants.LEDConstants.LED_COUNT, Constants.LEDConstants.PWM_PORT);
     // private PhotonCamera backLeftCamera = new PhotonCamera("back-left");
@@ -128,23 +130,6 @@ public class RobotContainer {
         for (int i = 0; i < 7; i++) {
             numNoteChooser.addOption(String.valueOf(i), i);
         }
-        cameras =
-            /*
-             * Camera Order: 0 - Front Left 1 - Front RIght 2 - Back Left 3 - Back Right
-             */
-            new PhotonCameraWrapper[] {
-                // new PhotonCameraWrapper(
-                // new PhotonReal(Constants.CameraConstants.FrontLeftFacingCamera.CAMERA_NAME),
-                // Constants.CameraConstants.FrontLeftFacingCamera.KCAMERA_TO_ROBOT),
-                new PhotonCameraWrapper(
-                    new PhotonReal(Constants.CameraConstants.FrontRightFacingCamera.CAMERA_NAME),
-                    Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT)};
-        // new PhotonCameraWrapper(
-        // new PhotonReal(Constants.CameraConstants.BackLeftFacingCamera.CAMERA_NAME),
-        // Constants.CameraConstants.BackLeftFacingCamera.KCAMERA_TO_ROBOT),
-        // new PhotonCameraWrapper(
-        // new PhotonReal(Constants.CameraConstants.BackRightFacingCamera.CAMERA_NAME),
-        // Constants.CameraConstants.BackRightFacingCamera.KCAMERA_TO_ROBOT)};
 
         switch (runtimeType) {
             case kReal:

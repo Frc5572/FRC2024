@@ -104,8 +104,8 @@ public final class Constants {
      */
     public static class CameraConstants {
 
-        public static double XY_STD_DEV_COEFF = 0.005;
-        public static double THETA_STD_DEV_COEFF = 0.01;
+        public static double XY_STD_DEV_COEFF = 0.1;
+        public static double THETA_STD_DEV_COEFF = 0.1;
 
         /**
          * Constants for Front Left Camera
@@ -121,6 +121,8 @@ public final class Constants {
 
             public static final String CAMERA_NAME = "front-left";
             public static final double LARGEST_DISTANCE = 0.1;
+            public static final Translation2d translationOffset =
+                new Translation2d(Units.inchesToMeters(0.0), Units.inchesToMeters(0.0));
         }
 
         /**
