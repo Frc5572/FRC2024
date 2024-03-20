@@ -105,8 +105,10 @@ public final class Constants {
     public static class CameraConstants {
 
         public static double XY_STD_DEV_COEFF = 0.1;
+        public static double XY_STD_DEV_AUTO_COEFF = 3.0;
+        public static double REPROJ_STD_DEV_COEFF = 0.1;
         public static double SPEED_STD_DEV_COEFF = 0.4;
-        public static double THETA_STD_DEV_COEFF = 999999999999.9;
+        public static double THETA_STD_DEV_COEFF = Double.MAX_VALUE;
 
         /**
          * Constants for Front Left Camera

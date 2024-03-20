@@ -14,7 +14,11 @@ public abstract class WatsonIO {
 
         public byte[] rawBytes;
         public boolean isMultiTag;
+        public int[] seenTags;
         public Translation2d result;
+        public double reprojectionError;
+        public Translation2d altResult;
+        public double altReprojectionError;
         public String name;
 
         /**
@@ -47,8 +51,9 @@ public abstract class WatsonIO {
             ByteBuffer buf = ByteBuffer.wrap(this.rawBytes);
             buf.rewind();
             int len = buf.getInt();
+            this.seenTags = new int[len];
             for (int i = 0; i < len; i++) {
-                buf.getInt();
+                seenTags[i] = buf.getInt();
             }
             if (buf.get() == 1) {
                 this.isMultiTag = false;
@@ -58,6 +63,13 @@ public abstract class WatsonIO {
             double x = buf.getDouble();
             double y = buf.getDouble();
             this.result = new Translation2d(x, y);
+            this.reprojectionError = buf.getDouble();
+            if (!this.isMultiTag) {
+                double x2 = buf.getDouble();
+                double y2 = buf.getDouble();
+                this.altResult = new Translation2d(x2, y2);
+                this.altReprojectionError = buf.getDouble();
+            }
         }
 
     }
