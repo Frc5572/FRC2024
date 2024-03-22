@@ -77,7 +77,8 @@ public final class Constants {
          * Class for elevator and wrist motor constants
          */
         public static final class ElevatorWrist {
-            public static final int ELEVATOR_NEO_ID = 57;
+            public static final int ELEVATOR_LEFT_NEO_ID = 57;
+            public static final int ELEVATOR_RIGHT_NEO_ID = 12;
             public static final int WRIST_NEO_ID = 52;
         }
 
