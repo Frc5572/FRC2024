@@ -83,7 +83,6 @@ public class Robot extends LoggedRobot {
                 Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
                 setUseTiming(true);
                 robotRunType = RobotRunType.kSimulation;
-                RoboRioSim.setVInVoltage(12.0);
             } else {
                 // (or prompt the user)
                 Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log

@@ -507,7 +507,7 @@ public final class Constants {
         public static final boolean INTAKE_MOTOR_INVERTED = true;
 
         public static final int INDEXER_BEAM_BRAKE_DIO_PORT = 8;
-        public static final int INTAKE_BEAM_BRAKE_DIO_PORT = 7;
+        public static final int INTAKE_BEAM_BRAKE_DIO_PORT = 6;
     }
 
     /**
