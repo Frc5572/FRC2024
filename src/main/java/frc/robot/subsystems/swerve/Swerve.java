@@ -18,7 +18,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -264,12 +263,12 @@ public class Swerve extends SubsystemBase {
         double speed = getPose().getTranslation().minus(prevPose.getTranslation()).getNorm() / 0.02;
 
         for (int i = 0; i < cameras.length; i++) {
-            var robotPose = cameras[i].getMultiTagPose(getFieldRelativeHeading(), speed);
+            var robotPose = cameras[i].takeMultiTagPose(getFieldRelativeHeading(), speed);
             Logger.recordOutput("/Swerve/hasPose[" + i + "]", robotPose.isPresent());
 
             if (robotPose.isPresent()) {
                 swerveOdometry.addVisionMeasurement(robotPose.get().robotPose,
-                    Timer.getFPGATimestamp() - 0.08, robotPose.get().stdDev);
+                    cameras[i].getLatency(), robotPose.get().stdDev);
                 hasInitialized = true;
             }
         }
