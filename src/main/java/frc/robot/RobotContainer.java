@@ -194,11 +194,12 @@ public class RobotContainer {
      * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
-        noteInIndexer.and(noteInIntake.negate())
-            .onTrue(new FlashingLEDColor(leds, Color.kPurple).withTimeout(3));
+        noteInIndexer.and(noteInIntake.negate()).onTrue(
+            new FlashingLEDColor(leds, Constants.LEDConstants.INDEXER_COLOR).withTimeout(3));
         noteInIntake.and(noteInIndexer.negate())
-            .onTrue(new FlashingLEDColor(leds, Color.kGreen).withTimeout(3));
-        noteInIntake.and(noteInIndexer).whileTrue(new FlashingLEDColor(leds, Color.kWhite));
+            .onTrue(new FlashingLEDColor(leds, Constants.LEDConstants.INTAKE_COLOR).withTimeout(3));
+        noteInIntake.and(noteInIndexer)
+            .whileTrue(new FlashingLEDColor(leds, Constants.LEDConstants.ALERT_COLOR));
 
 
         /* Driver Buttons */
