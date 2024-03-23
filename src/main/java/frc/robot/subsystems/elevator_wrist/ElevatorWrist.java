@@ -117,7 +117,7 @@ public class ElevatorWrist extends SubsystemBase {
         }
 
         double elevatorPIDValue = elevatorPIDController.calculate(calculatedHeight);
-        double elevatorFeedForward = 0.4;
+        double elevatorFeedForward = 0.2;
 
         if (getHeight() > 36) {
             wristPIDController.setP(Constants.ElevatorWristConstants.PID.WRIST_KP / 2);
@@ -144,7 +144,7 @@ public class ElevatorWrist extends SubsystemBase {
                 && getHeight() < Constants.ElevatorWristConstants.SetPoints.MAX_EXTENSION)
                 || (operatorX > 0
                     && getHeight() > Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT)) {
-                elevatorPower = -elevatorFeedForward + operatorX * 4.0;
+                elevatorPower = -elevatorFeedForward + operatorX * 3.0;
             }
             io.setWristVoltage(wristPower);
             io.setElevatorVoltage(elevatorPower);

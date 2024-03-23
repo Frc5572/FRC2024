@@ -37,12 +37,12 @@ public class ElevatorWristReal implements ElevatorWristIO {
      * Constructor for elevator wrist real class
      */
     public ElevatorWristReal() {
-        leftElevatorRelativeEnc.setPositionConversionFactor(25);
-        leftElevatorMotor.setIdleMode(IdleMode.kBrake);
-        leftElevatorMotor.setInverted(true);
         rightElevatorRelativeEnc.setPositionConversionFactor(25);
         rightElevatorMotor.setIdleMode(IdleMode.kBrake);
-        rightElevatorMotor.setInverted(false);
+        rightElevatorMotor.setInverted(true);
+        leftElevatorRelativeEnc.setPositionConversionFactor(25);
+        leftElevatorMotor.setIdleMode(IdleMode.kBrake);
+        leftElevatorMotor.setInverted(false);
 
         wristAbsoluteEnc.setPositionConversionFactor(1);
         wristMotor.setIdleMode(IdleMode.kBrake);
@@ -54,8 +54,8 @@ public class ElevatorWristReal implements ElevatorWristIO {
     public void updateInputs(ElevatorWristInputs inputs) {
         inputs.topLimitSwitch = topLimitSwitch.get();
         inputs.bottomLimitSwitch = bottomLimitSwitch.get();
-        inputs.leftElevatorRelativeEncRawValue = leftElevatorRelativeEnc.getPosition();
         inputs.rightElevatorRelativeEncRawValue = rightElevatorRelativeEnc.getPosition();
+        inputs.leftElevatorRelativeEncRawValue = leftElevatorRelativeEnc.getPosition();
         inputs.wristAbsoluteEncRawValue = wristAbsoluteEnc.getPosition();
         // inputs.elevatorMotorSupplyVoltage = elevatorMotor.getBusVoltage();
         // inputs.elevatorMotorVoltage = elevatorMotor.getOutputCurrent();
@@ -67,8 +67,8 @@ public class ElevatorWristReal implements ElevatorWristIO {
 
     @Override
     public void setElevatorVoltage(double v) {
-        leftElevatorMotor.setVoltage(v);
         rightElevatorMotor.setVoltage(v);
+        leftElevatorMotor.setVoltage(v);
     }
 
     @Override
