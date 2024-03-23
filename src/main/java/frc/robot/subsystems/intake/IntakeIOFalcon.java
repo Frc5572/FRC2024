@@ -28,7 +28,10 @@ public class IntakeIOFalcon implements IntakeIO {
 
     private final DutyCycleOut indexerDutyCycleOut = new DutyCycleOut(0);
     private final TalonFXConfiguration indexerConfig = new TalonFXConfiguration();
-    private final DigitalInput beamBrake = new DigitalInput(8);
+    private final DigitalInput indexerBeamBrake =
+        new DigitalInput(Constants.IntakeConstants.INDEXER_BEAM_BRAKE_DIO_PORT);
+    private final DigitalInput intakeBeamBrake =
+        new DigitalInput(Constants.IntakeConstants.INTAKE_BEAM_BRAKE_DIO_PORT);
 
     /**
      * Intake IO Layer with real motors and sensors
@@ -56,7 +59,8 @@ public class IntakeIOFalcon implements IntakeIO {
         // inputs.indexerMotorVoltage = indexerMotor.getMotorVoltage().getValueAsDouble();
         // inputs.indexerAmps = indexerMotor.getSupplyCurrent().getValueAsDouble();
         // inputs.indexerRPM = indexerMotor.getVelocity().getValueAsDouble();
-        inputs.sensorStatus = beamBrake.get(); // true == no game piece
+        inputs.indexerBeamBrake = !indexerBeamBrake.get(); // true == game piece
+        inputs.intakeBeamBrake = !intakeBeamBrake.get(); // true == game piece
     }
 
     @Override
