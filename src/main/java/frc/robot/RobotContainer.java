@@ -27,6 +27,7 @@ import frc.robot.Robot.RobotRunType;
 import frc.robot.autos.P123;
 import frc.robot.autos.P32;
 import frc.robot.autos.P321;
+import frc.robot.autos.P3675;
 import frc.robot.autos.P675;
 import frc.robot.autos.Resnick5;
 import frc.robot.commands.CommandFactory;
@@ -72,7 +73,7 @@ public class RobotContainer {
     public GenericEntry operatorManualMode = RobotContainer.mainDriverTab.add("Manual Mode", false)
         .withWidget(BuiltInWidgets.kBooleanBox)
         .withProperties(Map.of("true_color", 0xff00ffff, "false_color", 0xff770000))
-        .withPosition(7, 6).withSize(2, 2).getEntry();
+        .withPosition(10, 6).withSize(2, 2).getEntry();
     public static GenericEntry readyShoot = RobotContainer.mainDriverTab
         .add("Ready To Shoot", false).withWidget(BuiltInWidgets.kBooleanBox)
         .withProperties(Map.of("true_color", 0xff00ffff, "false_color", 0xff770000))
@@ -97,6 +98,9 @@ public class RobotContainer {
         RobotContainer.mainDriverTab.add("Battery Voltage", 0).withWidget("Voltage View")
             .withProperties(Map.of("topic", "/AdvantageKit/SystemStats/BatteryVoltage"))
             .withPosition(0, 6).withSize(4, 2);
+    public static SimpleWidget goToCenter =
+        RobotContainer.mainDriverTab.add("Auto - Go To Centerline", false)
+            .withWidget("Toggle Switch").withProperties(Map.of()).withPosition(7, 6).withSize(3, 2);
     /* Controllers */
     public final CommandXboxController driver = new CommandXboxController(Constants.DRIVER_ID);
     private final CommandXboxController operator = new CommandXboxController(Constants.OPERATOR_ID);
@@ -114,8 +118,10 @@ public class RobotContainer {
     // private PhotonCamera backLeftCamera = new PhotonCamera("back-left");
 
 
-    private Trigger gotNote = new Trigger(() -> !this.intake.getSensorStatus()).debounce(0.5,
-        Debouncer.DebounceType.kFalling);
+    private Trigger noteInIndexer = new Trigger(() -> this.intake.getIndexerBeamBrakeStatus())
+        .debounce(0.25, Debouncer.DebounceType.kRising);
+    private Trigger noteInIntake = new Trigger(() -> this.intake.getintakeBeamBrakeStatus())
+        .debounce(0.25, Debouncer.DebounceType.kRising);
     private Trigger mannualMode = new Trigger(() -> OperatorState.manualModeEnabled());
     private Trigger atHome = new Trigger(() -> elevatorWrist.elevatorAtHome());
 
@@ -173,7 +179,8 @@ public class RobotContainer {
         autoChooser.addOption("P123", "P123");
         autoChooser.addOption("P321", "P321");
         autoChooser.addOption("P32", "P32");
-        autoChooser.addOption("P675", "P32");
+        autoChooser.addOption("P675", "P675");
+        autoChooser.addOption("P3675", "P3675");
         autoChooser.addOption("Resnick 5", "Resnick 5");
         // autoChooser.addOption("P123", new P123(s_Swerve, elevatorWrist, intake, shooter));
         // autoChooser.addOption("P321", new P321(s_Swerve, elevatorWrist, intake, shooter));
@@ -196,7 +203,13 @@ public class RobotContainer {
      * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
-        gotNote.onTrue(new FlashingLEDColor(leds, Color.kGreen).withTimeout(3));
+        noteInIndexer.and(noteInIntake.negate())
+            .onTrue(new FlashingLEDColor(leds, Color.kPurple).withTimeout(3));
+        noteInIntake.and(noteInIndexer.negate())
+            .onTrue(new FlashingLEDColor(leds, Color.kGreen).withTimeout(3));
+        noteInIntake.and(noteInIndexer).whileTrue(new FlashingLEDColor(leds, Color.kRed));
+
+
         /* Driver Buttons */
         driver.y().onTrue(new InstantCommand(() -> s_Swerve.resetFieldRelativeOffset()));
         driver.start().onTrue(
@@ -229,7 +242,7 @@ public class RobotContainer {
         operator.a().whileTrue(new SelectCommand<OperatorState.State>(Map.of(
             //
             OperatorState.State.kAmp,
-            Commands.either(elevatorWrist.ampPosition(), Commands.none(), gotNote)
+            Commands.either(elevatorWrist.ampPosition(), Commands.none(), noteInIndexer)
                 .alongWith(new TeleopSwerve(s_Swerve, driver, true, false, 0.3)),
             //
             OperatorState.State.kShootWhileMove,
@@ -308,6 +321,9 @@ public class RobotContainer {
                     break;
                 case "P675":
                     autoCommand = new P675(s_Swerve, elevatorWrist, intake, shooter);
+                    break;
+                case "P3675":
+                    autoCommand = new P3675(s_Swerve, elevatorWrist, intake, shooter);
                     break;
                 case "Resnick 5":
                     autoCommand = new Resnick5(s_Swerve, elevatorWrist, intake, shooter);
