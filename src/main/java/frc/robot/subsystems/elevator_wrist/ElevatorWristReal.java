@@ -37,16 +37,20 @@ public class ElevatorWristReal implements ElevatorWristIO {
      * Constructor for elevator wrist real class
      */
     public ElevatorWristReal() {
-        rightElevatorRelativeEnc.setPositionConversionFactor(25);
+        rightElevatorMotor.restoreFactoryDefaults();
+        rightElevatorRelativeEnc.setPositionConversionFactor(60);
         rightElevatorMotor.setIdleMode(IdleMode.kBrake);
         rightElevatorMotor.setInverted(true);
-        leftElevatorRelativeEnc.setPositionConversionFactor(25);
+        leftElevatorMotor.restoreFactoryDefaults();
+        leftElevatorRelativeEnc.setPositionConversionFactor(60);
         leftElevatorMotor.setIdleMode(IdleMode.kBrake);
         leftElevatorMotor.setInverted(false);
-
         wristAbsoluteEnc.setPositionConversionFactor(1);
         wristMotor.setIdleMode(IdleMode.kBrake);
         wristMotor.setInverted(false);
+
+        leftElevatorMotor.burnFlash();
+        rightElevatorMotor.burnFlash();
     }
 
 
@@ -69,6 +73,7 @@ public class ElevatorWristReal implements ElevatorWristIO {
     public void setElevatorVoltage(double v) {
         rightElevatorMotor.setVoltage(v);
         leftElevatorMotor.setVoltage(v);
+        // org.littletonrobotics.junction.Logger.recordOutput("elevator/voltage", v);
     }
 
     @Override

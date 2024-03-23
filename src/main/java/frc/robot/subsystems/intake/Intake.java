@@ -32,7 +32,7 @@ public class Intake extends SubsystemBase {
         io.updateInputs(intakeAutoLogged);
         Logger.processInputs("Intake", intakeAutoLogged);
         if (getIndexerBeamBrakeStatus() && getintakeBeamBrakeStatus()) {
-            haveNote.setString(Color.kRed.toHexString());
+            haveNote.setString(Color.kWhite.toHexString());
         } else if (getIndexerBeamBrakeStatus()) {
             haveNote.setString(Color.kPurple.toHexString());
         } else if (getintakeBeamBrakeStatus()) {
