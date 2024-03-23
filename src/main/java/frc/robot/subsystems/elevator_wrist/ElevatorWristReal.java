@@ -15,8 +15,10 @@ import frc.robot.Constants;
  * Elevator and wrist real robot class
  */
 public class ElevatorWristReal implements ElevatorWristIO {
-    public final CANSparkMax elevatorMotor =
-        new CANSparkMax(Constants.Motors.ElevatorWrist.ELEVATOR_NEO_ID, MotorType.kBrushless);
+    public final CANSparkMax leftElevatorMotor =
+        new CANSparkMax(Constants.Motors.ElevatorWrist.ELEVATOR_LEFT_NEO_ID, MotorType.kBrushless);
+    public final CANSparkMax rightElevatorMotor =
+        new CANSparkMax(Constants.Motors.ElevatorWrist.ELEVATOR_RIGHT_NEO_ID, MotorType.kBrushless);
     public final CANSparkMax wristMotor =
         new CANSparkMax(Constants.Motors.ElevatorWrist.WRIST_NEO_ID, MotorType.kBrushless);
     public final DigitalInput topLimitSwitch =
@@ -25,21 +27,30 @@ public class ElevatorWristReal implements ElevatorWristIO {
         new DigitalInput(Constants.ElevatorWristConstants.Sensors.BOTTOM_LIMIT_SWITCH_PORT);
 
     public final AbsoluteEncoder wristAbsoluteEnc = wristMotor.getAbsoluteEncoder(Type.kDutyCycle);
-    public final RelativeEncoder elevatorRelativeEnc =
-        elevatorMotor.getEncoder(SparkRelativeEncoder.Type.kHallSensor, 42);
+    public final RelativeEncoder leftElevatorRelativeEnc =
+        leftElevatorMotor.getEncoder(SparkRelativeEncoder.Type.kHallSensor, 42);
+    public final RelativeEncoder rightElevatorRelativeEnc =
+        rightElevatorMotor.getEncoder(SparkRelativeEncoder.Type.kHallSensor, 42);
 
 
     /**
      * Constructor for elevator wrist real class
      */
     public ElevatorWristReal() {
-        elevatorRelativeEnc.setPositionConversionFactor(25);
-        elevatorMotor.setIdleMode(IdleMode.kBrake);
-        elevatorMotor.setInverted(true);
-
+        rightElevatorMotor.restoreFactoryDefaults();
+        rightElevatorRelativeEnc.setPositionConversionFactor(60);
+        rightElevatorMotor.setIdleMode(IdleMode.kBrake);
+        rightElevatorMotor.setInverted(true);
+        leftElevatorMotor.restoreFactoryDefaults();
+        leftElevatorRelativeEnc.setPositionConversionFactor(60);
+        leftElevatorMotor.setIdleMode(IdleMode.kBrake);
+        leftElevatorMotor.setInverted(false);
         wristAbsoluteEnc.setPositionConversionFactor(1);
         wristMotor.setIdleMode(IdleMode.kBrake);
         wristMotor.setInverted(false);
+
+        leftElevatorMotor.burnFlash();
+        rightElevatorMotor.burnFlash();
     }
 
 
@@ -47,7 +58,8 @@ public class ElevatorWristReal implements ElevatorWristIO {
     public void updateInputs(ElevatorWristInputs inputs) {
         inputs.topLimitSwitch = topLimitSwitch.get();
         inputs.bottomLimitSwitch = bottomLimitSwitch.get();
-        inputs.elevatorRelativeEncRawValue = elevatorRelativeEnc.getPosition();
+        inputs.rightElevatorRelativeEncRawValue = rightElevatorRelativeEnc.getPosition();
+        inputs.leftElevatorRelativeEncRawValue = leftElevatorRelativeEnc.getPosition();
         inputs.wristAbsoluteEncRawValue = wristAbsoluteEnc.getPosition();
         // inputs.elevatorMotorSupplyVoltage = elevatorMotor.getBusVoltage();
         // inputs.elevatorMotorVoltage = elevatorMotor.getOutputCurrent();
@@ -59,7 +71,9 @@ public class ElevatorWristReal implements ElevatorWristIO {
 
     @Override
     public void setElevatorVoltage(double v) {
-        elevatorMotor.setVoltage(v);
+        rightElevatorMotor.setVoltage(v);
+        leftElevatorMotor.setVoltage(v);
+        // org.littletonrobotics.junction.Logger.recordOutput("elevator/voltage", v);
     }
 
     @Override
