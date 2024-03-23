@@ -262,7 +262,7 @@ public final class Constants {
         public static final double maxSpeed = 10.0;
         public static final double AUTO_MAX_SPEED = 3.0;
         /** Radians per Second */
-        public static final double maxAngularVelocity = 10.0;
+        public static final double maxAngularVelocity = 15.0;
 
         /* Neutral Modes */
         public static final NeutralModeValue angleNeutralMode = NeutralModeValue.Coast;
@@ -277,7 +277,9 @@ public final class Constants {
             public static final int driveMotorID = 6;
             public static final int angleMotorID = 51;
             public static final int canCoderID = 4;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(183.955078125);
+            // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(183.955078125);
+            public static final Rotation2d angleOffset = Rotation2d.fromRotations(-0.004395 + 0.5);
+
         }
 
         /**
@@ -287,7 +289,9 @@ public final class Constants {
             public static final int driveMotorID = 2;
             public static final int angleMotorID = 40;
             public static final int canCoderID = 2;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(325.01953125);
+            // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(325.01953125);
+            public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.415527 + 0.5);
+
         }
 
         /**
@@ -297,7 +301,9 @@ public final class Constants {
             public static final int driveMotorID = 3;
             public static final int angleMotorID = 9;
             public static final int canCoderID = 1;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(124.62890625);
+            // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(124.62890625);
+            public static final Rotation2d angleOffset = Rotation2d.fromRotations(-0.145264 + 0.5);
+
         }
 
         /**
@@ -307,7 +313,8 @@ public final class Constants {
             public static final int driveMotorID = 10;
             public static final int angleMotorID = 8;
             public static final int canCoderID = 10;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(295.400390625);
+            // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(295.400390625);
+            public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.323730 + 0.5);
         }
 
         public static final HolonomicPathFollowerConfig pathFollowerConfig =
