@@ -198,7 +198,7 @@ public class RobotContainer {
             .onTrue(new FlashingLEDColor(leds, Color.kPurple).withTimeout(3));
         noteInIntake.and(noteInIndexer.negate())
             .onTrue(new FlashingLEDColor(leds, Color.kGreen).withTimeout(3));
-        noteInIntake.and(noteInIndexer).whileTrue(new FlashingLEDColor(leds, Color.kRed));
+        noteInIntake.and(noteInIndexer).whileTrue(new FlashingLEDColor(leds, Color.kWhite));
 
 
         /* Driver Buttons */
