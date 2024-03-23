@@ -22,7 +22,7 @@ public class CommandFactory {
      * @return Returns a command
      */
     public static Command runIntake(Intake intake, ElevatorWrist elevatorWrist) {
-        BooleanSupplier sensor = () -> intake.getSensorStatus();
+        BooleanSupplier sensor = () -> intake.getIndexerBeamBrakeStatus();
         Command moveElevatorWrist =
             elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
                 Constants.ElevatorWristConstants.SetPoints.HOME_ANGLE);
@@ -107,7 +107,7 @@ public class CommandFactory {
          * @return Command
          */
         public static Command runIndexer(Intake intake) {
-            return Commands.waitUntil(() -> intake.getSensorStatus())
+            return Commands.waitUntil(() -> !intake.getIndexerBeamBrakeStatus())
                 .andThen(Commands.waitSeconds(.25)).deadlineWith(intake.runIndexerMotor(1))
                 .withTimeout(5);
         }
@@ -131,7 +131,7 @@ public class CommandFactory {
          * @return Command
          */
         public static Command waitForIntake(Intake intake) {
-            return Commands.waitUntil(() -> !intake.getSensorStatus());
+            return Commands.waitUntil(() -> intake.getIndexerBeamBrakeStatus());
         }
 
     }
