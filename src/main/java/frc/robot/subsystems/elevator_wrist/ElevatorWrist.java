@@ -168,8 +168,10 @@ public class ElevatorWrist extends SubsystemBase {
         SmartDashboard.putNumber("Wrist PID Voltage", wristPIDValue);
         SmartDashboard.putNumber("ElevatorWrist PID setpoint",
             elevatorPIDController.getSetpoint().position);
-        SmartDashboard.putNumber("ElevatorWrist Elevator Encoder Value",
-            inputs.elevatorRelativeEncRawValue);
+        SmartDashboard.putNumber("ElevatorWrist Left Elevator Encoder Value",
+            inputs.leftElevatorRelativeEncRawValue);
+        SmartDashboard.putNumber("ElevatorWrist Right Elevator Encoder Value",
+            inputs.rightElevatorRelativeEncRawValue);
         SmartDashboard.putNumber("ElevatorWrist Wrist Encoder Value",
             inputs.wristAbsoluteEncRawValue);
         SmartDashboard.putNumber("ElevatorWrist Amp Drawn", inputs.wristMotorAmp);
@@ -184,7 +186,7 @@ public class ElevatorWrist extends SubsystemBase {
      * Calculate elevator height from raw encoder value.
      */
     public double getHeight() {
-        return Constants.ElevatorWristConstants.ELEVATOR_M * inputs.elevatorRelativeEncRawValue
+        return Constants.ElevatorWristConstants.ELEVATOR_M * inputs.leftElevatorRelativeEncRawValue
             + Constants.ElevatorWristConstants.ELEVATOR_B;
     }
 
@@ -302,7 +304,7 @@ public class ElevatorWrist extends SubsystemBase {
      * @return Height of elevator in meters
      */
     public double elevatorDistanceTraveled() {
-        return inputs.elevatorRelativeEncRawValue
+        return inputs.leftElevatorRelativeEncRawValue
             * Constants.ElevatorWristConstants.SetPoints.LINEAR_DISTANCE;
     }
 
