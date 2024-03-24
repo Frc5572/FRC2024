@@ -228,6 +228,15 @@ public class ElevatorWrist extends SubsystemBase {
     }
 
     /**
+     * Set elevator to home and angle the wrist at a set angle to shoot into the speaker from
+     * directly in front.
+     */
+    public Command speakerPreset() {
+        return goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
+            Rotation2d.fromDegrees(47)).withTimeout(2); // TODO: Update angle
+    }
+
+    /**
      * Set elevator and wrist to amp position. Performs two steps to avoid colliding with
      * electronics box.
      */
@@ -316,9 +325,7 @@ public class ElevatorWrist extends SubsystemBase {
      * @return boolean representing if the elevator and wrist PID controllers are at their goals
      */
     public Boolean atGoal() {
-        // return elevatorPIDController.atGoal() && wristPIDController.atGoal();
-        return wristPIDController.atSetpoint();
-        // return true;
+        return wristPIDController.atSetpoint() && elevatorPIDController.atGoal();
     }
 
     /**
