@@ -28,6 +28,7 @@ import frc.robot.autos.P32;
 import frc.robot.autos.P321;
 import frc.robot.autos.P3675;
 import frc.robot.autos.P675;
+import frc.robot.autos.P8765;
 import frc.robot.autos.Resnick5;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.FlashingLEDColor;
@@ -97,7 +98,10 @@ public class RobotContainer {
             .withPosition(0, 6).withSize(4, 2);
     public static SimpleWidget goToCenter =
         RobotContainer.mainDriverTab.add("Auto - Go To Centerline", false)
-            .withWidget("Toggle Switch").withProperties(Map.of()).withPosition(7, 6).withSize(3, 2);
+            .withWidget("Toggle Switch").withProperties(Map.of()).withPosition(7, 6).withSize(3, 1);
+    public static SimpleWidget dumpNotes =
+        RobotContainer.mainDriverTab.add("Auto - Dump Notes", false).withWidget("Toggle Switch")
+            .withProperties(Map.of()).withPosition(7, 7).withSize(3, 1);
     /* Controllers */
     public final CommandXboxController driver = new CommandXboxController(Constants.DRIVER_ID);
     private final CommandXboxController operator = new CommandXboxController(Constants.OPERATOR_ID);
@@ -178,6 +182,7 @@ public class RobotContainer {
         autoChooser.addOption("P32", new P32(s_Swerve, elevatorWrist, intake, shooter));
         autoChooser.addOption("P675", new P675(s_Swerve, elevatorWrist, intake, shooter));
         autoChooser.addOption("P3675", new P3675(s_Swerve, elevatorWrist, intake, shooter));
+        autoChooser.addOption("P8765", new P8765(s_Swerve, elevatorWrist, intake, shooter));
         autoChooser.addOption("Resnick 5", new Resnick5(s_Swerve, elevatorWrist, intake, shooter));
 
         s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, driver,
