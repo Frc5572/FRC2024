@@ -18,7 +18,7 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
 
 /**
- * Resnick 2 Custom Auto
+ * P8765 Auto to shoot or dump
  */
 public class P8765 extends SequentialCommandGroup {
 
@@ -28,7 +28,7 @@ public class P8765 extends SequentialCommandGroup {
     Shooter shooter;
 
     /**
-     * Resnick 2 Custom Auto
+     * P8765 Auto to shoot or dump
      *
      * @param swerveDrive Swerve Drive Subsystem
      * @param elevatorWrist Elevator Wrist Subsystem
@@ -51,11 +51,13 @@ public class P8765 extends SequentialCommandGroup {
         PathPlannerPath path4_dump = PathPlannerPath.fromChoreoTrajectory("P8765-p5-dump");
         PathPlannerPath path5_dump = PathPlannerPath.fromChoreoTrajectory("P8765-p4-dump");
 
+        // Shoot Paths
         Command followPath0 = AutoBuilder.followPath(path0);
         Command followPath1 = AutoBuilder.followPath(path1);
         Command followPath2 = AutoBuilder.followPath(path2);
         Command followPath3 = AutoBuilder.followPath(path3);
 
+        // Dump Paths
         Command followPath1_dump = AutoBuilder.followPath(path1_dump);
         Command followPath2_dump = AutoBuilder.followPath(path2_dump);
         Command followPath3_dump = AutoBuilder.followPath(path3_dump);
@@ -102,6 +104,7 @@ public class P8765 extends SequentialCommandGroup {
             .andThen(elevatorWrist.homePosition().withTimeout(.5));
         Command part5_dump = followPath5_dump.alongWith(CommandFactory.intakeNote(intake));
 
+        Command wait = Commands.waitSeconds(.1);
         Command resetPosition = Commands.runOnce(() -> {
             Pose2d initialState =
                 FieldConstants.allianceFlip(path0.getPreviewStartingHolonomicPose()
@@ -117,6 +120,6 @@ public class P8765 extends SequentialCommandGroup {
             () -> RobotContainer.dumpNotes.getEntry().getBoolean(false)));
         Command shootCommand = shooter.shootSpeaker();
 
-        addCommands(resetPosition, followPaths.deadlineWith(shootCommand));
+        addCommands(resetPosition, wait, followPaths.deadlineWith(shootCommand));
     }
 }
