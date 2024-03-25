@@ -232,6 +232,8 @@ public class RobotContainer {
         // run action based on current state as incremented through operator states list
         operator.a().whileTrue(new SelectCommand<OperatorState.State>(Map.of(
             //
+            OperatorState.State.kSpeaker, elevatorWrist.speakerPreset(),
+            //
             OperatorState.State.kAmp,
             Commands.either(elevatorWrist.ampPosition(), Commands.none(), noteInIndexer)
                 .alongWith(new TeleopSwerve(s_Swerve, driver, true, false, 0.3)),

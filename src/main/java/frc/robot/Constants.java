@@ -365,10 +365,12 @@ public final class Constants {
      */
     public static final class ElevatorWristConstants {
 
-        public static final Rotation2d WRIST_REF_1_ANGLE_MEASURED = Rotation2d.fromRotations(0.004);
-        public static final Rotation2d WRIST_REF_2_ANGLE_MEASURED = Rotation2d.fromRotations(-.105);
+        public static final Rotation2d WRIST_REF_1_ANGLE_MEASURED =
+            Rotation2d.fromRotations(0.3082);
+        public static final Rotation2d WRIST_REF_2_ANGLE_MEASURED =
+            Rotation2d.fromRotations(0.4399);
         public static final Rotation2d WRIST_REF_1_ANGLE_ACTUAL = Rotation2d.fromDegrees(0.0);
-        public static final Rotation2d WRIST_REF_2_ANGLE_ACTUAL = Rotation2d.fromDegrees(41.0);
+        public static final Rotation2d WRIST_REF_2_ANGLE_ACTUAL = Rotation2d.fromDegrees(45.0);
 
         public static final double WRIST_M;
         public static final double WRIST_B;
@@ -402,17 +404,6 @@ public final class Constants {
             // b = act_1 - meas_1 * m
             ELEVATOR_B =
                 ELEVATOR_REF_1_HEIGHT - ELEVATOR_REF_1_ANGLE_MEASURED.getRotations() * ELEVATOR_M;
-        }
-
-        /**
-         * Sensor Constants
-         */
-        public static final class Sensors {
-
-            public static final int ELEVATOR_ENC_CHANNEL_A = -1;
-            public static final int ELEVATOR_ENC_CHANNEL_B = -1;
-            public static final int TOP_LIMIT_SWITCH_PORT = 1;
-            public static final int BOTTOM_LIMIT_SWITCH_PORT = 2;
         }
 
         /**
