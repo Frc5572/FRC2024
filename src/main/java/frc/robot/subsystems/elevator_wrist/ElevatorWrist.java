@@ -233,7 +233,7 @@ public class ElevatorWrist extends SubsystemBase {
      */
     public Command speakerPreset() {
         return goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-            Rotation2d.fromDegrees(47)).withTimeout(2); // TODO: Update angle
+            Rotation2d.fromDegrees(33.75)).withTimeout(2);
     }
 
     /**
