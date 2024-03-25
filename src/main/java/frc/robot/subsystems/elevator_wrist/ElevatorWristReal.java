@@ -8,7 +8,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkRelativeEncoder;
-import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants;
 
 /**
@@ -21,10 +20,6 @@ public class ElevatorWristReal implements ElevatorWristIO {
         new CANSparkMax(Constants.Motors.ElevatorWrist.ELEVATOR_RIGHT_NEO_ID, MotorType.kBrushless);
     public final CANSparkMax wristMotor =
         new CANSparkMax(Constants.Motors.ElevatorWrist.WRIST_NEO_ID, MotorType.kBrushless);
-    public final DigitalInput topLimitSwitch =
-        new DigitalInput(Constants.ElevatorWristConstants.Sensors.TOP_LIMIT_SWITCH_PORT);
-    public final DigitalInput bottomLimitSwitch =
-        new DigitalInput(Constants.ElevatorWristConstants.Sensors.BOTTOM_LIMIT_SWITCH_PORT);
 
     public final AbsoluteEncoder wristAbsoluteEnc = wristMotor.getAbsoluteEncoder(Type.kDutyCycle);
     public final RelativeEncoder leftElevatorRelativeEnc =
@@ -56,8 +51,6 @@ public class ElevatorWristReal implements ElevatorWristIO {
 
     @Override
     public void updateInputs(ElevatorWristInputs inputs) {
-        inputs.topLimitSwitch = topLimitSwitch.get();
-        inputs.bottomLimitSwitch = bottomLimitSwitch.get();
         inputs.rightElevatorRelativeEncRawValue = rightElevatorRelativeEnc.getPosition();
         inputs.leftElevatorRelativeEncRawValue = leftElevatorRelativeEnc.getPosition();
         inputs.wristAbsoluteEncRawValue = wristAbsoluteEnc.getPosition();
