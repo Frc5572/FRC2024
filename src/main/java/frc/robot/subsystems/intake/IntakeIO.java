@@ -20,7 +20,8 @@ public interface IntakeIO {
         // public double indexerAmps;
         // public double intakeRPM;
         // public double indexerRPM;
-        public boolean sensorStatus;
+        public boolean indexerBeamBrake;
+        public boolean intakeBeamBrake;
     }
 
     public default void updateInputs(IntakeInputs inputs) {}

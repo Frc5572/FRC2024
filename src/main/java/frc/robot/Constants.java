@@ -77,7 +77,8 @@ public final class Constants {
          * Class for elevator and wrist motor constants
          */
         public static final class ElevatorWrist {
-            public static final int ELEVATOR_NEO_ID = 57;
+            public static final int ELEVATOR_RIGHT_NEO_ID = 57;
+            public static final int ELEVATOR_LEFT_NEO_ID = 12;
             public static final int WRIST_NEO_ID = 52;
         }
 
@@ -369,10 +370,12 @@ public final class Constants {
      */
     public static final class ElevatorWristConstants {
 
-        public static final Rotation2d WRIST_REF_1_ANGLE_MEASURED = Rotation2d.fromRotations(0.004);
-        public static final Rotation2d WRIST_REF_2_ANGLE_MEASURED = Rotation2d.fromRotations(-.105);
+        public static final Rotation2d WRIST_REF_1_ANGLE_MEASURED =
+            Rotation2d.fromRotations(0.3082);
+        public static final Rotation2d WRIST_REF_2_ANGLE_MEASURED =
+            Rotation2d.fromRotations(0.4399);
         public static final Rotation2d WRIST_REF_1_ANGLE_ACTUAL = Rotation2d.fromDegrees(0.0);
-        public static final Rotation2d WRIST_REF_2_ANGLE_ACTUAL = Rotation2d.fromDegrees(41.0);
+        public static final Rotation2d WRIST_REF_2_ANGLE_ACTUAL = Rotation2d.fromDegrees(45.0);
 
         public static final double WRIST_M;
         public static final double WRIST_B;
@@ -391,9 +394,9 @@ public final class Constants {
         public static final Rotation2d ELEVATOR_REF_1_ANGLE_MEASURED =
             Rotation2d.fromRotations(0.0);
         public static final Rotation2d ELEVATOR_REF_2_ANGLE_MEASURED =
-            Rotation2d.fromRotations(-973);
+            Rotation2d.fromRotations(-10030.96);
         public static final double ELEVATOR_REF_1_HEIGHT = 24.0;
-        public static final double ELEVATOR_REF_2_HEIGHT = 44.125;
+        public static final double ELEVATOR_REF_2_HEIGHT = 44.75;
 
         public static final double ELEVATOR_M;
         public static final double ELEVATOR_B;
@@ -409,26 +412,15 @@ public final class Constants {
         }
 
         /**
-         * Sensor Constants
-         */
-        public static final class Sensors {
-
-            public static final int ELEVATOR_ENC_CHANNEL_A = -1;
-            public static final int ELEVATOR_ENC_CHANNEL_B = -1;
-            public static final int TOP_LIMIT_SWITCH_PORT = 1;
-            public static final int BOTTOM_LIMIT_SWITCH_PORT = 2;
-        }
-
-        /**
          * PID constants
          */
         public static final class PID {
 
-            public static final double ELEVATOR_KP = 2.2;
+            public static final double ELEVATOR_KP = 10.0;
             public static final double ELEVATOR_KI = 0;
             public static final double ELEVATOR_KD = 0;
-            public static final double ELEVATOR_MAX_VELOCITY = 40;
-            public static final double ELEVATOR_MAX_ACCELERATION = 100;
+            public static final double ELEVATOR_MAX_VELOCITY = 320;
+            public static final double ELEVATOR_MAX_ACCELERATION = 200;
             public static final double ELEVATOR_KS = 0;
             public static final double ELEVATOR_KG = 0;
             public static final double ELEVATOR_KV = 0;
@@ -453,13 +445,13 @@ public final class Constants {
             public static final Rotation2d INTAKE_ANGLE = Rotation2d.fromDegrees(39);
             public static final Rotation2d HOME_ANGLE = Rotation2d.fromDegrees(10);
             // public static final double AMP_HEIGHT = Units.inchesToMeters(34);
-            public static final double AMP_HEIGHT = 44;
+            public static final double AMP_HEIGHT = 43.5;
             public static final Rotation2d AMP_ANGLE = Rotation2d.fromDegrees(-38);
             // public static final double TRAP_HEIGHT = Units.inchesToMeters(40);
             public static final double TRAP_HEIGHT = 44;
             public static final Rotation2d TRAP_ANGLE = Rotation2d.fromDegrees(-10);
             // public static final double MAX_EXTENSION = Units.inchesToMeters(48);
-            public static final double MAX_EXTENSION = 44.7;
+            public static final double MAX_EXTENSION = 43.5;
             public static final double CLIMBING_HEIGHT = 43.34;
             public static final Rotation2d CLIMBING_ANGLE = Rotation2d.fromDegrees(-54);
             public static final Rotation2d MIN_ANGLE = Rotation2d.fromDegrees(-44);
@@ -511,6 +503,8 @@ public final class Constants {
         public static final double INDEX_MOTOR_STOP = 0;
         public static final boolean INTAKE_MOTOR_INVERTED = true;
 
+        public static final int INDEXER_BEAM_BRAKE_DIO_PORT = 8;
+        public static final int INTAKE_BEAM_BRAKE_DIO_PORT = 6;
     }
 
     /**

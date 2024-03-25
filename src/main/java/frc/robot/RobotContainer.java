@@ -117,8 +117,10 @@ public class RobotContainer {
     // private PhotonCamera backLeftCamera = new PhotonCamera("back-left");
 
 
-    private Trigger gotNote = new Trigger(() -> !this.intake.getSensorStatus()).debounce(0.5,
-        Debouncer.DebounceType.kFalling);
+    private Trigger noteInIndexer = new Trigger(() -> this.intake.getIndexerBeamBrakeStatus())
+        .debounce(0.25, Debouncer.DebounceType.kRising);
+    private Trigger noteInIntake = new Trigger(() -> this.intake.getintakeBeamBrakeStatus())
+        .debounce(0.25, Debouncer.DebounceType.kRising);
     private Trigger mannualMode = new Trigger(() -> OperatorState.manualModeEnabled());
     private Trigger atHome = new Trigger(() -> elevatorWrist.elevatorAtHome());
 
@@ -155,6 +157,7 @@ public class RobotContainer {
                 elevatorWrist = new ElevatorWrist(new ElevatorWristIO() {}, operator);
         }
 
+        autoChooser.setDefaultOption("Nothing", Commands.none());
         autoChooser.addOption("P123", new P123(s_Swerve, elevatorWrist, intake, shooter));
         autoChooser.addOption("P321", new P321(s_Swerve, elevatorWrist, intake, shooter));
         autoChooser.addOption("P32", new P32(s_Swerve, elevatorWrist, intake, shooter));
@@ -176,7 +179,13 @@ public class RobotContainer {
      * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
-        gotNote.onTrue(new FlashingLEDColor(leds, Color.kGreen).withTimeout(3));
+        noteInIndexer.and(noteInIntake.negate())
+            .onTrue(new FlashingLEDColor(leds, Color.kPurple).withTimeout(3));
+        noteInIntake.and(noteInIndexer.negate())
+            .onTrue(new FlashingLEDColor(leds, Color.kGreen).withTimeout(3));
+        noteInIntake.and(noteInIndexer).whileTrue(new FlashingLEDColor(leds, Color.kWhite));
+
+
         /* Driver Buttons */
         driver.y().onTrue(new InstantCommand(() -> s_Swerve.resetFieldRelativeOffset()));
         driver.start().onTrue(
@@ -208,8 +217,10 @@ public class RobotContainer {
         // run action based on current state as incremented through operator states list
         operator.a().whileTrue(new SelectCommand<OperatorState.State>(Map.of(
             //
+            OperatorState.State.kSpeaker, elevatorWrist.speakerPreset(),
+            //
             OperatorState.State.kAmp,
-            Commands.either(elevatorWrist.ampPosition(), Commands.none(), gotNote)
+            Commands.either(elevatorWrist.ampPosition(), Commands.none(), noteInIndexer)
                 .alongWith(new TeleopSwerve(s_Swerve, driver, true, false, 0.3)),
             //
             OperatorState.State.kShootWhileMove,
