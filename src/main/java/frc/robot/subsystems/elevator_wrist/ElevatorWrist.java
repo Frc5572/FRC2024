@@ -91,7 +91,7 @@ public class ElevatorWrist extends SubsystemBase {
         io.updateInputs(inputs);
         Logger.processInputs("ElevatorWrist", inputs);
 
-        if (inputs.wristAbsoluteEncRawValue > 0.5) {
+        if (inputs.wristAbsoluteEncRawValue > 0.9) {
             inputs.wristAbsoluteEncRawValue -= 1.0;
         }
 
@@ -130,14 +130,14 @@ public class ElevatorWrist extends SubsystemBase {
         }
         if (OperatorState.manualModeEnabled()) {
             double operatorY = (Math.abs(operator.getLeftY()) < Constants.STICK_DEADBAND) ? 0
-                : -operator.getLeftY();
+                : operator.getLeftY();
             double operatorX = (Math.abs(operator.getRightY()) < Constants.STICK_DEADBAND) ? 0
                 : operator.getRightY();
             double wristPower = 0;
             double elevatorPower = -elevatorFeedForward;
-            if ((operatorY > 0 && getWristAngle()
+            if (DriverStation.isTest() || (operatorY < 0 && getWristAngle()
                 .getDegrees() < Constants.ElevatorWristConstants.SetPoints.MAX_ANGLE.getDegrees())
-                || (operatorY < 0 && getWristAngle()
+                || (operatorY > 0 && getWristAngle()
                     .getDegrees() > Constants.ElevatorWristConstants.SetPoints.MIN_ANGLE
                         .getDegrees())) {
                 wristPower = operatorY * 4.0;
@@ -153,7 +153,7 @@ public class ElevatorWrist extends SubsystemBase {
             io.setElevatorVoltage(elevatorPower);
         } else if (pidEnabled) {
             io.setElevatorVoltage(-elevatorFeedForward - elevatorPIDValue);
-            io.setWristVoltage(-wristPIDValue);
+            io.setWristVoltage(wristPIDValue);
         } else {
             io.setElevatorVoltage(-elevatorFeedForward);
             io.setWristVoltage(0);
@@ -250,7 +250,7 @@ public class ElevatorWrist extends SubsystemBase {
     }
 
     /**
-     * Set elevator and wrist to amp position. Performs two steps to avoid colliding with
+     * Set elevator and wrist to climbing position. Performs two steps to avoid colliding with
      * electronics box.
      */
     public Command climbPosition() {
@@ -267,7 +267,7 @@ public class ElevatorWrist extends SubsystemBase {
      */
     public Command homePosition() {
         Command checkHome = Commands.either(
-            goToPosition(36, Rotation2d.fromDegrees(24))
+            goToPosition(30, Rotation2d.fromDegrees(24))
                 .until(() -> getWristAngle().getDegrees() > 15).withTimeout(2),
             Commands.none(), () -> !elevatorAtHome());
         Command goHome = goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
