@@ -267,8 +267,8 @@ public class Swerve extends SubsystemBase {
             Logger.recordOutput("/Swerve/hasPose[" + i + "]", robotPose.isPresent());
 
             if (robotPose.isPresent()) {
-                swerveOdometry.addVisionMeasurement(robotPose.get().robotPose,
-                    cameras[i].getLatency(), robotPose.get().stdDev);
+                swerveOdometry.resetPosition(getFieldRelativeHeading(), getModulePositions(),
+                    robotPose.get().robotPose);
                 hasInitialized = true;
             }
         }

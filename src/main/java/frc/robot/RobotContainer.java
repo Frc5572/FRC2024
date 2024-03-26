@@ -110,8 +110,8 @@ public class RobotContainer {
     private Shooter shooter;
     private Intake intake;
     private WatsonCameraWrapper[] cameras = new WatsonCameraWrapper[] {new WatsonCameraWrapper(
-        new WatsonCamera(Constants.CameraConstants.FrontLeftFacingCamera.CAMERA_NAME),
-        Constants.CameraConstants.FrontLeftFacingCamera.translationOffset),};
+        new WatsonCamera(Constants.CameraConstants.FrontRightFacingCamera.CAMERA_NAME),
+        Constants.CameraConstants.FrontRightFacingCamera.translationOffset),};
     private ElevatorWrist elevatorWrist;
     private LEDs leds = new LEDs(Constants.LEDConstants.LED_COUNT, Constants.LEDConstants.PWM_PORT);
     // private PhotonCamera backLeftCamera = new PhotonCamera("back-left");
