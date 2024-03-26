@@ -250,7 +250,7 @@ public class ElevatorWrist extends SubsystemBase {
     }
 
     /**
-     * Set elevator and wrist to amp position. Performs two steps to avoid colliding with
+     * Set elevator and wrist to climbing position. Performs two steps to avoid colliding with
      * electronics box.
      */
     public Command climbPosition() {

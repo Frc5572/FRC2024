@@ -235,8 +235,7 @@ public class RobotContainer {
             OperatorState.State.kSpeaker, elevatorWrist.speakerPreset(),
             //
             OperatorState.State.kAmp,
-            Commands.either(elevatorWrist.ampPosition(), Commands.none(), noteInIndexer)
-                .alongWith(new TeleopSwerve(s_Swerve, driver, true, false, 0.3)),
+            Commands.either(elevatorWrist.ampPosition(), Commands.none(), noteInIndexer),
             //
             OperatorState.State.kShootWhileMove,
             new ShootWhileMoving(s_Swerve, driver, () -> s_Swerve.getPose(),
@@ -250,7 +249,11 @@ public class RobotContainer {
             OperatorState.State.kPost,
             new TurnToAngle(s_Swerve, Rotation2d.fromDegrees(25)).alongWith(elevatorWrist
                 .followPosition(() -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-                    () -> Constants.ElevatorWristConstants.SetPoints.PODIUM_ANGLE))),
+                    () -> Constants.ElevatorWristConstants.SetPoints.PODIUM_ANGLE)),
+            //
+            OperatorState.State.kClimb,
+            Commands.sequence(elevatorWrist.climbPosition(),
+                Commands.runOnce(() -> OperatorState.enableManualMode()))),
             OperatorState::getCurrentState));
 
         /*
