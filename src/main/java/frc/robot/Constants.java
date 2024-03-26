@@ -366,9 +366,9 @@ public final class Constants {
     public static final class ElevatorWristConstants {
 
         public static final Rotation2d WRIST_REF_1_ANGLE_MEASURED =
-            Rotation2d.fromRotations(0.3082);
+            Rotation2d.fromRotations(0.6067);
         public static final Rotation2d WRIST_REF_2_ANGLE_MEASURED =
-            Rotation2d.fromRotations(0.4399);
+            Rotation2d.fromRotations(0.7336);
         public static final Rotation2d WRIST_REF_1_ANGLE_ACTUAL = Rotation2d.fromDegrees(0.0);
         public static final Rotation2d WRIST_REF_2_ANGLE_ACTUAL = Rotation2d.fromDegrees(45.0);
 
@@ -420,8 +420,8 @@ public final class Constants {
             public static final double ELEVATOR_KG = 0;
             public static final double ELEVATOR_KV = 0;
 
-            public static final double WRIST_KP = 115;
-            public static final double WRIST_LARGE_KP = 80;
+            public static final double WRIST_KP = 100;
+            public static final double WRIST_LARGE_KP = 40;
             public static final double WRIST_KI = 0;
             public static final double WRIST_KD = 0;
             public static final double WRIST_MAX_VELOCITY = 0.000001;
