@@ -232,10 +232,15 @@ public class RobotContainer {
         // run action based on current state as incremented through operator states list
         operator.a().whileTrue(new SelectCommand<OperatorState.State>(Map.of(
             //
-            OperatorState.State.kSpeaker, elevatorWrist.speakerPreset(),
+            OperatorState.State.kSpeaker,
+            elevatorWrist.speakerPreset()
+                .alongWith(new TeleopSwerve(s_Swerve, driver, Constants.Swerve.isFieldRelative,
+                    Constants.Swerve.isOpenLoop)),
             //
             OperatorState.State.kAmp,
-            Commands.either(elevatorWrist.ampPosition(), Commands.none(), noteInIndexer),
+            Commands.either(elevatorWrist.ampPosition(), Commands.none(), noteInIndexer)
+                .alongWith(new TeleopSwerve(s_Swerve, driver, Constants.Swerve.isFieldRelative,
+                    Constants.Swerve.isOpenLoop)),
             //
             OperatorState.State.kShootWhileMove,
             new ShootWhileMoving(s_Swerve, driver, () -> s_Swerve.getPose(),
@@ -252,8 +257,11 @@ public class RobotContainer {
                     () -> Constants.ElevatorWristConstants.SetPoints.PODIUM_ANGLE)),
             //
             OperatorState.State.kClimb,
-            Commands.sequence(elevatorWrist.climbPosition(),
-                Commands.runOnce(() -> OperatorState.enableManualMode()))),
+            Commands
+                .sequence(elevatorWrist.climbPosition(),
+                    Commands.runOnce(() -> OperatorState.enableManualMode()))
+                .alongWith(new TeleopSwerve(s_Swerve, driver, Constants.Swerve.isFieldRelative,
+                    Constants.Swerve.isOpenLoop))),
             OperatorState::getCurrentState));
 
         /*
