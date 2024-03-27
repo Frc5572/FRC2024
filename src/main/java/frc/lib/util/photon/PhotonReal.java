@@ -1,5 +1,14 @@
 package frc.lib.util.photon;
 
+import java.io.File;
+import java.io.IOException;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.photonvision.PhotonCamera;
 import org.photonvision.common.dataflow.structures.Packet;
 import org.photonvision.common.dataflow.structures.PacketSerde;
@@ -13,6 +22,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.networktables.StringSubscriber;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** Represents an actual camera that is connected to PhotonVision. Based on {@link PhotonCamera}. */
 public class PhotonReal extends PhotonIO implements AutoCloseable {
@@ -65,6 +75,21 @@ public class PhotonReal extends PhotonIO implements AutoCloseable {
             return new PhotonPipelineResultIntermediate(result, data);
         }
 
+    }
+
+    private boolean uploadSettings(String ip, File file) throws IOException {
+        try (final CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpPost postReq = new HttpPost(ip + "/api/settings");
+            HttpEntity entity =
+                MultipartEntityBuilder.create().addPart("data", new FileBody(file)).build();
+            postReq.setEntity(entity);
+            try (CloseableHttpResponse response = httpClient.execute(postReq)) {
+                SmartDashboard.putString("uploadSettings/" + this.name,
+                    response.getStatusLine().getStatusCode() + ": "
+                        + response.getStatusLine().getReasonPhrase());
+                return response.getStatusLine().getStatusCode() == 200;
+            }
+        }
     }
 
     /**
