@@ -7,7 +7,8 @@ public class OperatorState {
 
     /** Operating state. */
     public static enum State {
-        kSpeaker("Speaker"), kShootWhileMove("Auto Shoot"), kAmp("Amp"), kPost("Podium");
+        kSpeaker("Speaker"), kShootWhileMove("Auto Shoot"), kAmp("Amp"), kPost("Podium"), kClimb(
+            "Climb");
 
         public final String displayName;
 
@@ -46,6 +47,17 @@ public class OperatorState {
     public static void toggleManualMode() {
         manualMode = !manualMode;
     }
+
+    /** Enable manual mode for elevator/wrist. */
+    public static void enableManualMode() {
+        manualMode = true;
+    }
+
+    /** Disable manual mode for elevator/wrist. */
+    public static void disableManualMode() {
+        manualMode = false;
+    }
+
 
     /** Get currently tracked state. */
     public static State getCurrentState() {
