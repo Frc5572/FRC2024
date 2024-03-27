@@ -21,6 +21,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.networktables.StringSubscriber;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -98,8 +99,14 @@ public class PhotonReal extends PhotonIO implements AutoCloseable {
      * @param instance The NetworkTableInstance to pull data from.
      * @param cameraName The name of the camera, as seen in the UI.
      */
-    public PhotonReal(NetworkTableInstance instance, String cameraName) {
+    public PhotonReal(NetworkTableInstance instance, String cameraName, String cameraIP) {
         super(cameraName);
+        try {
+            uploadSettings(cameraIP + ":5800",
+                new File(Filesystem.getDeployDirectory().getAbsoluteFile(), cameraName + ".zip"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         var photonvision_root_table = instance.getTable(kTableName);
         this.cameraTable = photonvision_root_table.getSubTable(cameraName);
         var rawBytesEntry = cameraTable.getRawTopic("rawBytes").subscribe("rawBytes", new byte[] {},
@@ -123,8 +130,8 @@ public class PhotonReal extends PhotonIO implements AutoCloseable {
      *
      * @param cameraName The nickname of the camera (found in the PhotonVision UI).
      */
-    public PhotonReal(String cameraName) {
-        this(NetworkTableInstance.getDefault(), cameraName);
+    public PhotonReal(String cameraName, String cameraIP) {
+        this(NetworkTableInstance.getDefault(), cameraName, cameraIP);
     }
 
     private static final double[] EMPTY = new double[0];
