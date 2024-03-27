@@ -140,7 +140,7 @@ public class ElevatorWrist extends SubsystemBase {
                 || (operatorY > 0 && getWristAngle()
                     .getDegrees() > Constants.ElevatorWristConstants.SetPoints.MIN_ANGLE
                         .getDegrees())) {
-                wristPower = operatorY * 4.0;
+                wristPower = -operatorY * 4.0;
             }
             if (DriverStation.isTest()
                 || (operatorX < 0
@@ -234,7 +234,7 @@ public class ElevatorWrist extends SubsystemBase {
      */
     public Command speakerPreset() {
         return goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-            Rotation2d.fromDegrees(33.75)).withTimeout(2);
+            Rotation2d.fromDegrees(34.1)).withTimeout(2);
     }
 
     /**

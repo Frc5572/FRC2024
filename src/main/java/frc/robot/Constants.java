@@ -366,9 +366,9 @@ public final class Constants {
     public static final class ElevatorWristConstants {
 
         public static final Rotation2d WRIST_REF_1_ANGLE_MEASURED =
-            Rotation2d.fromRotations(0.6067);
+            Rotation2d.fromRotations(0.6185);
         public static final Rotation2d WRIST_REF_2_ANGLE_MEASURED =
-            Rotation2d.fromRotations(0.7336);
+            Rotation2d.fromRotations(0.7453);
         public static final Rotation2d WRIST_REF_1_ANGLE_ACTUAL = Rotation2d.fromDegrees(0.0);
         public static final Rotation2d WRIST_REF_2_ANGLE_ACTUAL = Rotation2d.fromDegrees(45.0);
 
