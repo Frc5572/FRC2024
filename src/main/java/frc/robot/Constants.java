@@ -144,7 +144,7 @@ public final class Constants {
             public static final String CAMERA_NAME = "front-right";
             public static final double LARGEST_DISTANCE = 0.1;
             public static final Translation2d translationOffset =
-                new Translation2d(Units.inchesToMeters(0.0), Units.inchesToMeters(0.0));
+                new Translation2d(Units.inchesToMeters(-5), Units.inchesToMeters(-17));
         }
 
         /**

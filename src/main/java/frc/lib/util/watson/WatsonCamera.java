@@ -9,6 +9,7 @@ public class WatsonCamera extends WatsonIO {
 
     private final NetworkTable cameraTable;
     private RawSubscriber rawBytesEntry;
+    private long lastSub = 0;
 
     public WatsonCamera(String name) {
         super(name);
@@ -21,6 +22,14 @@ public class WatsonCamera extends WatsonIO {
     public void updateInputs(WatsonInputs input) {
         super.updateInputs(input);
         byte[] data = rawBytesEntry.get(new byte[] {});
+        if (data.length != 0) {
+            if (lastSub == rawBytesEntry.getLastChange()) {
+                input.rawBytes = new byte[] {};
+                input.deserializeResult();
+                return;
+            }
+            lastSub = rawBytesEntry.getLastChange();
+        }
         input.rawBytes = data;
         input.deserializeResult();
     }

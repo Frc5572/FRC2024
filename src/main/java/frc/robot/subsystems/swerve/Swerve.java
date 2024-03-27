@@ -265,8 +265,11 @@ public class Swerve extends SubsystemBase {
         for (int i = 0; i < cameras.length; i++) {
             var robotPose = cameras[i].takeMultiTagPose(getFieldRelativeHeading(), speed);
             Logger.recordOutput("/Swerve/hasPose[" + i + "]", robotPose.isPresent());
-
             if (robotPose.isPresent()) {
+                Logger.recordOutput("/Swerve/error[" + i + "]", robotPose.get().reprojectionError);
+            }
+
+            if (robotPose.isPresent() && robotPose.get().reprojectionError < 1.6) {
                 swerveOdometry.resetPosition(getFieldRelativeHeading(), getModulePositions(),
                     robotPose.get().robotPose);
                 hasInitialized = true;
