@@ -137,7 +137,7 @@ public final class Constants {
                     new Rotation3d(ROLL, PITCH, YAW)).inverse();
 
             public static final String CAMERA_NAME = "front-right";
-            public static final String CAMERA_IP = "10.55.72.2";
+            public static final String CAMERA_IP = "10.55.72.20";
             public static final double LARGEST_DISTANCE = 0.1;
         }
 
