@@ -105,8 +105,11 @@ public final class Constants {
      */
     public static class CameraConstants {
 
-        public static double XY_STD_DEV_COEFF = 0.005;
-        public static double THETA_STD_DEV_COEFF = 0.01;
+        public static double XY_STD_DEV_COEFF = 0.1;
+        public static double XY_STD_DEV_AUTO_COEFF = 3.0;
+        public static double REPROJ_STD_DEV_COEFF = 0.1;
+        public static double SPEED_STD_DEV_COEFF = 0.4;
+        public static double THETA_STD_DEV_COEFF = Double.MAX_VALUE;
 
         /**
          * Constants for Front Left Camera
@@ -122,6 +125,8 @@ public final class Constants {
 
             public static final String CAMERA_NAME = "front-left";
             public static final double LARGEST_DISTANCE = 0.1;
+            public static final Translation2d translationOffset =
+                new Translation2d(Units.inchesToMeters(0.0), Units.inchesToMeters(0.0));
         }
 
         /**
@@ -138,6 +143,8 @@ public final class Constants {
 
             public static final String CAMERA_NAME = "front-right";
             public static final double LARGEST_DISTANCE = 0.1;
+            public static final Translation2d translationOffset =
+                new Translation2d(Units.inchesToMeters(-5), Units.inchesToMeters(-17));
         }
 
         /**
@@ -366,9 +373,9 @@ public final class Constants {
     public static final class ElevatorWristConstants {
 
         public static final Rotation2d WRIST_REF_1_ANGLE_MEASURED =
-            Rotation2d.fromRotations(0.3082);
+            Rotation2d.fromRotations(0.6067);
         public static final Rotation2d WRIST_REF_2_ANGLE_MEASURED =
-            Rotation2d.fromRotations(0.4399);
+            Rotation2d.fromRotations(0.7336);
         public static final Rotation2d WRIST_REF_1_ANGLE_ACTUAL = Rotation2d.fromDegrees(0.0);
         public static final Rotation2d WRIST_REF_2_ANGLE_ACTUAL = Rotation2d.fromDegrees(45.0);
 
@@ -420,8 +427,8 @@ public final class Constants {
             public static final double ELEVATOR_KG = 0;
             public static final double ELEVATOR_KV = 0;
 
-            public static final double WRIST_KP = 115;
-            public static final double WRIST_LARGE_KP = 80;
+            public static final double WRIST_KP = 100;
+            public static final double WRIST_LARGE_KP = 40;
             public static final double WRIST_KI = 0;
             public static final double WRIST_KD = 0;
             public static final double WRIST_MAX_VELOCITY = 0.000001;
@@ -447,8 +454,8 @@ public final class Constants {
             public static final Rotation2d TRAP_ANGLE = Rotation2d.fromDegrees(-10);
             // public static final double MAX_EXTENSION = Units.inchesToMeters(48);
             public static final double MAX_EXTENSION = 43.5;
-            public static final double CLIMBING_HEIGHT = 43.34;
-            public static final Rotation2d CLIMBING_ANGLE = Rotation2d.fromDegrees(-54);
+            public static final double CLIMBING_HEIGHT = 40.0;
+            public static final Rotation2d CLIMBING_ANGLE = Rotation2d.fromDegrees(-40);
             public static final Rotation2d MIN_ANGLE = Rotation2d.fromDegrees(-44);
             public static final Rotation2d MAX_ANGLE = Rotation2d.fromDegrees(50);
 

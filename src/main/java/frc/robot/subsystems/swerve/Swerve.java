@@ -18,17 +18,14 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.FieldConstants;
-import frc.lib.util.photon.PhotonCameraWrapper;
-import frc.lib.util.photon.PhotonCameraWrapper.VisionObservation;
 import frc.lib.util.swerve.SwerveModule;
+import frc.lib.util.watson.WatsonCameraWrapper;
 import frc.robot.Constants;
-import frc.robot.OperatorState;
 import frc.robot.RobotContainer;
 
 /**
@@ -42,8 +39,9 @@ public class Swerve extends SubsystemBase {
     private SwerveInputsAutoLogged inputs = new SwerveInputsAutoLogged();
     private SwerveIO swerveIO;
     private boolean hasInitialized = false;
-    private PhotonCameraWrapper[] cameras;
+    private WatsonCameraWrapper[] cameras;
     private Boolean[] cameraSeesTarget = {false, false, false, false};
+    private Pose2d prevPose = new Pose2d();
 
     private GenericEntry aprilTagTarget = RobotContainer.mainDriverTab.add("See April Tag", false)
         .withWidget(BuiltInWidgets.kBooleanBox)
@@ -53,7 +51,7 @@ public class Swerve extends SubsystemBase {
     /**
      * Swerve Subsystem
      */
-    public Swerve(SwerveIO swerveIO, PhotonCameraWrapper[] cameras) {
+    public Swerve(SwerveIO swerveIO, WatsonCameraWrapper[] cameras) {
         this.swerveIO = swerveIO;
         this.cameras = cameras;
         fieldOffset = getGyroYaw().getDegrees();
@@ -95,6 +93,8 @@ public class Swerve extends SubsystemBase {
             // Do whatever you want with the poses here
             field.getObject("path").setPoses(poses);
         });
+
+        prevPose = getPose();
     }
 
     /**
@@ -246,43 +246,33 @@ public class Swerve extends SubsystemBase {
 
     @Override
     public void periodic() {
+        prevPose = getPose();
         swerveIO.updateInputs(inputs);
         for (var mod : swerveMods) {
             mod.periodic();
         }
-        swerveOdometry.update(getGyroYaw(), getModulePositions());
+        swerveOdometry.update(getFieldRelativeHeading(), getModulePositions());
         Logger.processInputs("Swerve", inputs);
         for (int i = 0; i < cameras.length; i++) {
             cameras[i].periodic();
-            cameraSeesTarget[i] = cameras[i].seesTarget();
+            // cameraSeesTarget[i] = cameras[i].seesTarget();
         }
 
         Logger.recordOutput("/Swerve/hasInitialized", hasInitialized);
 
-        if (!hasInitialized) {
-            for (int i = 0; i < cameras.length; i++) {
-                var robotPose = cameras[i].getInitialPose();
-                Logger.recordOutput("/Swerve/hasInitialPose[" + i + "]", robotPose.isPresent());
+        double speed = getPose().getTranslation().minus(prevPose.getTranslation()).getNorm() / 0.02;
 
-                if (robotPose.isPresent()) {
-                    if (OperatorState.tagFilter(robotPose.get().fudicialId)) {
-                        swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(),
-                            robotPose.get().robotPose);
-                        hasInitialized = true;
-                        break;
-                    }
-                }
+        for (int i = 0; i < cameras.length; i++) {
+            var robotPose = cameras[i].takeMultiTagPose(getFieldRelativeHeading(), speed);
+            Logger.recordOutput("/Swerve/hasPose[" + i + "]", robotPose.isPresent());
+            if (robotPose.isPresent()) {
+                Logger.recordOutput("/Swerve/error[" + i + "]", robotPose.get().reprojectionError);
             }
-        } else {
-            for (int i = 0; i < cameras.length; i++) {
-                var result = cameras[i].getInitialPose();
-                if (result.isPresent()) {
-                    VisionObservation camPose = result.get();
-                    if (OperatorState.tagFilter(camPose.fudicialId)) {
-                        swerveOdometry.addVisionMeasurement(camPose.robotPose,
-                            Timer.getFPGATimestamp() - cameras[i].latency(), camPose.stdDev);
-                    }
-                }
+
+            if (robotPose.isPresent() && robotPose.get().reprojectionError < 1.6) {
+                swerveOdometry.resetPosition(getFieldRelativeHeading(), getModulePositions(),
+                    robotPose.get().robotPose);
+                hasInitialized = true;
             }
         }
 
