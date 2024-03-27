@@ -1,5 +1,6 @@
 package frc.robot.subsystems.swerve;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
@@ -7,6 +8,8 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.PathPlannerLogging;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -26,6 +29,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.FieldConstants;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonCameraWrapper.VisionObservation;
+import frc.lib.util.photon.VisionPacket;
+import frc.lib.util.rospf.RosPF;
+import frc.lib.util.rospf.SwerveDriveOdometryMeasurement;
 import frc.lib.util.swerve.SwerveModule;
 import frc.robot.Constants;
 import frc.robot.OperatorState;
@@ -44,6 +50,8 @@ public class Swerve extends SubsystemBase {
     private boolean hasInitialized = false;
     private PhotonCameraWrapper[] cameras;
     private Boolean[] cameraSeesTarget = {false, false, false, false};
+
+    private RosPF pf;
 
     private GenericEntry aprilTagTarget = RobotContainer.mainDriverTab.add("See April Tag", false)
         .withWidget(BuiltInWidgets.kBooleanBox)
@@ -73,6 +81,9 @@ public class Swerve extends SubsystemBase {
 
         swerveOdometry = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics,
             getGyroYaw(), getModulePositions(), new Pose2d());
+
+        pf = new RosPF(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions(),
+            getPose(), AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo));
 
         swerveIO.updateInputs(inputs);
 
@@ -191,6 +202,7 @@ public class Swerve extends SubsystemBase {
      * @param pose Pose2d to set
      */
     public void resetOdometry(Pose2d pose) {
+        pf.resetPose(getGyroYaw(), getModulePositions(), pose);
         swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), pose);
     }
 
@@ -258,6 +270,17 @@ public class Swerve extends SubsystemBase {
         }
 
         Logger.recordOutput("/Swerve/hasInitialized", hasInitialized);
+
+        ArrayList<VisionPacket> packets = new ArrayList<>();
+        for (int i = 0; i < cameras.length; i++) {
+            var packet = cameras[i].getLatestMeasurement();
+            packets.add(packet);
+        }
+        pf.update(new SwerveDriveOdometryMeasurement(getGyroYaw(), getModulePositions()), packets);
+
+        Logger.recordOutput("/pf/OdometryPose", pf.getOdometryPose());
+        Logger.recordOutput("/pf/RawPose", pf.getRawPose());
+        Logger.recordOutput("/pf/Pose", pf.getPose());
 
         if (!hasInitialized) {
             for (int i = 0; i < cameras.length; i++) {

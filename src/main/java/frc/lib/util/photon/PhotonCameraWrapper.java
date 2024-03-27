@@ -1,12 +1,16 @@
 package frc.lib.util.photon;
 
+import java.util.ArrayList;
 import java.util.Optional;
+import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -17,6 +21,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Timer;
 import frc.lib.util.photon.PhotonIO.PhotonInputs;
 import frc.robot.Constants;
+import frc.robot.Robot;
 
 /**
  * PhotonCamera-based Pose Estimator.
@@ -25,6 +30,9 @@ public class PhotonCameraWrapper {
     public PhotonIO io;
     public PhotonInputs inputs = new PhotonInputs();
     public PhotonIOPoseEstimator photonPoseEstimator;
+
+    private static final double IMAGE_CAPTURE_LATENCY_SECONDS =
+        Robot.isSimulation() ? -LoggedRobot.defaultPeriodSecs : -0.02;
 
     /**
      * PhotonCamera-based Pose Estimator.
@@ -130,5 +138,25 @@ public class PhotonCameraWrapper {
         }
         photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
         return photonPoseEstimator.update();
+    }
+
+    public VisionPacket getLatestMeasurement() {
+        final var result = inputs.result;
+        final boolean hasTargets = result.hasTargets();
+        if (!hasTargets) {
+            return new VisionPacket(false, null, null, -1);
+        }
+
+        final Target bestTarget = Target.fromPhotonTrackedTargetWithCalibration(
+            result.getBestTarget(), MatBuilder.fill(Nat.N3(), Nat.N3(), inputs.cameraMatrix),
+            MatBuilder.fill(Nat.N5(), Nat.N1(), inputs.distCoeffs));
+        final ArrayList<Target> targets = new ArrayList<>();
+        for (var t : result.getTargets()) {
+            targets.add(Target.fromPhotonTrackedTargetWithCalibration(t,
+                MatBuilder.fill(Nat.N3(), Nat.N3(), inputs.cameraMatrix),
+                MatBuilder.fill(Nat.N5(), Nat.N1(), inputs.distCoeffs)));
+        }
+        return new VisionPacket(hasTargets, bestTarget, targets,
+            result.getTimestampSeconds() - IMAGE_CAPTURE_LATENCY_SECONDS);
     }
 }
