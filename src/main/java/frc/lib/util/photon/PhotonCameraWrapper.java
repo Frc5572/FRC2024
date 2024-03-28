@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lib.util.photon.PhotonIO.PhotonInputs;
 import frc.robot.Constants;
 
@@ -39,9 +40,17 @@ public class PhotonCameraWrapper {
         // field.
         AprilTagFieldLayout fieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
         // Create pose estimator
-        photonPoseEstimator = new PhotonIOPoseEstimator(fieldLayout, PoseStrategy.LOWEST_AMBIGUITY,
-            this.inputs, robotToCam);
-        photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.CLOSEST_TO_CAMERA_HEIGHT);
+        photonPoseEstimator = new PhotonIOPoseEstimator(fieldLayout,
+            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, this.inputs, robotToCam);
+        photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.CLOSEST_TO_REFERENCE_POSE);
+
+        // SmartDashboard.putNumber("rx", 0);
+        // SmartDashboard.putNumber("ry", 0);
+        // SmartDashboard.putNumber("rz", 0);
+        // SmartDashboard.putNumber("tx", 0);
+        // SmartDashboard.putNumber("ty", 0);
+        // SmartDashboard.putNumber("tz", 0);
+
     }
 
     /**
@@ -81,6 +90,7 @@ public class PhotonCameraWrapper {
     public Optional<VisionObservation> getInitialPose() {
         var res = inputs.result;
         if (res == null || inputs.timeSinceLastHeartbeat > 0.5) {
+            SmartDashboard.putString("reason", "res is null or heartbeat too long");
             return Optional.empty();
         }
         if (res.hasTargets()) {
@@ -103,6 +113,7 @@ public class PhotonCameraWrapper {
                         stdDev * Constants.CameraConstants.THETA_STD_DEV_COEFF)));
             }
         }
+        SmartDashboard.putString("reason", "no targets");
         return Optional.empty();
     }
 
@@ -119,16 +130,28 @@ public class PhotonCameraWrapper {
      */
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
         var res = inputs.result;
+
+        // photonPoseEstimator.setRobotToCameraTransform(new Transform3d(
+        // new Translation3d(Units.inchesToMeters(SmartDashboard.getNumber("tx", 0)),
+        // Units.inchesToMeters(SmartDashboard.getNumber("ty", 0)),
+        // Units.inchesToMeters(SmartDashboard.getNumber("tz", 0))),
+        // new Rotation3d(Math.toRadians(SmartDashboard.getNumber("rx", 0)),
+        // Math.toRadians(SmartDashboard.getNumber("ry", 0)),
+        // Math.toRadians(SmartDashboard.getNumber("rz", 0)))));
+
         // SmartDashboard.putNumber("photonLatency",
         // Timer.getFPGATimestamp() - res.getTimestampSeconds());
         if (Timer.getFPGATimestamp() - res.getTimestampSeconds() > 0.4) {
+            SmartDashboard.putString("reason", "too long");
             return Optional.empty();
         }
         if (photonPoseEstimator == null) {
+            SmartDashboard.putString("reason", "no estimator");
             // The field layout failed to load, so we cannot estimate poses.
             return Optional.empty();
         }
         photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
+        SmartDashboard.putString("reason", "good");
         return photonPoseEstimator.update();
     }
 }
