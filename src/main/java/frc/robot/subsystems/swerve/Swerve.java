@@ -25,10 +25,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.FieldConstants;
 import frc.lib.util.photon.PhotonCameraWrapper;
-import frc.lib.util.photon.PhotonCameraWrapper.VisionObservation;
 import frc.lib.util.swerve.SwerveModule;
 import frc.robot.Constants;
-import frc.robot.OperatorState;
 import frc.robot.RobotContainer;
 
 /**
@@ -265,23 +263,21 @@ public class Swerve extends SubsystemBase {
                 Logger.recordOutput("/Swerve/hasInitialPose[" + i + "]", robotPose.isPresent());
 
                 if (robotPose.isPresent()) {
-                    if (OperatorState.tagFilter(robotPose.get().fudicialId)) {
-                        swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(),
-                            robotPose.get().robotPose);
-                        hasInitialized = true;
-                        break;
-                    }
+
+                    swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(),
+                        robotPose.get().robotPose);
+                    hasInitialized = true;
+                    break;
+
                 }
             }
         } else {
             for (int i = 0; i < cameras.length; i++) {
-                var result = cameras[i].getInitialPose();
+                var result = cameras[i].getEstimatedGlobalPose(getPose());
                 if (result.isPresent()) {
-                    VisionObservation camPose = result.get();
-                    if (OperatorState.tagFilter(camPose.fudicialId)) {
-                        swerveOdometry.addVisionMeasurement(camPose.robotPose,
-                            Timer.getFPGATimestamp() - cameras[i].latency(), camPose.stdDev);
-                    }
+                    swerveOdometry.addVisionMeasurement(result.get().estimatedPose.toPose2d(),
+                        Timer.getFPGATimestamp() - cameras[i].latency());
+
                 }
             }
         }

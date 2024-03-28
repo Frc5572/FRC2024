@@ -259,7 +259,7 @@ public class RobotContainer {
             //
             OperatorState.State.kClimb,
             Commands
-                .sequence(elevatorWrist.climbPosition(),
+                .sequence(elevatorWrist.ampPosition(),
                     Commands.runOnce(() -> OperatorState.enableManualMode()))
                 .alongWith(new TeleopSwerve(s_Swerve, driver, Constants.Swerve.isFieldRelative,
                     Constants.Swerve.isOpenLoop))),

@@ -2,6 +2,8 @@ package frc.lib.util.photon;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -80,14 +82,23 @@ public class PhotonReal extends PhotonIO implements AutoCloseable {
 
     private boolean uploadSettings(String ip, File file) throws IOException {
         try (final CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            HttpPost postReq = new HttpPost(ip + "/api/settings");
+            HttpPost postReq = new HttpPost("http://" + ip + "/api/settings");
             HttpEntity entity =
                 MultipartEntityBuilder.create().addPart("data", new FileBody(file)).build();
             postReq.setEntity(entity);
             try (CloseableHttpResponse response = httpClient.execute(postReq)) {
-                SmartDashboard.putString("uploadSettings/" + this.name,
+                SmartDashboard.putString("uploadSettings/" + this.name + "/status",
                     response.getStatusLine().getStatusCode() + ": "
                         + response.getStatusLine().getReasonPhrase());
+                var ent = response.getEntity();
+                if (ent != null) {
+                    try (InputStream stream = ent.getContent()) {
+                        String text = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+                        SmartDashboard.putString("uploadSettings/" + this.name + "/content", text);
+                    }
+                } else {
+                    SmartDashboard.putString("uploadSettings/" + this.name + "/content", "null");
+                }
                 return response.getStatusLine().getStatusCode() == 200;
             }
         }

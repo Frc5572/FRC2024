@@ -128,13 +128,12 @@ public final class Constants {
          * Constants for Front Right Camera
          */
         public static class FrontRightFacingCamera {
-            public static final double ROLL = 0.0;
-            public static final double PITCH = Math.toRadians(5);
+            public static final double PITCH = Math.toRadians(0);
             public static final double YAW = Math.toRadians(-10);
-            public static final Transform3d KCAMERA_TO_ROBOT =
-                new Transform3d(new Translation3d(Units.inchesToMeters(11.013),
-                    Units.inchesToMeters(-10.96), Units.inchesToMeters(18.074)),
-                    new Rotation3d(ROLL, PITCH, YAW)).inverse();
+            public static final Transform3d KCAMERA_TO_ROBOT = new Transform3d(
+                new Translation3d(Units.inchesToMeters(17), Units.inchesToMeters(-5),
+                    Units.inchesToMeters(15)),
+                new Rotation3d(0, PITCH, YAW));
 
             public static final String CAMERA_NAME = "front-right";
             public static final String CAMERA_IP = "10.55.72.20";
@@ -421,7 +420,7 @@ public final class Constants {
             public static final double ELEVATOR_KG = 0;
             public static final double ELEVATOR_KV = 0;
 
-            public static final double WRIST_KP = 100;
+            public static final double WRIST_KP = 150;
             public static final double WRIST_LARGE_KP = 40;
             public static final double WRIST_KI = 0;
             public static final double WRIST_KD = 0;
