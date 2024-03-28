@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.util.Color;
 import frc.lib.util.FieldConstants;
 
 /**
@@ -256,7 +257,7 @@ public final class Constants {
         /* Swerve Profiling Values */
         /** Meters per Second */
         public static final double maxSpeed = 10.0;
-        public static final double AUTO_MAX_SPEED = 3.0;
+        public static final double AUTO_MAX_SPEED = 5.0;
         /** Radians per Second */
         public static final double maxAngularVelocity = 15.0;
 
@@ -508,6 +509,9 @@ public final class Constants {
     public static final class LEDConstants {
         public static final int PWM_PORT = 9;
         public static final int LED_COUNT = 60;
+        public static final Color INTAKE_COLOR = Color.kGreen;
+        public static final Color INDEXER_COLOR = Color.kPurple;
+        public static final Color ALERT_COLOR = Color.kWhite;
     }
 
 }

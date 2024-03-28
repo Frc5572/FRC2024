@@ -16,7 +16,7 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
 
 /**
- * Resnick 2 Custom Auto
+ * P3675 Auto
  */
 public class P3675 extends SequentialCommandGroup {
 
@@ -26,7 +26,7 @@ public class P3675 extends SequentialCommandGroup {
     Shooter shooter;
 
     /**
-     * Resnick 2 Custom Auto
+     * P3675 Auto
      *
      * @param swerveDrive Swerve Drive Subsystem
      * @param elevatorWrist Elevator Wrist Subsystem
