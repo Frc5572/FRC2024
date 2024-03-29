@@ -336,7 +336,7 @@ public class ElevatorWrist extends SubsystemBase {
      */
     public boolean elevatorAtHome() {
         return MathUtil.isNear(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT, getHeight(),
-            6);
+            3);
     }
 
 }

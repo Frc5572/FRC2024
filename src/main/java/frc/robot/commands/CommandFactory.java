@@ -94,6 +94,18 @@ public class CommandFactory {
             () -> elevatorWrist.getAngleFromDistance(swerveDrive.getPose()));
     }
 
+    public static Command newIntakeCommand(Intake intake, ElevatorWrist elevatorWrist) {
+        return Commands
+            .either(intakeNote(intake),
+                Commands
+                    .startEnd(() -> intake.setIntakeMotor(1), () -> intake.setIntakeMotor(0),
+                        elevatorWrist)
+                    .until(() -> intake.getintakeBeamBrakeStatus())
+                    .unless(() -> intake.getintakeBeamBrakeStatus()),
+                () -> elevatorWrist.elevatorAtHome())
+            .repeatedly().unless(() -> intake.getIndexerBeamBrakeStatus());
+    }
+
     /**
      * Command Factory for Auto Specific Commands
      */

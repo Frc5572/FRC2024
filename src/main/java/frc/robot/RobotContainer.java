@@ -206,7 +206,7 @@ public class RobotContainer {
         driver.start().onTrue(
             new InstantCommand(() -> s_Swerve.resetPvInitialization()).ignoringDisable(true));
         // intake forward
-        driver.rightTrigger().whileTrue(intake.runIntakeMotor(1, .20));
+        driver.rightTrigger().whileTrue(CommandFactory.newIntakeCommand(intake, elevatorWrist));
         // intake backward
         driver.leftTrigger().whileTrue(intake.runIntakeMotorNonStop(-1, -.20));
 
