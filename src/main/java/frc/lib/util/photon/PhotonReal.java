@@ -114,7 +114,8 @@ public class PhotonReal extends PhotonIO implements AutoCloseable {
         super(cameraName);
         try {
             uploadSettings(cameraIP + ":5800",
-                new File(Filesystem.getDeployDirectory().getAbsoluteFile(), cameraName + ".zip"));
+                new File(Filesystem.getDeployDirectory().getAbsoluteFile(),
+                    "photon-configs/" + cameraName + ".zip"));
         } catch (IOException e) {
             e.printStackTrace();
         }
