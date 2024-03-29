@@ -94,16 +94,22 @@ public class CommandFactory {
             () -> elevatorWrist.getAngleFromDistance(swerveDrive.getPose()));
     }
 
+    /**
+     * New intake command to prevent intaking past the intake when the elevator isn't home
+     *
+     * @param intake Intake Subsystem
+     * @param elevatorWrist Elevator Wrist Subsystem
+     * @return Command
+     */
     public static Command newIntakeCommand(Intake intake, ElevatorWrist elevatorWrist) {
-        return Commands
-            .either(intakeNote(intake),
-                Commands
-                    .startEnd(() -> intake.setIntakeMotor(1), () -> intake.setIntakeMotor(0),
-                        elevatorWrist)
-                    .until(() -> intake.getintakeBeamBrakeStatus())
-                    .unless(() -> intake.getintakeBeamBrakeStatus()),
-                () -> elevatorWrist.elevatorAtHome())
-            .repeatedly().unless(() -> intake.getIndexerBeamBrakeStatus());
+        Command regularIntake = intakeNote(intake);
+        Command altIntake = Commands
+            .startEnd(() -> intake.setIntakeMotor(1), () -> intake.setIntakeMotor(0), intake)
+            .until(() -> intake.getintakeBeamBrakeStatus())
+            .andThen(Commands.waitUntil(() -> elevatorWrist.elevatorAtHome()), intakeNote(intake));
+
+        return Commands.either(regularIntake, altIntake, () -> elevatorWrist.elevatorAtHome())
+            .unless(() -> intake.getIndexerBeamBrakeStatus());
     }
 
     /**
