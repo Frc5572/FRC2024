@@ -279,7 +279,7 @@ public class RobotContainer {
         }).ignoringDisable(true));
         // Flash LEDS to request amplify
         operator.povUp().onTrue(new FlashingLEDColor(leds, Color.kGold).withTimeout(5));
-        // Flash LEDs to request (TODO)
+        // Flash LEDs to request
         operator.povDown().onTrue(new FlashingLEDColor(leds, Color.kBlue).withTimeout(5));
 
 
