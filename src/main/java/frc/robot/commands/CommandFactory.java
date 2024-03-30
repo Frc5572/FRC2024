@@ -1,8 +1,10 @@
 package frc.robot.commands;
 
 import java.util.function.BooleanSupplier;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
 import frc.robot.subsystems.intake.Intake;
@@ -92,6 +94,26 @@ public class CommandFactory {
         return elevatorWrist.followPosition(
             () -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
             () -> elevatorWrist.getAngleFromDistance(swerveDrive.getPose()));
+    }
+
+    /**
+     * New intake command to prevent intaking past the intake when the elevator isn't home
+     *
+     * @param intake Intake Subsystem
+     * @param elevatorWrist Elevator Wrist Subsystem
+     * @return Command
+     */
+    public static Command newIntakeCommand(Intake intake, ElevatorWrist elevatorWrist) {
+        Trigger noteInIntake = new Trigger(() -> intake.getintakeBeamBrakeStatus()).debounce(0.25,
+            Debouncer.DebounceType.kRising);
+        Command regularIntake = intakeNote(intake);
+        Command altIntake = Commands
+            .startEnd(() -> intake.setIntakeMotor(1), () -> intake.setIntakeMotor(0), intake)
+            .until(noteInIntake)
+            .andThen(Commands.waitUntil(() -> elevatorWrist.elevatorAtHome()), intakeNote(intake));
+
+        return Commands.either(regularIntake, altIntake, () -> elevatorWrist.elevatorAtHome())
+            .unless(() -> intake.getIndexerBeamBrakeStatus());
     }
 
     /**

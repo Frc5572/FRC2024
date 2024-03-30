@@ -83,7 +83,10 @@ public class ElevatorWrist extends SubsystemBase {
         radiusToAngle.put(2.52, 35.55);
         radiusToAngle.put(3.15, 31.7);
         radiusToAngle.put(3.55, 31.3);
-        radiusToAngle.put(4.3, 27.75);
+        radiusToAngle.put(3.95, 26.3);
+        // radiusToAngle.put(4.3, 27.75);
+        radiusToAngle.put(5.02, 23.9);
+        radiusToAngle.put(5.56, 23.2);
     }
 
     @Override
@@ -336,7 +339,7 @@ public class ElevatorWrist extends SubsystemBase {
      */
     public boolean elevatorAtHome() {
         return MathUtil.isNear(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT, getHeight(),
-            6);
+            3);
     }
 
 }

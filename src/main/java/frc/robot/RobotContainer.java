@@ -105,7 +105,6 @@ public class RobotContainer {
     /* Controllers */
     public final CommandXboxController driver = new CommandXboxController(Constants.DRIVER_ID);
     private final CommandXboxController operator = new CommandXboxController(Constants.OPERATOR_ID);
-    // private final CommandXboxController test = new CommandXboxController(4);
 
 
 
@@ -129,11 +128,6 @@ public class RobotContainer {
     /**
      */
     public RobotContainer(RobotRunType runtimeType) {
-        // autoChooser.setDefaultOption("Wait 1 Second", "wait");
-        // autoChooser.addOption("P123", "P123");
-        // autoChooser.addOption("P321", "P321");
-        // autoChooser.addOption("P32", "P32");
-        // autoChooser.addOption("Resnick 5", "Resnick 5");
         numNoteChooser.setDefaultOption("0", 0);
         for (int i = 0; i < 7; i++) {
             numNoteChooser.addOption(String.valueOf(i), i);
@@ -147,7 +141,8 @@ public class RobotContainer {
                 // new PhotonReal(Constants.CameraConstants.FrontLeftFacingCamera.CAMERA_NAME),
                 // Constants.CameraConstants.FrontLeftFacingCamera.KCAMERA_TO_ROBOT),
                 new PhotonCameraWrapper(
-                    new PhotonReal(Constants.CameraConstants.FrontRightFacingCamera.CAMERA_NAME),
+                    new PhotonReal(Constants.CameraConstants.FrontRightFacingCamera.CAMERA_NAME,
+                        Constants.CameraConstants.FrontRightFacingCamera.CAMERA_IP),
                     Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT)};
         // new PhotonCameraWrapper(
         // new PhotonReal(Constants.CameraConstants.BackLeftFacingCamera.CAMERA_NAME),
@@ -212,7 +207,7 @@ public class RobotContainer {
         driver.start().onTrue(
             new InstantCommand(() -> s_Swerve.resetPvInitialization()).ignoringDisable(true));
         // intake forward
-        driver.rightTrigger().whileTrue(intake.runIntakeMotor(1, .20));
+        driver.rightTrigger().whileTrue(CommandFactory.newIntakeCommand(intake, elevatorWrist));
         // intake backward
         driver.leftTrigger().whileTrue(intake.runIntakeMotorNonStop(-1, -.20));
 
@@ -264,43 +259,20 @@ public class RobotContainer {
             //
             OperatorState.State.kClimb,
             Commands
-                .sequence(elevatorWrist.climbPosition(),
+                .sequence(elevatorWrist.ampPosition(),
                     Commands.runOnce(() -> OperatorState.enableManualMode()))
                 .alongWith(new TeleopSwerve(s_Swerve, driver, Constants.Swerve.isFieldRelative,
                     Constants.Swerve.isOpenLoop))),
             OperatorState::getCurrentState));
 
-        /*
-         * <OperatorState.State>( List.of(OperatorState.State.kAmp,
-         * OperatorState.State.kShootWhileMove, OperatorState.State.kClimb),
-         * List.of(elevatorWrist.ampPosition(), new ShootWhileMoving(s_Swerve,
-         * driver).alongWith(elevatorWrist.followPosition( () ->
-         * Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT, () ->
-         * elevatorWrist.getAngleFromDistance(s_Swerve.getPose()))), elevatorWrist.ampPosition()),
-         * )));
-         */
         // Toggle manual mode
         operator.start().onTrue(Commands.runOnce(() -> {
             OperatorState.toggleManualMode();
         }).ignoringDisable(true));
         // Flash LEDS to request amplify
         operator.povUp().onTrue(new FlashingLEDColor(leds, Color.kGold).withTimeout(5));
-        // Flash LEDs to request (TODO)
+        // Flash LEDs to request
         operator.povDown().onTrue(new FlashingLEDColor(leds, Color.kBlue).withTimeout(5));
-
-
-
-        // test.leftTrigger().whileTrue(Commands.startEnd(() -> {
-        // climber.setLeftPower(-1);
-        // }, () -> {
-        // climber.setLeftPower(0);
-        // }));
-        // // shoot note to speaker after being intaked
-        // test.rightTrigger().whileTrue(Commands.startEnd(() -> {
-        // climber.setRightPower(-1);
-        // }, () -> {
-        // climber.setRightPower(0);
-        // }));
     }
 
     /**

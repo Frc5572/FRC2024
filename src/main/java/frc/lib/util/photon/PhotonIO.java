@@ -88,7 +88,7 @@ public abstract class PhotonIO {
 
     }
 
-    private final String name;
+    protected final String name;
 
     public PhotonIO(String name) {
         this.name = name;
