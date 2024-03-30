@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.4042115449709587,
-        "y": 5.890468803998405
+        "x": 2.490901865102123,
+        "y": 5.930924286726282
       },
       "isLocked": false,
       "linkedName": "resnick 1 shoot p1"
@@ -45,7 +45,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 160.0,
+    "rotation": 159.91966436983242,
     "rotateFast": false
   },
   "reversed": false,

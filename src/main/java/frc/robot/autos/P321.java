@@ -58,47 +58,31 @@ public class P321 extends SequentialCommandGroup {
                 FieldConstants.allianceFlip(path1.getPreviewStartingHolonomicPose());
             swerveDrive.resetOdometry(initialState);
         });
+
+        double elevatorHeight = 28.1;
         SequentialCommandGroup part1 = followPath1
             .alongWith(
                 elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-                    Rotation2d.fromDegrees(39.0)).withTimeout(1))
+                    Rotation2d.fromDegrees(39.0)).withTimeout(1.0))
             .andThen(CommandFactory.Auto.runIndexer(intake));
-
         SequentialCommandGroup part2 = followPath2
-            .alongWith(
-                elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-                    Rotation2d.fromDegrees(37.0)).withTimeout(.5))
-            .deadlineWith(CommandFactory.intakeNote(intake))
-            .andThen(Commands.either(Commands.none(),
-                Commands.sequence(CommandFactory.intakeNote(intake),
-                    CommandFactory.Auto.runIndexer(intake)),
-                () -> !intake.getintakeBeamBrakeStatus() && !intake.getIndexerBeamBrakeStatus()));
-
+            .alongWith(CommandFactory.intakeNote(intake), elevatorWrist
+                .goToPosition(elevatorHeight, Rotation2d.fromDegrees(37.0)).withTimeout(.5))
+            .andThen(CommandFactory.Auto.runIndexer(intake));
         SequentialCommandGroup part3 = followPath3
-            .alongWith(
-                elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-                    Rotation2d.fromDegrees(37.5)).withTimeout(.5))
-            .deadlineWith(CommandFactory.intakeNote(intake))
-            .andThen(Commands.either(Commands.none(),
-                Commands.sequence(CommandFactory.intakeNote(intake),
-                    CommandFactory.Auto.runIndexer(intake)),
-                () -> !intake.getintakeBeamBrakeStatus() && !intake.getIndexerBeamBrakeStatus()));
-
+            .alongWith(CommandFactory.intakeNote(intake), elevatorWrist
+                .goToPosition(elevatorHeight, Rotation2d.fromDegrees(37.5)).withTimeout(.5))
+            .andThen(CommandFactory.Auto.runIndexer(intake));
         SequentialCommandGroup part4 = followPath4
-            .alongWith(
-                elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-                    Rotation2d.fromDegrees(37.0)).withTimeout(.5))
-            .deadlineWith(CommandFactory.intakeNote(intake))
-            .andThen(Commands.either(Commands.none(),
-                Commands.sequence(CommandFactory.intakeNote(intake),
-                    CommandFactory.Auto.runIndexer(intake)),
-                () -> !intake.getintakeBeamBrakeStatus() && !intake.getIndexerBeamBrakeStatus()));
-
+            .alongWith(CommandFactory.intakeNote(intake),
+                elevatorWrist.goToPosition(elevatorHeight, Rotation2d.fromDegrees(36.0))
+                    .withTimeout(.5))
+            .andThen(CommandFactory.Auto.runIndexer(intake))
+            .andThen(elevatorWrist.homePosition().withTimeout(.5));
         Command part5 = Commands.either(followPath5.alongWith(CommandFactory.intakeNote(intake)),
             Commands.none(), () -> RobotContainer.goToCenter.getEntry().getBoolean(false));
 
-        SequentialCommandGroup followPaths =
-            part1.andThen(part2).andThen(part3).andThen(part4).andThen(part5);
+        Command followPaths = Commands.sequence(part1, part2, part3, part4);
 
         // Command autoAlignWrist = CommandFactory.autoAngleWristSpeaker(elevatorWrist,
         // swerveDrive);

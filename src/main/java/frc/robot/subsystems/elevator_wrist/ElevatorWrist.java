@@ -115,7 +115,7 @@ public class ElevatorWrist extends SubsystemBase {
             wristProfiledPIDController.calculate(calculatedWristAngle.getRotations());
         SmartDashboard.putNumber("wristError",
             Rotation2d.fromRotations(wristPIDController.getPositionError()).getDegrees());
-        if (Math.abs(wristPIDController.getPositionError()) > Rotation2d.fromDegrees(5)
+        if (Math.abs(wristPIDController.getPositionError()) > Rotation2d.fromDegrees(10)
             .getRotations()) {
             wristPIDValue = profiledWristPIDValue;
         }

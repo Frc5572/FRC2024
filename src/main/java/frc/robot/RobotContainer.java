@@ -105,6 +105,7 @@ public class RobotContainer {
     /* Controllers */
     public final CommandXboxController driver = new CommandXboxController(Constants.DRIVER_ID);
     private final CommandXboxController operator = new CommandXboxController(Constants.OPERATOR_ID);
+    private final CommandXboxController test = new CommandXboxController(4);
 
 
 
@@ -207,7 +208,7 @@ public class RobotContainer {
         driver.start().onTrue(
             new InstantCommand(() -> s_Swerve.resetPvInitialization()).ignoringDisable(true));
         // intake forward
-        driver.rightTrigger().whileTrue(CommandFactory.newIntakeCommand(intake, elevatorWrist));
+        driver.rightTrigger().whileTrue(CommandFactory.intakeNote(intake));
         // intake backward
         driver.leftTrigger().whileTrue(intake.runIntakeMotorNonStop(-1, -.20));
 
@@ -273,6 +274,9 @@ public class RobotContainer {
         operator.povUp().onTrue(new FlashingLEDColor(leds, Color.kGold).withTimeout(5));
         // Flash LEDs to request
         operator.povDown().onTrue(new FlashingLEDColor(leds, Color.kBlue).withTimeout(5));
+
+        test.a().whileTrue(elevatorWrist.goToPosition(
+            Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT, Rotation2d.fromDegrees(37)));
     }
 
     /**
