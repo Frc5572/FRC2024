@@ -49,7 +49,6 @@ public class P8765 extends SequentialCommandGroup {
         PathPlannerPath path2_dump = PathPlannerPath.fromChoreoTrajectory("P8765-p7-dump");
         PathPlannerPath path3_dump = PathPlannerPath.fromChoreoTrajectory("P8765-p6-dump");
         PathPlannerPath path4_dump = PathPlannerPath.fromChoreoTrajectory("P8765-p5-dump");
-        PathPlannerPath path5_dump = PathPlannerPath.fromChoreoTrajectory("P8765-p4-dump");
 
         // Shoot Paths
         Command followPath0 = AutoBuilder.followPath(path0);
@@ -62,24 +61,21 @@ public class P8765 extends SequentialCommandGroup {
         Command followPath2_dump = AutoBuilder.followPath(path2_dump);
         Command followPath3_dump = AutoBuilder.followPath(path3_dump);
         Command followPath4_dump = AutoBuilder.followPath(path4_dump);
-        Command followPath5_dump = AutoBuilder.followPath(path5_dump);
 
+        double elevatorHeight = 28.0;
         Command part0 = followPath0
             .alongWith(
                 elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-                    Rotation2d.fromDegrees(38.5)).withTimeout(1))
-            .andThen(CommandFactory.Auto.runIndexer(intake))
-            .andThen(elevatorWrist.homePosition().withTimeout(.5));
+                    Rotation2d.fromDegrees(28.0)).withTimeout(1.5))
+            .andThen(Commands.waitSeconds(.1)).andThen(CommandFactory.Auto.runIndexer(intake))
+            .andThen(Commands.either(elevatorWrist.homePosition().withTimeout(.5), Commands.none(),
+                () -> RobotContainer.dumpNotes.getEntry().getBoolean(false)));
         Command part1 = followPath1.alongWith(CommandFactory.intakeNote(intake))
-            .andThen(
-                elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-                    Rotation2d.fromDegrees(32.5)).withTimeout(1.3))
-            .andThen(CommandFactory.Auto.runIndexer(intake))
-            .andThen(elevatorWrist.homePosition().withTimeout(.5));
+            .andThen(elevatorWrist.goToPosition(elevatorHeight, Rotation2d.fromDegrees(26.5)))
+            .andThen(CommandFactory.Auto.runIndexer(intake));
         Command part2 = followPath2.alongWith(CommandFactory.intakeNote(intake))
-            .andThen(
-                elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-                    Rotation2d.fromDegrees(32.5)).withTimeout(1.3))
+            .andThen(elevatorWrist.goToPosition(elevatorHeight, Rotation2d.fromDegrees(26.5))
+                .withTimeout(1.3))
             .andThen(CommandFactory.Auto.runIndexer(intake))
             .andThen(elevatorWrist.homePosition().withTimeout(.5));
         Command part3 = followPath3.alongWith(CommandFactory.intakeNote(intake))
@@ -92,19 +88,16 @@ public class P8765 extends SequentialCommandGroup {
 
         Command part1_dump = followPath1_dump.alongWith(CommandFactory.intakeNote(intake))
             .andThen(CommandFactory.Auto.runIndexer(intake))
-            .andThen(elevatorWrist.homePosition().withTimeout(.5));
+            .andThen(elevatorWrist.homePosition().withTimeout(.1));
         Command part2_dump = followPath2_dump.alongWith(CommandFactory.intakeNote(intake))
             .andThen(CommandFactory.Auto.runIndexer(intake))
-            .andThen(elevatorWrist.homePosition().withTimeout(.5));
+            .andThen(elevatorWrist.homePosition().withTimeout(.1));
         Command part3_dump = followPath3_dump.alongWith(CommandFactory.intakeNote(intake))
             .andThen(CommandFactory.Auto.runIndexer(intake))
-            .andThen(elevatorWrist.homePosition().withTimeout(.5));
-        Command part4_dump = followPath4_dump.alongWith(CommandFactory.intakeNote(intake))
-            .andThen(CommandFactory.Auto.runIndexer(intake))
-            .andThen(elevatorWrist.homePosition().withTimeout(.5));
-        Command part5_dump = followPath5_dump.alongWith(CommandFactory.intakeNote(intake));
+            .andThen(elevatorWrist.homePosition().withTimeout(.1));
+        Command part4_dump = followPath4_dump.alongWith(CommandFactory.intakeNote(intake));
 
-        Command wait = Commands.waitSeconds(.1);
+        Command wait = Commands.waitSeconds(.01);
         Command resetPosition = Commands.runOnce(() -> {
             Pose2d initialState =
                 FieldConstants.allianceFlip(path0.getPreviewStartingHolonomicPose()
@@ -114,10 +107,9 @@ public class P8765 extends SequentialCommandGroup {
 
         Command followPaths = part0.andThen(Commands.either(
             // Run Dump Paths
-            Commands.sequence(part1_dump, part2_dump, part3_dump, part4_dump, part5_dump),
+            Commands.sequence(part1_dump, part2_dump, part3_dump, part4_dump),
             // Run Shooting paths
-            Commands.sequence(part1, part2, part3),
-            () -> RobotContainer.dumpNotes.getEntry().getBoolean(false)));
+            Commands.sequence(part1), () -> RobotContainer.dumpNotes.getEntry().getBoolean(false)));
         Command shootCommand = shooter.shootSpeaker();
 
         addCommands(resetPosition, wait, followPaths.deadlineWith(shootCommand));

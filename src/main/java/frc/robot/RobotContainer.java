@@ -277,6 +277,21 @@ public class RobotContainer {
 
         test.a().whileTrue(elevatorWrist.goToPosition(
             Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT, Rotation2d.fromDegrees(37)));
+
+        test.a().whileTrue(new SelectCommand<String>(Map.of(
+            //
+            "P321",
+            elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
+                Rotation2d.fromDegrees(39.0)),
+            //
+            "P123",
+            elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
+                Rotation2d.fromDegrees(36.5)),
+            //
+            "P8765",
+            elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
+                Rotation2d.fromDegrees(28.0))),
+            () -> autoChooser.getSelected().getName()));
     }
 
     /**

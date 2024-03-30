@@ -46,7 +46,7 @@ public class P321 extends SequentialCommandGroup {
         PathPlannerPath path4 = PathPlannerPath.fromPathFile("4 - Resnick 2 Intake P1");
         PathPlannerPath path5 = PathPlannerPath.fromPathFile("5 - Resnick 2 midline");
 
-        Command wait = Commands.waitSeconds(.5);
+        Command wait = Commands.waitSeconds(.01);
         Command followPath1 = AutoBuilder.followPath(path1);
         Command followPath2 = AutoBuilder.followPath(path2);
         Command followPath3 = AutoBuilder.followPath(path3);
