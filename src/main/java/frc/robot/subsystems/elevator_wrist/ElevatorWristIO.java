@@ -11,8 +11,6 @@ public interface ElevatorWristIO {
      */
     @AutoLog
     public static class ElevatorWristInputs {
-        public boolean topLimitSwitch;
-        public boolean bottomLimitSwitch;
         public double wristAbsoluteEncRawValue;
         public double leftElevatorMotorSupplyVoltage;
         public double leftElevatorRelativeEncRawValue;

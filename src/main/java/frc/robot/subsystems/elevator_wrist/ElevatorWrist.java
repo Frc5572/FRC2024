@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -90,7 +91,7 @@ public class ElevatorWrist extends SubsystemBase {
         io.updateInputs(inputs);
         Logger.processInputs("ElevatorWrist", inputs);
 
-        if (inputs.wristAbsoluteEncRawValue > 0.5) {
+        if (inputs.wristAbsoluteEncRawValue > 0.9) {
             inputs.wristAbsoluteEncRawValue -= 1.0;
         }
 
@@ -134,16 +135,16 @@ public class ElevatorWrist extends SubsystemBase {
                 : operator.getRightY();
             double wristPower = 0;
             double elevatorPower = -elevatorFeedForward;
-            // boolean
-            if ((operatorY < 0 && getWristAngle()
+            if (DriverStation.isTest() || (operatorY < 0 && getWristAngle()
                 .getDegrees() < Constants.ElevatorWristConstants.SetPoints.MAX_ANGLE.getDegrees())
                 || (operatorY > 0 && getWristAngle()
                     .getDegrees() > Constants.ElevatorWristConstants.SetPoints.MIN_ANGLE
                         .getDegrees())) {
-                wristPower = operatorY * 4.0;
+                wristPower = -operatorY * 4.0;
             }
-            if ((operatorX < 0
-                && getHeight() < Constants.ElevatorWristConstants.SetPoints.MAX_EXTENSION)
+            if (DriverStation.isTest()
+                || (operatorX < 0
+                    && getHeight() < Constants.ElevatorWristConstants.SetPoints.MAX_EXTENSION)
                 || (operatorX > 0
                     && getHeight() > Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT)) {
                 elevatorPower = -elevatorFeedForward + operatorX * 12.0;
@@ -152,7 +153,7 @@ public class ElevatorWrist extends SubsystemBase {
             io.setElevatorVoltage(elevatorPower);
         } else if (pidEnabled) {
             io.setElevatorVoltage(-elevatorFeedForward - elevatorPIDValue);
-            io.setWristVoltage(-wristPIDValue);
+            io.setWristVoltage(wristPIDValue);
         } else {
             io.setElevatorVoltage(-elevatorFeedForward);
             io.setWristVoltage(0);
@@ -228,6 +229,15 @@ public class ElevatorWrist extends SubsystemBase {
     }
 
     /**
+     * Set elevator to home and angle the wrist at a set angle to shoot into the speaker from
+     * directly in front.
+     */
+    public Command speakerPreset() {
+        return goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
+            Rotation2d.fromDegrees(34.1)).withTimeout(2);
+    }
+
+    /**
      * Set elevator and wrist to amp position. Performs two steps to avoid colliding with
      * electronics box.
      */
@@ -240,7 +250,7 @@ public class ElevatorWrist extends SubsystemBase {
     }
 
     /**
-     * Set elevator and wrist to amp position. Performs two steps to avoid colliding with
+     * Set elevator and wrist to climbing position. Performs two steps to avoid colliding with
      * electronics box.
      */
     public Command climbPosition() {
@@ -257,7 +267,7 @@ public class ElevatorWrist extends SubsystemBase {
      */
     public Command homePosition() {
         Command checkHome = Commands.either(
-            goToPosition(36, Rotation2d.fromDegrees(24))
+            goToPosition(30, Rotation2d.fromDegrees(24))
                 .until(() -> getWristAngle().getDegrees() > 15).withTimeout(2),
             Commands.none(), () -> !elevatorAtHome());
         Command goHome = goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
@@ -316,9 +326,7 @@ public class ElevatorWrist extends SubsystemBase {
      * @return boolean representing if the elevator and wrist PID controllers are at their goals
      */
     public Boolean atGoal() {
-        // return elevatorPIDController.atGoal() && wristPIDController.atGoal();
-        return wristPIDController.atSetpoint();
-        // return true;
+        return wristPIDController.atSetpoint() && elevatorPIDController.atGoal();
     }
 
     /**

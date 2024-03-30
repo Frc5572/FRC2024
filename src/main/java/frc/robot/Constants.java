@@ -366,10 +366,12 @@ public final class Constants {
      */
     public static final class ElevatorWristConstants {
 
-        public static final Rotation2d WRIST_REF_1_ANGLE_MEASURED = Rotation2d.fromRotations(0.004);
-        public static final Rotation2d WRIST_REF_2_ANGLE_MEASURED = Rotation2d.fromRotations(-.105);
+        public static final Rotation2d WRIST_REF_1_ANGLE_MEASURED =
+            Rotation2d.fromRotations(0.6185);
+        public static final Rotation2d WRIST_REF_2_ANGLE_MEASURED =
+            Rotation2d.fromRotations(0.7453);
         public static final Rotation2d WRIST_REF_1_ANGLE_ACTUAL = Rotation2d.fromDegrees(0.0);
-        public static final Rotation2d WRIST_REF_2_ANGLE_ACTUAL = Rotation2d.fromDegrees(41.0);
+        public static final Rotation2d WRIST_REF_2_ANGLE_ACTUAL = Rotation2d.fromDegrees(45.0);
 
         public static final double WRIST_M;
         public static final double WRIST_B;
@@ -406,17 +408,6 @@ public final class Constants {
         }
 
         /**
-         * Sensor Constants
-         */
-        public static final class Sensors {
-
-            public static final int ELEVATOR_ENC_CHANNEL_A = -1;
-            public static final int ELEVATOR_ENC_CHANNEL_B = -1;
-            public static final int TOP_LIMIT_SWITCH_PORT = 1;
-            public static final int BOTTOM_LIMIT_SWITCH_PORT = 2;
-        }
-
-        /**
          * PID constants
          */
         public static final class PID {
@@ -430,8 +421,8 @@ public final class Constants {
             public static final double ELEVATOR_KG = 0;
             public static final double ELEVATOR_KV = 0;
 
-            public static final double WRIST_KP = 115;
-            public static final double WRIST_LARGE_KP = 80;
+            public static final double WRIST_KP = 100;
+            public static final double WRIST_LARGE_KP = 40;
             public static final double WRIST_KI = 0;
             public static final double WRIST_KD = 0;
             public static final double WRIST_MAX_VELOCITY = 0.000001;
@@ -457,8 +448,8 @@ public final class Constants {
             public static final Rotation2d TRAP_ANGLE = Rotation2d.fromDegrees(-10);
             // public static final double MAX_EXTENSION = Units.inchesToMeters(48);
             public static final double MAX_EXTENSION = 43.5;
-            public static final double CLIMBING_HEIGHT = 43.34;
-            public static final Rotation2d CLIMBING_ANGLE = Rotation2d.fromDegrees(-54);
+            public static final double CLIMBING_HEIGHT = 40.0;
+            public static final Rotation2d CLIMBING_ANGLE = Rotation2d.fromDegrees(-40);
             public static final Rotation2d MIN_ANGLE = Rotation2d.fromDegrees(-44);
             public static final Rotation2d MAX_ANGLE = Rotation2d.fromDegrees(50);
 
