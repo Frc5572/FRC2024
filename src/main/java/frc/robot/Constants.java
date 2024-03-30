@@ -441,7 +441,7 @@ public final class Constants {
 
             public static final double HOME_HEIGHT = 24;
             public static final Rotation2d INTAKE_ANGLE = Rotation2d.fromDegrees(39);
-            public static final Rotation2d HOME_ANGLE = Rotation2d.fromDegrees(10);
+            public static final Rotation2d HOME_ANGLE = Rotation2d.fromDegrees(5);
             // public static final double AMP_HEIGHT = Units.inchesToMeters(34);
             public static final double AMP_HEIGHT = 43.5;
             public static final Rotation2d AMP_ANGLE = Rotation2d.fromDegrees(-38);
