@@ -17,20 +17,6 @@ public class ShooterVortex implements ShooterIO {
     private RelativeEncoder topEncoder = topShooterMotor.getEncoder();
     private RelativeEncoder bottomEncoder = bottomShooterMotor.getEncoder();
 
-    private double topShooterMotorVoltage;
-    private double bottomShooterMotorVoltage;
-    private double topShooterVelocityRotPerMin = 0.0;
-    private double bottomShooterVelocityRotPerMin = 0.0;
-
-    // private Thread thread = new Thread(() -> {
-    // while (true) {
-    // topShooterMotor.setVoltage(topShooterMotorVoltage);
-    // bottomShooterMotor.setVoltage(bottomShooterMotorVoltage);
-    // topShooterVelocityRotPerMin = topEncoder.getVelocity();
-    // bottomShooterVelocityRotPerMin = bottomEncoder.getVelocity();
-    // }
-    // });
-
     /**
      * Constructor Shooter Subsystem - sets motor and encoder preferences
      */
