@@ -63,21 +63,37 @@ public class P321 extends SequentialCommandGroup {
                 elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
                     Rotation2d.fromDegrees(39.0)).withTimeout(1))
             .andThen(CommandFactory.Auto.runIndexer(intake));
+
         SequentialCommandGroup part2 = followPath2
-            .alongWith(CommandFactory.intakeNote(intake),
+            .alongWith(
                 elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
                     Rotation2d.fromDegrees(37.0)).withTimeout(.5))
-            .andThen(CommandFactory.Auto.runIndexer(intake));
+            .deadlineWith(CommandFactory.intakeNote(intake))
+            .andThen(Commands.either(Commands.none(),
+                Commands.sequence(CommandFactory.intakeNote(intake),
+                    CommandFactory.Auto.runIndexer(intake)),
+                () -> !intake.getintakeBeamBrakeStatus() && !intake.getIndexerBeamBrakeStatus()));
+
         SequentialCommandGroup part3 = followPath3
-            .alongWith(CommandFactory.intakeNote(intake),
+            .alongWith(
                 elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
                     Rotation2d.fromDegrees(37.5)).withTimeout(.5))
-            .andThen(CommandFactory.Auto.runIndexer(intake));
+            .deadlineWith(CommandFactory.intakeNote(intake))
+            .andThen(Commands.either(Commands.none(),
+                Commands.sequence(CommandFactory.intakeNote(intake),
+                    CommandFactory.Auto.runIndexer(intake)),
+                () -> !intake.getintakeBeamBrakeStatus() && !intake.getIndexerBeamBrakeStatus()));
+
         SequentialCommandGroup part4 = followPath4
-            .alongWith(CommandFactory.intakeNote(intake),
+            .alongWith(
                 elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
                     Rotation2d.fromDegrees(37.0)).withTimeout(.5))
-            .andThen(CommandFactory.Auto.runIndexer(intake));
+            .deadlineWith(CommandFactory.intakeNote(intake))
+            .andThen(Commands.either(Commands.none(),
+                Commands.sequence(CommandFactory.intakeNote(intake),
+                    CommandFactory.Auto.runIndexer(intake)),
+                () -> !intake.getintakeBeamBrakeStatus() && !intake.getIndexerBeamBrakeStatus()));
+
         Command part5 = Commands.either(followPath5.alongWith(CommandFactory.intakeNote(intake)),
             Commands.none(), () -> RobotContainer.goToCenter.getEntry().getBoolean(false));
 
