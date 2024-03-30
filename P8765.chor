@@ -2054,7 +2054,7 @@
             "usesDefaultFieldObstacles": true,
             "circleObstacles": [],
             "eventMarkers": [],
-            "isTrajectoryStale": true
+            "isTrajectoryStale": false
         },
         "P8765-p6": {
             "waypoints": [
@@ -5439,4 +5439,4 @@
     },
     "splitTrajectoriesAtStopPoints": false,
     "usesObstacles": false
-}}
+}

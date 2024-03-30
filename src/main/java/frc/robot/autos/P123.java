@@ -66,32 +66,28 @@ public class P123 extends SequentialCommandGroup {
         SequentialCommandGroup part1 = followPath1
             .alongWith(
                 elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-                    Rotation2d.fromDegrees(36.5)).withTimeout(2.0))
+                    Rotation2d.fromDegrees(36.5)).withTimeout(1.0))
             .andThen(CommandFactory.Auto.runIndexer(intake));
         SequentialCommandGroup part2 = followPath2
             .alongWith(CommandFactory.intakeNote(intake), elevatorWrist
-                .goToPosition(elevatorHeight, Rotation2d.fromDegrees(38.5)).withTimeout(.75))
+                .goToPosition(elevatorHeight, Rotation2d.fromDegrees(38.5)).withTimeout(.5))
             .andThen(CommandFactory.Auto.runIndexer(intake));
         SequentialCommandGroup part3 = followPath3
             .alongWith(CommandFactory.intakeNote(intake), elevatorWrist
-                .goToPosition(elevatorHeight, Rotation2d.fromDegrees(37.5)).withTimeout(.75))
+                .goToPosition(elevatorHeight, Rotation2d.fromDegrees(37.5)).withTimeout(.5))
             .andThen(CommandFactory.Auto.runIndexer(intake));
         SequentialCommandGroup part4 = followPath4
             .alongWith(CommandFactory.intakeNote(intake),
                 elevatorWrist.goToPosition(elevatorHeight, Rotation2d.fromDegrees(33.0))
-                    .withTimeout(.75))
+                    .withTimeout(.5))
             .andThen(CommandFactory.Auto.runIndexer(intake))
             .andThen(elevatorWrist.homePosition().withTimeout(.5));
-        Command part5 =
-            Commands
-                .either(
-                    followPath5
-                        .alongWith(CommandFactory.intakeNote(intake),
-                            elevatorWrist.goToPosition(
-                                Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-                                Rotation2d.fromDegrees(33.0)).withTimeout(.75))
-                        .andThen(CommandFactory.Auto.runIndexer(intake)),
-                    Commands.none(), () -> RobotContainer.goToCenter.getEntry().getBoolean(false));
+        Command part5 = Commands.either(
+            followPath5.alongWith(CommandFactory.intakeNote(intake),
+                elevatorWrist.goToPosition(elevatorHeight, Rotation2d.fromDegrees(33.0))
+                    .withTimeout(.75))
+                .andThen(CommandFactory.Auto.runIndexer(intake)),
+            Commands.none(), () -> RobotContainer.goToCenter.getEntry().getBoolean(false));
 
         Command followPaths = Commands.sequence(part1, part2, part3, part4, part5);
 

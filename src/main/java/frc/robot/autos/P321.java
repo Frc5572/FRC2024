@@ -82,7 +82,7 @@ public class P321 extends SequentialCommandGroup {
         Command part5 = Commands.either(followPath5.alongWith(CommandFactory.intakeNote(intake)),
             Commands.none(), () -> RobotContainer.goToCenter.getEntry().getBoolean(false));
 
-        Command followPaths = Commands.sequence(part1, part2, part3, part4);
+        Command followPaths = Commands.sequence(part1, part2, part3, part4, part5);
 
         // Command autoAlignWrist = CommandFactory.autoAngleWristSpeaker(elevatorWrist,
         // swerveDrive);
