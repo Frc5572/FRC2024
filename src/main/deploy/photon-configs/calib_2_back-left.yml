@@ -1,0 +1,24 @@
+calibration_time: "Mon 25 Mar 2024 03:20:17 PM "
+nr_of_frames: 7
+image_width: 1600
+image_height: 1200
+board_width: 12
+board_height: 9
+square_size: 30.
+# flags: +use_lu
+flags: 131072
+fisheye_model: 0
+camera_matrix:
+   rows: 3
+   cols: 3
+   dt: d
+   data: [ 9.0140087318423821e+02, 0., 8.0558895335552302e+02, 0.,
+       9.0210775301681997e+02, 6.4363666452647260e+02, 0., 0., 1. ]
+distortion_coefficients:
+   rows: 1
+   cols: 5
+   dt: d
+   data: [ 5.2259236332100382e-02, -8.5754932742093087e-02,
+       -1.5941780616913288e-04, -2.5659278279106654e-04,
+       2.5136315191582409e-02 ]
+avg_reprojection_error: 3.7439477459897841e-01
