@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
 /**
@@ -18,9 +19,9 @@ public class Intake extends SubsystemBase {
     // private GenericEntry beamBrake = RobotContainer.mainDriverTab.add("Have Note", false)
     // .withWidget(BuiltInWidgets.kBooleanBox).withPosition(9, 4).withSize(3, 2).getEntry();
 
-    private GenericEntry haveNote =
-        RobotContainer.mainDriverTab.add("Have Note", Color.kBlack.toHexString())
-            .withWidget("Single Color View").withPosition(9, 4).withSize(3, 2).getEntry();
+    private String noNote = Color.kBlack.toHexString();
+    private GenericEntry haveNote = RobotContainer.mainDriverTab.add("Have Note", noNote)
+        .withWidget("Single Color View").withPosition(9, 4).withSize(3, 2).getEntry();
 
     public Intake(IntakeIO io) {
         this.io = io;
@@ -32,13 +33,13 @@ public class Intake extends SubsystemBase {
         io.updateInputs(intakeAutoLogged);
         Logger.processInputs("Intake", intakeAutoLogged);
         if (getIndexerBeamBrakeStatus() && getintakeBeamBrakeStatus()) {
-            haveNote.setString(Color.kWhite.toHexString());
+            haveNote.setString(Constants.LEDConstants.ALERT_COLOR.toHexString());
         } else if (getIndexerBeamBrakeStatus()) {
-            haveNote.setString(Color.kPurple.toHexString());
+            haveNote.setString(Constants.LEDConstants.INDEXER_COLOR.toHexString());
         } else if (getintakeBeamBrakeStatus()) {
-            haveNote.setString(Color.kGreen.toHexString());
+            haveNote.setString(Constants.LEDConstants.INTAKE_COLOR.toHexString());
         } else {
-            haveNote.setString(Color.kBlack.toHexString());
+            haveNote.setString(noNote);
         }
     }
 

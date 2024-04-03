@@ -2,12 +2,14 @@
 
 while :
 do
-	$error = `systemctl status photonvision.service | grep -i "input was empty"`
+    error=`systemctl status photonvision.service | grep -i "Input was empty!"`
     if [[ $? -eq 0 ]];
     then
-    	dmesg | grep uvc > "/opt/uvc-$(date +%y%m%d%H%M%S).txt"
+        dmesg | grep uvc > "/opt/uvc-$(date +%y%m%d%H%M%S).txt"
+        systemctl stop photonvision.service
         modprobe uvcvideo
-        systemctl restart photonvision.service
+        systemctl start photonvision.service
+        sleep 15
     fi
-	sleep 1
+    sleep 1
 done

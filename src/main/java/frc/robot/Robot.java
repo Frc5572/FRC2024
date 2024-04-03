@@ -143,6 +143,7 @@ public class Robot extends LoggedRobot {
     @Override
     public void autonomousInit() {
         inAuto = true;
+        OperatorState.disableManualMode();
         robotContainer.getAutonomousCommand().schedule();
         autoChooser = robotContainer.getAutonomousCommand();
 
