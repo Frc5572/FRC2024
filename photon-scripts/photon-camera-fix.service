@@ -4,12 +4,5 @@ Description=Photon Camera Fix
 [Service]
 User=root
 Restart=always
-TimeoutSec=15min
-KillMode=process
-NotifyAccess=main
-RestartPreventExitStatus=2
-Type=notify
 ExecStart=/opt/photonvision/restart-photon.sh
-
-[Install]
-WantedBy=multi-user.target
+PIDFile=/tmp/restart-photon.pid
