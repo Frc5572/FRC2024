@@ -65,6 +65,8 @@ public class ElevatorWrist extends SubsystemBase {
             "vertical"))
         .withPosition(8, 2).withSize(2, 2).getEntry();
 
+    private double estimatedWristAngle = 0;
+
     /**
      * Create new ElevatorWrist.
      */
@@ -72,6 +74,7 @@ public class ElevatorWrist extends SubsystemBase {
         this.operator = operator;
         this.io = io;
         io.updateInputs(inputs);
+        estimatedWristAngle = getWristAngleMeasurement().getRotations();
         wristPIDController
             .setSetpoint(Constants.ElevatorWristConstants.SetPoints.AMP_ANGLE.getRotations());
         wristPIDController.setTolerance(Rotation2d.fromDegrees(0.1).getRotations());
@@ -87,6 +90,12 @@ public class ElevatorWrist extends SubsystemBase {
         // radiusToAngle.put(4.3, 27.75);
         radiusToAngle.put(5.02, 23.9);
         radiusToAngle.put(5.56, 23.2);
+
+        SmartDashboard.putNumber("wrist low pass", 0.9);
+        SmartDashboard.putNumber("wrist P", 150);
+        SmartDashboard.putNumber("wrist I", 0);
+        SmartDashboard.putNumber("wrist D", 0);
+        SmartDashboard.putNumber("wrist I zone", 5);
     }
 
     @Override
@@ -97,6 +106,21 @@ public class ElevatorWrist extends SubsystemBase {
         if (inputs.wristAbsoluteEncRawValue > 0.9) {
             inputs.wristAbsoluteEncRawValue -= 1.0;
         }
+
+        // double lowpass = SmartDashboard.getNumber("wrist low pass", 0.9);
+        // double wristP = SmartDashboard.getNumber("wrist P", 0);
+        // double wristI = SmartDashboard.getNumber("wrist I", 0);
+        // double wristD = SmartDashboard.getNumber("wrist D", 0);
+        // double wristIzone = SmartDashboard.getNumber("wrist I zone", 0);
+        // wristPIDController.setP(wristP);
+        // wristPIDController.setI(wristI);
+        // wristPIDController.setD(wristD);
+        // wristPIDController.setIZone(Rotation2d.fromDegrees(wristIzone).getRotations());
+
+        estimatedWristAngle =
+            estimatedWristAngle * (1.0 - Constants.ElevatorWristConstants.PID.WRIST_LOWPASS)
+                + getWristAngleMeasurement().getRotations()
+                    * Constants.ElevatorWristConstants.PID.WRIST_LOWPASS;
 
         SmartDashboard.putNumber("wristRawEncValue", inputs.wristAbsoluteEncRawValue);
 
@@ -132,6 +156,7 @@ public class ElevatorWrist extends SubsystemBase {
             wristProfiledPIDController.setP(Constants.ElevatorWristConstants.PID.WRIST_LARGE_KP);
         }
         if (OperatorState.manualModeEnabled()) {
+            wristPIDController.reset();
             double operatorY = (Math.abs(operator.getLeftY()) < Constants.STICK_DEADBAND) ? 0
                 : operator.getLeftY();
             double operatorX = (Math.abs(operator.getRightY()) < Constants.STICK_DEADBAND) ? 0
@@ -158,6 +183,7 @@ public class ElevatorWrist extends SubsystemBase {
             io.setElevatorVoltage(-elevatorFeedForward - elevatorPIDValue);
             io.setWristVoltage(wristPIDValue);
         } else {
+            wristPIDController.reset();
             io.setElevatorVoltage(-elevatorFeedForward);
             io.setWristVoltage(0);
         }
@@ -199,10 +225,14 @@ public class ElevatorWrist extends SubsystemBase {
     /**
      * Calculate wrist angle from raw encoder value.
      */
-    public Rotation2d getWristAngle() {
+    public Rotation2d getWristAngleMeasurement() {
         return Rotation2d.fromRotations(
             Constants.ElevatorWristConstants.WRIST_M * inputs.wristAbsoluteEncRawValue
                 + Constants.ElevatorWristConstants.WRIST_B);
+    }
+
+    public Rotation2d getWristAngle() {
+        return Rotation2d.fromRotations(estimatedWristAngle);
     }
 
     /**
@@ -245,11 +275,21 @@ public class ElevatorWrist extends SubsystemBase {
      * electronics box.
      */
     public Command ampPosition() {
-        return goToPosition(Constants.ElevatorWristConstants.SetPoints.AMP_HEIGHT,
+        return Commands.sequence(Commands.runOnce(() -> {
+            wristPIDController.setP(Constants.ElevatorWristConstants.PID.WRIST_AMP_KP);
+            wristPIDController.setI(Constants.ElevatorWristConstants.PID.WRIST_AMP_KI);
+            wristPIDController.setD(Constants.ElevatorWristConstants.PID.WRIST_AMP_KD);
+        }), goToPosition(Constants.ElevatorWristConstants.SetPoints.AMP_HEIGHT,
             Constants.ElevatorWristConstants.SetPoints.HOME_ANGLE).until(() -> getHeight() > 32)
-                .withTimeout(2)
-                .andThen(goToPosition(Constants.ElevatorWristConstants.SetPoints.AMP_HEIGHT,
-                    Constants.ElevatorWristConstants.SetPoints.AMP_ANGLE).withTimeout(2));
+                .withTimeout(2),
+            goToPosition(Constants.ElevatorWristConstants.SetPoints.AMP_HEIGHT,
+                Constants.ElevatorWristConstants.SetPoints.AMP_ANGLE).withTimeout(2))
+            .finallyDo(x -> {
+                wristPIDController.setP(Constants.ElevatorWristConstants.PID.WRIST_KP);
+                wristPIDController.setI(Constants.ElevatorWristConstants.PID.WRIST_KI);
+                wristPIDController.setD(Constants.ElevatorWristConstants.PID.WRIST_KD);
+                wristPIDController.reset();
+            });
     }
 
     /**
@@ -288,6 +328,7 @@ public class ElevatorWrist extends SubsystemBase {
      */
     public Command goToPosition(double height, Rotation2d angle) {
         return Commands.runOnce(() -> {
+            wristPIDController.reset();
             elevatorPIDController.setGoal(height);
             wristPIDController.setSetpoint(angle.getRotations());
             wristProfiledPIDController.setSetpoint(angle.getRotations());
@@ -307,6 +348,7 @@ public class ElevatorWrist extends SubsystemBase {
      */
     public Command followPosition(DoubleSupplier height, Supplier<Rotation2d> angle) {
         return Commands.run(() -> {
+            wristPIDController.reset();
             elevatorPIDController.setGoal(height.getAsDouble());
             wristPIDController.setSetpoint(angle.get().getRotations());
             wristProfiledPIDController.setSetpoint(angle.get().getRotations());

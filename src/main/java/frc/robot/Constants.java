@@ -110,16 +110,16 @@ public final class Constants {
         public static double THETA_STD_DEV_COEFF = 0.01;
 
         /**
-         * Constants for Front Left Camera TODO: update Transform
+         * Constants for Front Left Camera
          */
         public static class FrontLeftFacingCamera {
             public static final double ROLL = 0.0;
-            public static final double PITCH = Math.toRadians(40);
-            public static final double YAW = Math.toRadians(10);
-            public static final Transform3d KCAMERA_TO_ROBOT =
-                new Transform3d(new Translation3d(Units.inchesToMeters(-3.96),
-                    Units.inchesToMeters(10.275), Units.inchesToMeters(18.164)),
-                    new Rotation3d(ROLL, PITCH, YAW)).inverse();
+            public static final double PITCH = Math.toRadians(0);
+            public static final double YAW = Math.toRadians(12.0);
+            public static final Transform3d KCAMERA_TO_ROBOT = new Transform3d(
+                new Translation3d(Units.inchesToMeters(17), Units.inchesToMeters(4.0),
+                    Units.inchesToMeters(15)),
+                new Rotation3d(ROLL, PITCH, YAW));
 
             public static final String CAMERA_NAME = "front-left";
             public static final String CAMERA_IP = "10.55.72.12";
@@ -143,16 +143,16 @@ public final class Constants {
         }
 
         /**
-         * Constants for Back Left Camera TODO: update Transform
+         * Constants for Back Left Camera
          */
         public static class BackLeftFacingCamera {
             public static final double ROLL = 0.0;
             public static final double PITCH = Math.toRadians(0);
-            public static final double YAW = Math.toRadians(180);
-            public static final Transform3d KCAMERA_TO_ROBOT =
-                new Transform3d(new Translation3d(Units.inchesToMeters(-12.83),
-                    Units.inchesToMeters(-8.175), Units.inchesToMeters(18.5)),
-                    new Rotation3d(ROLL, PITCH, YAW)).inverse();
+            public static final double YAW = Math.toRadians(184);
+            public static final Transform3d KCAMERA_TO_ROBOT = new Transform3d(
+                new Translation3d(Units.inchesToMeters(-10.0), Units.inchesToMeters(15),
+                    Units.inchesToMeters(0)),
+                new Rotation3d(ROLL, PITCH, YAW));
 
             public static final String CAMERA_NAME = "back-left";
             public static final String CAMERA_IP = "10.55.72.13";
@@ -425,14 +425,18 @@ public final class Constants {
             public static final double ELEVATOR_KV = 0;
 
             public static final double WRIST_KP = 90;
+            public static final double WRIST_AMP_KP = 150;
             public static final double WRIST_LARGE_KP = 40;
-            public static final double WRIST_KI = 0;
+            public static final double WRIST_KI = 0.1;
+            public static final double WRIST_AMP_KI = 0;
             public static final double WRIST_KD = 0.15;
+            public static final double WRIST_AMP_KD = 0;
             public static final double WRIST_MAX_VELOCITY = 0.000001;
             public static final double WRIST_MAX_ACCELERATION = 0.0000000001;
             public static final double WRIST_KS = 0;
             public static final double WRIST_KG = 0;
             public static final double WRIST_KV = 0;
+            public static final double WRIST_LOWPASS = 1.0;
         }
 
         /**
