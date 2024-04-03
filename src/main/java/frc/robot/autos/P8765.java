@@ -93,11 +93,11 @@ public class P8765 extends SequentialCommandGroup {
                 Commands.sequence(CommandFactory.intakeNote(intake),
                     CommandFactory.Auto.runIndexer(intake)),
                 abort))
-            .andThen(elevatorWrist.homePosition().withTimeout(5));
+            .andThen(elevatorWrist.homePosition().withTimeout(2));
         Command part3 = followPath3.alongWith(CommandFactory.intakeNote(intake))
             .andThen(
                 elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-                    Rotation2d.fromDegrees(32.5)).withTimeout(1.3))
+                    Rotation2d.fromDegrees(32.5)).withTimeout(1.5))
             .andThen(CommandFactory.Auto.runIndexer(intake))
             .andThen(elevatorWrist.homePosition().withTimeout(.5));
 
@@ -134,7 +134,7 @@ public class P8765 extends SequentialCommandGroup {
             // Run Dump Paths
             Commands.sequence(part1_dump, part2_dump, part3_dump, part4_dump),
             // Run Shooting paths
-            Commands.sequence(part1, part2), dumpOrNot));
+            Commands.sequence(part1, part2, part3), dumpOrNot));
         Command shootCommand = shooter.shootSpeaker();
 
         addCommands(resetPosition, wait, followPaths.deadlineWith(shootCommand));
