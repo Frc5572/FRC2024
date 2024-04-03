@@ -370,9 +370,9 @@ public final class Constants {
     public static final class ElevatorWristConstants {
 
         public static final Rotation2d WRIST_REF_1_ANGLE_MEASURED =
-            Rotation2d.fromRotations(0.6185);
+            Rotation2d.fromRotations(0.6225);
         public static final Rotation2d WRIST_REF_2_ANGLE_MEASURED =
-            Rotation2d.fromRotations(0.7453);
+            Rotation2d.fromRotations(0.7434);
         public static final Rotation2d WRIST_REF_1_ANGLE_ACTUAL = Rotation2d.fromDegrees(0.0);
         public static final Rotation2d WRIST_REF_2_ANGLE_ACTUAL = Rotation2d.fromDegrees(45.0);
 
@@ -424,7 +424,7 @@ public final class Constants {
             public static final double ELEVATOR_KG = 0;
             public static final double ELEVATOR_KV = 0;
 
-            public static final double WRIST_KP = 90;
+            public static final double WRIST_KP = 150;
             public static final double WRIST_AMP_KP = 150;
             public static final double WRIST_LARGE_KP = 40;
             public static final double WRIST_KI = 0.1;
@@ -436,7 +436,7 @@ public final class Constants {
             public static final double WRIST_KS = 0;
             public static final double WRIST_KG = 0;
             public static final double WRIST_KV = 0;
-            public static final double WRIST_LOWPASS = 1.0;
+            public static final double WRIST_LOWPASS = 0.9;
         }
 
         /**
@@ -491,7 +491,7 @@ public final class Constants {
         public static final double HEIGHT_FROM_LOWEST_POS = Units.inchesToMeters(32.0);
         public static final double HEIGHT_FROM_SPEAKER =
             FieldConstants.centerSpeaker - HEIGHT_FROM_LOWEST_POS;
-        public static final double SHOOT_SPEAKER_RPM = 11000.0;
+        public static final double SHOOT_SPEAKER_RPM = 11250.0;
     }
 
     /**
