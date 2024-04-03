@@ -101,9 +101,6 @@ public class RobotContainer {
     /* Controllers */
     public final CommandXboxController driver = new CommandXboxController(Constants.DRIVER_ID);
     private final CommandXboxController operator = new CommandXboxController(Constants.OPERATOR_ID);
-    private final CommandXboxController test = new CommandXboxController(4);
-
-
 
     /* Subsystems */
     private Swerve s_Swerve;
@@ -271,24 +268,6 @@ public class RobotContainer {
         operator.povUp().onTrue(new FlashingLEDColor(leds, Color.kGold).withTimeout(5));
         // Flash LEDs to request
         operator.povDown().onTrue(new FlashingLEDColor(leds, Color.kBlue).withTimeout(5));
-
-        test.a().whileTrue(elevatorWrist.goToPosition(
-            Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT, Rotation2d.fromDegrees(37)));
-
-        test.a().whileTrue(new SelectCommand<String>(Map.of(
-            //
-            "P321",
-            elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-                Rotation2d.fromDegrees(39.0)),
-            //
-            "P123",
-            elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-                Rotation2d.fromDegrees(36.5)),
-            //
-            "P8765",
-            elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-                Rotation2d.fromDegrees(28.0))),
-            () -> autoChooser.getSelected().getName()));
     }
 
     /**
