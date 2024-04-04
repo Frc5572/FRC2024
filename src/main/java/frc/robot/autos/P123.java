@@ -83,9 +83,7 @@ public class P123 extends SequentialCommandGroup {
             .andThen(CommandFactory.Auto.runIndexer(intake))
             .andThen(elevatorWrist.homePosition().withTimeout(.5));
         Command part5 = Commands.either(
-            followPath5.alongWith(CommandFactory.intakeNote(intake),
-                elevatorWrist.goToPosition(elevatorHeight, Rotation2d.fromDegrees(33.0))
-                    .withTimeout(.75))
+            followPath5.alongWith(CommandFactory.intakeNote(intake))
                 .andThen(CommandFactory.Auto.runIndexer(intake)),
             Commands.none(), () -> RobotContainer.goToCenter.getEntry().getBoolean(false));
 

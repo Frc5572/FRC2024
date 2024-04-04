@@ -79,7 +79,9 @@ public class P321 extends SequentialCommandGroup {
                     .withTimeout(.5))
             .andThen(CommandFactory.Auto.runIndexer(intake))
             .andThen(elevatorWrist.homePosition().withTimeout(.5));
-        Command part5 = Commands.either(followPath5.alongWith(CommandFactory.intakeNote(intake)),
+        Command part5 = Commands.either(
+            followPath5.alongWith(CommandFactory.intakeNote(intake))
+                .andThen(CommandFactory.Auto.runIndexer(intake)),
             Commands.none(), () -> RobotContainer.goToCenter.getEntry().getBoolean(false));
 
         Command followPaths = Commands.sequence(part1, part2, part3, part4, part5);
