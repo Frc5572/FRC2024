@@ -424,9 +424,9 @@ public final class Constants {
             public static final double ELEVATOR_KG = 0;
             public static final double ELEVATOR_KV = 0;
 
-            public static final double WRIST_KP = 150;
+            public static final double WRIST_KP = 130;
             public static final double WRIST_AMP_KP = 150;
-            public static final double WRIST_LARGE_KP = 40;
+            public static final double WRIST_LARGE_KP = 60;
             public static final double WRIST_KI = 0.1;
             public static final double WRIST_AMP_KI = 0;
             public static final double WRIST_KD = 0.15;
@@ -436,7 +436,7 @@ public final class Constants {
             public static final double WRIST_KS = 0;
             public static final double WRIST_KG = 0;
             public static final double WRIST_KV = 0;
-            public static final double WRIST_LOWPASS = 0.9;
+            public static final double WRIST_LOWPASS = 1;
         }
 
         /**

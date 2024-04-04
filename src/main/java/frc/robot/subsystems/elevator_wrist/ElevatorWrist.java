@@ -9,6 +9,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.GenericEntry;
@@ -84,10 +85,10 @@ public class ElevatorWrist extends SubsystemBase {
         radiusToAngle.put(1.55, 48.65);
         radiusToAngle.put(1.99, 42.5);
         radiusToAngle.put(2.52, 37.0);
-        radiusToAngle.put(3.15, 32.3);
-        radiusToAngle.put(3.55, 28.5);
-        radiusToAngle.put(3.95, 27.2);
-        radiusToAngle.put(4.33, 25.75);
+        radiusToAngle.put(3.15, 32.5);
+        radiusToAngle.put(3.55, 29.0);
+        radiusToAngle.put(3.95, 28.0);
+        radiusToAngle.put(4.33, 26.25);
         // radiusToAngle.put(5.02, 23.9);
         // radiusToAngle.put(5.56, 23.2);
 
@@ -242,12 +243,18 @@ public class ElevatorWrist extends SubsystemBase {
      * @return Rotation of the wrist
      */
     public Rotation2d getAngleFromDistance(Pose2d position) {
+        double k = 0.066;
         Pose2d speakerPos =
             FieldConstants.allianceFlip(FieldConstants.Speaker.centerSpeakerOpening);
-        double distFromSpeaker =
-            position.getTranslation().minus(speakerPos.getTranslation()).getNorm();
-        SmartDashboard.putNumber("Dist from speaker", distFromSpeaker);
-        return Rotation2d.fromDegrees(radiusToAngle.get(distFromSpeaker));
+        Translation2d distFromSpeaker =
+            position.getTranslation().minus(speakerPos.getTranslation());
+        Rotation2d angleFromSpeaker =
+            new Rotation2d(distFromSpeaker.getX(), distFromSpeaker.getY());
+        double angle = radiusToAngle.get(distFromSpeaker.getNorm());
+        if (angleFromSpeaker.getDegrees() >= 30) {
+            angle = angle + k * angleFromSpeaker.getDegrees();
+        }
+        return Rotation2d.fromDegrees(angle);
     }
 
     /**
