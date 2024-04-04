@@ -130,12 +130,13 @@ public final class Constants {
          * Constants for Front Right Camera
          */
         public static class FrontRightFacingCamera {
+            public static final double ROLL = Math.toRadians(180);
             public static final double PITCH = Math.toRadians(0);
             public static final double YAW = Math.toRadians(-6);
             public static final Transform3d KCAMERA_TO_ROBOT = new Transform3d(
                 new Translation3d(Units.inchesToMeters(17), Units.inchesToMeters(-5),
                     Units.inchesToMeters(15)),
-                new Rotation3d(0, PITCH, YAW));
+                new Rotation3d(ROLL, PITCH, YAW));
 
             public static final String CAMERA_NAME = "front-right";
             public static final String CAMERA_IP = "10.55.72.10";
