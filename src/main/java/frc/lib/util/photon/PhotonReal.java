@@ -80,7 +80,7 @@ public class PhotonReal extends PhotonIO implements AutoCloseable {
 
     }
 
-    private boolean uploadSettings(String ip, File file) throws IOException {
+    public boolean uploadSettings(String ip, File file) throws IOException {
         try (final CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpPost postReq = new HttpPost("http://" + ip + "/api/settings");
             HttpEntity entity =
@@ -111,7 +111,7 @@ public class PhotonReal extends PhotonIO implements AutoCloseable {
      * @param cameraName The name of the camera, as seen in the UI.
      */
     public PhotonReal(NetworkTableInstance instance, String cameraName, String cameraIP) {
-        super(cameraName);
+        super(cameraName, cameraIP);
         try {
             uploadSettings(cameraIP + ":5800",
                 new File(Filesystem.getDeployDirectory().getAbsoluteFile(),
