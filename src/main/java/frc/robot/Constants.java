@@ -131,7 +131,7 @@ public final class Constants {
          */
         public static class FrontRightFacingCamera {
             public static final double PITCH = Math.toRadians(0);
-            public static final double YAW = Math.toRadians(-10);
+            public static final double YAW = Math.toRadians(-6);
             public static final Transform3d KCAMERA_TO_ROBOT = new Transform3d(
                 new Translation3d(Units.inchesToMeters(17), Units.inchesToMeters(-5),
                     Units.inchesToMeters(15)),
@@ -150,7 +150,7 @@ public final class Constants {
             public static final double PITCH = Math.toRadians(0);
             public static final double YAW = Math.toRadians(184);
             public static final Transform3d KCAMERA_TO_ROBOT = new Transform3d(
-                new Translation3d(Units.inchesToMeters(-10.0), Units.inchesToMeters(15),
+                new Translation3d(Units.inchesToMeters(-13.0), Units.inchesToMeters(14),
                     Units.inchesToMeters(0)),
                 new Rotation3d(ROLL, PITCH, YAW));
 
