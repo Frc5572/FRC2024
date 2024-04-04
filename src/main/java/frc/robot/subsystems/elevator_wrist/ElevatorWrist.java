@@ -82,15 +82,15 @@ public class ElevatorWrist extends SubsystemBase {
         elevatorPIDController.setGoal(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT);
         wristPIDController.setIZone(Rotation2d.fromDegrees(5).getRotations());
         wristProfiledPIDController.setIZone(Rotation2d.fromDegrees(1).getRotations());
-        radiusToAngle.put(1.55, 48.65);
-        radiusToAngle.put(1.99, 42.5);
-        radiusToAngle.put(2.52, 37.0);
-        radiusToAngle.put(3.15, 32.5);
-        radiusToAngle.put(3.55, 29.0);
-        radiusToAngle.put(3.95, 28.0);
-        radiusToAngle.put(4.33, 26.25);
-        // radiusToAngle.put(5.02, 23.9);
-        // radiusToAngle.put(5.56, 23.2);
+        radiusToAngle.put(1.55, 46.55);
+        radiusToAngle.put(1.99, 39.35);
+        radiusToAngle.put(2.52, 35.55);
+        radiusToAngle.put(3.15, 31.7);
+        radiusToAngle.put(3.55, 31.3);
+        radiusToAngle.put(3.95, 26.3);
+        // radiusToAngle.put(4.64, 26.7);
+        radiusToAngle.put(5.02, 23.9);
+        radiusToAngle.put(5.56, 23.2);
 
         SmartDashboard.putNumber("wrist low pass", 0.9);
         SmartDashboard.putNumber("wrist P", 150);
@@ -243,17 +243,11 @@ public class ElevatorWrist extends SubsystemBase {
      * @return Rotation of the wrist
      */
     public Rotation2d getAngleFromDistance(Pose2d position) {
-        double k = 0.066;
         Pose2d speakerPos =
             FieldConstants.allianceFlip(FieldConstants.Speaker.centerSpeakerOpening);
         Translation2d distFromSpeaker =
             position.getTranslation().minus(speakerPos.getTranslation());
-        Rotation2d angleFromSpeaker =
-            new Rotation2d(distFromSpeaker.getX(), distFromSpeaker.getY());
         double angle = radiusToAngle.get(distFromSpeaker.getNorm());
-        if (angleFromSpeaker.getDegrees() >= 30) {
-            angle = angle + k * angleFromSpeaker.getDegrees();
-        }
         return Rotation2d.fromDegrees(angle);
     }
 
