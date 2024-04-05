@@ -24,6 +24,7 @@ import frc.lib.util.FieldConstants;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
+import frc.robot.autos.JustShoot1;
 import frc.robot.autos.P123;
 import frc.robot.autos.P321;
 import frc.robot.autos.P8765;
@@ -172,6 +173,8 @@ public class RobotContainer {
         autoChooser.addOption("P123", new P123(s_Swerve, elevatorWrist, intake, shooter));
         autoChooser.addOption("P321", new P321(s_Swerve, elevatorWrist, intake, shooter));
         autoChooser.addOption("P8765", new P8765(s_Swerve, elevatorWrist, intake, shooter));
+        autoChooser.addOption("Just Shoot 1",
+            new JustShoot1(s_Swerve, elevatorWrist, intake, shooter));
         // autoChooser.addOption("P32", new P32(s_Swerve, elevatorWrist, intake, shooter));
         // autoChooser.addOption("P675", new P675(s_Swerve, elevatorWrist, intake, shooter));
         // autoChooser.addOption("P3675", new P3675(s_Swerve, elevatorWrist, intake, shooter));
