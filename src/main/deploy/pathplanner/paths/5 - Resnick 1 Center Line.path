@@ -32,16 +32,16 @@
     },
     {
       "anchor": {
-        "x": 8.241359767136025,
-        "y": 0.8508715270400491
+        "x": 8.22619949354389,
+        "y": 0.9105123040299752
       },
       "prevControl": {
-        "x": 7.622968816867052,
-        "y": 0.983796684574503
+        "x": 7.607808543274917,
+        "y": 1.0434374615644293
       },
       "nextControl": {
-        "x": 8.342435281509847,
-        "y": 0.8291450146045546
+        "x": 8.327275007917711,
+        "y": 0.8887857915944807
       },
       "isLocked": false,
       "linkedName": null
@@ -60,7 +60,13 @@
       "linkedName": "p123 - shoot p8"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": 151.0202923020712,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
