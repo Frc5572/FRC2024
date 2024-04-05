@@ -2,7 +2,6 @@ package frc.robot;
 
 import java.util.Map;
 import edu.wpi.first.math.filter.Debouncer;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -216,15 +215,15 @@ public class RobotContainer {
         // reset apriltag vision
         operator.b().onTrue(new InstantCommand(() -> s_Swerve.resetPvInitialization()));
         // spin up shooter
-        // operator.leftTrigger().whileTrue(shooter.shootSpeaker());
-        operator.leftTrigger()
-            .whileTrue(new ShootWhileMoving(s_Swerve, driver, () -> s_Swerve.getPose(),
-                () -> FieldConstants
-                    .allianceFlip(new Pose2d(FieldConstants.ampCenter, new Rotation2d()))
-                    .getTranslation())
-                        .alongWith(elevatorWrist.goToPosition(
-                            Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-                            Constants.ElevatorWristConstants.SetPoints.HOME_ANGLE)));
+        operator.leftTrigger().whileTrue(shooter.shootSpeaker());
+        // operator.leftTrigger()
+        // .whileTrue(new ShootWhileMoving(s_Swerve, driver, () -> s_Swerve.getPose(),
+        // () -> FieldConstants
+        // .allianceFlip(new Pose2d(FieldConstants.ampCenter, new Rotation2d()))
+        // .getTranslation())
+        // .alongWith(elevatorWrist.goToPosition(
+        // Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
+        // Constants.ElevatorWristConstants.SetPoints.HOME_ANGLE)));
         // shoot note to speaker after being intaked
         operator.rightTrigger().whileTrue(CommandFactory.shootSpeaker(shooter, intake));
         // set shooter to home preset position
