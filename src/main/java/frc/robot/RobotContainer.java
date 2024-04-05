@@ -225,7 +225,9 @@ public class RobotContainer {
         // Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
         // Constants.ElevatorWristConstants.SetPoints.HOME_ANGLE)));
         // shoot note to speaker after being intaked
-        operator.rightTrigger().whileTrue(CommandFactory.shootSpeaker(shooter, intake));
+        operator.rightTrigger().and(operator.leftTrigger().negate())
+            .whileTrue(CommandFactory.shootSpeaker(shooter, intake));
+        operator.rightTrigger().and(operator.leftTrigger()).whileTrue(intake.runIndexerMotor(1));
         // set shooter to home preset position
         operator.y().onTrue(elevatorWrist.homePosition());
         // increment once through states list to next state
