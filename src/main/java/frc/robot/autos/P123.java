@@ -1,12 +1,15 @@
 package frc.robot.autos;
 
+import java.util.function.BooleanSupplier;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.util.FieldConstants;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
@@ -48,6 +51,7 @@ public class P123 extends SequentialCommandGroup {
         PathPlannerPath path3 = PathPlannerPath.fromPathFile("3 - Resnick 1 Intake P2");
         PathPlannerPath path4 = PathPlannerPath.fromPathFile("4 - Resnick 1 Intake P3");
         PathPlannerPath path5 = PathPlannerPath.fromPathFile("5 - Resnick 1 Center Line");
+        PathPlannerPath path6 = PathPlannerPath.fromPathFile("6 - Resnick 1 Center Line 2");
 
         Command wait = Commands.waitSeconds(.01);
         Command followPath1 = AutoBuilder.followPath(path1);
@@ -55,6 +59,13 @@ public class P123 extends SequentialCommandGroup {
         Command followPath3 = AutoBuilder.followPath(path3);
         Command followPath4 = AutoBuilder.followPath(path4);
         Command followPath5 = AutoBuilder.followPath(path5);
+        Command followPath6 = AutoBuilder.followPath(path6);
+
+        Trigger noteInIndexer = new Trigger(() -> this.intake.getIndexerBeamBrakeStatus())
+            .debounce(0.25, Debouncer.DebounceType.kRising);
+        Trigger noteInIntake = new Trigger(() -> this.intake.getintakeBeamBrakeStatus())
+            .debounce(0.25, Debouncer.DebounceType.kRising);
+        BooleanSupplier abort = () -> !noteInIndexer.getAsBoolean() && !noteInIntake.getAsBoolean();
 
         Command resetPosition = Commands.runOnce(() -> {
             Pose2d initialState =
@@ -82,12 +93,16 @@ public class P123 extends SequentialCommandGroup {
                     .withTimeout(.5))
             .andThen(CommandFactory.Auto.runIndexer(intake))
             .andThen(elevatorWrist.homePosition().withTimeout(.5));
-        Command part5 = Commands.either(
-            followPath5.alongWith(CommandFactory.intakeNote(intake))
-                .andThen(CommandFactory.Auto.runIndexer(intake)),
-            Commands.none(), () -> RobotContainer.goToCenter.getEntry().getBoolean(false));
+        Command part5 = followPath5.deadlineWith(CommandFactory.intakeNote(intake)).andThen(
+            Commands.either(Commands.none(), Commands.sequence(CommandFactory.intakeNote(intake),
+                CommandFactory.Auto.runIndexer(intake)), abort));
+        Command part6 = followPath6.deadlineWith(CommandFactory.intakeNote(intake)).andThen(
+            Commands.either(Commands.none(), Commands.sequence(CommandFactory.intakeNote(intake),
+                CommandFactory.Auto.runIndexer(intake)), abort));
+        Command midline = Commands.either(Commands.sequence(part5, part6), Commands.none(),
+            () -> RobotContainer.goToCenter.getEntry().getBoolean(false));
 
-        Command followPaths = Commands.sequence(part1, part2, part3, part4, part5);
+        Command followPaths = Commands.sequence(part1, part2, part3, part4, midline);
 
         // Command autoAlignWrist = CommandFactory.autoAngleWristSpeaker(elevatorWrist,
         // swerveDrive);

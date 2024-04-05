@@ -3,45 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.5949302492595203,
-        "y": 4.283808204234158
+        "x": 5.784342836291307,
+        "y": 1.7343583982942623
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.1961547766561638,
-        "y": 3.4400224216241586
+        "x": 8.024555767421393,
+        "y": 2.2835718910874445
       },
       "isLocked": false,
-      "linkedName": "resnick 1 shoot p3"
+      "linkedName": "p123 - shoot p8"
     },
     {
       "anchor": {
-        "x": 2.8723392736792466,
-        "y": 2.838969535381419
+        "x": 8.255803553860629,
+        "y": 2.4570077309168705
       },
       "prevControl": {
-        "x": 2.6409845523229034,
-        "y": 3.070324256737763
+        "x": 8.284709527165534,
+        "y": 2.442554744264419
       },
       "nextControl": {
-        "x": 3.051499268616986,
-        "y": 2.659809540443679
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 8.241359767136025,
-        "y": 0.8508715270400491
-      },
-      "prevControl": {
-        "x": 7.622968816867052,
-        "y": 0.983796684574503
-      },
-      "nextControl": {
-        "x": 8.342435281509847,
-        "y": 0.8291450146045546
+        "x": 7.825838587382434,
+        "y": 2.6719902141559544
       },
       "isLocked": false,
       "linkedName": null
@@ -49,18 +33,24 @@
     {
       "anchor": {
         "x": 5.784342836291307,
-        "y": 1.7343583982942623
+        "y": 4.0323832760341585
       },
       "prevControl": {
-        "x": 7.27300046149388,
-        "y": 1.170691918848627
+        "x": 7.215188514884072,
+        "y": 3.2808279701066456
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "p123 - shoot p8"
+      "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": -160.3128838018742,
+      "rotateFast": true
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -72,7 +62,7 @@
   "goalEndState": {
     "velocity": 0,
     "rotation": 145.6196552761552,
-    "rotateFast": false
+    "rotateFast": true
   },
   "reversed": false,
   "folder": "P123",
