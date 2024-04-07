@@ -3,10 +3,10 @@ package frc.robot.autos;
 import java.util.function.BooleanSupplier;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.PathPlannerTrajectory.State;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -124,10 +124,9 @@ public class P8765 extends SequentialCommandGroup {
 
         Command wait = Commands.waitSeconds(.01);
         Command resetPosition = Commands.runOnce(() -> {
-            Pose2d initialState =
-                FieldConstants.allianceFlip(path0.getPreviewStartingHolonomicPose()
-                    .plus(new Transform2d(0, 0, Rotation2d.fromDegrees(180))));
-            swerveDrive.resetOdometry(initialState);
+            State initalState = path0.getTrajectory(null, null).getInitialState();
+            Pose2d initialPose = FieldConstants.allianceFlip(initalState.getTargetHolonomicPose());
+            swerveDrive.resetOdometry(initialPose);
         });
 
         Command followPaths = part0.andThen(Commands.either(
