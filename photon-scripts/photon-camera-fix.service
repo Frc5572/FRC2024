@@ -6,3 +6,6 @@ User=root
 Restart=always
 ExecStart=/opt/photonvision/restart-photon.sh
 PIDFile=/tmp/restart-photon.pid
+
+[Install]
+WantedBy=multi-user.target

@@ -44,7 +44,7 @@ public class CommandFactory {
         Command runIndexer = intake.runIndexerMotor(1);
         Command runshooter = shooter.shootSpeaker();
         Command readytoShoot = Commands.waitUntil(() -> shooter.readyToShoot());
-        return runshooter.alongWith(readytoShoot.withTimeout(0.8).andThen(runIndexer));
+        return runshooter.alongWith(readytoShoot.withTimeout(1).andThen(runIndexer));
     }
 
     /**

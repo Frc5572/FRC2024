@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.357976707567671,
-        "y": 6.6533436211526515
+        "x": 5.744319180946055,
+        "y": 7.019756150424644
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.2768941009580135,
-        "y": 6.826724261414981
+        "x": 7.027299688402193,
+        "y": 6.431579060341219
       },
       "isLocked": false,
-      "linkedName": "resnick 2 shoot p1"
+      "linkedName": "p321 - shoot p4"
     },
     {
       "anchor": {
-        "x": 8.32806848712289,
-        "y": 7.414382152707968
+        "x": 8.284709527165534,
+        "y": 5.8390066075906795
       },
       "prevControl": {
-        "x": 6.375803520837811,
-        "y": 7.137241609009157
+        "x": 6.622616062133535,
+        "y": 6.735091780042714
       },
       "nextControl": {
-        "x": 8.563670084488917,
-        "y": 7.4478277945229605
+        "x": 8.398497509391024,
+        "y": 5.777660043260415
       },
       "isLocked": false,
       "linkedName": null
@@ -33,18 +33,24 @@
     {
       "anchor": {
         "x": 5.744319180946055,
-        "y": 7.019756150424644
+        "y": 6.417126073688768
       },
       "prevControl": {
-        "x": 7.55065810668294,
-        "y": 7.284098432239799
+        "x": 7.114017608316907,
+        "y": 6.041348420725011
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "p321 - shoot p4"
+      "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.15,
+      "rotationDegrees": 144.25829396063003,
+      "rotateFast": true
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -55,8 +61,8 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -163.32293763849984,
-    "rotateFast": true
+    "rotation": 178.5761151251252,
+    "rotateFast": false
   },
   "reversed": false,
   "folder": "P321",

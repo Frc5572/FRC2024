@@ -256,7 +256,6 @@ public class Swerve extends SubsystemBase {
         }
 
         Logger.recordOutput("/Swerve/hasInitialized", hasInitialized);
-
         if (!hasInitialized && !DriverStation.isAutonomous()) {
             for (int i = 0; i < cameras.length; i++) {
                 var robotPose = cameras[i].getInitialPose();
@@ -274,6 +273,9 @@ public class Swerve extends SubsystemBase {
                 var result = cameras[i].getEstimatedGlobalPose(getPose());
                 if (result.isPresent()) {
                     if (DriverStation.isAutonomous() && result.get().targetsUsed.size() < 2) {
+                        continue;
+                    } else if (result.get().targetsUsed.size() == 1
+                        && result.get().targetsUsed.get(0).getPoseAmbiguity() > 0.1) {
                         continue;
                     }
                     swerveOdometry.addVisionMeasurement(result.get().estimatedPose.toPose2d(),

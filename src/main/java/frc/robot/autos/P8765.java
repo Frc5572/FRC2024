@@ -78,22 +78,25 @@ public class P8765 extends SequentialCommandGroup {
             .alongWith(
                 elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
                     Rotation2d.fromDegrees(28.0)).withTimeout(1.5))
-            .andThen(Commands.waitSeconds(.1)).andThen(CommandFactory.Auto.runIndexer(intake))
-            .andThen(Commands.either(elevatorWrist.homePosition().withTimeout(.5), Commands.none(),
-                dumpOrNot));
-        Command part1 = followPath1
-            .deadlineWith(CommandFactory.intakeNote(intake),
-                elevatorWrist.goToPosition(elevatorHeight, Rotation2d.fromDegrees(27.3)))
-            .andThen(Commands.either(Commands.none(), Commands.sequence(
-                CommandFactory.intakeNote(intake), CommandFactory.Auto.runIndexer(intake)), abort));
-        Command part2 = followPath2
-            .deadlineWith(CommandFactory.intakeNote(intake),
-                elevatorWrist.goToPosition(elevatorHeight, Rotation2d.fromDegrees(27.3)))
+            .andThen(Commands.waitSeconds(.1)).andThen(CommandFactory.Auto.runIndexer(intake));
+        // .andThen(Commands.either(elevatorWrist.homePosition().withTimeout(.5), Commands.none(),
+        // dumpOrNot));
+        Command part1 = followPath1.deadlineWith(CommandFactory.intakeNote(intake),
+            elevatorWrist.homePosition().withTimeout(1.0))
             .andThen(Commands.either(Commands.none(),
-                Commands.sequence(CommandFactory.intakeNote(intake),
-                    CommandFactory.Auto.runIndexer(intake)),
-                abort))
-            .andThen(elevatorWrist.homePosition().withTimeout(2));
+                Commands.sequence(CommandFactory.intakeNote(intake).alongWith(elevatorWrist
+                    .followPosition(() -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
+                        () -> elevatorWrist.getAngleFromDistance(swerveDrive.getPose()))
+                    .withTimeout(1.5)), CommandFactory.Auto.runIndexer(intake)),
+                abort));
+        Command part2 = followPath2.deadlineWith(CommandFactory.intakeNote(intake),
+            elevatorWrist.homePosition().withTimeout(1.0))
+            .andThen(Commands.either(Commands.none(),
+                Commands.sequence(CommandFactory.intakeNote(intake).alongWith(elevatorWrist
+                    .followPosition(() -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
+                        () -> elevatorWrist.getAngleFromDistance(swerveDrive.getPose()))
+                    .withTimeout(1.5)), CommandFactory.Auto.runIndexer(intake)),
+                abort));
         Command part3 = followPath3.alongWith(CommandFactory.intakeNote(intake))
             .andThen(
                 elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
@@ -134,7 +137,7 @@ public class P8765 extends SequentialCommandGroup {
             // Run Dump Paths
             Commands.sequence(part1_dump, part2_dump, part3_dump, part4_dump),
             // Run Shooting paths
-            Commands.sequence(part1, part2, part3), dumpOrNot));
+            Commands.sequence(part1, part2), dumpOrNot));
         Command shootCommand = shooter.shootSpeaker();
 
         addCommands(resetPosition, wait, followPaths.deadlineWith(shootCommand));

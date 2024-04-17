@@ -23,6 +23,7 @@ import frc.lib.util.FieldConstants;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
+import frc.robot.autos.JustShoot1;
 import frc.robot.autos.P123;
 import frc.robot.autos.P321;
 import frc.robot.autos.P8765;
@@ -138,11 +139,11 @@ public class RobotContainer {
                 new PhotonCameraWrapper(
                     new PhotonReal(Constants.CameraConstants.FrontRightFacingCamera.CAMERA_NAME,
                         Constants.CameraConstants.FrontRightFacingCamera.CAMERA_IP),
-                    Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT),
-                new PhotonCameraWrapper(
-                    new PhotonReal(Constants.CameraConstants.BackLeftFacingCamera.CAMERA_NAME,
-                        Constants.CameraConstants.BackLeftFacingCamera.CAMERA_IP),
-                    Constants.CameraConstants.BackLeftFacingCamera.KCAMERA_TO_ROBOT)};
+                    Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT)};
+        // new PhotonCameraWrapper(
+        // new PhotonReal(Constants.CameraConstants.BackLeftFacingCamera.CAMERA_NAME,
+        // Constants.CameraConstants.BackLeftFacingCamera.CAMERA_IP),
+        // Constants.CameraConstants.BackLeftFacingCamera.KCAMERA_TO_ROBOT)
         // new PhotonCameraWrapper(
         // new PhotonReal(Constants.CameraConstants.BackRightFacingCamera.CAMERA_NAME),
         // Constants.CameraConstants.BackRightFacingCamera.KCAMERA_TO_ROBOT)};
@@ -171,6 +172,8 @@ public class RobotContainer {
         autoChooser.addOption("P123", new P123(s_Swerve, elevatorWrist, intake, shooter));
         autoChooser.addOption("P321", new P321(s_Swerve, elevatorWrist, intake, shooter));
         autoChooser.addOption("P8765", new P8765(s_Swerve, elevatorWrist, intake, shooter));
+        autoChooser.addOption("Just Shoot 1",
+            new JustShoot1(s_Swerve, elevatorWrist, intake, shooter));
         // autoChooser.addOption("P32", new P32(s_Swerve, elevatorWrist, intake, shooter));
         // autoChooser.addOption("P675", new P675(s_Swerve, elevatorWrist, intake, shooter));
         // autoChooser.addOption("P3675", new P3675(s_Swerve, elevatorWrist, intake, shooter));
@@ -213,8 +216,18 @@ public class RobotContainer {
         operator.b().onTrue(new InstantCommand(() -> s_Swerve.resetPvInitialization()));
         // spin up shooter
         operator.leftTrigger().whileTrue(shooter.shootSpeaker());
+        // operator.leftTrigger()
+        // .whileTrue(new ShootWhileMoving(s_Swerve, driver, () -> s_Swerve.getPose(),
+        // () -> FieldConstants
+        // .allianceFlip(new Pose2d(FieldConstants.ampCenter, new Rotation2d()))
+        // .getTranslation())
+        // .alongWith(elevatorWrist.goToPosition(
+        // Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
+        // Constants.ElevatorWristConstants.SetPoints.HOME_ANGLE)));
         // shoot note to speaker after being intaked
-        operator.rightTrigger().whileTrue(CommandFactory.shootSpeaker(shooter, intake));
+        operator.rightTrigger().and(operator.leftTrigger().negate())
+            .whileTrue(CommandFactory.shootSpeaker(shooter, intake));
+        operator.rightTrigger().and(operator.leftTrigger()).whileTrue(intake.runIndexerMotor(1));
         // set shooter to home preset position
         operator.y().onTrue(elevatorWrist.homePosition());
         // increment once through states list to next state
