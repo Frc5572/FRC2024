@@ -80,6 +80,37 @@ task(checkAkitInstall, dependsOn: "classes", type: JavaExec) {
 }
 compileJava.finalizedBy checkAkitInstall
 
+sourceSets {
+    tools {
+        compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
+        runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output
+    }
+}
+
+import org.gradle.internal.os.OperatingSystem
+
+project.ext.lwjglVersion = "3.3.3"
+
+switch (OperatingSystem.current()) {
+	case OperatingSystem.LINUX:
+		project.ext.lwjglNatives = "natives-linux"
+		def osArch = System.getProperty("os.arch")
+		if (osArch.startsWith("arm") || osArch.startsWith("aarch64")) {
+			project.ext.lwjglNatives += osArch.contains("64") || osArch.startsWith("armv8") ? "-arm64" : "-arm32"
+		} else if  (osArch.startsWith("ppc")) {
+			project.ext.lwjglNatives += "-ppc64le"
+		} else if  (osArch.startsWith("riscv")) {
+			project.ext.lwjglNatives += "-riscv64"
+		}
+		break
+	case OperatingSystem.MAC_OS:
+		project.ext.lwjglNatives = "natives-macos"
+		break
+	case OperatingSystem.WINDOWS:
+		project.ext.lwjglNatives = "natives-windows"
+		break
+}
+
 dependencies {
     def akitJson = new groovy.json.JsonSlurper().parseText(new File(projectDir.getAbsolutePath() + "/vendordeps/AdvantageKit.json").text)
     annotationProcessor "org.littletonrobotics.akit.junction:junction-autolog:$akitJson.version"
@@ -104,6 +135,14 @@ dependencies {
 
     implementation 'org.apache.httpcomponents:httpclient:4.5.14'
     implementation 'org.apache.httpcomponents:httpmime:4.5.14'
+
+    toolsImplementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
+    toolsImplementation "org.lwjgl:lwjgl"
+	toolsImplementation "org.lwjgl:lwjgl-nfd"
+	toolsRuntimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
+	toolsRuntimeOnly "org.lwjgl:lwjgl-nfd::$lwjglNatives"
+    toolsImplementation wpi.java.deps.wpilibJniRelease(wpi.platforms.desktop)
+    toolsImplementation wpi.java.vendor.jniRelease(wpi.platforms.desktop)
 }
 
 // Simulation configuration (e.g. environment variables).
@@ -149,4 +188,10 @@ gversion {
     dateFormat   = "yyyy-MM-dd HH:mm:ss z"
     timeZone     = "America/New_York"
     indent       = "  "
+}
+
+task(replay, dependsOn: "build", type: JavaExec) {
+    mainClass = "frc.robot.Replay"
+    classpath = sourceSets.tools.runtimeClasspath
+    systemProperties["java.library.path"] = new File(project.projectDir, "build/jni/release")
 }

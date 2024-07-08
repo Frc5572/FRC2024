@@ -182,6 +182,12 @@ public class Robot extends LoggedRobot {
     @Override
     public void testPeriodic() {}
 
+    private static String logFile = null;
+
+    public static void setReplayFile(String logFile) {
+        Robot.logFile = logFile;
+    }
+
 
     private static final String environmentVariable = "AKIT_LOG_PATH";
     private static final String advantageScopeFileName = "akit-log-path.txt";
@@ -192,6 +198,9 @@ public class Robot extends LoggedRobot {
      * available 3. The result of the prompt displayed to the user
      */
     public static String findReplayLog() {
+        if (Robot.logFile != null) {
+            return Robot.logFile;
+        }
         // Read environment variables
         String envPath = System.getenv(environmentVariable);
         if (envPath != null) {
