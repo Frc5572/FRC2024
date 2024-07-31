@@ -23,6 +23,24 @@ pluginManagement {
             name 'frcHome'
             url frcHomeMaven
         }
+        maven {
+            url "https://jitpack.io"
+        }
+    }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.toString().startsWith("com.github.")) {
+                var spl = requested.id.toString().split("\\.")
+                var user = spl[2]
+                var name = spl[3]
+                var version = requested.version
+                if(version == null) {
+                    useModule("com.github.$user:plugin:unspecified")
+                } else {
+                    useModule("com.github.$user.$name:plugin:$version")
+                }
+            }
+        }
     }
 }
 

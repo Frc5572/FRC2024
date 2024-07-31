@@ -1,0 +1,66 @@
+root
+    visitCount: 1
+    totalTime: 11.7933055
+    maxTime: 11.7933055
+    minTime: 11.7933055
+    avgTime: 11.7933055
+root.processMixins
+    visitCount: 1
+    totalTime: 11.4532781
+    maxTime: 11.4532781
+    minTime: 11.4532781
+    avgTime: 11.4532781
+root.processMixins.entry
+    visitCount: 19337
+    totalTime: 7.4753828
+    maxTime: 0.0285842
+    minTime: 5.0E-7
+    avgTime: 3.86584E-4
+root.processMixins.entry.simpleCopy
+    visitCount: 18882
+    totalTime: 7.3360202
+    maxTime: 0.0285815
+    minTime: 1.809E-4
+    avgTime: 3.88519E-4
+root.moveNewToOld
+    visitCount: 1
+    totalTime: 0.2318702
+    maxTime: 0.2318702
+    minTime: 0.2318702
+    avgTime: 0.2318702
+root.processMixins.entry.simpleDir
+    visitCount: 438
+    totalTime: 0.1083083
+    maxTime: 0.0015455
+    minTime: 1.642E-4
+    avgTime: 2.47279E-4
+root.mixinIndex
+    visitCount: 1
+    totalTime: 0.1036441
+    maxTime: 0.1036441
+    minTime: 0.1036441
+    avgTime: 0.1036441
+root.mixinIndex.entry
+    visitCount: 19337
+    totalTime: 0.0409437
+    maxTime: 0.0065085
+    minTime: 1.0E-7
+    avgTime: 2.117E-6
+root.oldJarName
+    visitCount: 1
+    totalTime: 2.82E-5
+    maxTime: 2.82E-5
+    minTime: 2.82E-5
+    avgTime: 2.82E-5
+root.processMixins.entry.seenAlready
+    visitCount: 16
+    totalTime: 4.0E-7
+    maxTime: 1.0E-7
+    minTime: 0.0
+    avgTime: 2.5E-8
+root.processMixins.entry.skipped
+    visitCount: 1
+    totalTime: 0.0
+    maxTime: 0.0
+    minTime: 0.0
+    avgTime: 0.0
