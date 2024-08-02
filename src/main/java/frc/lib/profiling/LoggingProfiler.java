@@ -13,8 +13,7 @@ import java.util.function.LongSupplier;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.ReceiverThread;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
-import it.unimi.dsi.fastutil.longs.LongArrayList;
-import it.unimi.dsi.fastutil.longs.LongList;
+import frc.lib.util.LongArrayList;
 
 /**
  * This logger saves runtime performance metrics to memory. These metrics are subsequently written
@@ -24,7 +23,7 @@ public final class LoggingProfiler implements Profiler {
     private static final char SPLIT_CHAR = '\u001e';
 
     private final List<String> path = new ArrayList<>();
-    private final LongList timeList = new LongArrayList();
+    private final LongArrayList timeList = new LongArrayList();
     private final Map<String, LoggingProfiler.LocatedInfo> locationInfos = new HashMap<>();
     private final LongSupplier timeGetter;
     private final double timeDivisor;
@@ -163,7 +162,7 @@ public final class LoggingProfiler implements Profiler {
             this.path.remove(this.path.size() - 1);
 
             long currentTime = timeGetter.getAsLong();
-            long startTime = this.timeList.removeLong(this.timeList.size() - 1);
+            long startTime = this.timeList.remove(this.timeList.size() - 1);
             long timeSpan = currentTime - startTime;
 
             LocatedInfo locatedInfo = this.getCurrentInfo();
