@@ -9,6 +9,7 @@ import frc.lib.profiling.LoggingProfiler;
  * An optimized long array. Used in lieu of an {@code ArrayList<Long>} to avoid boxing (and the
  * performance implications that come with it).
  *
+ * <p>
  * Current interface is limited to the methods used by {@link LoggingProfiler}, though its interface
  * may expand in the future to match the full {@link List} interface.
  */
