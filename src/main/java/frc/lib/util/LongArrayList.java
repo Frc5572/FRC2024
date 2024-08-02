@@ -6,8 +6,8 @@ import java.util.RandomAccess;
 import frc.lib.profiling.LoggingProfiler;
 
 /**
- * An optimized long array. Used in lieu of an ArrayList<Long> to avoid boxing (and the performance
- * implications that come with it).
+ * An optimized long array. Used in lieu of an {@code ArrayList<Long>} to avoid boxing (and the
+ * performance implications that come with it).
  *
  * Current interface is limited to the methods used by {@link LoggingProfiler}, though its interface
  * may expand in the future to match the full {@link List} interface.
@@ -40,7 +40,7 @@ public class LongArrayList implements RandomAccess, Cloneable, java.io.Serializa
     /**
      * Grows this arraylist, ensuring it can contain {@code capacity} longs.
      *
-     * @param capacity the new minium capacity for this array list.
+     * @param capacity the new minimum capacity for this array list.
      */
     private void grow(int capacity) {
         if (capacity <= backing.length) {
@@ -88,6 +88,9 @@ public class LongArrayList implements RandomAccess, Cloneable, java.io.Serializa
         return size;
     }
 
+    /**
+     * Removes the element at the specified position in this list.
+     */
     public long remove(final int index) {
         Objects.checkIndex(index, size);
         final long[] a = this.backing;
@@ -101,7 +104,7 @@ public class LongArrayList implements RandomAccess, Cloneable, java.io.Serializa
     }
 
     private static long[] forceCapacity(final long[] array, final int length, final int preserve) {
-        final long newArray[] = new long[length];
+        final long[] newArray = new long[length];
         System.arraycopy(array, 0, newArray, 0, preserve);
         return newArray;
     }
