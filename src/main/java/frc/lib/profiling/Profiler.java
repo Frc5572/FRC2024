@@ -20,6 +20,7 @@ package frc.lib.profiling;
  * }
  * </pre>
  *
+ * <p>
  * will produce a profile with three sections:
  * <ul>
  * <li>{@code root}, which describes the time between {@link #startTick() profiler.startTick()} and
@@ -30,6 +31,7 @@ package frc.lib.profiling;
  * profiler.swap("World")} and {@link #pop() profiler.pop()}.
  * </ul>
  *
+ * <p>
  * A call to {@link #save() profiler.save()} would output the performance metrics of these sections
  * in the case of a {@link LoggingProfiler}.
  */
