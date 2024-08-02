@@ -34,7 +34,6 @@ public final class LoggingProfiler implements Profiler {
     private LoggingProfiler.LocatedInfo currentInfo;
 
     /**
-     * @param filePath file path to write when {@link #save() save} is called.
      * @param timeGetter a supplier for the current time.
      * @param timeDivisor a conversion factor turning the units of {@code timeGetter} to the units
      *        output to a file.

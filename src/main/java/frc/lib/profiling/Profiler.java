@@ -3,6 +3,7 @@ package frc.lib.profiling;
 /**
  * Interface supporting profiling calls for measuring and saving runtime performance.
  *
+ * <p>
  * Operates on the idea of a "profile stack", which is just a stack of names with associated
  * profiling metrics. For instance, the following code
  *
@@ -31,12 +32,13 @@ package frc.lib.profiling;
  *
  * A call to {@link #save() profiler.save()} would output the performance metrics of these sections
  * in the case of a {@link LoggingProfiler}.
+ * </p>
  */
 public sealed interface Profiler permits EmptyProfiler, LoggingProfiler, ValidatingProfiler {
     /**
      * Called at the top of the main loop. Indicates the profiler is at "root" and records the start
      * time. Within the main loop, no meaningful work should occur before this call.
-     *
+     * 
      * @throws RuntimeException if called twice without a call to {@link #endTick() endTick} in
      *         between.
      */
@@ -46,7 +48,7 @@ public sealed interface Profiler permits EmptyProfiler, LoggingProfiler, Validat
      * Called at the bottom of the main loop. Indicates the profiler's "root" is finished, and its
      * time usage metrics are updated. Within the main loop, no meaningful work should occur after
      * this call.
-     *
+     * 
      * @throws RuntimeException if the profile stack is not empty or {@link #startTick() startTick}
      *         has not been called.
      */
@@ -55,7 +57,7 @@ public sealed interface Profiler permits EmptyProfiler, LoggingProfiler, Validat
     /**
      * The profile stack is pushed with the {@code location} as its top. Must be accompanied by a
      * call to {@link #pop() pop}.
-     *
+     * 
      * @throws RuntimeException if {@link #startTick() startTick} hasn't been called yet.
      */
     void push(String location);
@@ -63,7 +65,7 @@ public sealed interface Profiler permits EmptyProfiler, LoggingProfiler, Validat
     /**
      * The profile stack is popped. Must be preceded (at some point) by a call to
      * {@link #push(String) push}.
-     *
+     * 
      * @throws RuntimeException if {@link #startTick() startTick} hasn't been called yet or the
      *         profile stack is empty.
      */
@@ -72,7 +74,7 @@ public sealed interface Profiler permits EmptyProfiler, LoggingProfiler, Validat
     /**
      * The top of the profile stack is replaced with {@code location}. This is equivalent to a call
      * to {@link #pop() pop} followed immediately by a call to {@link #push(String) push}.
-     *
+     * 
      * @throws RuntimeException if the profile stack is empty.
      */
     default void swap(String location) {

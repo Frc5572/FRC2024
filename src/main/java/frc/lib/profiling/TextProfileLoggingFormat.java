@@ -41,9 +41,8 @@ public class TextProfileLoggingFormat implements ProfileLoggingFormat {
     @Override
     public void begin(OutputStream outputStream) {
         try {
-            outputStream.write(("Performance Log\n" + //
-                "================================================================================\n")
-                    .getBytes());
+            outputStream.write(("Performance Log\n===================================="
+                + "============================================\n").getBytes());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
