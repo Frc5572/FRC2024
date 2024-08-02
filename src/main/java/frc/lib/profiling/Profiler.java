@@ -32,7 +32,6 @@ package frc.lib.profiling;
  *
  * A call to {@link #save() profiler.save()} would output the performance metrics of these sections
  * in the case of a {@link LoggingProfiler}.
- * </p>
  */
 public sealed interface Profiler permits EmptyProfiler, LoggingProfiler, ValidatingProfiler {
     /**
