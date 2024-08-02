@@ -107,7 +107,8 @@ public class Robot extends LoggedRobot {
             case kReplay -> profiler = EmptyProfiler.INSTANCE;
             case kSimulation -> profiler = new LoggingProfiler(() -> Logger.getRealTimestamp(),
                 1000000.0, TextProfileLoggingFormat.INSTANCE);
-            // case kSimulation -> profiler = ValidatingProfiler.INSTANCE;
+            default -> {
+            }
         }
         // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in the
         // "Understanding Data Flow" page
