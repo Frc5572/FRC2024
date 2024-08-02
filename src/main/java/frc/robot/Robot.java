@@ -49,6 +49,10 @@ public class Robot extends LoggedRobot {
     public static boolean inAuto = false;
     public RobotRunType robotRunType = RobotRunType.kReal;
     private Timer gcTimer = new Timer();
+    // We don't want to write empty profiles, so we have a boolean that only becomes true once
+    // teleop or auto has started.
+    private boolean hasDoneSomething = false;
+    private boolean hasStarted = false;
 
     /** Set up logging, profiling, and robotContainer. */
     @SuppressWarnings("resource")
@@ -103,6 +107,7 @@ public class Robot extends LoggedRobot {
             case kReplay -> profiler = EmptyProfiler.INSTANCE;
             case kSimulation -> profiler = new LoggingProfiler(() -> Logger.getRealTimestamp(),
                 1000000.0, TextProfileLoggingFormat.INSTANCE);
+            // case kSimulation -> profiler = ValidatingProfiler.INSTANCE;
         }
         // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in the
         // "Understanding Data Flow" page
@@ -110,7 +115,6 @@ public class Robot extends LoggedRobot {
         // Instantiate our RobotContainer. This will perform all our button bindings,
         // and put our autonomous chooser on the dashboard.
         robotContainer = new RobotContainer(robotRunType);
-        profiler.startTick();
     }
 
     /**
@@ -124,7 +128,11 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void robotPeriodic() {
-        profiler.endTick();
+        if (hasStarted) {
+            profiler.endTick();
+        } else {
+            hasStarted = true;
+        }
         profiler.startTick();
         profiler.push("robotPeriodic()");
         profiler.push("draw_state_to_shuffleboard");
@@ -151,9 +159,13 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void disabledInit() {
-        profiler.endTick();
-        profiler.save();
-        profiler.startTick();
+        if (hasStarted) {
+            profiler.endTick();
+            if (hasDoneSomething) {
+                profiler.save();
+            }
+            profiler.startTick();
+        }
     }
 
     @Override
@@ -164,6 +176,7 @@ public class Robot extends LoggedRobot {
      */
     @Override
     public void autonomousInit() {
+        hasDoneSomething = true;
         profiler.push("autonomousInit()");
         inAuto = true;
         OperatorState.disableManualMode();
@@ -184,10 +197,13 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void teleopInit() {
+        hasDoneSomething = true;
+        profiler.push("teleopInit()");
         inAuto = false;
         if (autoChooser != null) {
             autoChooser.cancel();
         }
+        profiler.pop();
     }
 
     /** This function is called periodically during operator control. */

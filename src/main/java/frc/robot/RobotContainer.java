@@ -115,8 +115,6 @@ public class RobotContainer {
         .debounce(0.25, Debouncer.DebounceType.kRising);
     private Trigger noteInIntake = new Trigger(() -> this.intake.getintakeBeamBrakeStatus())
         .debounce(0.25, Debouncer.DebounceType.kRising);
-    private Trigger mannualMode = new Trigger(() -> OperatorState.manualModeEnabled());
-    private Trigger atHome = new Trigger(() -> elevatorWrist.elevatorAtHome());
 
     /**
      */

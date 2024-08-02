@@ -50,6 +50,8 @@ public final class LoggingProfiler implements Profiler {
     @Override
     public void save() {
         try {
+            // Determine the filepath of the current logger, except the suffix is "-profile.txt"
+            // instead of ".wpilog".
             String filePath = null;
 
             Field dataReceiversField = ReceiverThread.class.getDeclaredField("dataReceivers");
@@ -90,6 +92,8 @@ public final class LoggingProfiler implements Profiler {
                     }
                 }
             }
+
+            // Write to file.
             try (var outStream = new FileOutputStream(filePath)) {
                 loggingFormat.begin(outStream);
                 for (var entry : locationInfos.entrySet().stream().sorted((a, b) -> loggingFormat
