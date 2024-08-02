@@ -14,11 +14,16 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.lib.profiling.EmptyProfiler;
+import frc.lib.profiling.LoggingProfiler;
+import frc.lib.profiling.Profiler;
+import frc.lib.profiling.TextProfileLoggingFormat;
 
 /**
  * Runs tasks on Roborio in this file.
@@ -27,8 +32,10 @@ public class Robot extends LoggedRobot {
     private RobotContainer robotContainer;
     private Command autoChooser;
 
+    public static Profiler profiler;
+
     /**
-     * Robnot Run type
+     * Robot Run type
      */
     public static enum RobotRunType {
         /** Real Robot. */
@@ -43,14 +50,9 @@ public class Robot extends LoggedRobot {
     public RobotRunType robotRunType = RobotRunType.kReal;
     private Timer gcTimer = new Timer();
 
-    // private Ultrasonic ultrasonic = new Ultrasonic();
-    /**
-     * This function is run when the robot is first started up and should be used for any
-     * initialization code.
-     */
+    /** Set up logging, profiling, and robotContainer. */
     @SuppressWarnings("resource")
-    @Override
-    public void robotInit() {
+    public Robot() {
         // Record metadata
         Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
         Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
@@ -80,27 +82,35 @@ public class Robot extends LoggedRobot {
         } else {
             String logPath = findReplayLog();
             if (logPath == null) {
+                Logger.addDataReceiver(
+                    new WPILOGWriter(Filesystem.getOperatingDirectory().getAbsolutePath()));
                 Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
                 setUseTiming(true);
                 robotRunType = RobotRunType.kSimulation;
             } else {
-                // (or prompt the user)
                 Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
                 Logger
                     .addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
                 // Save outputs to a new log
                 setUseTiming(false); // Run as fast as possible
                 robotRunType = RobotRunType.kReplay;
-
             }
+        }
+        Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values
+        switch (robotRunType) {
+            case kReal -> profiler = new LoggingProfiler(() -> Logger.getRealTimestamp(), 1000000.0,
+                TextProfileLoggingFormat.INSTANCE);
+            case kReplay -> profiler = EmptyProfiler.INSTANCE;
+            case kSimulation -> profiler = new LoggingProfiler(() -> Logger.getRealTimestamp(),
+                1000000.0, TextProfileLoggingFormat.INSTANCE);
         }
         // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in the
         // "Understanding Data Flow" page
-        Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values
 
         // Instantiate our RobotContainer. This will perform all our button bindings,
         // and put our autonomous chooser on the dashboard.
         robotContainer = new RobotContainer(robotRunType);
+        profiler.startTick();
     }
 
     /**
@@ -114,6 +124,10 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void robotPeriodic() {
+        profiler.endTick();
+        profiler.startTick();
+        profiler.push("robotPeriodic()");
+        profiler.push("draw_state_to_shuffleboard");
         robotContainer.operatorState.setString(OperatorState.getCurrentState().displayName);
         robotContainer.operatorManualMode.setBoolean(OperatorState.manualModeEnabled());
         robotContainer.matchTime.setDouble(Timer.getMatchTime());
@@ -125,14 +139,22 @@ public class Robot extends LoggedRobot {
         // subsystem periodic() methods. This must be called from the robot's periodic block in
         // order for
         // anything in the Command-based framework to work.
+        profiler.swap("command_scheduler");
         CommandScheduler.getInstance().run();
+        profiler.swap("manual-gc");
         if (gcTimer.advanceIfElapsed(5)) {
             System.gc();
         }
+        profiler.pop();
+        profiler.pop();
     }
 
     @Override
-    public void disabledInit() {}
+    public void disabledInit() {
+        profiler.endTick();
+        profiler.save();
+        profiler.startTick();
+    }
 
     @Override
     public void disabledPeriodic() {}
@@ -142,8 +164,10 @@ public class Robot extends LoggedRobot {
      */
     @Override
     public void autonomousInit() {
+        profiler.push("autonomousInit()");
         inAuto = true;
         OperatorState.disableManualMode();
+
         robotContainer.getAutonomousCommand().schedule();
         autoChooser = robotContainer.getAutonomousCommand();
 
@@ -151,6 +175,7 @@ public class Robot extends LoggedRobot {
         if (autoChooser != null) {
             autoChooser.schedule();
         }
+        profiler.pop();
     }
 
     /** This function is called periodically during autonomous. */

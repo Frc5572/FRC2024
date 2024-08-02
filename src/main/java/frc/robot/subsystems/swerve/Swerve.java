@@ -27,6 +27,7 @@ import frc.lib.util.FieldConstants;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.swerve.SwerveModule;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 
 /**
@@ -105,12 +106,14 @@ public class Swerve extends SubsystemBase {
      */
     public void drive(Translation2d translation, double rotation, boolean fieldRelative,
         boolean isOpenLoop) {
+        Robot.profiler.push("swerve.drive()");
         ChassisSpeeds chassisSpeeds = fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(translation.getX(), translation.getY(),
                 rotation, getFieldRelativeHeading())
             : new ChassisSpeeds(translation.getX(), translation.getY(), rotation);
 
         setModuleStates(chassisSpeeds);
+        Robot.profiler.pop();
     }
 
     /**
@@ -244,17 +247,23 @@ public class Swerve extends SubsystemBase {
 
     @Override
     public void periodic() {
+        Robot.profiler.push("swerve_periodic");
+        Robot.profiler.push("update_inputs");
         swerveIO.updateInputs(inputs);
+        Robot.profiler.swap("update_swerve_mods");
         for (var mod : swerveMods) {
             mod.periodic();
         }
+        Robot.profiler.swap("update_swerve_odometry");
         swerveOdometry.update(getGyroYaw(), getModulePositions());
+        Robot.profiler.swap("process_inputs");
         Logger.processInputs("Swerve", inputs);
+        Robot.profiler.swap("process_cameras");
         for (int i = 0; i < cameras.length; i++) {
             cameras[i].periodic();
             cameraSeesTarget[i] = cameras[i].seesTarget();
         }
-
+        Robot.profiler.swap("do_camera_stuff");
         Logger.recordOutput("/Swerve/hasInitialized", hasInitialized);
 
         if (!hasInitialized && !DriverStation.isAutonomous()) {
@@ -281,6 +290,7 @@ public class Swerve extends SubsystemBase {
                 }
             }
         }
+        Robot.profiler.swap("update_shuffleboard");
 
         field.setRobotPose(getPose());
         aprilTagTarget
@@ -292,6 +302,8 @@ public class Swerve extends SubsystemBase {
 
         SmartDashboard.putBoolean("Has Initialized", hasInitialized);
         SmartDashboard.putNumber("Gyro Yaw", getGyroYaw().getDegrees());
+        Robot.profiler.pop();
+        Robot.profiler.pop();
     }
 
     /**
