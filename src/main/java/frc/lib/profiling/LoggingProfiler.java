@@ -37,7 +37,6 @@ public final class LoggingProfiler implements Profiler {
      * @param timeGetter a supplier for the current time.
      * @param timeDivisor a conversion factor turning the units of {@code timeGetter} to the units
      *        output to a file.
-     * @param loggingFormat file format to use when {@link #save() save} is called.
      */
     public LoggingProfiler(LongSupplier timeGetter, double timeDivisor) {
         this.timeGetter = timeGetter;
@@ -225,7 +224,10 @@ public final class LoggingProfiler implements Profiler {
         long visits;
     }
 
-    public static class LocatedInfoJSON {
+    /**
+     * JSON Tree version of {@link LocatedInfo}
+     */
+    private static class LocatedInfoJSON {
         long maxTime = Long.MIN_VALUE;
         long minTime = Long.MAX_VALUE;
         long totalTime;

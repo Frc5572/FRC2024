@@ -56,6 +56,9 @@ public class SwerveModule {
         Logger.processInputs("SwerveModule" + moduleNumber, inputs);
     }
 
+    /**
+     * Update inputs for a Swerve Module.
+     */
     public void periodic() {
         Robot.profiler.push("updateInputs");
         io.updateInputs(inputs);

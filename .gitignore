@@ -185,4 +185,4 @@ simgui.json
 !src/main/deploy/photon-configs/*.zip
 
 /*.wpilog
-/*-profile.txt
+/*-profile.json
