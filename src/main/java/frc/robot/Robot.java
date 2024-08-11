@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.profiling.EmptyProfiler;
 import frc.lib.profiling.LoggingProfiler;
 import frc.lib.profiling.Profiler;
-import frc.lib.profiling.TextProfileLoggingFormat;
 
 /**
  * Runs tasks on Roborio in this file.
@@ -102,11 +101,11 @@ public class Robot extends LoggedRobot {
         }
         Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values
         switch (robotRunType) {
-            case kReal -> profiler = new LoggingProfiler(() -> Logger.getRealTimestamp(), 1000000.0,
-                TextProfileLoggingFormat.INSTANCE);
+            case kReal -> profiler =
+                new LoggingProfiler(() -> Logger.getRealTimestamp(), 1000000.0);
             case kReplay -> profiler = EmptyProfiler.INSTANCE;
-            case kSimulation -> profiler = new LoggingProfiler(() -> Logger.getRealTimestamp(),
-                1000000.0, TextProfileLoggingFormat.INSTANCE);
+            case kSimulation -> profiler =
+                new LoggingProfiler(() -> Logger.getRealTimestamp(), 1000000.0);
             default -> {
             }
         }

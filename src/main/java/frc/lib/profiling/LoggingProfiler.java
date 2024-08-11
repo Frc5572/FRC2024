@@ -13,6 +13,8 @@ import java.util.function.LongSupplier;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.ReceiverThread;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 import frc.lib.util.LongArrayList;
 
 /**
@@ -27,7 +29,6 @@ public final class LoggingProfiler implements Profiler {
     private final Map<String, LoggingProfiler.LocatedInfo> locationInfos = new HashMap<>();
     private final LongSupplier timeGetter;
     private final double timeDivisor;
-    private final ProfileLoggingFormat loggingFormat;
     private boolean tickStarted;
     private String fullPath = "";
     private LoggingProfiler.LocatedInfo currentInfo;
@@ -38,11 +39,9 @@ public final class LoggingProfiler implements Profiler {
      *        output to a file.
      * @param loggingFormat file format to use when {@link #save() save} is called.
      */
-    public LoggingProfiler(LongSupplier timeGetter, double timeDivisor,
-        ProfileLoggingFormat loggingFormat) {
+    public LoggingProfiler(LongSupplier timeGetter, double timeDivisor) {
         this.timeGetter = timeGetter;
         this.timeDivisor = timeDivisor;
-        this.loggingFormat = loggingFormat;
     }
 
     @Override
@@ -85,22 +84,54 @@ public final class LoggingProfiler implements Profiler {
                             newFilenameBuilder.append("_");
                             newFilenameBuilder.append(logMatchText);
                         }
-                        newFilenameBuilder.append("-profile.txt");
+                        newFilenameBuilder.append("-profile.json");
                         filePath = newFilenameBuilder.toString();
                     }
                 }
             }
 
+            HashMap<String, LocatedInfoJSON> jsons = new HashMap<>();
+            for (var entry : locationInfos.entrySet()) {
+                var value = new LocatedInfoJSON();
+                value.visits = entry.getValue().visits;
+                value.maxTime = entry.getValue().maxTime;
+                value.minTime = entry.getValue().minTime;
+                value.totalTime = entry.getValue().totalTime;
+                value.children = new HashMap<>();
+                jsons.put(entry.getKey(), value);
+            }
+
+            System.out.println("----");
+            for (var entry : jsons.entrySet()) {
+                System.out.println(entry.getKey());
+            }
+            System.out.println("----");
+
+            for (var entry : jsons.entrySet()) {
+                String key = entry.getKey();
+                String[] parts = key.split("\\" + SPLIT_CHAR);
+                if (parts.length < 2) {
+                    continue;
+                }
+                StringBuilder parent = new StringBuilder();
+                for (int i = 0; i < parts.length - 2; i++) {
+                    parent.append(parts[i]);
+                    parent.append(SPLIT_CHAR);
+                }
+                parent.append(parts[parts.length - 2]);
+                System.out.println(parent.toString());
+                jsons.get(parent.toString()).children.put(parts[parts.length - 1],
+                    entry.getValue());
+            }
+
             // Write to file.
             try (var outStream = new FileOutputStream(filePath)) {
-                loggingFormat.begin(outStream);
-                for (var entry : locationInfos.entrySet().stream().sorted((a, b) -> loggingFormat
-                    .compare(a.getKey(), a.getValue(), b.getKey(), b.getValue())).toList()) {
-                    var info = entry.getValue();
-                    var name = entry.getKey().replace(SPLIT_CHAR, '.');
-                    loggingFormat.write(name, info, timeDivisor, outStream);
-                }
-                loggingFormat.end(outStream);
+                LocatedInfoJSON root = jsons.get("root");
+                JsonFactory factory = new JsonFactory();
+                JsonGenerator generator = factory.createGenerator(outStream);
+                root.writeJSON(generator, timeDivisor, 0, root.totalTime);
+                generator.flush();
+                generator.close();
             }
         } catch (IOException | NoSuchFieldException | SecurityException | IllegalArgumentException
             | IllegalAccessException e) {
@@ -192,6 +223,40 @@ public final class LoggingProfiler implements Profiler {
         long minTime = Long.MAX_VALUE;
         long totalTime;
         long visits;
+    }
+
+    public static class LocatedInfoJSON {
+        long maxTime = Long.MIN_VALUE;
+        long minTime = Long.MAX_VALUE;
+        long totalTime;
+        long visits;
+        HashMap<String, LocatedInfoJSON> children;
+
+        void writeJSON(JsonGenerator generator, double timeDivisor, long parent_total,
+            long root_total) throws IOException {
+            generator.writeStartObject();
+            generator.writeNumberField("visitCount", visits);
+            generator.writeNumberField("totalTime", totalTime / timeDivisor);
+            if (parent_total > 0) {
+                double percent = (double) totalTime / (double) parent_total * 100.0;
+                generator.writeNumberField("percentOfParent", percent);
+            }
+            if (root_total > 0) {
+                double percent = (double) totalTime / (double) root_total * 100.0;
+                generator.writeNumberField("percentOfRoot", percent);
+            }
+            generator.writeNumberField("maxTime", maxTime / timeDivisor);
+            generator.writeNumberField("minTime", minTime / timeDivisor);
+            generator.writeNumberField("avgTime", totalTime / timeDivisor / visits);
+            generator.writeFieldName("children");
+            generator.writeStartObject();
+            for (var entry : children.entrySet()) {
+                generator.writeFieldName(entry.getKey());
+                entry.getValue().writeJSON(generator, timeDivisor, totalTime, root_total);
+            }
+            generator.writeEndObject();
+            generator.writeEndObject();
+        }
     }
 
 }

@@ -10,6 +10,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.lib.math.Conversions;
 import frc.robot.Constants;
+import frc.robot.Robot;
 
 /**
  * Swerve Module Subsystem
@@ -56,8 +57,11 @@ public class SwerveModule {
     }
 
     public void periodic() {
+        Robot.profiler.push("updateInputs");
         io.updateInputs(inputs);
+        Robot.profiler.swap("processInputs");
         Logger.processInputs("SwerveModule" + moduleNumber, inputs);
+        Robot.profiler.pop();
     }
 
     /**
