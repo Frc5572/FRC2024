@@ -104,6 +104,10 @@ public class LongArrayList implements RandomAccess, Cloneable, java.io.Serializa
         return old;
     }
 
+    public void clear() {
+        this.size = 0;
+    }
+
     private static long[] forceCapacity(final long[] array, final int length, final int preserve) {
         final long[] newArray = new long[length];
         System.arraycopy(array, 0, newArray, 0, preserve);

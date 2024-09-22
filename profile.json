@@ -1,0 +1,236 @@
+{
+    "visitCount": 221,
+    "totalTime": 6.136004,
+    "percentOfRoot": 100.0,
+    "maxTime": 1.02012,
+    "minTime": 0.01113,
+    "avgTime": 0.02776472398190045,
+    "children": {
+        "robotPeriodic()": {
+            "visitCount": 221,
+            "totalTime": 3.466921,
+            "percentOfParent": 56.50128324557807,
+            "percentOfRoot": 56.50128324557807,
+            "maxTime": 0.9518,
+            "minTime": 0.005917,
+            "avgTime": 0.015687425339366515,
+            "children": {
+                "manual-gc": {
+                    "visitCount": 221,
+                    "totalTime": 0.005231,
+                    "percentOfParent": 0.1508831611680797,
+                    "percentOfRoot": 0.08525092226145875,
+                    "maxTime": 0.001187,
+                    "minTime": 0.0,
+                    "avgTime": 2.3669683257918552E-5,
+                    "children": {}
+                },
+                "draw_state_to_shuffleboard": {
+                    "visitCount": 221,
+                    "totalTime": 0.029186,
+                    "percentOfParent": 0.8418420840855617,
+                    "percentOfRoot": 0.4756515804096607,
+                    "maxTime": 0.001187,
+                    "minTime": 5.5E-5,
+                    "avgTime": 1.320633484162896E-4,
+                    "children": {}
+                },
+                "command_scheduler": {
+                    "visitCount": 221,
+                    "totalTime": 3.377213,
+                    "percentOfParent": 97.41245906670501,
+                    "percentOfRoot": 55.03928941376179,
+                    "maxTime": 0.921008,
+                    "minTime": 0.005769,
+                    "avgTime": 0.015281506787330316,
+                    "children": {
+                        "swerve_periodic": {
+                            "visitCount": 221,
+                            "totalTime": 2.353467,
+                            "percentOfParent": 69.68666175334513,
+                            "percentOfRoot": 38.35504344521288,
+                            "maxTime": 0.826199,
+                            "minTime": 0.002671,
+                            "avgTime": 0.010649171945701358,
+                            "children": {
+                                "update_shuffleboard": {
+                                    "visitCount": 221,
+                                    "totalTime": 0.728499,
+                                    "percentOfParent": 30.954289990044476,
+                                    "percentOfRoot": 11.87253137383874,
+                                    "maxTime": 0.604044,
+                                    "minTime": 2.79E-4,
+                                    "avgTime": 0.0032963755656108596,
+                                    "children": {}
+                                },
+                                "update_inputs": {
+                                    "visitCount": 221,
+                                    "totalTime": 0.008889,
+                                    "percentOfParent": 0.37769809391846154,
+                                    "percentOfRoot": 0.14486626801416688,
+                                    "maxTime": 0.001076,
+                                    "minTime": 0.0,
+                                    "avgTime": 4.022171945701357E-5,
+                                    "children": {}
+                                },
+                                "do_camera_stuff": {
+                                    "visitCount": 221,
+                                    "totalTime": 0.664337,
+                                    "percentOfParent": 28.228014244516707,
+                                    "percentOfRoot": 10.826867127205263,
+                                    "maxTime": 0.037712,
+                                    "minTime": 7.05E-4,
+                                    "avgTime": 0.003006049773755656,
+                                    "children": {}
+                                },
+                                "process_cameras": {
+                                    "visitCount": 221,
+                                    "totalTime": 0.242648,
+                                    "percentOfParent": 10.310235920027772,
+                                    "percentOfRoot": 3.9544954664305956,
+                                    "maxTime": 0.061085,
+                                    "minTime": 3.89E-4,
+                                    "avgTime": 0.0010979547511312218,
+                                    "children": {}
+                                },
+                                "update_swerve_odometry": {
+                                    "visitCount": 221,
+                                    "totalTime": 0.251536,
+                                    "percentOfParent": 10.687891523441799,
+                                    "percentOfRoot": 4.0993454371933264,
+                                    "maxTime": 0.131389,
+                                    "minTime": 1.3E-4,
+                                    "avgTime": 0.0011381719457013574,
+                                    "children": {}
+                                },
+                                "process_inputs": {
+                                    "visitCount": 221,
+                                    "totalTime": 0.022414,
+                                    "percentOfParent": 0.9523821663953648,
+                                    "percentOfRoot": 0.3652865936854018,
+                                    "maxTime": 0.001781,
+                                    "minTime": 3.7E-5,
+                                    "avgTime": 1.01420814479638E-4,
+                                    "children": {}
+                                },
+                                "update_swerve_mods": {
+                                    "visitCount": 221,
+                                    "totalTime": 0.379823,
+                                    "percentOfParent": 16.13887086583326,
+                                    "percentOfRoot": 6.19007093215715,
+                                    "maxTime": 0.014469,
+                                    "minTime": 7.24E-4,
+                                    "avgTime": 0.001718656108597285,
+                                    "children": {
+                                        "updateInputs": {
+                                            "visitCount": 884,
+                                            "totalTime": 0.200015,
+                                            "percentOfParent": 52.66005481500594,
+                                            "percentOfRoot": 3.259694745961704,
+                                            "maxTime": 0.002319,
+                                            "minTime": 7.4E-5,
+                                            "avgTime": 2.2626131221719457E-4,
+                                            "children": {}
+                                        },
+                                        "processInputs": {
+                                            "visitCount": 884,
+                                            "totalTime": 0.089001,
+                                            "percentOfParent": 23.43223027568104,
+                                            "percentOfRoot": 1.4504716750510593,
+                                            "maxTime": 0.001262,
+                                            "minTime": 3.7E-5,
+                                            "avgTime": 1.0067986425339367E-4,
+                                            "children": {}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "teleop_swerve": {
+                            "visitCount": 84,
+                            "totalTime": 0.15469,
+                            "percentOfParent": 4.580404019527344,
+                            "percentOfRoot": 2.521021824627233,
+                            "maxTime": 0.063682,
+                            "minTime": 5.75E-4,
+                            "avgTime": 0.001841547619047619,
+                            "children": {
+                                "swerve.drive()": {
+                                    "visitCount": 84,
+                                    "totalTime": 0.147641,
+                                    "percentOfParent": 95.44314435322258,
+                                    "percentOfRoot": 2.406142499255216,
+                                    "maxTime": 0.063293,
+                                    "minTime": 5.01E-4,
+                                    "avgTime": 0.0017576309523809524,
+                                    "children": {}
+                                }
+                            }
+                        },
+                        "ElevatorWrist periodic": {
+                            "visitCount": 221,
+                            "totalTime": 0.27999,
+                            "percentOfParent": 8.290563846580005,
+                            "percentOfRoot": 4.563067429551871,
+                            "maxTime": 0.009127,
+                            "minTime": 5.56E-4,
+                            "avgTime": 0.001266923076923077,
+                            "children": {
+                                "Publish to SmartDashboard": {
+                                    "visitCount": 221,
+                                    "totalTime": 0.05901,
+                                    "percentOfParent": 21.075752705453766,
+                                    "percentOfRoot": 0.961700807235458,
+                                    "maxTime": 0.00306,
+                                    "minTime": 1.11E-4,
+                                    "avgTime": 2.670135746606335E-4,
+                                    "children": {}
+                                },
+                                "PID stuff": {
+                                    "visitCount": 221,
+                                    "totalTime": 0.096493,
+                                    "percentOfParent": 34.46301653630487,
+                                    "percentOfRoot": 1.5725706828092028,
+                                    "maxTime": 0.004638,
+                                    "minTime": 1.67E-4,
+                                    "avgTime": 4.366199095022624E-4,
+                                    "children": {}
+                                },
+                                "updateInputs": {
+                                    "visitCount": 221,
+                                    "totalTime": 0.039408,
+                                    "percentOfParent": 14.074788385299474,
+                                    "percentOfRoot": 0.6422420845879501,
+                                    "maxTime": 0.004136,
+                                    "minTime": 7.4E-5,
+                                    "avgTime": 1.7831674208144795E-4,
+                                    "children": {}
+                                },
+                                "processInputs": {
+                                    "visitCount": 221,
+                                    "totalTime": 0.051389,
+                                    "percentOfParent": 18.353869781063608,
+                                    "percentOfRoot": 0.8374994540420769,
+                                    "maxTime": 0.002411,
+                                    "minTime": 1.11E-4,
+                                    "avgTime": 2.3252941176470586E-4,
+                                    "children": {}
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "teleopInit()": {
+            "visitCount": 1,
+            "totalTime": 1.8E-5,
+            "percentOfParent": 2.933505258471148E-4,
+            "percentOfRoot": 2.933505258471148E-4,
+            "maxTime": 1.8E-5,
+            "minTime": 1.8E-5,
+            "avgTime": 1.8E-5,
+            "children": {}
+        }
+    }
+}

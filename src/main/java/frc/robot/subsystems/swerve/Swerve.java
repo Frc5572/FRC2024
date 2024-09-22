@@ -267,7 +267,9 @@ public class Swerve extends SubsystemBase {
         Logger.recordOutput("/Swerve/hasInitialized", hasInitialized);
 
         if (!hasInitialized && !DriverStation.isAutonomous()) {
+            Robot.profiler.push("init");
             for (int i = 0; i < cameras.length; i++) {
+                Robot.profiler.push(cameras[i].inputs.name);
                 var robotPose = cameras[i].getInitialPose();
                 Logger.recordOutput("/Swerve/hasInitialPose[" + i + "]", robotPose.isPresent());
 
@@ -277,9 +279,13 @@ public class Swerve extends SubsystemBase {
                     hasInitialized = true;
                     break;
                 }
+                Robot.profiler.pop();
             }
+            Robot.profiler.pop();
         } else {
+            Robot.profiler.push("update");
             for (int i = 0; i < cameras.length; i++) {
+                Robot.profiler.push(cameras[i].inputs.name);
                 var result = cameras[i].getEstimatedGlobalPose(getPose());
                 if (result.isPresent()) {
                     if (DriverStation.isAutonomous() && result.get().targetsUsed.size() < 2) {
@@ -288,20 +294,25 @@ public class Swerve extends SubsystemBase {
                     swerveOdometry.addVisionMeasurement(result.get().estimatedPose.toPose2d(),
                         Timer.getFPGATimestamp() - cameras[i].latency());
                 }
+                Robot.profiler.pop();
             }
+            Robot.profiler.pop();
         }
         Robot.profiler.swap("update_shuffleboard");
-
+        Robot.profiler.push("field");
         field.setRobotPose(getPose());
+        Robot.profiler.swap("apriltag");
         aprilTagTarget
             .setBoolean(Arrays.asList(cameraSeesTarget).stream().anyMatch(val -> val == true));
 
+        Robot.profiler.swap("dist-to-speaker");
         SmartDashboard.putNumber("Distance to Speaker",
             FieldConstants.allianceFlip(FieldConstants.Speaker.centerSpeakerOpening)
                 .getTranslation().minus(getPose().getTranslation()).getNorm());
-
+        Robot.profiler.swap("simple");
         SmartDashboard.putBoolean("Has Initialized", hasInitialized);
         SmartDashboard.putNumber("Gyro Yaw", getGyroYaw().getDegrees());
+        Robot.profiler.pop();
         Robot.profiler.pop();
         Robot.profiler.pop();
     }

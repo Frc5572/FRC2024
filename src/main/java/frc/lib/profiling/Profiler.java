@@ -87,4 +87,9 @@ public sealed interface Profiler permits EmptyProfiler, LoggingProfiler, Validat
      * Write profile data to a file.
      */
     void save();
+
+    /**
+     * Reset logger.
+     */
+    void reset();
 }

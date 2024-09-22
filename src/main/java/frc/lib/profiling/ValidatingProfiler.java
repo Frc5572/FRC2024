@@ -133,4 +133,9 @@ public final class ValidatingProfiler implements Profiler {
             }
         }
     }
+
+    @Override
+    public void reset() {
+
+    }
 }

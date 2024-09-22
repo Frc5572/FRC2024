@@ -37,4 +37,9 @@ public final class EmptyProfiler implements Profiler {
     public void pop() {
 
     }
+
+    @Override
+    public void reset() {
+
+    }
 }

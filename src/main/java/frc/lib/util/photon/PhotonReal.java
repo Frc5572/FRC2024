@@ -112,13 +112,15 @@ public class PhotonReal extends PhotonIO implements AutoCloseable {
      */
     public PhotonReal(NetworkTableInstance instance, String cameraName, String cameraIP) {
         super(cameraName);
-        try {
-            uploadSettings(cameraIP + ":5800",
-                new File(Filesystem.getDeployDirectory().getAbsoluteFile(),
-                    "photon-configs/" + cameraName + ".zip"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        new Thread(() -> {
+            try {
+                uploadSettings(cameraIP + ":5800",
+                    new File(Filesystem.getDeployDirectory().getAbsoluteFile(),
+                        "photon-configs/" + cameraName + ".zip"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
         var photonvision_root_table = instance.getTable(kTableName);
         this.cameraTable = photonvision_root_table.getSubTable(cameraName);
         var rawBytesEntry = cameraTable.getRawTopic("rawBytes").subscribe("rawBytes", new byte[] {},

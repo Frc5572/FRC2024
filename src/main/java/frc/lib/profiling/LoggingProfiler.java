@@ -1,18 +1,13 @@
 package frc.lib.profiling;
 
-import java.io.FileOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.LongSupplier;
 import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.ReceiverThread;
-import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import frc.lib.util.LongArrayList;
@@ -45,97 +40,56 @@ public final class LoggingProfiler implements Profiler {
 
     @Override
     public void save() {
-        try {
-            // Determine the filepath of the current logger, except the suffix is "-profile.txt"
-            // instead of ".wpilog".
-            String filePath = null;
-
-            Field dataReceiversField = ReceiverThread.class.getDeclaredField("dataReceivers");
-            dataReceiversField.setAccessible(true);
-            Field receiverThreadField = Logger.class.getDeclaredField("receiverThread");
-            receiverThreadField.setAccessible(true);
-            Field logDateField = WPILOGWriter.class.getDeclaredField("logDate");
-            logDateField.setAccessible(true);
-            Field randomIdentifierField = WPILOGWriter.class.getDeclaredField("randomIdentifier");
-            randomIdentifierField.setAccessible(true);
-            Field timeFormatterField = WPILOGWriter.class.getDeclaredField("timeFormatter");
-            timeFormatterField.setAccessible(true);
-            Field logMatchTextField = WPILOGWriter.class.getDeclaredField("logMatchText");
-            logMatchTextField.setAccessible(true);
-
-            Object dataReceivers = dataReceiversField.get(receiverThreadField.get(null));
-            if (dataReceivers instanceof List<?> dataReceiversList) {
-                for (Object dataReceiver : dataReceiversList) {
-                    if (dataReceiver instanceof WPILOGWriter dataWriter) {
-                        StringBuilder newFilenameBuilder = new StringBuilder();
-                        newFilenameBuilder.append("Log_");
-                        LocalDateTime logDate = (LocalDateTime) logDateField.get(dataWriter);
-                        if (logDate == null) {
-                            Object randomIdentifier = randomIdentifierField.get(dataWriter);
-                            newFilenameBuilder.append(randomIdentifier);
-                        } else {
-                            DateTimeFormatter timeFormatter =
-                                (DateTimeFormatter) timeFormatterField.get(dataWriter);
-                            newFilenameBuilder.append(timeFormatter.format(logDate));
-                        }
-                        Object logMatchText = logMatchTextField.get(dataWriter);
-                        if (logMatchText != null) {
-                            newFilenameBuilder.append("_");
-                            newFilenameBuilder.append(logMatchText);
-                        }
-                        newFilenameBuilder.append("-profile.json");
-                        filePath = newFilenameBuilder.toString();
-                    }
-                }
-            }
-
-            HashMap<String, LocatedInfoJSON> jsons = new HashMap<>();
-            for (var entry : locationInfos.entrySet()) {
-                var value = new LocatedInfoJSON();
-                value.visits = entry.getValue().visits;
-                value.maxTime = entry.getValue().maxTime;
-                value.minTime = entry.getValue().minTime;
-                value.totalTime = entry.getValue().totalTime;
-                value.children = new HashMap<>();
-                jsons.put(entry.getKey(), value);
-            }
-
-            System.out.println("----");
-            for (var entry : jsons.entrySet()) {
-                System.out.println(entry.getKey());
-            }
-            System.out.println("----");
-
-            for (var entry : jsons.entrySet()) {
-                String key = entry.getKey();
-                String[] parts = key.split("\\" + SPLIT_CHAR);
-                if (parts.length < 2) {
-                    continue;
-                }
-                StringBuilder parent = new StringBuilder();
-                for (int i = 0; i < parts.length - 2; i++) {
-                    parent.append(parts[i]);
-                    parent.append(SPLIT_CHAR);
-                }
-                parent.append(parts[parts.length - 2]);
-                System.out.println(parent.toString());
-                jsons.get(parent.toString()).children.put(parts[parts.length - 1],
-                    entry.getValue());
-            }
-
-            // Write to file.
-            try (var outStream = new FileOutputStream(filePath)) {
-                LocatedInfoJSON root = jsons.get("root");
-                JsonFactory factory = new JsonFactory();
-                JsonGenerator generator = factory.createGenerator(outStream);
-                root.writeJSON(generator, timeDivisor, 0, root.totalTime);
-                generator.flush();
-                generator.close();
-            }
-        } catch (IOException | NoSuchFieldException | SecurityException | IllegalArgumentException
-            | IllegalAccessException e) {
-            throw new RuntimeException(e);
+        long start = timeGetter.getAsLong();
+        HashMap<String, LocatedInfoJSON> jsons = new HashMap<>();
+        for (var entry : locationInfos.entrySet()) {
+            var value = new LocatedInfoJSON();
+            value.visits = entry.getValue().visits;
+            value.maxTime = entry.getValue().maxTime;
+            value.minTime = entry.getValue().minTime;
+            value.totalTime = entry.getValue().totalTime;
+            value.children = new HashMap<>();
+            jsons.put(entry.getKey(), value);
         }
+
+        System.out.println("----");
+        for (var entry : jsons.entrySet()) {
+            System.out.println(entry.getKey());
+        }
+        System.out.println("----");
+
+        for (var entry : jsons.entrySet()) {
+            String key = entry.getKey();
+            String[] parts = key.split("\\" + SPLIT_CHAR);
+            if (parts.length < 2) {
+                continue;
+            }
+            StringBuilder parent = new StringBuilder();
+            for (int i = 0; i < parts.length - 2; i++) {
+                parent.append(parts[i]);
+                parent.append(SPLIT_CHAR);
+            }
+            parent.append(parts[parts.length - 2]);
+            System.out.println(parent.toString());
+            jsons.get(parent.toString()).children.put(parts[parts.length - 1], entry.getValue());
+        }
+
+        // Write to file.
+        try {
+            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+            LocatedInfoJSON root = jsons.get("root");
+            JsonFactory factory = new JsonFactory();
+            JsonGenerator generator = factory.createGenerator(outStream);
+            root.writeJSON(generator, timeDivisor, 0, root.totalTime);
+            generator.flush();
+            generator.close();
+            Logger.recordOutput("profile/json", new String(outStream.toByteArray()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        long end = timeGetter.getAsLong();
+        double timeDiff = (end - start) / timeDivisor;
+        Logger.recordOutput("profile/timeToWrite", timeDiff);
     }
 
     @Override
@@ -259,6 +213,14 @@ public final class LoggingProfiler implements Profiler {
             generator.writeEndObject();
             generator.writeEndObject();
         }
+    }
+
+    @Override
+    public void reset() {
+        this.locationInfos.clear();
+        this.fullPath = "";
+        this.path.clear();
+        this.timeList.clear();
     }
 
 }

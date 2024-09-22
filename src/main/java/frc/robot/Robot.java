@@ -48,6 +48,7 @@ public class Robot extends LoggedRobot {
     public static boolean inAuto = false;
     public RobotRunType robotRunType = RobotRunType.kReal;
     private Timer gcTimer = new Timer();
+    private Timer profileTimer = new Timer();
     // We don't want to write empty profiles, so we have a boolean that only becomes true once
     // teleop or auto has started.
     private boolean hasDoneSomething = false;
@@ -130,6 +131,12 @@ public class Robot extends LoggedRobot {
     public void robotPeriodic() {
         if (hasStarted) {
             profiler.endTick();
+            if (profileTimer.advanceIfElapsed(1)) {
+                if (hasDoneSomething) {
+                    profiler.save();
+                    profiler.reset();
+                }
+            }
         } else {
             hasStarted = true;
         }
@@ -158,15 +165,7 @@ public class Robot extends LoggedRobot {
     }
 
     @Override
-    public void disabledInit() {
-        if (hasStarted) {
-            profiler.endTick();
-            if (hasDoneSomething) {
-                profiler.save();
-            }
-            profiler.startTick();
-        }
-    }
+    public void disabledInit() {}
 
     @Override
     public void disabledPeriodic() {}
