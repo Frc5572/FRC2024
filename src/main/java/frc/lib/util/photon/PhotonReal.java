@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -104,6 +105,8 @@ public class PhotonReal extends PhotonIO implements AutoCloseable {
         }
     }
 
+    private AtomicBoolean isPhotonOk = new AtomicBoolean(false);
+
     /**
      * Constructs a PhotonReal from a root table.
      *
@@ -113,12 +116,18 @@ public class PhotonReal extends PhotonIO implements AutoCloseable {
     public PhotonReal(NetworkTableInstance instance, String cameraName, String cameraIP) {
         super(cameraName, cameraIP);
         new Thread(() -> {
-            try {
-                uploadSettings(cameraIP + ":5800",
-                    new File(Filesystem.getDeployDirectory().getAbsoluteFile(),
-                        "photon-configs/" + cameraName + ".zip"));
-            } catch (IOException e) {
-                e.printStackTrace();
+            Timer timer = new Timer();
+            while (true) {
+                if (timer.advanceIfElapsed(5.0) && !isPhotonOk.get()) {
+                    try {
+                        uploadSettings(cameraIP + ":5800",
+                            new File(Filesystem.getDeployDirectory().getAbsoluteFile(),
+                                "photon-configs/" + cameraName + ".zip"));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Thread.yield();
             }
         }).start();
         var photonvision_root_table = instance.getTable(kTableName);
@@ -174,6 +183,8 @@ public class PhotonReal extends PhotonIO implements AutoCloseable {
 
         inputs.cameraMatrix = cameraIntrinsicsSubscriber.get(EMPTY);
         inputs.distCoeffs = cameraDistortionSubscriber.get(EMPTY);
+
+        isPhotonOk.set(inputs.distCoeffs.length != 0);
     }
 
     @Override
