@@ -1,5 +1,7 @@
 package frc.lib.util.photon;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
 import org.littletonrobotics.junction.LogTable;
 import org.littletonrobotics.junction.inputs.LoggableInputs;
@@ -89,13 +91,19 @@ public abstract class PhotonIO {
     }
 
     protected final String name;
+    protected final String ip;
 
-    public PhotonIO(String name) {
+    public PhotonIO(String name, String ip) {
         this.name = name;
+        this.ip = ip;
+
     }
 
     public void updateInputs(PhotonInputs inputs) {
         inputs.name = name;
     }
 
+    public boolean uploadSettings(String ip, File file) throws IOException {
+        return false;
+    }
 }
