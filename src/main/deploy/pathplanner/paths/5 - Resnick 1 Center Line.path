@@ -32,35 +32,41 @@
     },
     {
       "anchor": {
-        "x": 8.241359767136025,
-        "y": 0.8508715270400491
+        "x": 8.22619949354389,
+        "y": 0.9105123040299752
       },
       "prevControl": {
-        "x": 7.622968816867052,
-        "y": 0.983796684574503
+        "x": 7.607808543274917,
+        "y": 1.0434374615644293
       },
       "nextControl": {
-        "x": 8.342435281509847,
-        "y": 0.8291450146045546
+        "x": 8.327275007917711,
+        "y": 0.8887857915944807
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.300011519659657,
-        "y": 3.0239088849945692
+        "x": 5.784342836291307,
+        "y": 1.7343583982942623
       },
       "prevControl": {
-        "x": 4.126459238243424,
-        "y": 2.1281089103058712
+        "x": 7.27300046149388,
+        "y": 1.170691918848627
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "p123 - shoot p8"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": 151.0202923020712,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -71,7 +77,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 138.9198004178883,
+    "rotation": 145.6196552761552,
     "rotateFast": false
   },
   "reversed": false,

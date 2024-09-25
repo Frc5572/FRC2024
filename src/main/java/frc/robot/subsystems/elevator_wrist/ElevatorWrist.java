@@ -9,6 +9,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.GenericEntry;
@@ -87,7 +88,7 @@ public class ElevatorWrist extends SubsystemBase {
         radiusToAngle.put(3.15, 31.7);
         radiusToAngle.put(3.55, 31.3);
         radiusToAngle.put(3.95, 26.3);
-        // radiusToAngle.put(4.3, 27.75);
+        // radiusToAngle.put(4.64, 26.7);
         radiusToAngle.put(5.02, 23.9);
         radiusToAngle.put(5.56, 23.2);
 
@@ -244,10 +245,10 @@ public class ElevatorWrist extends SubsystemBase {
     public Rotation2d getAngleFromDistance(Pose2d position) {
         Pose2d speakerPos =
             FieldConstants.allianceFlip(FieldConstants.Speaker.centerSpeakerOpening);
-        double distFromSpeaker =
-            position.getTranslation().minus(speakerPos.getTranslation()).getNorm();
-        SmartDashboard.putNumber("Dist from speaker", distFromSpeaker);
-        return Rotation2d.fromDegrees(radiusToAngle.get(distFromSpeaker));
+        Translation2d distFromSpeaker =
+            position.getTranslation().minus(speakerPos.getTranslation());
+        double angle = radiusToAngle.get(distFromSpeaker.getNorm());
+        return Rotation2d.fromDegrees(angle);
     }
 
     /**

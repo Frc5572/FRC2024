@@ -1,5 +1,7 @@
 package frc.lib.util.photon;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
@@ -14,6 +16,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lib.util.photon.PhotonIO.PhotonInputs;
@@ -26,6 +29,7 @@ public class PhotonCameraWrapper {
     public PhotonIO io;
     public PhotonInputs inputs = new PhotonInputs();
     public PhotonIOPoseEstimator photonPoseEstimator;
+    private double resetTimer = 0;
 
     /**
      * PhotonCamera-based Pose Estimator.
@@ -59,6 +63,16 @@ public class PhotonCameraWrapper {
     public void periodic() {
         this.io.updateInputs(this.inputs);
         Logger.processInputs("PhotonVision/" + inputs.name, inputs);
+        if (this.inputs.distCoeffs.length == 0 && Timer.getFPGATimestamp() - resetTimer > 5) {
+            resetTimer = Timer.getFPGATimestamp();
+            try {
+                this.io.uploadSettings(this.io.ip + ":5800",
+                    new File(Filesystem.getDeployDirectory().getAbsoluteFile(),
+                        "photon-configs/" + inputs.name + ".zip"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**

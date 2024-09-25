@@ -3,48 +3,54 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.357976707567671,
-        "y": 6.6533436211526515
+        "x": 5.784342836291307,
+        "y": 1.7343583982942623
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.2768941009580135,
-        "y": 6.826724261414981
+        "x": 8.024555767421393,
+        "y": 2.2835718910874445
       },
       "isLocked": false,
-      "linkedName": "resnick 2 shoot p1"
+      "linkedName": "p123 - shoot p8"
     },
     {
       "anchor": {
-        "x": 8.32806848712289,
-        "y": 7.414382152707968
+        "x": 8.255803553860629,
+        "y": 2.4570077309168705
       },
       "prevControl": {
-        "x": 6.375803520837811,
-        "y": 7.137241609009157
+        "x": 8.284709527165534,
+        "y": 2.442554744264419
       },
       "nextControl": {
-        "x": 8.563670084488917,
-        "y": 7.4478277945229605
+        "x": 7.825838587382434,
+        "y": 2.6719902141559544
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.744319180946055,
-        "y": 7.019756150424644
+        "x": 5.784342836291307,
+        "y": 4.0323832760341585
       },
       "prevControl": {
-        "x": 7.55065810668294,
-        "y": 7.284098432239799
+        "x": 7.215188514884072,
+        "y": 3.2808279701066456
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "p321 - shoot p4"
+      "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": -160.3128838018742,
+      "rotateFast": true
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -55,13 +61,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -163.32293763849984,
+    "rotation": 145.6196552761552,
     "rotateFast": true
   },
   "reversed": false,
-  "folder": "P321",
+  "folder": "P123",
   "previewStartingState": {
-    "rotation": -150.0,
+    "rotation": 155.0,
     "velocity": 0
   },
   "useDefaultConstraints": true
