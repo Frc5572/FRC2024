@@ -276,6 +276,7 @@ public class Swerve extends SubsystemBase {
                     swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(),
                         robotPose.get().robotPose);
                     hasInitialized = true;
+                    Robot.profiler.pop();
                     break;
                 }
                 Robot.profiler.pop();
@@ -288,9 +289,11 @@ public class Swerve extends SubsystemBase {
                 var result = cameras[i].getEstimatedGlobalPose(getPose());
                 if (result.isPresent()) {
                     if (DriverStation.isAutonomous() && result.get().targetsUsed.size() < 2) {
+                        Robot.profiler.pop();
                         continue;
                     } else if (result.get().targetsUsed.size() == 1
                         && result.get().targetsUsed.get(0).getPoseAmbiguity() > 0.1) {
+                        Robot.profiler.pop();
                         continue;
                     }
                     swerveOdometry.addVisionMeasurement(result.get().estimatedPose.toPose2d(),
