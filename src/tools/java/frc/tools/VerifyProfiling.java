@@ -5,6 +5,8 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -104,6 +106,8 @@ public class VerifyProfiling {
             if (!reachedTerminal) {
                 current.goesTo.add(newCurrent);
                 newCurrent.comesFrom.add(current);
+            } else {
+                reachedTerminal = false;
             }
             current = newCurrent;
         }
@@ -216,10 +220,10 @@ public class VerifyProfiling {
                     .replace(")", "_").replace("/", "_").replace(";", "_") + ".png");
                 try {
                     Files.createDirectories(p.getParent());
-                    Files.write(p, sb.toString().getBytes());
+                    Files.write(p, sb.toString().getBytes(), StandardOpenOption.CREATE);
                     var os = Runtime.getRuntime().exec("dot " + p.toString() + " -Tpng")
                         .getInputStream();
-                    Files.copy(os, p2);
+                    Files.copy(os, p2, StandardCopyOption.REPLACE_EXISTING);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
