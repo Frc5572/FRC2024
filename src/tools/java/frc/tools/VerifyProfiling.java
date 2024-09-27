@@ -5,74 +5,106 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import frc.lib.types.Tuples.Tuple2;
 
 public class VerifyProfiling {
 
+    private static record GraphWalkHistory(int[] lineNoHistory, int currentStackSize,
+        CodeGraphNode currentEntry) {
+        @Override
+        public final boolean equals(Object arg0) {
+            if (arg0 instanceof GraphWalkHistory other) {
+                if (other.currentEntry.lineNo == 0 || this.currentEntry.lineNo == 0) {
+                    return false;
+                }
+                return currentStackSize == other.currentStackSize
+                    && currentEntry.lineNo == other.currentEntry.lineNo;
+            }
+            return false;
+        }
+
+        @Override
+        public final int hashCode() {
+            int hash = 17;
+            hash = hash * 31 + this.currentStackSize;
+            hash = hash * 31 + this.currentEntry.lineNo;
+            return hash;
+        }
+
+        @Override
+        public final String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append("[currentStackSize=");
+            sb.append(currentStackSize);
+            sb.append(",lineNo=");
+            sb.append(currentEntry.lineNo);
+            sb.append("]");
+            return sb.toString();
+        }
+    }
+
+    private static boolean verifyGraph(CodeGraphNode entry, int maxStackSize, int maxHistory) {
+        GraphWalkHistory[] currentPaths =
+            new GraphWalkHistory[] {new GraphWalkHistory(new int[] {}, 0, entry)};
+        for (int _i = 0; _i < maxHistory; _i++) {
+            ArrayList<GraphWalkHistory> newPaths = new ArrayList<>();
+            System.out.print("[");
+            for (int i = 0; i < currentPaths.length; i++) {
+                if (i != 0) {
+                    System.out.print(", ");
+                }
+                System.out.print(currentPaths[i]);
+            }
+            System.out.println("]");
+            for (int i = 0; i < currentPaths.length; i++) {
+                int newStackSize =
+                    currentPaths[i].currentStackSize + currentPaths[i].currentEntry.pushes;
+                int[] newHistory = new int[currentPaths[i].lineNoHistory.length + 1];
+                System.arraycopy(currentPaths[i].lineNoHistory, 0, newHistory, 0,
+                    currentPaths[i].lineNoHistory.length);
+                for (var next : currentPaths[i].currentEntry.goesTo) {
+                    var nextEntry = new GraphWalkHistory(newHistory, newStackSize, next);
+                    if (!newPaths.contains(nextEntry)) {
+                        newPaths.add(nextEntry);
+                    } else {
+                        System.out
+                            .println("skipping adding " + nextEntry + " since already in new");
+                    }
+                }
+            }
+            currentPaths = newPaths.toArray(GraphWalkHistory[]::new);
+        }
+        return true;
+    }
+
     private static class CodeGraphNode {
-        public final int labelNum;
         public final int lineNo;
 
-        public CodeGraphNode(int labelNum, int lineNo) {
-            this.labelNum = labelNum;
+        public CodeGraphNode(int lineNo) {
             this.lineNo = lineNo;
         }
 
         public ArrayList<CodeGraphNode> comesFrom = new ArrayList<>();
         public ArrayList<CodeGraphNode> goesTo = new ArrayList<>();
         public int pushes = 0;
-
-        public String graphviz_name() {
-            return "L" + labelNum;
-        }
-
-        public String graphviz_def() {
-            String push = "(" + pushes + ")";
-            if (lineNo == 0) {
-                return graphviz_name() + " [shape=box,label=\"? " + push + "\"];";
-            }
-            return graphviz_name() + " [shape=box,label=\"Line " + lineNo + " " + push + "\"];";
-        }
-
-        public String graphviz_conn() {
-            StringBuilder sb = new StringBuilder();
-            for (CodeGraphNode to : goesTo) {
-                sb.append(graphviz_name() + " -> " + to.graphviz_name() + ";\n");
-            }
-            return sb.toString();
-        }
     }
 
     private static class EndGraphNode extends CodeGraphNode {
         private EndGraphNode() {
-            super(-1, -1);
+            super(-1);
         }
 
         public static final EndGraphNode INSTANCE = new EndGraphNode();
-
-        @Override
-        public String graphviz_name() {
-            return "return";
-        }
-
-        @Override
-        public String graphviz_def() {
-            return graphviz_name() + " [shape=box,label=\"Return\"];";
-        }
-
-        @Override
-        public String graphviz_conn() {
-            return "";
-        }
     }
 
     private static class MethodWalker extends MethodVisitor {
@@ -90,7 +122,7 @@ public class VerifyProfiling {
         public MethodWalker(String path) {
             super(Opcodes.ASM9);
             this.path = path;
-            this.entry = new CodeGraphNode(numLabels++, 0);
+            this.entry = new CodeGraphNode(0);
             current = this.entry;
         }
 
@@ -102,7 +134,7 @@ public class VerifyProfiling {
         @Override
         public void visitLabel(Label label) {
             CodeGraphNode newCurrent =
-                graph.computeIfAbsent(label, k -> new CodeGraphNode(numLabels++, recentLineNo));
+                graph.computeIfAbsent(label, k -> new CodeGraphNode(recentLineNo));
             if (!reachedTerminal) {
                 current.goesTo.add(newCurrent);
                 newCurrent.comesFrom.add(current);
@@ -139,8 +171,7 @@ public class VerifyProfiling {
                 default:
                     break;
             }
-            CodeGraphNode to =
-                graph.computeIfAbsent(label, k -> new CodeGraphNode(numLabels++, recentLineNo));
+            CodeGraphNode to = graph.computeIfAbsent(label, k -> new CodeGraphNode(recentLineNo));
             to.comesFrom.add(this.current);
             this.current.goesTo.add(to);
         }
@@ -149,13 +180,12 @@ public class VerifyProfiling {
         public void visitLookupSwitchInsn(Label dflt, int[] keys, Label[] labels) {
             this.reachedTerminal = true;
             for (int i = 0; i < labels.length; i++) {
-                CodeGraphNode to = graph.computeIfAbsent(labels[i],
-                    k -> new CodeGraphNode(numLabels++, recentLineNo));
+                CodeGraphNode to =
+                    graph.computeIfAbsent(labels[i], k -> new CodeGraphNode(recentLineNo));
                 to.comesFrom.add(this.current);
                 this.current.goesTo.add(to);
             }
-            CodeGraphNode to =
-                graph.computeIfAbsent(dflt, k -> new CodeGraphNode(numLabels++, recentLineNo));
+            CodeGraphNode to = graph.computeIfAbsent(dflt, k -> new CodeGraphNode(recentLineNo));
             to.comesFrom.add(this.current);
             this.current.goesTo.add(to);
         }
@@ -164,13 +194,12 @@ public class VerifyProfiling {
         public void visitTableSwitchInsn(int min, int max, Label dflt, Label... labels) {
             this.reachedTerminal = true;
             for (int i = 0; i < labels.length; i++) {
-                CodeGraphNode to = graph.computeIfAbsent(labels[i],
-                    k -> new CodeGraphNode(numLabels++, recentLineNo));
+                CodeGraphNode to =
+                    graph.computeIfAbsent(labels[i], k -> new CodeGraphNode(recentLineNo));
                 to.comesFrom.add(this.current);
                 this.current.goesTo.add(to);
             }
-            CodeGraphNode to =
-                graph.computeIfAbsent(dflt, k -> new CodeGraphNode(numLabels++, recentLineNo));
+            CodeGraphNode to = graph.computeIfAbsent(dflt, k -> new CodeGraphNode(recentLineNo));
             to.comesFrom.add(this.current);
             this.current.goesTo.add(to);
         }
@@ -198,35 +227,47 @@ public class VerifyProfiling {
                 current.goesTo.add(EndGraphNode.INSTANCE);
             }
             if (seesPush) {
+                HashMap<Integer, Tuple2<HashSet<Integer>, AtomicInteger>> consolidated =
+                    new HashMap<>();
+                {
+                    Tuple2<HashSet<Integer>, AtomicInteger> ce = consolidated.computeIfAbsent(
+                        entry.lineNo, _k -> new Tuple2<>(new HashSet<>(), new AtomicInteger(0)));
+                    ce._1().addAndGet(entry.pushes);
+                    for (var e : entry.goesTo) {
+                        if(e.lineNo != entry.lineNo) {
+                            ce._0().add(e.lineNo);
+                        }
+                    }
+                }
+                for (var entry : graph.values()) {
+                    Tuple2<HashSet<Integer>, AtomicInteger> ce = consolidated.computeIfAbsent(
+                        entry.lineNo, _k -> new Tuple2<>(new HashSet<>(), new AtomicInteger(0)));
+                    ce._1().addAndGet(entry.pushes);
+                    for (var e : entry.goesTo) {
+                        if(e.lineNo != entry.lineNo) {
+                            ce._0().add(e.lineNo);
+                        }
+                    }
+                }
                 System.out.println(path);
-                StringBuilder sb = new StringBuilder();
-                sb.append("digraph {\n");
-                sb.append(entry.graphviz_def());
-                sb.append('\n');
-                sb.append(EndGraphNode.INSTANCE.graphviz_def());
-                sb.append('\n');
-                for (var entry : graph.values()) {
-                    sb.append(entry.graphviz_def());
-                    sb.append('\n');
+                System.out.println("[");
+                for (var entry : consolidated.entrySet()) {
+                    System.out.println("    ");
+                    System.out.print(entry.getKey());
+                    System.out.println(":(");
+                    System.out.print("        [");
+                    var next = entry.getValue()._0().toArray(Integer[]::new);
+                    for (int i = 0; i < next.length; i++) {
+                        System.out.print(next[i]);
+                        System.out.print(",");
+                    }
+                    System.out.println("],");
+                    System.out.print("        ");
+                    System.out.println(entry.getValue()._1().get());
+                    System.out.println("    )");
                 }
-                sb.append(entry.graphviz_conn());
-                for (var entry : graph.values()) {
-                    sb.append(entry.graphviz_conn());
-                }
-                sb.append("}\n");
-                Path p = Path.of("build/profiling/" + path.replace(".java:", "_").replace("(", "_")
-                    .replace(")", "_").replace("/", "_").replace(";", "_") + ".dot");
-                Path p2 = Path.of("build/profiling/" + path.replace(".java:", "_").replace("(", "_")
-                    .replace(")", "_").replace("/", "_").replace(";", "_") + ".png");
-                try {
-                    Files.createDirectories(p.getParent());
-                    Files.write(p, sb.toString().getBytes(), StandardOpenOption.CREATE);
-                    var os = Runtime.getRuntime().exec("dot " + p.toString() + " -Tpng")
-                        .getInputStream();
-                    Files.copy(os, p2, StandardCopyOption.REPLACE_EXISTING);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                System.out.println("]");
+                // verifyGraph(consolidated.get(0), 10, 200);
             }
         }
 
