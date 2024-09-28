@@ -238,7 +238,8 @@ public class RobotContainer {
             OperatorState.decrement();
         }).ignoringDisable(true));
         new Trigger(() -> OperatorState.getCurrentState() == OperatorState.State.kAmp)
-            .and(noteInIndexer.negate()).debounce(1.0).onTrue(elevatorWrist.homePosition());
+            .and(new Trigger(() -> !this.intake.getIndexerBeamBrakeStatus()).debounce(1.0))
+            .onTrue(elevatorWrist.homePosition());
         // run action based on current state as incremented through operator states list
         operator.a().whileTrue(new SelectCommand<OperatorState.State>(Map.of(
             //
