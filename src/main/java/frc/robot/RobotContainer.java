@@ -229,6 +229,10 @@ public class RobotContainer {
         operator.rightTrigger().and(operator.leftTrigger()).whileTrue(intake.runIndexerMotor(1));
         // set shooter to home preset position
         operator.y().onTrue(elevatorWrist.homePosition());
+        operator.y().and(elevatorWrist.elevatorAtAmp).and(noteInIndexer)
+            .onTrue(intake.runIntakeMotorNonStop(0, -0.2).withTimeout(2.0)
+                .until(new Trigger(() -> !this.intake.getIndexerBeamBrakeStatus()).debounce(.5)));
+
         // increment once through states list to next state
         operator.povRight().onTrue(Commands.runOnce(() -> {
             OperatorState.increment();

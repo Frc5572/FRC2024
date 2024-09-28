@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.util.FieldConstants;
 import frc.robot.Constants;
 import frc.robot.OperatorState;
@@ -68,6 +69,8 @@ public class ElevatorWrist extends SubsystemBase {
         .withPosition(8, 2).withSize(2, 2).getEntry();
 
     private double estimatedWristAngle = 0;
+
+    public Trigger elevatorAtAmp = new Trigger(() -> elevatorAtAmp());
 
     /**
      * Create new ElevatorWrist.
@@ -389,6 +392,16 @@ public class ElevatorWrist extends SubsystemBase {
      */
     public boolean elevatorAtHome() {
         return MathUtil.isNear(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT, getHeight(),
+            3);
+    }
+
+    /**
+     * Check if the elevator is at the AMP position
+     *
+     * @return True if the elevator is AMP
+     */
+    public boolean elevatorAtAmp() {
+        return MathUtil.isNear(Constants.ElevatorWristConstants.SetPoints.AMP_HEIGHT, getHeight(),
             3);
     }
 
