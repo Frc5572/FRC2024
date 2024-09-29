@@ -206,7 +206,8 @@ public class RobotContainer {
         // intake forward
         driver.rightTrigger().whileTrue(CommandFactory.newIntakeCommand(intake, elevatorWrist));
         // intake backward
-        driver.leftTrigger().whileTrue(intake.runIntakeMotorNonStop(-1, -.20));
+        driver.leftTrigger().and(() -> elevatorWrist.getWristAngle().getDegrees() <= 24.0)
+            .whileTrue(intake.runIntakeMotorNonStop(-1, -.20));
 
         /* Operator Buttons */
         // spit note currently in robot through shooter
