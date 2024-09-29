@@ -12,7 +12,7 @@ jobs:
     container: wpilib/roborio-cross-ubuntu:2023-22.04
     steps:
     - uses: actions/checkout@v3
-    - run: apt install update -y
+    - run: apt update -y
     - run: apt install mingw-w64-x86-64-dev -y
     - uses: dtolnay/rust-toolchain@stable
       with:
