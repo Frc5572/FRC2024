@@ -1,0 +1,21 @@
+
+name: Generate Rust Binaries
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-22.04
+    container: wpilib/roborio-cross-ubuntu:2023-22.04
+    steps:
+    - uses: actions/checkout@v3
+    - uses: dtolnay/rust-toolchain@stable
+      with:
+        targets:
+          - x86_64-pc-windows-gnu
+    - run: cargo build --target x86_64-pc-windows-gnu
+      working-directory: src/main/rust
+    - run: find src/main/rust
