@@ -6,4 +6,6 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-choreo-core = { git = "https://github.com/SleipnirGroup/Choreo.git" }
+# choreo-core = { git = "https://github.com/SleipnirGroup/Choreo.git" }
+java-util = { path = "../java-util" }
+jni-sys = "0.4"

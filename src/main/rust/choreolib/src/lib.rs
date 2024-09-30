@@ -1,4 +1,5 @@
+use std::cell::Cell;
 
-fn add(x: i32, y: i32) -> i32 {
-    x + y
+thread_local! {
+    static CURRENT_JVM: Cell<*mut ()> = Cell::new(std::ptr::null_mut());
 }
