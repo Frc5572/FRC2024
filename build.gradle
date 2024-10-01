@@ -161,7 +161,7 @@ gversion {
 }
 
 task(verifyProfiling, dependsOn: "jar", type: JavaExec) {
-    mainClass = "frc.tools.VerifyProfiling"
+    mainClass = "frc.tools.AddProfiling"
     classpath = sourceSets.tools.runtimeClasspath
     systemProperties["java.library.path"] = new File(project.projectDir, "build/jni/release")
 }
