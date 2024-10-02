@@ -127,6 +127,7 @@ jar {
     from sourceSets.main.allSource
     manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    finalizedBy("addProfiling")
 }
 
 // Configure jar and deploy tasks
@@ -160,8 +161,9 @@ gversion {
     indent       = "  "
 }
 
-task(verifyProfiling, dependsOn: "jar", type: JavaExec) {
+task(addProfiling, dependsOn: "jar", type: JavaExec) {
     mainClass = "frc.tools.AddProfiling"
     classpath = sourceSets.tools.runtimeClasspath
     systemProperties["java.library.path"] = new File(project.projectDir, "build/jni/release")
 }
+

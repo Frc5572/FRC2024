@@ -62,9 +62,8 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser = new SendableChooser<>();
     public ComplexWidget autoChooserWidget = mainDriverTab.add("Auto Chooser", autoChooser)
         .withWidget(BuiltInWidgets.kComboBoxChooser).withPosition(4, 6).withSize(3, 2);
-    public GenericEntry operatorState =
-        mainDriverTab.add("Operator State", OperatorState.getCurrentState().displayName)
-            .withWidget(BuiltInWidgets.kTextView).withPosition(8, 0).withSize(3, 2).getEntry();
+    public GenericEntry operatorState = mainDriverTab.add("Operator State", "")
+        .withWidget(BuiltInWidgets.kTextView).withPosition(8, 0).withSize(3, 2).getEntry();
     public GenericEntry operatorManualMode = RobotContainer.mainDriverTab.add("Manual Mode", false)
         .withWidget(BuiltInWidgets.kBooleanBox)
         .withProperties(Map.of("true_color", 0xff00ffff, "false_color", 0xff770000))

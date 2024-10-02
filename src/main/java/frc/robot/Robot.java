@@ -115,7 +115,13 @@ public class Robot extends LoggedRobot {
 
         // Instantiate our RobotContainer. This will perform all our button bindings,
         // and put our autonomous chooser on the dashboard.
+        profiler.startTick();
+        profiler.push("startup");
         robotContainer = new RobotContainer(robotRunType);
+        profiler.pop();
+        profiler.endTick();
+        profileTimer.start();
+        gcTimer.start();
     }
 
     /**
@@ -133,6 +139,7 @@ public class Robot extends LoggedRobot {
             profiler.endTick();
             if (profileTimer.advanceIfElapsed(1)) {
                 if (hasDoneSomething) {
+                    System.out.println("Saving!");
                     profiler.save();
                     profiler.reset();
                 }
