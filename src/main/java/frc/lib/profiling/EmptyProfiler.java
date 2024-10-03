@@ -11,6 +11,9 @@ public final class EmptyProfiler implements Profiler {
      */
     public static final EmptyProfiler INSTANCE = new EmptyProfiler();
 
+    /**
+     * Empty Profiler
+     */
     private EmptyProfiler() {}
 
     @Override

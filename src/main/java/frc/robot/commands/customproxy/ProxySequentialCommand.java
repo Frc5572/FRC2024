@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.function.Supplier;
 import edu.wpi.first.wpilibj2.command.Command;
 
+/**
+ * Proxy Sequential Command
+ */
 public class ProxySequentialCommand extends Command {
     private final Supplier<List<Command>> m_supplier;
     private final List<Command> m_commands = new ArrayList<>();
@@ -14,8 +17,6 @@ public class ProxySequentialCommand extends Command {
     /**
      * Creates a new ProxySequentialCommand that schedules the supplied command when initialized,
      * and ends when it is no longer scheduled. Useful for lazily creating commands at runtime.
-     *
-     * Supplier<List<String>> str = () -> new ArrayList<>();
      *
      * @param supplier the command supplier
      */

@@ -36,7 +36,7 @@ public class CommandFactory {
      * Wrist follows the speaker until it is met, then it shoots
      *
      * @param shooter Shooter subsystem
-     * @param intake Intake subsystem
+     * @param indexer Indexer subsystem
      * @return Returns a command
      */
     public static Command shootSpeaker(Shooter shooter, Indexer indexer) {
@@ -51,6 +51,7 @@ public class CommandFactory {
      *
      * @param shooter Shooter subsystem
      * @param intake Intake subsystem
+     * @param indexer Indexer Subsystem
      * @return Returns a command
      */
     public static Command passThroughShoot(Shooter shooter, Intake intake, Indexer indexer) {
@@ -65,7 +66,7 @@ public class CommandFactory {
      * Command to spit out the notes
      *
      * @param shooter Shooter Subsystem
-     * @param intake Intake Subsystem
+     * @param indexer Indexer Subsystem
      * @return Command
      */
     public static Command spit(Shooter shooter, Indexer indexer) {
@@ -76,6 +77,7 @@ public class CommandFactory {
      * Command to run the intake and indexer at the proper speed to intake a note
      *
      * @param intake Intake Subsystem
+     * @param indexer Indexer Subsystem
      * @return Command
      */
     public static Command intakeNote(Intake intake, Indexer indexer) {
@@ -99,6 +101,7 @@ public class CommandFactory {
      * New intake command to prevent intaking past the intake when the elevator isn't home
      *
      * @param intake Intake Subsystem
+     * @param indexer Indexer Subsystem
      * @param elevatorWrist Elevator Wrist Subsystem
      * @return Command
      */
@@ -123,7 +126,7 @@ public class CommandFactory {
          * Command to run the indexer to shoot a note until .25 seconds after the beam brake is no
          * longer broken
          *
-         * @param intake Intake Subsystem
+         * @param indexer Indexer Subsystem
          * @return Command
          */
         public static Command runIndexer(Indexer indexer) {
@@ -136,7 +139,7 @@ public class CommandFactory {
          * Command to run the indexer to shoot a note until .25 seconds after the beam brake is no
          * longer broken
          *
-         * @param intake Intake Subsystem
+         * @param indexer Indexer Subsystem
          * @return Command
          */
         public static Command runIndexer(Indexer indexer, Shooter shooter) {
@@ -147,7 +150,7 @@ public class CommandFactory {
         /**
          * Command to wait for Intake beam brake is tripped
          *
-         * @param intake Intake Subsystem
+         * @param indexer Indexer Subsystem
          * @return Command
          */
         public static Command waitForIntake(Indexer indexer) {

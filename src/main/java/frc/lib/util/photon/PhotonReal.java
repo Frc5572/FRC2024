@@ -28,7 +28,9 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-/** Represents an actual camera that is connected to PhotonVision. Based on {@link PhotonCamera}. */
+/**
+ * Represents an actual camera that is connected to PhotonVision. Based on {@link PhotonCamera}.
+ */
 public class PhotonReal extends PhotonIO implements AutoCloseable {
     public static final String kTableName = "photonvision";
     private static int InstanceCount = 0;
@@ -43,21 +45,33 @@ public class PhotonReal extends PhotonIO implements AutoCloseable {
     private long prevHeartbeatValue = -1;
     private double prevHeartbeatChangeTime = 0;
 
+    /**
+     * Photon Pipeline Result
+     */
     private static class PhotonPipelineResultIntermediate {
         public PhotonPipelineResult result;
         public byte[] rawBytes;
 
+        /**
+         * Photon Pipeline Result
+         */
         public PhotonPipelineResultIntermediate() {
             result = new PhotonPipelineResult();
             rawBytes = new byte[0];
         }
 
+        /**
+         * Photon Pipeline Result
+         */
         public PhotonPipelineResultIntermediate(PhotonPipelineResult result, byte[] rawBytes) {
             this.result = result;
             this.rawBytes = rawBytes;
         }
     }
 
+    /**
+     * Photon Pipeline Result Builder
+     */
     private static class PhotonResultIntermediateBuilder
         implements PacketSerde<PhotonPipelineResultIntermediate> {
 
@@ -81,6 +95,14 @@ public class PhotonReal extends PhotonIO implements AutoCloseable {
 
     }
 
+    /**
+     * Upload Camera Settings
+     *
+     * @param ip Camera IP
+     * @param file Camera Settings file
+     * @return true if settings upload was successful
+     * @throws IOException
+     */
     public boolean uploadSettings(String ip, File file) throws IOException {
         try (final CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpPost postReq = new HttpPost("http://" + ip + "/api/settings");

@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.function.Supplier;
 import edu.wpi.first.wpilibj2.command.Command;
 
+/**
+ * Proxy Parallel Command
+ */
 public class ProxyParallelCommand extends Command {
     private final Supplier<List<Command>> m_supplier;
     private final Map<Command, Boolean> m_commands = new HashMap<>();
@@ -14,8 +17,6 @@ public class ProxyParallelCommand extends Command {
     /**
      * Creates a new ProxyParallelCommand that schedules the supplied command when initialized, and
      * ends when it is no longer scheduled. Useful for lazily creating commands at runtime.
-     *
-     * Supplier<List<String>> str = () -> new ArrayList<>();
      *
      * @param supplier the command supplier
      */

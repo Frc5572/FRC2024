@@ -5,6 +5,9 @@ import java.util.function.BooleanSupplier;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
+/**
+ * Proxy Conditional Command
+ */
 public class ProxyConditionalCommand extends Command {
     private final Command m_onTrue;
     private final Command m_onFalse;

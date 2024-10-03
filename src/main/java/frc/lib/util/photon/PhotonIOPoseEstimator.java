@@ -115,7 +115,6 @@ public class PhotonIOPoseEstimator {
     /**
      * Get the AprilTagFieldLayout being used by the PositionEstimator.
      *
-     * <p>
      * Note: Setting the origin of this layout will affect the results from this class.
      *
      * @return the AprilTagFieldLayout
@@ -127,7 +126,6 @@ public class PhotonIOPoseEstimator {
     /**
      * Set the AprilTagFieldLayout being used by the PositionEstimator.
      *
-     * <p>
      * Note: Setting the origin of this layout will affect the results from this class.
      *
      * @param fieldTags the AprilTagFieldLayout
@@ -140,7 +138,6 @@ public class PhotonIOPoseEstimator {
     /**
      * Get the TargetModel representing the tags being detected. This is used for on-rio multitag.
      *
-     * <p>
      * By default, this is {@link TargetModel#kAprilTag16h5}.
      */
     public TargetModel getTagModel() {
