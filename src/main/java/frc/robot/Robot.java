@@ -163,8 +163,8 @@ public class Robot extends LoggedRobot {
         // anything in the Command-based framework to work.
         profiler.swap("command_scheduler");
         CommandScheduler.getInstance().run();
-        profiler.swap("manual-gc");
         if (gcTimer.advanceIfElapsed(5)) {
+            profiler.swap("manual-gc");
             System.gc();
         }
         profiler.pop();

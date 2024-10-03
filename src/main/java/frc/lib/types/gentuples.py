@@ -39,7 +39,7 @@ def gentuples():
             if(tup % 10 == 1 and tup != 11):
                 nth = "{}st".format(tup)
             if(tup % 10 == 2 and tup != 12):
-                nth = "{}nd".format(tup)
+                nth = "{}{}{}".format(tup, "n", "d")
             if(tup % 10 == 3 and tup != 13):
                 nth = "{}rd".format(tup)
             # IValue interface

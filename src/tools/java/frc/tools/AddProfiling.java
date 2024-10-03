@@ -21,8 +21,10 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+/** Jar file modifier that adds profiling commands */
 public class AddProfiling {
 
+    /** Entrypoint */
     public static void main(String[] args) throws IOException {
         FileSystem fs =
             FileSystems.newFileSystem(Paths.get("build/libs/FRC2024.jar"), Collections.emptyMap());
