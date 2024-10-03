@@ -117,8 +117,6 @@ public class RobotContainer {
         .debounce(0.25, Debouncer.DebounceType.kRising);
     private Trigger noteInIntake = new Trigger(() -> this.intake.getintakeBeamBrakeStatus())
         .debounce(0.25, Debouncer.DebounceType.kRising);
-    private Trigger mannualMode = new Trigger(() -> OperatorState.manualModeEnabled());
-    private Trigger atHome = new Trigger(() -> elevatorWrist.elevatorAtHome());
 
     /**
      */
@@ -132,18 +130,19 @@ public class RobotContainer {
              * Camera Order: 0 - Front Left 1 - Front RIght 2 - Back Left 3 - Back Right
              */
             new PhotonCameraWrapper[] {
-                new PhotonCameraWrapper(
-                    new PhotonReal(Constants.CameraConstants.FrontLeftFacingCamera.CAMERA_NAME,
-                        Constants.CameraConstants.FrontLeftFacingCamera.CAMERA_IP),
-                    Constants.CameraConstants.FrontLeftFacingCamera.KCAMERA_TO_ROBOT),
+                // new PhotonCameraWrapper(
+                // new PhotonReal(Constants.CameraConstants.FrontLeftFacingCamera.CAMERA_NAME,
+                // Constants.CameraConstants.FrontLeftFacingCamera.CAMERA_IP),
+                // Constants.CameraConstants.FrontLeftFacingCamera.KCAMERA_TO_ROBOT),
                 new PhotonCameraWrapper(
                     new PhotonReal(Constants.CameraConstants.FrontRightFacingCamera.CAMERA_NAME,
                         Constants.CameraConstants.FrontRightFacingCamera.CAMERA_IP),
-                    Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT)};
-        // new PhotonCameraWrapper(
-        // new PhotonReal(Constants.CameraConstants.BackLeftFacingCamera.CAMERA_NAME,
-        // Constants.CameraConstants.BackLeftFacingCamera.CAMERA_IP),
-        // Constants.CameraConstants.BackLeftFacingCamera.KCAMERA_TO_ROBOT)
+                    Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT),
+            // new PhotonCameraWrapper(
+            // new PhotonReal(Constants.CameraConstants.BackLeftFacingCamera.CAMERA_NAME,
+            // Constants.CameraConstants.BackLeftFacingCamera.CAMERA_IP),
+            // Constants.CameraConstants.BackLeftFacingCamera.KCAMERA_TO_ROBOT)
+            };
         // new PhotonCameraWrapper(
         // new PhotonReal(Constants.CameraConstants.BackRightFacingCamera.CAMERA_NAME),
         // Constants.CameraConstants.BackRightFacingCamera.KCAMERA_TO_ROBOT)};
@@ -207,7 +206,8 @@ public class RobotContainer {
         // intake forward
         driver.rightTrigger().whileTrue(CommandFactory.newIntakeCommand(intake, elevatorWrist));
         // intake backward
-        driver.leftTrigger().whileTrue(intake.runIntakeMotorNonStop(-1, -.20));
+        driver.leftTrigger().and(() -> elevatorWrist.getWristAngle().getDegrees() <= 24.0)
+            .whileTrue(intake.runIntakeMotorNonStop(-1, -.20));
 
         /* Operator Buttons */
         // spit note currently in robot through shooter
@@ -230,6 +230,10 @@ public class RobotContainer {
         operator.rightTrigger().and(operator.leftTrigger()).whileTrue(intake.runIndexerMotor(1));
         // set shooter to home preset position
         operator.y().onTrue(elevatorWrist.homePosition());
+        operator.y().and(elevatorWrist.elevatorAtAmp).and(noteInIndexer)
+            .onTrue(intake.runIntakeMotorNonStop(0, -0.2).withTimeout(2.0)
+                .until(new Trigger(() -> !this.intake.getIndexerBeamBrakeStatus()).debounce(.5)));
+
         // increment once through states list to next state
         operator.povRight().onTrue(Commands.runOnce(() -> {
             OperatorState.increment();
@@ -238,6 +242,9 @@ public class RobotContainer {
         operator.povLeft().onTrue(Commands.runOnce(() -> {
             OperatorState.decrement();
         }).ignoringDisable(true));
+        new Trigger(() -> OperatorState.getCurrentState() == OperatorState.State.kAmp)
+            .and(new Trigger(() -> !this.intake.getIndexerBeamBrakeStatus()).debounce(1.0))
+            .onTrue(elevatorWrist.homePosition());
         // run action based on current state as incremented through operator states list
         operator.a().whileTrue(new SelectCommand<OperatorState.State>(Map.of(
             //

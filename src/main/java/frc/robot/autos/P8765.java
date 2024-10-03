@@ -77,7 +77,7 @@ public class P8765 extends SequentialCommandGroup {
         Command part0 = followPath0
             .alongWith(
                 elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-                    Rotation2d.fromDegrees(28.0)).withTimeout(1.5))
+                    Rotation2d.fromDegrees(31.0)).withTimeout(1.5))
             .andThen(Commands.waitSeconds(.1)).andThen(CommandFactory.Auto.runIndexer(intake));
         // .andThen(Commands.either(elevatorWrist.homePosition().withTimeout(.5), Commands.none(),
         // dumpOrNot));

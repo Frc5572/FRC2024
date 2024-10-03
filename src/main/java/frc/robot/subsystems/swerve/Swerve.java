@@ -27,6 +27,7 @@ import frc.lib.util.FieldConstants;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.swerve.SwerveModule;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 
 /**
@@ -105,12 +106,14 @@ public class Swerve extends SubsystemBase {
      */
     public void drive(Translation2d translation, double rotation, boolean fieldRelative,
         boolean isOpenLoop) {
+        Robot.profiler.push("swerve.drive()");
         ChassisSpeeds chassisSpeeds = fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(translation.getX(), translation.getY(),
                 rotation, getFieldRelativeHeading())
             : new ChassisSpeeds(translation.getX(), translation.getY(), rotation);
 
         setModuleStates(chassisSpeeds);
+        Robot.profiler.pop();
     }
 
     /**
@@ -244,20 +247,28 @@ public class Swerve extends SubsystemBase {
 
     @Override
     public void periodic() {
+        Robot.profiler.push("swerve_periodic");
+        Robot.profiler.push("update_inputs");
         swerveIO.updateInputs(inputs);
+        Robot.profiler.swap("update_swerve_mods");
         for (var mod : swerveMods) {
             mod.periodic();
         }
+        Robot.profiler.swap("update_swerve_odometry");
         swerveOdometry.update(getGyroYaw(), getModulePositions());
+        Robot.profiler.swap("process_inputs");
         Logger.processInputs("Swerve", inputs);
+        Robot.profiler.swap("process_cameras");
         for (int i = 0; i < cameras.length; i++) {
             cameras[i].periodic();
             cameraSeesTarget[i] = cameras[i].seesTarget();
         }
-
+        Robot.profiler.swap("do_camera_stuff");
         Logger.recordOutput("/Swerve/hasInitialized", hasInitialized);
         if (!hasInitialized && !DriverStation.isAutonomous()) {
+            Robot.profiler.push("init");
             for (int i = 0; i < cameras.length; i++) {
+                Robot.profiler.push(cameras[i].inputs.name);
                 var robotPose = cameras[i].getInitialPose();
                 Logger.recordOutput("/Swerve/hasInitialPose[" + i + "]", robotPose.isPresent());
 
@@ -265,35 +276,50 @@ public class Swerve extends SubsystemBase {
                     swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(),
                         robotPose.get().robotPose);
                     hasInitialized = true;
+                    Robot.profiler.pop();
                     break;
                 }
+                Robot.profiler.pop();
             }
+            Robot.profiler.pop();
         } else {
+            Robot.profiler.push("update");
             for (int i = 0; i < cameras.length; i++) {
+                Robot.profiler.push(cameras[i].inputs.name);
                 var result = cameras[i].getEstimatedGlobalPose(getPose());
                 if (result.isPresent()) {
                     if (DriverStation.isAutonomous() && result.get().targetsUsed.size() < 2) {
+                        Robot.profiler.pop();
                         continue;
                     } else if (result.get().targetsUsed.size() == 1
                         && result.get().targetsUsed.get(0).getPoseAmbiguity() > 0.1) {
+                        Robot.profiler.pop();
                         continue;
                     }
                     swerveOdometry.addVisionMeasurement(result.get().estimatedPose.toPose2d(),
                         Timer.getFPGATimestamp() - cameras[i].latency());
                 }
+                Robot.profiler.pop();
             }
+            Robot.profiler.pop();
         }
-
+        Robot.profiler.swap("update_shuffleboard");
+        Robot.profiler.push("field");
         field.setRobotPose(getPose());
+        Robot.profiler.swap("apriltag");
         aprilTagTarget
             .setBoolean(Arrays.asList(cameraSeesTarget).stream().anyMatch(val -> val == true));
 
+        Robot.profiler.swap("dist-to-speaker");
         SmartDashboard.putNumber("Distance to Speaker",
             FieldConstants.allianceFlip(FieldConstants.Speaker.centerSpeakerOpening)
                 .getTranslation().minus(getPose().getTranslation()).getNorm());
-
+        Robot.profiler.swap("simple");
         SmartDashboard.putBoolean("Has Initialized", hasInitialized);
         SmartDashboard.putNumber("Gyro Yaw", getGyroYaw().getDegrees());
+        Robot.profiler.pop();
+        Robot.profiler.pop();
+        Robot.profiler.pop();
     }
 
     /**

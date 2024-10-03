@@ -20,9 +20,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.util.FieldConstants;
 import frc.robot.Constants;
 import frc.robot.OperatorState;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 
 /**
@@ -68,6 +70,8 @@ public class ElevatorWrist extends SubsystemBase {
 
     private double estimatedWristAngle = 0;
 
+    public Trigger elevatorAtAmp = new Trigger(() -> elevatorAtAmp());
+
     /**
      * Create new ElevatorWrist.
      */
@@ -101,9 +105,12 @@ public class ElevatorWrist extends SubsystemBase {
 
     @Override
     public void periodic() {
+        Robot.profiler.push("ElevatorWrist periodic");
+        Robot.profiler.push("updateInputs");
         io.updateInputs(inputs);
+        Robot.profiler.swap("processInputs");
         Logger.processInputs("ElevatorWrist", inputs);
-
+        Robot.profiler.swap("PID stuff");
         if (inputs.wristAbsoluteEncRawValue > 0.9) {
             inputs.wristAbsoluteEncRawValue -= 1.0;
         }
@@ -123,23 +130,16 @@ public class ElevatorWrist extends SubsystemBase {
                 + getWristAngleMeasurement().getRotations()
                     * Constants.ElevatorWristConstants.PID.WRIST_LOWPASS;
 
-        SmartDashboard.putNumber("wristRawEncValue", inputs.wristAbsoluteEncRawValue);
-
         wristProfiledPIDController.setSetpoint(wristPIDController.getSetpoint());
 
         Rotation2d calculatedWristAngle = getWristAngle();
 
         double calculatedHeight = getHeight();
 
-        wristAngle.setDouble(calculatedWristAngle.getDegrees());
-        elevatorHeight.setDouble(calculatedHeight);
-
         double wristPIDValue = wristPIDController.calculate(calculatedWristAngle.getRotations());
 
         double profiledWristPIDValue =
             wristProfiledPIDController.calculate(calculatedWristAngle.getRotations());
-        SmartDashboard.putNumber("wristError",
-            Rotation2d.fromRotations(wristPIDController.getPositionError()).getDegrees());
         if (Math.abs(wristPIDController.getPositionError()) > Rotation2d.fromDegrees(10)
             .getRotations()) {
             wristPIDValue = profiledWristPIDValue;
@@ -189,6 +189,15 @@ public class ElevatorWrist extends SubsystemBase {
             io.setWristVoltage(0);
         }
 
+        Robot.profiler.swap("Publish to SmartDashboard");
+        SmartDashboard.putNumber("wristError",
+            Rotation2d.fromRotations(wristPIDController.getPositionError()).getDegrees());
+
+        SmartDashboard.putNumber("wristRawEncValue", inputs.wristAbsoluteEncRawValue);
+
+        wristAngle.setDouble(calculatedWristAngle.getDegrees());
+        elevatorHeight.setDouble(calculatedHeight);
+
         Logger.recordOutput("/ElevatorWrist/Wrist/PID Voltage", elevatorPIDValue);
         Logger.recordOutput("/ElevatorWrist/Wrist/PID setpoint",
             elevatorPIDController.getSetpoint().position);
@@ -212,7 +221,8 @@ public class ElevatorWrist extends SubsystemBase {
         // Logger.recordOutput("/ElevatorWrist/Wrist/Combined Voltage",
         // wristFeedForwardValue + wristPIDValue);
         Logger.recordOutput("/ElevatorWrist/Wrist/Combined Voltage", wristPIDValue);
-
+        Robot.profiler.pop();
+        Robot.profiler.pop();
     }
 
     /**
@@ -268,7 +278,7 @@ public class ElevatorWrist extends SubsystemBase {
      */
     public Command speakerPreset() {
         return goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-            Rotation2d.fromDegrees(34.1)).withTimeout(2);
+            Rotation2d.fromDegrees(37.5)).withTimeout(2);
     }
 
     /**
@@ -382,6 +392,16 @@ public class ElevatorWrist extends SubsystemBase {
      */
     public boolean elevatorAtHome() {
         return MathUtil.isNear(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT, getHeight(),
+            3);
+    }
+
+    /**
+     * Check if the elevator is at the AMP position
+     *
+     * @return True if the elevator is AMP
+     */
+    public boolean elevatorAtAmp() {
+        return MathUtil.isNear(Constants.ElevatorWristConstants.SetPoints.AMP_HEIGHT, getHeight(),
             3);
     }
 
