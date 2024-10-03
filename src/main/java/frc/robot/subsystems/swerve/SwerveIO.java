@@ -14,6 +14,7 @@ public interface SwerveIO {
 
     @AutoLog
     public static class SwerveInputs {
+        public boolean gyroConnected;
         public float yaw;
         public float roll;
         public float pitch;

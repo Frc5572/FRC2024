@@ -3,19 +3,18 @@ package frc.robot.autos;
 import java.util.function.BooleanSupplier;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
-import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.util.FieldConstants;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.commands.CommandFactory;
 import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
+import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
@@ -28,6 +27,7 @@ public class P8765 extends SequentialCommandGroup {
     Swerve swerveDrive;
     ElevatorWrist elevatorWrist;
     Intake intake;
+    Indexer indexer;
     Shooter shooter;
 
     /**
@@ -36,12 +36,15 @@ public class P8765 extends SequentialCommandGroup {
      * @param swerveDrive Swerve Drive Subsystem
      * @param elevatorWrist Elevator Wrist Subsystem
      * @param intake Intake Subsystem
+     * @param indexer Indexer Subsystem
      * @param shooter Shooter Subsystem
      */
-    public P8765(Swerve swerveDrive, ElevatorWrist elevatorWrist, Intake intake, Shooter shooter) {
+    public P8765(Swerve swerveDrive, ElevatorWrist elevatorWrist, Intake intake, Indexer indexer,
+        Shooter shooter) {
         this.swerveDrive = swerveDrive;
         this.elevatorWrist = elevatorWrist;
         this.intake = intake;
+        this.indexer = indexer;
         this.shooter = shooter;
 
         PathPlannerPath path0 = PathPlannerPath.fromChoreoTrajectory("P8765-initial");
@@ -65,65 +68,56 @@ public class P8765 extends SequentialCommandGroup {
         Command followPath3_dump = AutoBuilder.followPath(path3_dump);
         Command followPath4_dump = AutoBuilder.followPath(path4_dump);
 
-
-
-        Trigger noteInIndexer = new Trigger(() -> this.intake.getIndexerBeamBrakeStatus())
-            .debounce(0.25, Debouncer.DebounceType.kRising);
-        Trigger noteInIntake = new Trigger(() -> this.intake.getintakeBeamBrakeStatus())
-            .debounce(0.25, Debouncer.DebounceType.kRising);
-        BooleanSupplier abort = () -> !noteInIndexer.getAsBoolean() && !noteInIntake.getAsBoolean();
+        BooleanSupplier abort = indexer.noteInIndexer.negate().and(intake.noteInIntake.negate());
         BooleanSupplier dumpOrNot = () -> RobotContainer.dumpNotes.getEntry().getBoolean(false);
         double elevatorHeight = 28.0;
         Command part0 = followPath0
             .alongWith(
                 elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
                     Rotation2d.fromDegrees(31.0)).withTimeout(1.5))
-            .andThen(Commands.waitSeconds(.1)).andThen(CommandFactory.Auto.runIndexer(intake));
+            .andThen(Commands.waitSeconds(.1))
+            .andThen(CommandFactory.Auto.runIndexer(indexer).asProxy());
         // .andThen(Commands.either(elevatorWrist.homePosition().withTimeout(.5), Commands.none(),
         // dumpOrNot));
-        Command part1 = followPath1.deadlineWith(CommandFactory.intakeNote(intake),
-            elevatorWrist.homePosition().withTimeout(1.0))
-            .andThen(Commands.either(Commands.none(),
-                Commands.sequence(CommandFactory.intakeNote(intake).alongWith(elevatorWrist
+        Command part1 =
+            followPath1.deadlineWith(elevatorWrist.homePosition().withTimeout(1.0))
+                .andThen(Commands.either(Commands.none(), Commands.sequence(elevatorWrist
                     .followPosition(() -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
                         () -> elevatorWrist.getAngleFromDistance(swerveDrive.getPose()))
-                    .withTimeout(1.5)), CommandFactory.Auto.runIndexer(intake)),
-                abort));
-        Command part2 = followPath2.deadlineWith(CommandFactory.intakeNote(intake),
-            elevatorWrist.homePosition().withTimeout(1.0))
-            .andThen(Commands.either(Commands.none(),
-                Commands.sequence(CommandFactory.intakeNote(intake).alongWith(elevatorWrist
+                    .withTimeout(1.5), CommandFactory.Auto.runIndexer(indexer).asProxy()), abort));
+        Command part2 =
+            followPath2.deadlineWith(elevatorWrist.homePosition().withTimeout(1.0))
+                .andThen(Commands.either(Commands.none(), Commands.sequence(elevatorWrist
                     .followPosition(() -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
                         () -> elevatorWrist.getAngleFromDistance(swerveDrive.getPose()))
-                    .withTimeout(1.5)), CommandFactory.Auto.runIndexer(intake)),
-                abort));
-        Command part3 = followPath3.alongWith(CommandFactory.intakeNote(intake))
+                    .withTimeout(1.5), CommandFactory.Auto.runIndexer(indexer).asProxy()), abort));
+        Command part3 = followPath3
             .andThen(
                 elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
                     Rotation2d.fromDegrees(32.5)).withTimeout(1.5))
-            .andThen(CommandFactory.Auto.runIndexer(intake))
+            .andThen(CommandFactory.Auto.runIndexer(indexer).asProxy())
             .andThen(elevatorWrist.homePosition().withTimeout(.5));
 
 
-        Command part1_dump = followPath1_dump.deadlineWith(CommandFactory.intakeNote(intake))
+        Command part1_dump = followPath1_dump
             .andThen(Commands.either(Commands.none(),
-                Commands.sequence(CommandFactory.intakeNote(intake),
-                    CommandFactory.Auto.runIndexer(intake)),
+                Commands.sequence(Commands.waitUntil(indexer.noteInIndexer),
+                    CommandFactory.Auto.runIndexer(indexer).asProxy()),
                 abort))
             .andThen(elevatorWrist.homePosition().withTimeout(.1));
-        Command part2_dump = followPath2_dump.deadlineWith(CommandFactory.intakeNote(intake))
+        Command part2_dump = followPath2_dump
             .andThen(Commands.either(Commands.none(),
-                Commands.sequence(CommandFactory.intakeNote(intake),
-                    CommandFactory.Auto.runIndexer(intake)),
+                Commands.sequence(Commands.waitUntil(indexer.noteInIndexer),
+                    CommandFactory.Auto.runIndexer(indexer).asProxy()),
                 abort))
             .andThen(elevatorWrist.homePosition().withTimeout(.1));
-        Command part3_dump = followPath3_dump.deadlineWith(CommandFactory.intakeNote(intake))
+        Command part3_dump = followPath3_dump
             .andThen(Commands.either(Commands.none(),
-                Commands.sequence(CommandFactory.intakeNote(intake),
-                    CommandFactory.Auto.runIndexer(intake)),
+                Commands.sequence(Commands.waitUntil(indexer.noteInIndexer),
+                    CommandFactory.Auto.runIndexer(indexer).asProxy()),
                 abort))
             .andThen(elevatorWrist.homePosition().withTimeout(.1));
-        Command part4_dump = followPath4_dump.alongWith(CommandFactory.intakeNote(intake));
+        Command part4_dump = followPath4_dump;
 
         Command wait = Commands.waitSeconds(.01);
         Command resetPosition = Commands.runOnce(() -> {

@@ -12,21 +12,11 @@ public interface IntakeIO {
      */
     @AutoLog
     public static class IntakeInputs {
-        // public double intakeSupplyVoltage;
-        // public double indexerSupplyVoltage;
-        // public double intakeMotorVoltage;
-        // public double indexerMotorVoltage;
-        // public double intakeAmps;
-        // public double indexerAmps;
-        // public double intakeRPM;
-        // public double indexerRPM;
-        public boolean indexerBeamBrake;
         public boolean intakeBeamBrake;
+        public double intakeRPM;
     }
 
     public default void updateInputs(IntakeInputs inputs) {}
 
     public default void setIntakeMotorPercentage(double percent) {}
-
-    public default void setIndexerMotorPercentage(double percent) {}
 }

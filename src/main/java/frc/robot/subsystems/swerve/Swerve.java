@@ -11,6 +11,7 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -23,6 +24,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.util.FieldConstants;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.swerve.SwerveModule;
@@ -43,11 +45,19 @@ public class Swerve extends SubsystemBase {
     private boolean hasInitialized = false;
     private PhotonCameraWrapper[] cameras;
     private Boolean[] cameraSeesTarget = {false, false, false, false};
-
+    private Rotation2d rawGyroRotation = new Rotation2d();
+    private SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
+    private SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[4];
+    private SwerveModulePosition[] lastModulePositions = // For delta tracking
+        new SwerveModulePosition[] {new SwerveModulePosition(), new SwerveModulePosition(),
+            new SwerveModulePosition(), new SwerveModulePosition()};
     private GenericEntry aprilTagTarget = RobotContainer.mainDriverTab.add("See April Tag", false)
         .withWidget(BuiltInWidgets.kBooleanBox)
         .withProperties(Map.of("Color when true", "green", "Color when false", "red"))
         .withPosition(11, 0).withSize(2, 2).getEntry();
+
+    public Trigger seeAprilTag =
+        new Trigger(() -> Arrays.asList(cameraSeesTarget).stream().anyMatch(val -> val == true));
 
     /**
      * Swerve Subsystem
@@ -55,7 +65,6 @@ public class Swerve extends SubsystemBase {
     public Swerve(SwerveIO swerveIO, PhotonCameraWrapper[] cameras) {
         this.swerveIO = swerveIO;
         this.cameras = cameras;
-        fieldOffset = getGyroYaw().getDegrees();
         swerveMods = new SwerveModule[] {
             swerveIO.createSwerveModule(0, Constants.Swerve.Mod0.driveMotorID,
                 Constants.Swerve.Mod0.angleMotorID, Constants.Swerve.Mod0.canCoderID,
@@ -69,6 +78,7 @@ public class Swerve extends SubsystemBase {
             swerveIO.createSwerveModule(3, Constants.Swerve.Mod3.driveMotorID,
                 Constants.Swerve.Mod3.angleMotorID, Constants.Swerve.Mod3.canCoderID,
                 Constants.Swerve.Mod3.angleOffset)};
+        fieldOffset = getGyroYaw().getDegrees();
 
         swerveOdometry = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics,
             getGyroYaw(), getModulePositions(), new Pose2d());
@@ -210,9 +220,26 @@ public class Swerve extends SubsystemBase {
      * @return Current rotation/yaw of gyro as {@link Rotation2d}
      */
     public Rotation2d getGyroYaw() {
-        float yaw = inputs.yaw;
-        return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(-yaw)
-            : Rotation2d.fromDegrees(yaw);
+        // Update gyro angle
+        if (inputs.gyroConnected) {
+            // Use the real gyro angle
+            float yaw = inputs.yaw;
+            rawGyroRotation = (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(-yaw)
+                : Rotation2d.fromDegrees(yaw);
+        } else {
+            // Use the angle delta from the kinematics and module deltas
+            for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
+                modulePositions[moduleIndex] = swerveMods[moduleIndex].getPosition();
+                moduleDeltas[moduleIndex] = new SwerveModulePosition(
+                    modulePositions[moduleIndex].distanceMeters
+                        - lastModulePositions[moduleIndex].distanceMeters,
+                    modulePositions[moduleIndex].angle);
+                lastModulePositions[moduleIndex] = modulePositions[moduleIndex];
+            }
+            Twist2d twist = Constants.Swerve.swerveKinematics.toTwist2d(moduleDeltas);
+            rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
+        }
+        return rawGyroRotation;
     }
 
     /**
@@ -307,8 +334,7 @@ public class Swerve extends SubsystemBase {
         Robot.profiler.push("field");
         field.setRobotPose(getPose());
         Robot.profiler.swap("apriltag");
-        aprilTagTarget
-            .setBoolean(Arrays.asList(cameraSeesTarget).stream().anyMatch(val -> val == true));
+        aprilTagTarget.setBoolean(seeAprilTag.getAsBoolean());
 
         Robot.profiler.swap("dist-to-speaker");
         SmartDashboard.putNumber("Distance to Speaker",

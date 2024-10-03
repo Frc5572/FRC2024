@@ -4,7 +4,9 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.ControlRequest;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -26,6 +28,13 @@ public class SwerveModuleReal implements SwerveModuleIO {
     private StatusSignal<Double> driveMotorSelectedSensorVelocity;
     private StatusSignal<Double> angleMotorSelectedPosition;
     private StatusSignal<Double> absolutePositionAngleEncoder;
+
+    /* drive motor control requests */
+    private final DutyCycleOut driveDutyCycle = new DutyCycleOut(0);
+    private final VelocityVoltage driveVelocity = new VelocityVoltage(0);
+
+    /* angle motor control requests */
+    private final PositionVoltage anglePosition = new PositionVoltage(0);
 
     /** Instantiating motors and Encoders */
     public SwerveModuleReal(int moduleNumber, int driveMotorID, int angleMotorID, int cancoderID,
@@ -117,13 +126,15 @@ public class SwerveModuleReal implements SwerveModuleIO {
     }
 
     @Override
-    public void setAngleMotor(ControlRequest request) {
-        mAngleMotor.setControl(request);
+    public void setAngleMotor(double angle) {
+        mAngleMotor.setControl(anglePosition.withPosition(angle));
     }
 
     @Override
-    public void setDriveMotor(ControlRequest request) {
-        mDriveMotor.setControl(request);
+    public void setDriveMotor(double rpm, double feedforward) {
+        driveVelocity.FeedForward = feedforward;
+        driveVelocity.Velocity = rpm;
+        mDriveMotor.setControl(driveVelocity);
     }
 
     @Override

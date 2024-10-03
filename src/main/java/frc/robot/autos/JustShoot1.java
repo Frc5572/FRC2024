@@ -12,7 +12,7 @@ import frc.lib.util.FieldConstants;
 import frc.robot.Constants;
 import frc.robot.commands.CommandFactory;
 import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
-import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
 
@@ -23,7 +23,7 @@ public class JustShoot1 extends SequentialCommandGroup {
 
     Swerve swerveDrive;
     ElevatorWrist elevatorWrist;
-    Intake intake;
+    Indexer indexer;
     Shooter shooter;
 
     /**
@@ -31,14 +31,14 @@ public class JustShoot1 extends SequentialCommandGroup {
      *
      * @param swerveDrive Swerve Drive Subsystem
      * @param elevatorWrist Elevator Wrist Subsystem
-     * @param intake Intake Subsystem
+     * @param indexer INdexer Subsystem
      * @param shooter Shooter Subsystem
      */
-    public JustShoot1(Swerve swerveDrive, ElevatorWrist elevatorWrist, Intake intake,
+    public JustShoot1(Swerve swerveDrive, ElevatorWrist elevatorWrist, Indexer indexer,
         Shooter shooter) {
         this.swerveDrive = swerveDrive;
         this.elevatorWrist = elevatorWrist;
-        this.intake = intake;
+        this.indexer = indexer;
         this.shooter = shooter;
 
         PathPlannerPath path1 = PathPlannerPath.fromChoreoTrajectory("just shoot 1");
@@ -52,7 +52,7 @@ public class JustShoot1 extends SequentialCommandGroup {
                     .plus(new Transform2d(0, 0, Rotation2d.fromDegrees(180))));
             swerveDrive.resetOdometry(initialState);
         });
-        SequentialCommandGroup part1 = followPath1.andThen(CommandFactory.Auto.runIndexer(intake));
+        SequentialCommandGroup part1 = followPath1.andThen(CommandFactory.Auto.runIndexer(indexer));
 
         SequentialCommandGroup followPaths = part1;
 
