@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
  * of corners start in the lower left moving clockwise. <b>All units in Meters</b> <br>
  * <br>
  *
- * <p>
  * All translations and poses are stored with the origin at the rightmost point on the BLUE ALLIANCE
  * wall.<br>
  * <br>

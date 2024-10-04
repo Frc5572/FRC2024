@@ -3,7 +3,6 @@ package frc.lib.profiling;
 /**
  * Interface supporting profiling calls for measuring and saving runtime performance.
  *
- * <p>
  * Operates on the idea of a "profile stack", which is just a stack of names with associated
  * profiling metrics. For instance, the following code
  *
@@ -20,7 +19,6 @@ package frc.lib.profiling;
  * }
  * </pre>
  *
- * <p>
  * will produce a profile with three sections:
  * <ul>
  * <li>{@code root}, which describes the time between {@link #startTick() profiler.startTick()} and
@@ -31,7 +29,6 @@ package frc.lib.profiling;
  * profiler.swap("World")} and {@link #pop() profiler.pop()}.
  * </ul>
  *
- * <p>
  * A call to {@link #save() profiler.save()} would output the performance metrics of these sections
  * in the case of a {@link LoggingProfiler}.
  */

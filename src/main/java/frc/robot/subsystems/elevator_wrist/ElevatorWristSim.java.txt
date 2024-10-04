@@ -1,0 +1,61 @@
+package frc.robot.subsystems.elevator_wrist;
+
+
+import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.SparkAbsoluteEncoder.Type;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.simulation.ElevatorSim;
+import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import frc.robot.Constants;
+
+/**
+ * Elevator and wrist real robot class
+ */
+public class ElevatorWristSim implements ElevatorWristIO {
+
+    private final ElevatorSim elevatorSim =
+        new ElevatorSim(DCMotor.getNEO(2), 60, 1, Units.inchesToMeters(2),
+            Units.inchesToMeters(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT),
+            Units.inchesToMeters(Constants.ElevatorWristConstants.SetPoints.MAX_EXTENSION), true,
+            Units.inchesToMeters(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT));
+    private final SingleJointedArmSim wristSim = new SingleJointedArmSim(DCMotor.getNEO(1), 60, 1,
+        1, Constants.ElevatorWristConstants.SetPoints.MIN_ANGLE.getRadians(),
+        Constants.ElevatorWristConstants.SetPoints.MAX_ANGLE.getRadians(), true,
+        Constants.ElevatorWristConstants.SetPoints.HOME_ANGLE.getRadians());
+
+    public final AbsoluteEncoder wristAbsoluteEnc = wristMotor.getAbsoluteEncoder(Type.kDutyCycle);
+
+
+    /**
+     * Constructor for elevator wrist real class
+     */
+    public ElevatorWristSim() {}
+
+
+    @Override
+    public void updateInputs(ElevatorWristInputs inputs) {
+        elevatorSim.update(Constants.loopPeriodSecs);
+        wristSim.update(Constants.loopPeriodSecs);
+        inputs.rightElevatorRelativeEncRawValue = rightElevatorRelativeEnc.getPosition();
+        inputs.leftElevatorRelativeEncRawValue = leftElevatorRelativeEnc.getPosition();
+        inputs.wristAbsoluteEncRawValue = wristAbsoluteEnc.getPosition();
+        // inputs.elevatorMotorSupplyVoltage = elevatorMotor.getBusVoltage();
+        // inputs.elevatorMotorVoltage = elevatorMotor.getOutputCurrent();
+        // inputs.elevatorMotorTemp = elevatorMotor.getMotorTemperature();
+        // inputs.wristMotorVoltage = wristMotor.getBusVoltage();
+        // inputs.wristMotorAmp = wristMotor.getOutputCurrent();
+        // inputs.wristMotorTemp = wristMotor.getMotorTemperature();
+    }
+
+    @Override
+    public void setElevatorVoltage(double v) {
+        elevatorSim.setInputVoltage(v);
+        // org.littletonrobotics.junction.Logger.recordOutput("elevator/voltage", v);
+    }
+
+    @Override
+    public void setWristVoltage(double v) {
+        wristSim.setInputVoltage(v);
+    }
+}
