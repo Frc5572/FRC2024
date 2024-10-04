@@ -11,13 +11,14 @@ public interface SwerveModuleIO {
         public double driveMotorSelectedSensorVelocity;
         public double angleMotorSelectedPosition;
         public double absolutePositionAngleEncoder;
+        public double[] odometryTimestamps;
         // public double driveMotorTemp;
         // public double angleMotorTemp;
     }
 
     public default void updateInputs(SwerveModuleInputs inputs) {}
 
-    public default void setDriveMotor(double rpm, double feedforward) {}
+    public default void setDriveMotor(double mps) {}
 
     public default void setDriveMotorPower(double power) {}
 

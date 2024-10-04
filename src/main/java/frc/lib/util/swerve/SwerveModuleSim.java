@@ -2,10 +2,13 @@ package frc.lib.util.swerve;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.lib.math.Conversions;
 import frc.robot.Constants;
 
 public class SwerveModuleSim implements SwerveModuleIO {
@@ -15,67 +18,66 @@ public class SwerveModuleSim implements SwerveModuleIO {
     private FlywheelSim turnSim =
         new FlywheelSim(DCMotor.getFalcon500(1), Constants.Swerve.angleGearRatio, 0.004);
 
-    private final Rotation2d turnAbsoluteInitPosition =
-        new Rotation2d(Math.random() * 2.0 * Math.PI);
-
-    private double turnRelativePositionRad = 0.0;
-    private double turnAbsolutePositionRad = Math.random() * 2.0 * Math.PI;
+    private double turnRelativePositionRot = 0.0;
+    private double turnAbsolutePositionRot = Math.random();
     private double driveAppliedVolts = 0.0;
     private double turnAppliedVolts = 0.0;
 
-    private final PIDController driveFeedback;
-    private final PIDController turnFeedback;
+
+    private SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(0.0, 0.13);
+    private PIDController driveFeedback = new PIDController(0.1, 0.0, 0.0);
+    private PIDController turnFeedback = new PIDController(0.05, 0.0, 0.0);
 
     public SwerveModuleSim(int moduleNumber) {
         this.moduleNumber = moduleNumber;
         System.out.println("[Init] Creating ServeModuleSim");
-        driveFeedback = new PIDController(Constants.Swerve.driveKP, Constants.Swerve.driveKI,
-            Constants.Swerve.driveKD);
-        turnFeedback = new PIDController(Constants.Swerve.angleKP, Constants.Swerve.angleKI,
-            Constants.Swerve.angleKD);
-        turnFeedback.enableContinuousInput(-Math.PI, Math.PI);
+        turnFeedback.enableContinuousInput(-0.5, 0.5);
     }
 
     public void updateInputs(SwerveModuleInputs inputs) {
         driveSim.update(Constants.loopPeriodSecs);
         turnSim.update(Constants.loopPeriodSecs);
-
-        double angleDiffRad = turnSim.getAngularVelocityRadPerSec() * Constants.loopPeriodSecs;
-        turnRelativePositionRad += angleDiffRad;
-        turnAbsolutePositionRad += angleDiffRad;
-        while (turnAbsolutePositionRad < 0) {
-            turnAbsolutePositionRad += 2.0 * Math.PI;
+        double angleDiffRot = Units
+            .radiansToRotations(turnSim.getAngularVelocityRadPerSec() * Constants.loopPeriodSecs);
+        turnRelativePositionRot += angleDiffRot;
+        turnAbsolutePositionRot += angleDiffRot;
+        while (turnAbsolutePositionRot < 0) {
+            turnAbsolutePositionRot += 1;
         }
-        while (turnAbsolutePositionRad > 2.0 * Math.PI) {
-            turnAbsolutePositionRad -= 2.0 * Math.PI;
+        while (turnAbsolutePositionRot > 1) {
+            turnAbsolutePositionRot -= 1;
         }
 
-        inputs.driveMotorSelectedPosition = Rotation2d
-            .fromRadians(inputs.driveMotorSelectedPosition
-                + (driveSim.getAngularVelocityRadPerSec() * Constants.loopPeriodSecs))
-            .getRotations();
+        inputs.driveMotorSelectedPosition =
+            inputs.driveMotorSelectedPosition + Units.radiansToRotations(
+                (driveSim.getAngularVelocityRadPerSec() * Constants.loopPeriodSecs));
         inputs.driveMotorSelectedSensorVelocity =
-            Rotation2d.fromRadians(driveSim.getAngularVelocityRadPerSec()).getRotations();
+            Units.radiansPerSecondToRotationsPerMinute(driveSim.getAngularVelocityRadPerSec());
 
-        inputs.angleMotorSelectedPosition =
-            Rotation2d.fromRadians(turnAbsolutePositionRad).getRotations();
-        inputs.absolutePositionAngleEncoder = 0;
+        inputs.angleMotorSelectedPosition = turnRelativePositionRot;
+
+        inputs.absolutePositionAngleEncoder = turnAbsolutePositionRot;
+        inputs.odometryTimestamps = new double[] {Timer.getFPGATimestamp()};
     }
 
-    public void setDriveMotor(double rpm, double feedforward) {
+    public void setDriveMotor(double mps) {
+        double rpm = Conversions.metersPerSecondToRotationPerSecond(mps,
+            Constants.Swerve.wheelCircumference);
         driveFeedback.setSetpoint(rpm);
-        double volts =
-            driveFeedback.calculate(driveSim.getAngularVelocityRadPerSec() / (2 * Math.PI))
-                + feedforward;
-        SmartDashboard.putNumber("rpm/" + moduleNumber, rpm);
-        SmartDashboard.putNumber("ff/" + moduleNumber, feedforward);
-        SmartDashboard.putNumber("volts/" + moduleNumber, volts);
+        double driveFF = driveFeedforward.calculate(mps);
+        SmartDashboard.putNumber("ff/" + moduleNumber, driveFF);
+        double volts = driveFeedback.calculate(mps) + driveFF;
+        if (rpm == 0) {
+            volts = 0;
+        }
+        SmartDashboard.putNumber("Drive volts/" + moduleNumber, volts);
         setDriveVoltage(volts);
     }
 
     public void setAngleMotor(double angle) {
         turnFeedback.setSetpoint(angle);
-        double volts = turnFeedback.calculate(turnAbsolutePositionRad / (2 * Math.PI));
+        double volts = turnFeedback.calculate(turnAbsolutePositionRot);
+        SmartDashboard.putNumber("Angle volts/" + moduleNumber, volts);
         setTurnVoltage(volts);
     }
 

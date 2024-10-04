@@ -50,6 +50,7 @@ import frc.robot.subsystems.shooter.ShooterVortex;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.SwerveIO;
 import frc.robot.subsystems.swerve.SwerveReal;
+import frc.robot.subsystems.swerve.SwerveSim;
 
 
 /**
@@ -136,7 +137,7 @@ public class RobotContainer {
         cameras = new PhotonCameraWrapper[] {new PhotonCameraWrapper(
             new PhotonReal(Constants.CameraConstants.FrontRightFacingCamera.CAMERA_NAME,
                 Constants.CameraConstants.FrontRightFacingCamera.CAMERA_IP),
-            Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT),};
+            Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT)};
 
         switch (runtimeType) {
             case kReal:
@@ -147,7 +148,7 @@ public class RobotContainer {
                 elevatorWrist = new ElevatorWrist(new ElevatorWristReal(), operator);
                 break;
             case kSimulation:
-                s_Swerve = new Swerve(new SwerveIO() {}, cameras);
+                s_Swerve = new Swerve(new SwerveSim(), cameras);
                 shooter = new Shooter(new ShooterSim());
                 intake = new Intake(new IntakeIOSim());
                 indexer = new Indexer(new IndexerIOSim());

@@ -1,7 +1,6 @@
 package frc.lib.util.swerve;
 
 import org.littletonrobotics.junction.Logger;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -20,10 +19,6 @@ public class SwerveModule {
 
     private SwerveModuleIO io;
     private SwerveModuleInputsAutoLogged inputs = new SwerveModuleInputsAutoLogged();
-
-    private final SimpleMotorFeedforward driveFeedForward = new SimpleMotorFeedforward(
-        Constants.Swerve.driveKS, Constants.Swerve.driveKV, Constants.Swerve.driveKA);
-
 
     /**
      * Swerve Module
@@ -86,10 +81,7 @@ public class SwerveModule {
             double power = desiredState.speedMetersPerSecond / Constants.Swerve.maxSpeed;
             io.setDriveMotorPower(power);
         } else {
-            double driveRPM = Conversions.metersPerSecondToRotationPerSecond(
-                desiredState.speedMetersPerSecond, Constants.Swerve.wheelCircumference);
-            double driveFF = driveFeedForward.calculate(desiredState.speedMetersPerSecond);
-            io.setDriveMotor(driveRPM, driveFF);
+            io.setDriveMotor(desiredState.speedMetersPerSecond);
         }
     }
 

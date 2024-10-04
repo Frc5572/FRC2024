@@ -10,6 +10,7 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.geometry.Rotation2d;
+import frc.lib.math.Conversions;
 import frc.robot.Constants;
 
 /**
@@ -103,6 +104,9 @@ public class SwerveModuleReal implements SwerveModuleIO {
         swerveDriveFXConfig.Slot0.kP = Constants.Swerve.driveKP;
         swerveDriveFXConfig.Slot0.kI = Constants.Swerve.driveKI;
         swerveDriveFXConfig.Slot0.kD = Constants.Swerve.driveKD;
+        swerveDriveFXConfig.Slot0.kS = Constants.Swerve.driveKS;
+        swerveDriveFXConfig.Slot0.kV = Constants.Swerve.driveKV;
+        swerveDriveFXConfig.Slot0.kA = Constants.Swerve.driveKA;
 
         /* Open and Closed Loop Ramping */
         swerveDriveFXConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod =
@@ -131,9 +135,11 @@ public class SwerveModuleReal implements SwerveModuleIO {
     }
 
     @Override
-    public void setDriveMotor(double rpm, double feedforward) {
-        driveVelocity.FeedForward = feedforward;
-        driveVelocity.Velocity = rpm;
+    public void setDriveMotor(double mps) {
+        // driveVelocity.FeedForward = feedforward;
+        double driveRPS = Conversions.metersPerSecondToRotationPerSecond(mps,
+            Constants.Swerve.wheelCircumference);
+        driveVelocity.Velocity = driveRPS;
         mDriveMotor.setControl(driveVelocity);
     }
 
