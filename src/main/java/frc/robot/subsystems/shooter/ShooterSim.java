@@ -1,5 +1,6 @@
 package frc.robot.subsystems.shooter;
 
+import org.littletonrobotics.junction.LoggedRobot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
@@ -37,8 +38,8 @@ public class ShooterSim implements ShooterIO {
 
     @Override
     public void updateInputs(ShooterIOInputsAutoLogged inputs) {
-        topShooterMotor.update(Constants.loopPeriodSecs);
-        bottomShooterMotor.update(Constants.loopPeriodSecs);
+        topShooterMotor.update(LoggedRobot.defaultPeriodSecs);
+        bottomShooterMotor.update(LoggedRobot.defaultPeriodSecs);
         inputs.topShooterVelocityRotPerMin = topShooterMotor.getAngularVelocityRPM();
         inputs.bottomShooterVelocityRotPerMin = bottomShooterMotor.getAngularVelocityRPM();
     }

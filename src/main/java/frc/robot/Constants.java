@@ -21,8 +21,6 @@ import frc.lib.util.FieldConstants;
  * Constants file.
  */
 public final class Constants {
-
-    public static final double loopPeriodSecs = 0.02;
     /**
      * Stick Deadband
      */

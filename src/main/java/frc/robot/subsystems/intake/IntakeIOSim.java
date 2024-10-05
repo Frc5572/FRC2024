@@ -1,5 +1,6 @@
 package frc.robot.subsystems.intake;
 
+import org.littletonrobotics.junction.LoggedRobot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -30,8 +31,8 @@ public class IntakeIOSim implements IntakeIO {
 
     @Override
     public void updateInputs(IntakeInputs inputs) {
-        intakeSim.update(Constants.loopPeriodSecs);
-        indexerSim.update(Constants.loopPeriodSecs);
+        intakeSim.update(LoggedRobot.defaultPeriodSecs);
+        indexerSim.update(LoggedRobot.defaultPeriodSecs);
 
         inputs.intakeBeamBrake = !intakeBeamBrake.get(); // true == game piece
         inputs.intakeRPM = intakeSim.getAngularVelocityRPM();
