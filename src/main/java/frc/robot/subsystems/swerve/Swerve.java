@@ -11,6 +11,7 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -43,6 +44,13 @@ public class Swerve extends SubsystemBase {
     private boolean hasInitialized = false;
     private PhotonCameraWrapper[] cameras;
     private Boolean[] cameraSeesTarget = {false, false, false, false};
+
+    private Rotation2d rawGyroRotation = new Rotation2d();
+    private SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
+    private SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[4];
+    private SwerveModulePosition[] lastModulePositions = // For delta tracking
+        new SwerveModulePosition[] {new SwerveModulePosition(), new SwerveModulePosition(),
+            new SwerveModulePosition(), new SwerveModulePosition()};
 
     private GenericEntry aprilTagTarget = RobotContainer.mainDriverTab.add("See April Tag", false)
         .withWidget(BuiltInWidgets.kBooleanBox)
@@ -210,9 +218,24 @@ public class Swerve extends SubsystemBase {
      * @return Current rotation/yaw of gyro as {@link Rotation2d}
      */
     public Rotation2d getGyroYaw() {
-        float yaw = inputs.yaw;
-        return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(-yaw)
-            : Rotation2d.fromDegrees(yaw);
+        if (!Robot.isSimulation()) {
+            float yaw = inputs.yaw;
+            return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(-yaw)
+                : Rotation2d.fromDegrees(yaw);
+
+        } else {
+            for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
+                modulePositions[moduleIndex] = swerveMods[moduleIndex].getPosition();
+                moduleDeltas[moduleIndex] = new SwerveModulePosition(
+                    modulePositions[moduleIndex].distanceMeters
+                        - lastModulePositions[moduleIndex].distanceMeters,
+                    modulePositions[moduleIndex].angle);
+                lastModulePositions[moduleIndex] = modulePositions[moduleIndex];
+            }
+            Twist2d twist = Constants.Swerve.swerveKinematics.toTwist2d(moduleDeltas);
+            rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
+            return rawGyroRotation;
+        }
     }
 
     /**

@@ -1,7 +1,6 @@
 package frc.lib.util.swerve;
 
 import org.littletonrobotics.junction.AutoLog;
-import com.ctre.phoenix6.controls.ControlRequest;
 
 /** IO Class for SwerveModule */
 public interface SwerveModuleIO {
@@ -12,20 +11,21 @@ public interface SwerveModuleIO {
         public double driveMotorSelectedSensorVelocity;
         public double angleMotorSelectedPosition;
         public double absolutePositionAngleEncoder;
+        public double[] odometryTimestamps;
         // public double driveMotorTemp;
         // public double angleMotorTemp;
     }
 
     public default void updateInputs(SwerveModuleInputs inputs) {}
 
-    public default void setDriveMotor(ControlRequest request) {}
+    public default void setDriveMotor(double mps) {}
 
-    public default void setAngleMotor(ControlRequest request) {}
+    public default void setDriveMotorPower(double power) {}
+
+    public default void setAngleMotor(double angle) {}
 
     public default void setAngleSelectedSensorPosition(double angle) {}
 
     public default void setPositionAngleMotor(double absolutePosition) {}
-
-
 
 }

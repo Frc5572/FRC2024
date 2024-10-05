@@ -36,16 +36,20 @@ import frc.robot.commands.TurnToAngle;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
 import frc.robot.subsystems.elevator_wrist.ElevatorWristIO;
+import frc.robot.subsystems.elevator_wrist.ElevatorWristIOSim;
 import frc.robot.subsystems.elevator_wrist.ElevatorWristReal;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOFalcon;
+import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
+import frc.robot.subsystems.shooter.ShooterSim;
 import frc.robot.subsystems.shooter.ShooterVortex;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.SwerveIO;
 import frc.robot.subsystems.swerve.SwerveReal;
+import frc.robot.subsystems.swerve.SwerveSim;
 
 
 /**
@@ -155,10 +159,10 @@ public class RobotContainer {
                 elevatorWrist = new ElevatorWrist(new ElevatorWristReal(), operator);
                 break;
             case kSimulation:
-                s_Swerve = new Swerve(new SwerveIO() {}, cameras);
-                shooter = new Shooter(new ShooterIO() {});
-                intake = new Intake(new IntakeIO() {});
-                elevatorWrist = new ElevatorWrist(new ElevatorWristIO() {}, operator);
+                s_Swerve = new Swerve(new SwerveSim(), cameras);
+                shooter = new Shooter(new ShooterSim());
+                intake = new Intake(new IntakeIOSim());
+                elevatorWrist = new ElevatorWrist(new ElevatorWristIOSim(), operator);
                 break;
             default:
                 s_Swerve = new Swerve(new SwerveIO() {}, cameras);
