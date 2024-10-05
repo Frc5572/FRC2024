@@ -14,11 +14,11 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+import choreo.auto.AutoLoop;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.profiling.EmptyProfiler;
 import frc.lib.profiling.LoggingProfiler;
@@ -29,7 +29,8 @@ import frc.lib.profiling.Profiler;
  */
 public class Robot extends LoggedRobot {
     private RobotContainer robotContainer;
-    private Command autoChooser;
+    private AutoLoop autoChooser;
+    private AutoLoop autoloop;
 
     public static Profiler profiler;
 
@@ -180,19 +181,30 @@ public class Robot extends LoggedRobot {
         inAuto = true;
         OperatorState.disableManualMode();
 
-        robotContainer.getAutonomousCommand().schedule();
         autoChooser = robotContainer.getAutonomousCommand();
 
         // schedule the autonomous command (example)
         if (autoChooser != null) {
-            autoChooser.schedule();
+            autoChooser.cmd().schedule();
         }
         profiler.pop();
     }
 
     /** This function is called periodically during autonomous. */
     @Override
-    public void autonomousPeriodic() {}
+    public void autonomousPeriodic() {
+        if (autoChooser != null) {
+            autoChooser.poll();
+        }
+    }
+
+    @Override
+    public void autonomousExit() {
+        if (autoChooser != null) {
+            autoChooser.kill();
+            autoChooser.cmd().cancel();
+        }
+    }
 
     @Override
     public void teleopInit() {
@@ -200,7 +212,8 @@ public class Robot extends LoggedRobot {
         profiler.push("teleopInit()");
         inAuto = false;
         if (autoChooser != null) {
-            autoChooser.cancel();
+            autoChooser.kill();
+            autoChooser.cmd().cancel();
         }
         profiler.pop();
     }

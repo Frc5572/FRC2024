@@ -1,6 +1,7 @@
 package frc.robot;
 
 import java.util.Map;
+import choreo.auto.AutoLoop;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
@@ -13,7 +14,6 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
@@ -23,10 +23,7 @@ import frc.lib.util.FieldConstants;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
-import frc.robot.autos.JustShoot1;
-import frc.robot.autos.P123;
-import frc.robot.autos.P321;
-import frc.robot.autos.P8765;
+import frc.robot.commands.AutoCommandFactory;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.FlashingLEDColor;
 import frc.robot.commands.MovingColorLEDs;
@@ -59,7 +56,7 @@ public class RobotContainer {
     public static ShuffleboardTab mainDriverTab = Shuffleboard.getTab("Main Driver");
 
     // Initialize AutoChooser Sendable
-    private final SendableChooser<Command> autoChooser = new SendableChooser<>();
+    private final SendableChooser<AutoLoop> autoChooser = new SendableChooser<>();
     public ComplexWidget autoChooserWidget = mainDriverTab.add("Auto Chooser", autoChooser)
         .withWidget(BuiltInWidgets.kComboBoxChooser).withPosition(4, 6).withSize(3, 2);
     public GenericEntry operatorState =
@@ -117,6 +114,7 @@ public class RobotContainer {
         .debounce(0.25, Debouncer.DebounceType.kRising);
     private Trigger noteInIntake = new Trigger(() -> this.intake.getintakeBeamBrakeStatus())
         .debounce(0.25, Debouncer.DebounceType.kRising);
+    public AutoLoop autotest;
 
     /**
      */
@@ -167,12 +165,18 @@ public class RobotContainer {
                 elevatorWrist = new ElevatorWrist(new ElevatorWristIO() {}, operator);
         }
 
-        autoChooser.setDefaultOption("Nothing", Commands.none());
-        autoChooser.addOption("P123", new P123(s_Swerve, elevatorWrist, intake, shooter));
-        autoChooser.addOption("P321", new P321(s_Swerve, elevatorWrist, intake, shooter));
-        autoChooser.addOption("P8765", new P8765(s_Swerve, elevatorWrist, intake, shooter));
-        autoChooser.addOption("Just Shoot 1",
-            new JustShoot1(s_Swerve, elevatorWrist, intake, shooter));
+        AutoLoop autotest = AutoCommandFactory.fivePieceAutoTriggerSeg(s_Swerve.test, s_Swerve,
+            intake, shooter, elevatorWrist);
+        AutoLoop p8765 =
+            AutoCommandFactory.p8765(s_Swerve.test, s_Swerve, intake, shooter, elevatorWrist);
+
+        autoChooser.setDefaultOption("Nothing", AutoCommandFactory.none(s_Swerve.test));
+        autoChooser.addOption("P8765", p8765);
+        // autoChooser.addOption("P123", new P123(s_Swerve, elevatorWrist, intake, shooter));
+        // autoChooser.addOption("P321", new P321(s_Swerve, elevatorWrist, intake, shooter));
+        // autoChooser.addOption("P8765", new P8765(s_Swerve, elevatorWrist, intake, shooter));
+        // autoChooser.addOption("Just Shoot 1",
+        // new JustShoot1(s_Swerve, elevatorWrist, intake, shooter));
         // autoChooser.addOption("P32", new P32(s_Swerve, elevatorWrist, intake, shooter));
         // autoChooser.addOption("P675", new P675(s_Swerve, elevatorWrist, intake, shooter));
         // autoChooser.addOption("P3675", new P3675(s_Swerve, elevatorWrist, intake, shooter));
@@ -295,9 +299,9 @@ public class RobotContainer {
      *
      * @return Returns autonomous command selected.
      */
-    public Command getAutonomousCommand() {
+    public AutoLoop getAutonomousCommand() {
         OperatorState.setState(OperatorState.State.kShootWhileMove);
-        Command autocommand = autoChooser.getSelected();
+        AutoLoop autocommand = autoChooser.getSelected();
         return autocommand;
     }
 

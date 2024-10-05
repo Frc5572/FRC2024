@@ -7,6 +7,7 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.PathPlannerLogging;
+import choreo.auto.AutoFactory;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -49,6 +50,8 @@ public class Swerve extends SubsystemBase {
         .withProperties(Map.of("Color when true", "green", "Color when false", "red"))
         .withPosition(11, 0).withSize(2, 2).getEntry();
 
+    public AutoFactory test = new AutoFactory(null, null, null, null, this, null, null);
+
     /**
      * Swerve Subsystem
      */
@@ -78,6 +81,7 @@ public class Swerve extends SubsystemBase {
         AutoBuilder.configureHolonomic(this::getPose, this::resetOdometry, this::getChassisSpeeds,
             this::setModuleStates, Constants.Swerve.pathFollowerConfig, () -> shouldFlipPath(),
             this);
+
 
         RobotContainer.mainDriverTab.add("Field Pos", field).withWidget(BuiltInWidgets.kField)
             .withSize(8, 4) // make the widget 2x1
