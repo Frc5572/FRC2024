@@ -28,7 +28,11 @@ public class SwerveSim implements SwerveIO {
     @Override
     public void updateInputs(SwerveInputs inputs) {
         m_gyroSim.setAngle(getHeading().getDegrees());
-        inputs.yaw = (float) m_gyroSim.getAngle();
+        if (Constants.Swerve.invertGyro) {
+            inputs.yaw = (float) -m_gyroSim.getAngle();
+        } else {
+            inputs.yaw = (float) m_gyroSim.getAngle();
+        }
         // inputs.pitch = 0;
         // inputs.roll = 0;
 

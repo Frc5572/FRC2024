@@ -111,7 +111,7 @@ public class Swerve extends SubsystemBase {
      */
     public void setModuleStates(SwerveModuleState[] desiredStates) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.Swerve.maxSpeed);
-
+        Logger.recordOutput("/Swerve/DesiredStates", desiredStates);
         for (SwerveModule mod : swerveMods) {
             mod.setDesiredState(desiredStates[mod.moduleNumber], false);
         }
@@ -305,6 +305,7 @@ public class Swerve extends SubsystemBase {
         Robot.profiler.swap("simple");
         SmartDashboard.putBoolean("Has Initialized", hasInitialized);
         SmartDashboard.putNumber("Gyro Yaw", getGyroYaw().getDegrees());
+        Logger.recordOutput("/Swerve/ActualStates", getModuleStates());
         Robot.profiler.pop();
         Robot.profiler.pop();
         Robot.profiler.pop();
