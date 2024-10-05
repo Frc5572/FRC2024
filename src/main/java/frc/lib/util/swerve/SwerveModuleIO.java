@@ -16,6 +16,8 @@ public interface SwerveModuleIO {
         // public double angleMotorTemp;
     }
 
+    public default void setModNumber(int number) {}
+
     public default void updateInputs(SwerveModuleInputs inputs) {}
 
     public default void setDriveMotor(double mps) {}

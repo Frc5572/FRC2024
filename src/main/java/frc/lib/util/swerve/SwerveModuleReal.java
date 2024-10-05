@@ -9,7 +9,6 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.math.geometry.Rotation2d;
 import frc.lib.math.Conversions;
 import frc.robot.Constants;
 
@@ -38,8 +37,7 @@ public class SwerveModuleReal implements SwerveModuleIO {
     private final PositionVoltage anglePosition = new PositionVoltage(0);
 
     /** Instantiating motors and Encoders */
-    public SwerveModuleReal(int moduleNumber, int driveMotorID, int angleMotorID, int cancoderID,
-        Rotation2d angleOffset) {
+    public SwerveModuleReal(int driveMotorID, int angleMotorID, int cancoderID) {
 
         angleEncoder = new CANcoder(cancoderID, "canivore");
         mDriveMotor = new TalonFX(driveMotorID, "canivore");

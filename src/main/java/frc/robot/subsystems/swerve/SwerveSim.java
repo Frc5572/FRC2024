@@ -1,28 +1,66 @@
 package frc.robot.subsystems.swerve;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Twist2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.wpilibj.AnalogGyro;
+import edu.wpi.first.wpilibj.simulation.AnalogGyroSim;
 import frc.lib.util.swerve.SwerveModule;
 import frc.lib.util.swerve.SwerveModuleSim;
+import frc.robot.Constants;
 
 /** Real Class for Swerve */
 public class SwerveSim implements SwerveIO {
+
+    private SwerveModule[] swerveMods;
+    private final AnalogGyro m_gyro = new AnalogGyro(0);
+    private final AnalogGyroSim m_gyroSim = new AnalogGyroSim(m_gyro);
+    private Rotation2d rawGyroRotation = new Rotation2d();
+    private SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
+    private SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[4];
+    private SwerveModulePosition[] lastModulePositions = // For delta tracking
+        new SwerveModulePosition[] {new SwerveModulePosition(), new SwerveModulePosition(),
+            new SwerveModulePosition(), new SwerveModulePosition()};
 
     /** Real Swerve Initializer */
     public SwerveSim() {}
 
     @Override
     public void updateInputs(SwerveInputs inputs) {
-        // inputs.yaw = 0;
+        m_gyroSim.setAngle(getHeading().getDegrees());
+        inputs.yaw = (float) m_gyroSim.getAngle();
         // inputs.pitch = 0;
         // inputs.roll = 0;
 
     }
 
+    public SwerveModule createSwerveModule(int moduleNumber) {
+        SwerveModuleSim modIO = new SwerveModuleSim();
+        modIO.setModNumber(moduleNumber);
+        SwerveModule mod =
+            new SwerveModule(moduleNumber, Rotation2d.fromRotations(Math.random()), modIO);
+        return mod;
+    }
+
     @Override
-    public SwerveModule createSwerveModule(int moduleNumber, int driveMotorID, int angleMotorID,
-        int cancoderID, Rotation2d angleOffset) {
-        return new SwerveModule(moduleNumber, driveMotorID, angleMotorID, cancoderID, angleOffset,
-            new SwerveModuleSim(moduleNumber));
+    public SwerveModule[] createModules() {
+        swerveMods = new SwerveModule[] {createSwerveModule(0), createSwerveModule(1),
+            createSwerveModule(2), createSwerveModule(3)};
+        return swerveMods;
+    }
+
+    private Rotation2d getHeading() {
+        for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
+            modulePositions[moduleIndex] = swerveMods[moduleIndex].getPosition();
+            moduleDeltas[moduleIndex] = new SwerveModulePosition(
+                modulePositions[moduleIndex].distanceMeters
+                    - lastModulePositions[moduleIndex].distanceMeters,
+                modulePositions[moduleIndex].angle);
+            lastModulePositions[moduleIndex] = modulePositions[moduleIndex];
+        }
+        Twist2d twist = Constants.Swerve.swerveKinematics.toTwist2d(moduleDeltas);
+        rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
+        return rawGyroRotation;
     }
 
 }

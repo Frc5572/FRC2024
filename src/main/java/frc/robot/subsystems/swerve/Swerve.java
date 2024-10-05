@@ -11,7 +11,6 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -45,13 +44,6 @@ public class Swerve extends SubsystemBase {
     private PhotonCameraWrapper[] cameras;
     private Boolean[] cameraSeesTarget = {false, false, false, false};
 
-    private Rotation2d rawGyroRotation = new Rotation2d();
-    private SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
-    private SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[4];
-    private SwerveModulePosition[] lastModulePositions = // For delta tracking
-        new SwerveModulePosition[] {new SwerveModulePosition(), new SwerveModulePosition(),
-            new SwerveModulePosition(), new SwerveModulePosition()};
-
     private GenericEntry aprilTagTarget = RobotContainer.mainDriverTab.add("See April Tag", false)
         .withWidget(BuiltInWidgets.kBooleanBox)
         .withProperties(Map.of("Color when true", "green", "Color when false", "red"))
@@ -63,20 +55,8 @@ public class Swerve extends SubsystemBase {
     public Swerve(SwerveIO swerveIO, PhotonCameraWrapper[] cameras) {
         this.swerveIO = swerveIO;
         this.cameras = cameras;
+        swerveMods = swerveIO.createModules();
         fieldOffset = getGyroYaw().getDegrees();
-        swerveMods = new SwerveModule[] {
-            swerveIO.createSwerveModule(0, Constants.Swerve.Mod0.driveMotorID,
-                Constants.Swerve.Mod0.angleMotorID, Constants.Swerve.Mod0.canCoderID,
-                Constants.Swerve.Mod0.angleOffset),
-            swerveIO.createSwerveModule(1, Constants.Swerve.Mod1.driveMotorID,
-                Constants.Swerve.Mod1.angleMotorID, Constants.Swerve.Mod1.canCoderID,
-                Constants.Swerve.Mod1.angleOffset),
-            swerveIO.createSwerveModule(2, Constants.Swerve.Mod2.driveMotorID,
-                Constants.Swerve.Mod2.angleMotorID, Constants.Swerve.Mod2.canCoderID,
-                Constants.Swerve.Mod2.angleOffset),
-            swerveIO.createSwerveModule(3, Constants.Swerve.Mod3.driveMotorID,
-                Constants.Swerve.Mod3.angleMotorID, Constants.Swerve.Mod3.canCoderID,
-                Constants.Swerve.Mod3.angleOffset)};
 
         swerveOdometry = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics,
             getGyroYaw(), getModulePositions(), new Pose2d());
@@ -218,24 +198,9 @@ public class Swerve extends SubsystemBase {
      * @return Current rotation/yaw of gyro as {@link Rotation2d}
      */
     public Rotation2d getGyroYaw() {
-        if (!Robot.isSimulation()) {
-            float yaw = inputs.yaw;
-            return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(-yaw)
-                : Rotation2d.fromDegrees(yaw);
-
-        } else {
-            for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
-                modulePositions[moduleIndex] = swerveMods[moduleIndex].getPosition();
-                moduleDeltas[moduleIndex] = new SwerveModulePosition(
-                    modulePositions[moduleIndex].distanceMeters
-                        - lastModulePositions[moduleIndex].distanceMeters,
-                    modulePositions[moduleIndex].angle);
-                lastModulePositions[moduleIndex] = modulePositions[moduleIndex];
-            }
-            Twist2d twist = Constants.Swerve.swerveKinematics.toTwist2d(moduleDeltas);
-            rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
-            return rawGyroRotation;
-        }
+        float yaw = inputs.yaw;
+        return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(-yaw)
+            : Rotation2d.fromDegrees(yaw);
     }
 
     /**

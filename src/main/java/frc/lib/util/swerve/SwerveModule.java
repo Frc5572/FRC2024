@@ -24,13 +24,9 @@ public class SwerveModule {
      * Swerve Module
      *
      * @param moduleNumber Module Number
-     * @param driveMotorID CAN ID of the Drive Motor
-     * @param angleMotorID CAN ID of the Angle Motor
-     * @param cancoderID CAN ID of the CANCoder
      * @param angleOffset Angle Offset of the CANCoder to align the wheels
      */
-    public SwerveModule(int moduleNumber, int driveMotorID, int angleMotorID, int cancoderID,
-        Rotation2d angleOffset, SwerveModuleIO io) {
+    public SwerveModule(int moduleNumber, Rotation2d angleOffset, SwerveModuleIO io) {
         this.io = io;
 
         this.moduleNumber = moduleNumber;

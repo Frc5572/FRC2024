@@ -26,14 +26,19 @@ public class SwerveModuleSim implements SwerveModuleIO {
 
     private SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(0.0, 0.13);
     private PIDController driveFeedback = new PIDController(0.1, 0.0, 0.0);
-    private PIDController turnFeedback = new PIDController(0.05, 0.0, 0.0);
+    private PIDController turnFeedback = new PIDController(0.1, 0.0, 0.0);
 
-    public SwerveModuleSim(int moduleNumber) {
-        this.moduleNumber = moduleNumber;
+    public SwerveModuleSim() {
         System.out.println("[Init] Creating ServeModuleSim");
         turnFeedback.enableContinuousInput(-0.5, 0.5);
     }
 
+    @Override
+    public void setModNumber(int number) {
+        this.moduleNumber = number;
+    }
+
+    @Override
     public void updateInputs(SwerveModuleInputs inputs) {
         driveSim.update(Constants.loopPeriodSecs);
         turnSim.update(Constants.loopPeriodSecs);
