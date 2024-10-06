@@ -3,6 +3,7 @@ package frc.robot;
 import java.util.Map;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -11,8 +12,13 @@ import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -59,6 +65,16 @@ import frc.robot.subsystems.swerve.SwerveSim;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+    public static Mechanism2d mech =
+        new Mechanism2d(Constants.Swerve.trackWidth, Constants.Swerve.wheelBase);
+    public static MechanismRoot2d root =
+        mech.getRoot("climber", Units.inchesToMeters(12), Constants.Swerve.wheelBase / 2);
+    public static MechanismLigament2d m_elevator = root.append(new MechanismLigament2d("elevator",
+        Units.inchesToMeters(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT), 90));
+    public static MechanismLigament2d m_wrist = m_elevator.append(new MechanismLigament2d("wrist",
+        0.5, Constants.ElevatorWristConstants.SetPoints.MIN_ANGLE.getRadians(), 6,
+        new Color8Bit(Color.kPurple)));
+
     /* Shuffleboard */
     public static ShuffleboardTab mainDriverTab = Shuffleboard.getTab("Main Driver");
 
@@ -125,6 +141,7 @@ public class RobotContainer {
     /**
      */
     public RobotContainer(RobotRunType runtimeType) {
+        SmartDashboard.putData("Mech2d", mech);
         numNoteChooser.setDefaultOption("0", 0);
         for (int i = 0; i < 7; i++) {
             numNoteChooser.addOption(String.valueOf(i), i);
@@ -304,5 +321,4 @@ public class RobotContainer {
         Command autocommand = autoChooser.getSelected();
         return autocommand;
     }
-
 }
