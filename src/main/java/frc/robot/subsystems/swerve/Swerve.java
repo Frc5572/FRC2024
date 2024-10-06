@@ -179,10 +179,6 @@ public class Swerve extends SubsystemBase {
         return swerveOdometry.getEstimatedPosition();
     }
 
-    public Rotation2d getFacing() {
-        return getPose().getRotation();
-    }
-
     /**
      * Set the position on the field with given Pose2d
      *

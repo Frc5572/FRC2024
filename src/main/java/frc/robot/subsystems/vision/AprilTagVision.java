@@ -100,7 +100,7 @@ public class AprilTagVision extends SubsystemBase {
 
         if (Double.isInfinite(result.get().rotationalStandardDeviationRadians))
             return new Pose2d(result.get().pointEstimation.getTranslation(),
-                driveSubsystem.getFacing());
+                driveSubsystem.getHeading());
         return result.get().pointEstimation;
     }
 
