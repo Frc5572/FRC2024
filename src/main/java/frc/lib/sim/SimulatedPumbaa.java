@@ -1,6 +1,5 @@
 package frc.lib.sim;
 
-import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -65,32 +64,28 @@ public class SimulatedPumbaa {
         this.hasNote = true;
     }
 
+    public Pose3d getShootFrom() {
+        Translation3d t = new Translation3d(
+            this.getPose().getX() + SHOOTER_FRONT * this.getPose().getRotation().getCos(),
+            this.getPose().getY() + SHOOTER_FRONT * this.getPose().getRotation().getSin(),
+            Units.inchesToMeters(height));
+        Rotation3d r =
+            new Rotation3d(0.0, wristAngle.getRadians(), this.getPose().getRotation().getRadians());
+        return new Pose3d(t, r);
+    }
+
     public void advanceNote(double dt, SimulatedArena arena) {
         Rotation2d yaw = this.getPose().getRotation();
         Rotation2d pitch = this.wristAngle;
-        double x = yaw.getCos() * pitch.getCos();
-        double y = yaw.getSin() * pitch.getCos();
-        Translation3d shooterSpeed = new Translation3d(x, y, pitch.getSin());
-        shooterSpeed = shooterSpeed.times(this.shooterSpeed / SHOOTER_DIV);
-        Logger.recordOutput("Viz/shooterSpeed", shooterSpeed);
-        Logger.recordOutput("Viz/shooterDir", yaw);
         if (hasNote) {
             if (notePosition < 0.85) {
                 notePosition += intake * dt;
             } else if (indexer < -0.2) {
                 this.hasNote = false;
-                arena.shootNote(new Pose3d(this.getPose()), new Translation3d());
+                arena.shootNote(new Pose3d(this.getPose()), yaw, Rotation2d.fromDegrees(0.0), 0.0);
             } else if (notePosition > 1.0) {
                 this.hasNote = false;
-                Translation3d t = new Translation3d(
-                    this.getPose().getX() + SHOOTER_FRONT * this.getPose().getRotation().getCos(),
-                    this.getPose().getY() + SHOOTER_FRONT * this.getPose().getRotation().getSin(),
-                    Units.inchesToMeters(height));
-                Rotation3d r = new Rotation3d(0.0, wristAngle.getRadians(),
-                    this.getPose().getRotation().getRadians());
-                Pose3d fromPose = new Pose3d(t, r);
-                Logger.recordOutput("Viz/fromPose", fromPose);
-                arena.shootNote(fromPose, shooterSpeed);
+                arena.shootNote(this.getShootFrom(), yaw, pitch, this.shooterSpeed / SHOOTER_DIV);
             } else {
                 notePosition += indexer * dt;
             }

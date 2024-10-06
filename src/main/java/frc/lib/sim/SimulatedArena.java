@@ -7,10 +7,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import frc.lib.util.FieldConstants;
@@ -19,16 +20,33 @@ public class SimulatedArena {
 
     private static class ShotNote {
         public Pose3d pose;
-        public Translation3d velocity;
+        ArrayList<Pose3d> trajectory = new ArrayList<>();
+        double t = 0.0;
 
-        public ShotNote(Pose3d pose, Translation3d velocity) {
-            this.pose = pose;
-            this.velocity = velocity;
+        public ShotNote(Pose3d startPose, Rotation2d yaw, Rotation2d pitch, double velocity) {
+            this.pose = startPose;
+            double vz = pitch.getSin() * velocity;
+            double vx = yaw.getCos() * velocity;
+            double vy = yaw.getSin() * velocity;
+            double prevZ = startPose.getZ();
+            for (double t = 0.0; prevZ > 0.0; t += LoggedRobot.defaultPeriodSecs) {
+                double x = startPose.getX() + vx * t;
+                double y = startPose.getY() + vy * t;
+                double z = startPose.getZ() + vz * t - 9.81 * t * t;
+                trajectory.add(new Pose3d(x, y, z, new Rotation3d()));
+                prevZ = z;
+            }
         }
 
         public void update(double dt) {
-            velocity = velocity.minus(new Translation3d(0, 0, 9.81 * dt));
-            pose = pose.plus(new Transform3d(velocity.times(dt), NO_ROT));
+            int index = (int) Math.floor(t / LoggedRobot.defaultPeriodSecs);
+            if (index >= trajectory.size()) {
+                pose = trajectory.get(trajectory.size() - 1);
+                pose = new Pose3d(pose.getX(), pose.getY(), 0.0, new Rotation3d());
+            } else {
+                pose = trajectory.get(index);
+            }
+            t += dt;
         }
     }
 
@@ -37,8 +55,11 @@ public class SimulatedArena {
     private int id = 0;
     private static final Rotation3d NO_ROT = new Rotation3d();
     private List<Pose3d> notes = Stream
-        .concat(Arrays.stream(FieldConstants.StagingLocations.centerlineTranslations),
-            Arrays.stream(FieldConstants.StagingLocations.spikeTranslations))
+        .concat(
+            Stream.concat(Arrays.stream(FieldConstants.StagingLocations.centerlineTranslations),
+                Arrays.stream(FieldConstants.StagingLocations.spikeTranslations)),
+            Arrays.stream(FieldConstants.StagingLocations.spikeTranslations)
+                .map((p) -> FieldConstants.allianceFlip(p)))
         .map((pos) -> new Pose3d(new Translation3d(pos.getX(), pos.getY(), NOTE_HEIGHT), NO_ROT))
         .collect(Collectors.toList());
     public List<ShotNote> shotNotes = new ArrayList<>();
@@ -58,7 +79,6 @@ public class SimulatedArena {
                 for (int i = 0; i < notes.size(); i++) {
                     double distance = notes.get(i).toPose2d().getTranslation()
                         .minus(robot.getPose().getTranslation()).getNorm();
-                    System.out.println(i + ": " + distance);
                     if (distance < 0.6) {
                         notes.remove(i);
                         robot.intakeOneNote();
@@ -82,8 +102,8 @@ public class SimulatedArena {
             this.shotNotes.stream().map((shotNote) -> shotNote.pose).toArray(Pose3d[]::new));
     }
 
-    void shootNote(Pose3d pose, Translation3d velocity) {
-        this.shotNotes.add(new ShotNote(pose, velocity));
+    void shootNote(Pose3d pose, Rotation2d yaw, Rotation2d pitch, double velocity) {
+        this.shotNotes.add(new ShotNote(pose, yaw, pitch, velocity));
     }
 
 }

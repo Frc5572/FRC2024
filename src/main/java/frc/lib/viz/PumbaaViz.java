@@ -1,5 +1,7 @@
 package frc.lib.viz;
 
+import java.util.ArrayList;
+import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -21,6 +23,8 @@ public class PumbaaViz {
     private NoteLocation noteLocation = NoteLocation.None;
     private final SimulatedPumbaa sim;
     private Rotation2d wristAngle;
+    private double height;
+    private Pose2d robotPose = new Pose2d();
 
     private final Rotation3d NO_ROT = new Rotation3d();
     private final Pose3d NO_NOTE_POSE = new Pose3d(0, 0, -100.0, NO_ROT);
@@ -43,6 +47,7 @@ public class PumbaaViz {
     }
 
     public void setElevatorWrist(double height, Rotation2d wristAngle) {
+        this.height = height;
         height =
             Units.inchesToMeters(height - Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT);
         this.wristAngle = wristAngle;
@@ -57,7 +62,7 @@ public class PumbaaViz {
     }
 
     public void setPose(Pose2d pose) {
-
+        this.robotPose = pose;
     }
 
     public static enum NoteLocation {
@@ -79,6 +84,20 @@ public class PumbaaViz {
         }
         this.noteLocation = location;
     }
+
+    private static final double SHOOTER_FRONT = 0.271162;
+
+    public Pose3d getShootFrom() {
+        Translation3d t = new Translation3d(
+            this.robotPose.getX() + SHOOTER_FRONT * this.robotPose.getRotation().getCos(),
+            this.robotPose.getY() + SHOOTER_FRONT * this.robotPose.getRotation().getSin(),
+            Units.inchesToMeters(height));
+        Rotation3d r =
+            new Rotation3d(0.0, wristAngle.getRadians(), this.robotPose.getRotation().getRadians());
+        return new Pose3d(t, r);
+    }
+
+    ArrayList<Pose3d> trajectory = new ArrayList<>();
 
     public void update() {
         if (this.sim != null) {
@@ -105,8 +124,28 @@ public class PumbaaViz {
                 this.notePose = NO_NOTE_POSE;
             }
         }
+        recalculateTrajectory();
+        Logger.recordOutput(prefix + "/trajectory", trajectory.toArray(Pose3d[]::new));
         Logger.recordOutput(prefix + "/components",
             new Pose3d[] {shooterPose, elevatorBottomPose, elevatorTopPose, notePose});
+    }
+
+    private static final double SHOOT_SPEED = 33.0;
+
+    void recalculateTrajectory() {
+        trajectory.clear();
+        Pose3d startPose = getShootFrom();
+        double vz = wristAngle.getSin() * SHOOT_SPEED;
+        double vx = robotPose.getRotation().getCos() * SHOOT_SPEED;
+        double vy = robotPose.getRotation().getSin() * SHOOT_SPEED;
+        double prevZ = startPose.getZ();
+        for (double t = 0.0; prevZ > 0.0; t += LoggedRobot.defaultPeriodSecs) {
+            double x = startPose.getX() + vx * t;
+            double y = startPose.getY() + vy * t;
+            double z = startPose.getZ() + vz * t - 9.81 * t * t;
+            trajectory.add(new Pose3d(x, y, z, new Rotation3d()));
+            prevZ = z;
+        }
     }
 
 }
