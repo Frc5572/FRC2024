@@ -3,9 +3,8 @@ package frc.robot.subsystems.intake;
 import org.littletonrobotics.junction.LoggedRobot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
-import frc.robot.Constants;
+import frc.lib.sim.SimulatedPumbaa;
 
 public class IntakeIOSim implements IntakeIO {
 
@@ -15,18 +14,13 @@ public class IntakeIOSim implements IntakeIO {
     private double intakeAppliedVolts = 0.0;
     private double indexerAppliedVolts = 0.0;
 
-
-    private final DigitalInput indexerBeamBrake =
-        new DigitalInput(Constants.IntakeConstants.INDEXER_BEAM_BRAKE_DIO_PORT);
-    private final DigitalInput intakeBeamBrake =
-        new DigitalInput(Constants.IntakeConstants.INTAKE_BEAM_BRAKE_DIO_PORT);
-
+    private final SimulatedPumbaa pumbaa;
 
     /**
-     * Intake IO Layer with real motors and sensors
+     * Intake IO Layer with simulated motors and sensors
      */
-    public IntakeIOSim() {
-
+    public IntakeIOSim(SimulatedPumbaa pumbaa) {
+        this.pumbaa = pumbaa;
     }
 
     @Override
@@ -34,9 +28,9 @@ public class IntakeIOSim implements IntakeIO {
         intakeSim.update(LoggedRobot.defaultPeriodSecs);
         indexerSim.update(LoggedRobot.defaultPeriodSecs);
 
-        inputs.intakeBeamBrake = !intakeBeamBrake.get(); // true == game piece
+        inputs.intakeBeamBrake = pumbaa.lowerBeamBreak(); // true == game piece
         inputs.intakeRPM = intakeSim.getAngularVelocityRPM();
-        inputs.indexerBeamBrake = !indexerBeamBrake.get(); // true == game piece
+        inputs.indexerBeamBrake = pumbaa.upperBeamBreak(); // true == game piece
         inputs.indexerRPM = indexerSim.getAngularVelocityRPM();
     }
 
@@ -44,11 +38,13 @@ public class IntakeIOSim implements IntakeIO {
     public void setIntakeMotorPercentage(double percent) {
         intakeAppliedVolts = MathUtil.clamp(percent * 12.0, -12.0, 12.0);
         intakeSim.setInputVoltage(intakeAppliedVolts);
+        pumbaa.setIntake(percent);
     }
 
     @Override
     public void setIndexerMotorPercentage(double percent) {
         indexerAppliedVolts = MathUtil.clamp(percent * 12.0, -12.0, 12.0);
         indexerSim.setInputVoltage(indexerAppliedVolts);
+        pumbaa.setIndexer(percent);
     }
 }

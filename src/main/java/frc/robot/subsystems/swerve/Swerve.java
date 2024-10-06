@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.FieldConstants;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.swerve.SwerveModule;
+import frc.lib.viz.PumbaaViz;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
@@ -49,12 +50,15 @@ public class Swerve extends SubsystemBase {
         .withProperties(Map.of("Color when true", "green", "Color when false", "red"))
         .withPosition(11, 0).withSize(2, 2).getEntry();
 
+    private final PumbaaViz viz;
+
     /**
      * Swerve Subsystem
      */
-    public Swerve(SwerveIO swerveIO, PhotonCameraWrapper[] cameras) {
+    public Swerve(SwerveIO swerveIO, PhotonCameraWrapper[] cameras, PumbaaViz viz) {
         this.swerveIO = swerveIO;
         this.cameras = cameras;
+        this.viz = viz;
         swerveMods = swerveIO.createModules();
         fieldOffset = getGyroYaw().getDegrees();
 
@@ -308,6 +312,8 @@ public class Swerve extends SubsystemBase {
         Logger.recordOutput("/Swerve/ActualStates", getModuleStates());
         Robot.profiler.pop();
         Robot.profiler.pop();
+        Robot.profiler.swap("viz");
+        viz.setPose(getPose());
         Robot.profiler.pop();
     }
 

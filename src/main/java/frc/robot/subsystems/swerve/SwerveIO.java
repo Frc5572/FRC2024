@@ -34,6 +34,6 @@ public interface SwerveIO {
         return Optional.empty();
     }
 
-    public default void update(int i, Pose2d pose) {}
+    public default void setPose(Pose2d pose) {}
 
 }

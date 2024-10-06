@@ -1,6 +1,7 @@
 package frc.robot;
 
 import java.util.Map;
+import org.littletonrobotics.junction.LoggedRobot;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
@@ -19,9 +20,12 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.lib.sim.SimulatedArena;
+import frc.lib.sim.SimulatedPumbaa;
 import frc.lib.util.FieldConstants;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonReal;
+import frc.lib.viz.PumbaaViz;
 import frc.robot.Robot.RobotRunType;
 import frc.robot.autos.JustShoot1;
 import frc.robot.autos.P123;
@@ -122,9 +126,21 @@ public class RobotContainer {
     private Trigger noteInIntake = new Trigger(() -> this.intake.getintakeBeamBrakeStatus())
         .debounce(0.25, Debouncer.DebounceType.kRising);
 
+    /** Viz */
+    private final PumbaaViz viz;
+
+    /** Simulation */
+    private final SimulatedArena arena;
+
     /**
      */
     public RobotContainer(RobotRunType runtimeType) {
+        if (runtimeType == RobotRunType.kSimulation) {
+            arena = new SimulatedArena();
+        } else {
+            arena = null;
+        }
+        viz = new PumbaaViz("Viz");
         numNoteChooser.setDefaultOption("0", 0);
         for (int i = 0; i < 7; i++) {
             numNoteChooser.addOption(String.valueOf(i), i);
@@ -154,21 +170,22 @@ public class RobotContainer {
         switch (runtimeType) {
             case kReal:
                 shooter = new Shooter(new ShooterVortex());
-                intake = new Intake(new IntakeIOFalcon());
-                s_Swerve = new Swerve(new SwerveReal(), cameras);
-                elevatorWrist = new ElevatorWrist(new ElevatorWristReal(), operator);
+                intake = new Intake(new IntakeIOFalcon(), viz);
+                s_Swerve = new Swerve(new SwerveReal(), cameras, viz);
+                elevatorWrist = new ElevatorWrist(new ElevatorWristReal(), operator, viz);
                 break;
             case kSimulation:
-                s_Swerve = new Swerve(new SwerveSim(), cameras);
+                SimulatedPumbaa pumbaa = arena.newPumbaa();
+                s_Swerve = new Swerve(new SwerveSim(pumbaa), cameras, viz);
                 shooter = new Shooter(new ShooterSim());
-                intake = new Intake(new IntakeIOSim());
-                elevatorWrist = new ElevatorWrist(new ElevatorWristIOSim(), operator);
+                intake = new Intake(new IntakeIOSim(pumbaa), viz);
+                elevatorWrist = new ElevatorWrist(new ElevatorWristIOSim(), operator, viz);
                 break;
             default:
-                s_Swerve = new Swerve(new SwerveIO() {}, cameras);
+                s_Swerve = new Swerve(new SwerveIO() {}, cameras, viz);
                 shooter = new Shooter(new ShooterIO() {});
-                intake = new Intake(new IntakeIO() {});
-                elevatorWrist = new ElevatorWrist(new ElevatorWristIO() {}, operator);
+                intake = new Intake(new IntakeIO() {}, viz);
+                elevatorWrist = new ElevatorWrist(new ElevatorWristIO() {}, operator, viz);
         }
 
         autoChooser.setDefaultOption("Nothing", Commands.none());
@@ -303,6 +320,22 @@ public class RobotContainer {
         OperatorState.setState(OperatorState.State.kShootWhileMove);
         Command autocommand = autoChooser.getSelected();
         return autocommand;
+    }
+
+    /**
+     * Update viz
+     */
+    public void updateViz() {
+        this.viz.update();
+    }
+
+    /**
+     * Update simulation
+     */
+    public void updateSimulation() {
+        if (this.arena != null) {
+            this.arena.update(LoggedRobot.defaultPeriodSecs);
+        }
     }
 
 }

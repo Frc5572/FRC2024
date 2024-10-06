@@ -1,10 +1,12 @@
 package frc.robot.subsystems.swerve;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.simulation.AnalogGyroSim;
+import frc.lib.sim.SimulatedPumbaa;
 import frc.lib.util.swerve.SwerveModule;
 import frc.lib.util.swerve.SwerveModuleSim;
 import frc.robot.Constants;
@@ -22,8 +24,13 @@ public class SwerveSim implements SwerveIO {
         new SwerveModulePosition[] {new SwerveModulePosition(), new SwerveModulePosition(),
             new SwerveModulePosition(), new SwerveModulePosition()};
 
+    private Pose2d currentPose = new Pose2d();
+    private final SimulatedPumbaa pumbaa;
+
     /** Real Swerve Initializer */
-    public SwerveSim() {}
+    public SwerveSim(SimulatedPumbaa pumbaa) {
+        this.pumbaa = pumbaa;
+    }
 
     @Override
     public void updateInputs(SwerveInputs inputs) {
@@ -63,8 +70,16 @@ public class SwerveSim implements SwerveIO {
             lastModulePositions[moduleIndex] = modulePositions[moduleIndex];
         }
         Twist2d twist = Constants.Swerve.swerveKinematics.toTwist2d(moduleDeltas);
+        this.currentPose = this.currentPose.exp(twist);
+        this.pumbaa.setPose(this.currentPose);
         rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
         return rawGyroRotation;
+    }
+
+    @Override
+    public void setPose(Pose2d pose) {
+        this.currentPose = pose;
+        this.pumbaa.setPose(this.currentPose);
     }
 
 }
