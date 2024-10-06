@@ -1,10 +1,10 @@
 package frc.robot;
 
+import java.util.List;
 import java.util.Map;
 import org.littletonrobotics.junction.LoggedRobot;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -13,12 +13,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
-import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -28,8 +24,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.sim.SimulatedArena;
 import frc.lib.sim.SimulatedPumbaa;
 import frc.lib.util.FieldConstants;
-import frc.lib.util.photon.PhotonCameraWrapper;
-import frc.lib.util.photon.PhotonReal;
 import frc.lib.viz.PumbaaViz;
 import frc.robot.Robot.RobotRunType;
 import frc.robot.autos.JustShoot1;
@@ -59,6 +53,10 @@ import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.SwerveIO;
 import frc.robot.subsystems.swerve.SwerveReal;
 import frc.robot.subsystems.swerve.SwerveSim;
+import frc.robot.subsystems.vision.AprilTagVision;
+import frc.robot.subsystems.vision.AprilTagVisionIOReal;
+import frc.robot.subsystems.vision.ApriltagVisionIOSim;
+import frc.robot.subsystems.vision.PhotonCameraProperties;
 
 
 /**
@@ -68,16 +66,6 @@ import frc.robot.subsystems.swerve.SwerveSim;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-    public static Mechanism2d mech =
-        new Mechanism2d(Constants.Swerve.trackWidth, Constants.Swerve.wheelBase);
-    public static MechanismRoot2d root =
-        mech.getRoot("climber", Units.inchesToMeters(12), Constants.Swerve.wheelBase / 2);
-    public static MechanismLigament2d m_elevator = root.append(new MechanismLigament2d("elevator",
-        Units.inchesToMeters(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT), 90));
-    public static MechanismLigament2d m_wrist = m_elevator.append(new MechanismLigament2d("wrist",
-        0.5, Constants.ElevatorWristConstants.SetPoints.MIN_ANGLE.getRadians(), 6,
-        new Color8Bit(Color.kPurple)));
-
     /* Shuffleboard */
     public static ShuffleboardTab mainDriverTab = Shuffleboard.getTab("Main Driver");
 
@@ -130,10 +118,10 @@ public class RobotContainer {
     private Swerve s_Swerve;
     private Shooter shooter;
     private Intake intake;
-    private PhotonCameraWrapper[] cameras;
+    public AprilTagVision aprilTagVision;
     private ElevatorWrist elevatorWrist;
     private LEDs leds = new LEDs(Constants.LEDConstants.LED_COUNT, Constants.LEDConstants.PWM_PORT);
-    // private PhotonCamera backLeftCamera = new PhotonCamera("back-left");
+    final List<PhotonCameraProperties> camerasProperties = VisionConstants.photonVisionCameras;
 
 
     private Trigger noteInIndexer = new Trigger(() -> this.intake.getIndexerBeamBrakeStatus())
@@ -149,8 +137,8 @@ public class RobotContainer {
 
     /**
      */
-    public RobotContainer(RobotRunType runtimeType) {
-        if (runtimeType == RobotRunType.kSimulation) {
+    public RobotContainer() {
+        if (Robot.CURRENT_ROBOT_MODE == RobotRunType.kSimulation) {
             arena = new SimulatedArena();
         } else {
             arena = null;
@@ -160,47 +148,31 @@ public class RobotContainer {
         for (int i = 0; i < 7; i++) {
             numNoteChooser.addOption(String.valueOf(i), i);
         }
-        cameras =
-            /*
-             * Camera Order: 0 - Front Left 1 - Front RIght 2 - Back Left 3 - Back Right
-             */
-            new PhotonCameraWrapper[] {
-                // new PhotonCameraWrapper(
-                // new PhotonReal(Constants.CameraConstants.FrontLeftFacingCamera.CAMERA_NAME,
-                // Constants.CameraConstants.FrontLeftFacingCamera.CAMERA_IP),
-                // Constants.CameraConstants.FrontLeftFacingCamera.KCAMERA_TO_ROBOT),
-                new PhotonCameraWrapper(
-                    new PhotonReal(Constants.CameraConstants.FrontRightFacingCamera.CAMERA_NAME,
-                        Constants.CameraConstants.FrontRightFacingCamera.CAMERA_IP),
-                    Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT),
-            // new PhotonCameraWrapper(
-            // new PhotonReal(Constants.CameraConstants.BackLeftFacingCamera.CAMERA_NAME,
-            // Constants.CameraConstants.BackLeftFacingCamera.CAMERA_IP),
-            // Constants.CameraConstants.BackLeftFacingCamera.KCAMERA_TO_ROBOT)
-            };
-        // new PhotonCameraWrapper(
-        // new PhotonReal(Constants.CameraConstants.BackRightFacingCamera.CAMERA_NAME),
-        // Constants.CameraConstants.BackRightFacingCamera.KCAMERA_TO_ROBOT)};
-
-        switch (runtimeType) {
+        switch (Robot.CURRENT_ROBOT_MODE) {
             case kReal:
                 shooter = new Shooter(new ShooterVortex());
                 intake = new Intake(new IntakeIOFalcon(), viz);
-                s_Swerve = new Swerve(new SwerveReal(), cameras, viz);
+                s_Swerve = new Swerve(new SwerveReal(), viz);
                 elevatorWrist = new ElevatorWrist(new ElevatorWristReal(), operator, viz);
+                aprilTagVision = new AprilTagVision(new AprilTagVisionIOReal(camerasProperties),
+                    camerasProperties, s_Swerve);
                 break;
             case kSimulation:
                 SimulatedPumbaa pumbaa = arena.newPumbaa();
-                s_Swerve = new Swerve(new SwerveSim(pumbaa), cameras, viz);
+                s_Swerve = new Swerve(new SwerveSim(pumbaa), viz);
                 shooter = new Shooter(new ShooterSim());
                 intake = new Intake(new IntakeIOSim(pumbaa), viz);
                 elevatorWrist = new ElevatorWrist(new ElevatorWristIOSim(), operator, viz);
+                aprilTagVision = new AprilTagVision(new ApriltagVisionIOSim(camerasProperties,
+                    VisionConstants.fieldLayout, s_Swerve::getPose), camerasProperties, s_Swerve);
                 break;
             default:
-                s_Swerve = new Swerve(new SwerveIO() {}, cameras, viz);
+                s_Swerve = new Swerve(new SwerveIO() {}, viz);
                 shooter = new Shooter(new ShooterIO() {});
                 intake = new Intake(new IntakeIO() {}, viz);
                 elevatorWrist = new ElevatorWrist(new ElevatorWristIO() {}, operator, viz);
+                aprilTagVision = new AprilTagVision((inputs) -> {
+                }, camerasProperties, s_Swerve);
         }
 
         autoChooser.setDefaultOption("Nothing", Commands.none());

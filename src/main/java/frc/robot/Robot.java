@@ -46,7 +46,7 @@ public class Robot extends LoggedRobot {
     }
 
     public static boolean inAuto = false;
-    public RobotRunType robotRunType = RobotRunType.kReal;
+    public static RobotRunType CURRENT_ROBOT_MODE = RobotRunType.kReal;
     private Timer gcTimer = new Timer();
     private Timer profileTimer = new Timer();
     // We don't want to write empty profiles, so we have a boolean that only becomes true once
@@ -82,7 +82,7 @@ public class Robot extends LoggedRobot {
             Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
             new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
             setUseTiming(true);
-            robotRunType = RobotRunType.kReal;
+            CURRENT_ROBOT_MODE = RobotRunType.kReal;
         } else {
             String logPath = findReplayLog();
             if (logPath == null) {
@@ -90,18 +90,18 @@ public class Robot extends LoggedRobot {
                     new WPILOGWriter(Filesystem.getOperatingDirectory().getAbsolutePath()));
                 Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
                 setUseTiming(true);
-                robotRunType = RobotRunType.kSimulation;
+                CURRENT_ROBOT_MODE = RobotRunType.kSimulation;
             } else {
                 Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
                 Logger
                     .addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
                 // Save outputs to a new log
                 setUseTiming(false); // Run as fast as possible
-                robotRunType = RobotRunType.kReplay;
+                CURRENT_ROBOT_MODE = RobotRunType.kReplay;
             }
         }
         Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values
-        switch (robotRunType) {
+        switch (CURRENT_ROBOT_MODE) {
             case kReal -> profiler =
                 new LoggingProfiler(() -> Logger.getRealTimestamp(), 1000000.0);
             case kReplay -> profiler = EmptyProfiler.INSTANCE;
@@ -115,7 +115,7 @@ public class Robot extends LoggedRobot {
 
         // Instantiate our RobotContainer. This will perform all our button bindings,
         // and put our autonomous chooser on the dashboard.
-        robotContainer = new RobotContainer(robotRunType);
+        robotContainer = new RobotContainer();
     }
 
     /**
