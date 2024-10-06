@@ -21,8 +21,8 @@ public class SimulatedArena {
     private List<Pose3d> notes = Stream
         .concat(Arrays.stream(FieldConstants.StagingLocations.centerlineTranslations),
             Arrays.stream(FieldConstants.StagingLocations.spikeTranslations))
-        .map((pos) -> new Pose3d(new Translation3d(pos.getX(), pos.getY(), Units.inchesToMeters(2)),
-            NO_ROT))
+        .map((pos) -> new Pose3d(
+            new Translation3d(pos.getX(), pos.getY(), Units.inchesToMeters(1.7)), NO_ROT))
         .collect(Collectors.toList());
 
     public SimulatedPumbaa newPumbaa() {
@@ -33,11 +33,15 @@ public class SimulatedArena {
 
     public void update(double dt) {
         robots: for (SimulatedPumbaa robot : this.robots) {
+            Logger.recordOutput("Viz/Robot" + robot.id, robot.getPose());
             robot.advanceNote(dt, this);
             if (robot.couldIntake()) {
+                System.out.println("checking");
                 for (int i = 0; i < notes.size(); i++) {
-                    if (notes.get(i).toPose2d().minus(robot.getPose()).getTranslation()
-                        .getNorm() < 0.5) {
+                    double distance = notes.get(i).toPose2d().getTranslation()
+                        .minus(robot.getPose().getTranslation()).getNorm();
+                    System.out.println(i + ": " + distance);
+                    if (distance < 0.6) {
                         notes.remove(i);
                         robot.intakeOneNote();
                         continue robots;

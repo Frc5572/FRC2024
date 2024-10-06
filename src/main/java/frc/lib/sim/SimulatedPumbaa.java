@@ -4,7 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 
 public class SimulatedPumbaa {
 
-    private final int id;
+    public final int id;
 
     SimulatedPumbaa(int id) {
         this.id = id;
@@ -43,12 +43,12 @@ public class SimulatedPumbaa {
 
     public void advanceNote(double dt, SimulatedArena arena) {
         if (hasNote) {
-            if (notePosition < 2.0) {
+            if (notePosition < 0.85) {
                 notePosition += intake * dt;
             } else if (indexer < -0.2) {
                 this.hasNote = false;
                 // Spit out back
-            } else if (notePosition > 2.5) {
+            } else if (notePosition > 1.0) {
                 this.hasNote = false;
                 // Spit out front
             } else {
@@ -58,11 +58,11 @@ public class SimulatedPumbaa {
     }
 
     public boolean lowerBeamBreak() {
-        return hasNote && notePosition < 1.8;
+        return hasNote && notePosition < 0.8;
     }
 
     public boolean upperBeamBreak() {
-        return hasNote && notePosition > 2.2 && notePosition < 2.5;
+        return hasNote && notePosition > 0.9 && notePosition < 1.0;
     }
 
 }
