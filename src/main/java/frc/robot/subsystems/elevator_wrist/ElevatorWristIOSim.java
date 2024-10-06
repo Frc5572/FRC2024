@@ -2,9 +2,17 @@ package frc.robot.subsystems.elevator_wrist;
 
 import org.littletonrobotics.junction.LoggedRobot;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import frc.lib.sim.SimulatedPumbaa;
 
 public class ElevatorWristIOSim implements ElevatorWristIO {
+
+    private final SimulatedPumbaa sim;
+
+    public ElevatorWristIOSim(SimulatedPumbaa sim) {
+        this.sim = sim;
+    }
 
     private static final double ELEVATOR_START_HEIGHT =
         frc.robot.Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT;
@@ -94,6 +102,9 @@ public class ElevatorWristIOSim implements ElevatorWristIO {
         double wristMeas = WRIST_M * Units.degreesToRotations(wristCurrentPosition) + WRIST_B;
 
         inputs.wristAbsoluteEncRawValue = wristMeas;
+
+        this.sim.setElevatorWrist(elevatorCurrentPosition,
+            Rotation2d.fromDegrees(wristCurrentPosition));
     }
 
 }

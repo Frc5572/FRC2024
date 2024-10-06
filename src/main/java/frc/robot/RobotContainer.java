@@ -155,7 +155,6 @@ public class RobotContainer {
         } else {
             arena = null;
         }
-        viz = new PumbaaViz("Viz");
         numNoteChooser.setDefaultOption("0", 0);
         for (int i = 0; i < 7; i++) {
             numNoteChooser.addOption(String.valueOf(i), i);
@@ -184,6 +183,7 @@ public class RobotContainer {
 
         switch (runtimeType) {
             case kReal:
+                viz = new PumbaaViz("Viz", null);
                 shooter = new Shooter(new ShooterVortex());
                 intake = new Intake(new IntakeIOFalcon(), viz);
                 s_Swerve = new Swerve(new SwerveReal(), cameras, viz);
@@ -191,12 +191,14 @@ public class RobotContainer {
                 break;
             case kSimulation:
                 SimulatedPumbaa pumbaa = arena.newPumbaa();
+                viz = new PumbaaViz("Viz", pumbaa);
                 s_Swerve = new Swerve(new SwerveSim(pumbaa), cameras, viz);
-                shooter = new Shooter(new ShooterSim());
+                shooter = new Shooter(new ShooterSim(pumbaa));
                 intake = new Intake(new IntakeIOSim(pumbaa), viz);
-                elevatorWrist = new ElevatorWrist(new ElevatorWristIOSim(), operator, viz);
+                elevatorWrist = new ElevatorWrist(new ElevatorWristIOSim(pumbaa), operator, viz);
                 break;
             default:
+                viz = new PumbaaViz("Viz", null);
                 s_Swerve = new Swerve(new SwerveIO() {}, cameras, viz);
                 shooter = new Shooter(new ShooterIO() {});
                 intake = new Intake(new IntakeIO() {}, viz);
