@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.util.FieldConstants;
+import frc.lib.viz.PumbaaViz;
 import frc.robot.Constants;
 import frc.robot.OperatorState;
 import frc.robot.Robot;
@@ -72,12 +73,15 @@ public class ElevatorWrist extends SubsystemBase {
 
     public Trigger elevatorAtAmp = new Trigger(() -> elevatorAtAmp());
 
+    private final PumbaaViz viz;
+
     /**
      * Create new ElevatorWrist.
      */
-    public ElevatorWrist(ElevatorWristIO io, CommandXboxController operator) {
+    public ElevatorWrist(ElevatorWristIO io, CommandXboxController operator, PumbaaViz viz) {
         this.operator = operator;
         this.io = io;
+        this.viz = viz;
         io.updateInputs(inputs);
         estimatedWristAngle = getWristAngleMeasurement().getRotations();
         wristPIDController
@@ -221,6 +225,8 @@ public class ElevatorWrist extends SubsystemBase {
         // Logger.recordOutput("/ElevatorWrist/Wrist/Combined Voltage",
         // wristFeedForwardValue + wristPIDValue);
         Logger.recordOutput("/ElevatorWrist/Wrist/Combined Voltage", wristPIDValue);
+        Robot.profiler.swap("viz");
+        viz.setElevatorWrist(calculatedHeight, calculatedWristAngle);
         Robot.profiler.pop();
         Robot.profiler.pop();
     }

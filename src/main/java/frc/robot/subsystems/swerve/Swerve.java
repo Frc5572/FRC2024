@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.FieldConstants;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.swerve.SwerveModule;
+import frc.lib.viz.PumbaaViz;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
@@ -56,27 +57,17 @@ public class Swerve extends SubsystemBase {
     public AutoFactory test = Choreo.createAutoFactory(this, this::getPose,
         (Pose2d pose, SwerveSample sample) -> new ChassisSpeeds(sample.vx, sample.vy, sample.omega),
         this::setModuleStates, () -> shouldFlipPath(), new ChoreoAutoBindings());
+    private final PumbaaViz viz;
 
     /**
      * Swerve Subsystem
      */
-    public Swerve(SwerveIO swerveIO, PhotonCameraWrapper[] cameras) {
+    public Swerve(SwerveIO swerveIO, PhotonCameraWrapper[] cameras, PumbaaViz viz) {
         this.swerveIO = swerveIO;
         this.cameras = cameras;
+        this.viz = viz;
+        swerveMods = swerveIO.createModules();
         fieldOffset = getGyroYaw().getDegrees();
-        swerveMods = new SwerveModule[] {
-            swerveIO.createSwerveModule(0, Constants.Swerve.Mod0.driveMotorID,
-                Constants.Swerve.Mod0.angleMotorID, Constants.Swerve.Mod0.canCoderID,
-                Constants.Swerve.Mod0.angleOffset),
-            swerveIO.createSwerveModule(1, Constants.Swerve.Mod1.driveMotorID,
-                Constants.Swerve.Mod1.angleMotorID, Constants.Swerve.Mod1.canCoderID,
-                Constants.Swerve.Mod1.angleOffset),
-            swerveIO.createSwerveModule(2, Constants.Swerve.Mod2.driveMotorID,
-                Constants.Swerve.Mod2.angleMotorID, Constants.Swerve.Mod2.canCoderID,
-                Constants.Swerve.Mod2.angleOffset),
-            swerveIO.createSwerveModule(3, Constants.Swerve.Mod3.driveMotorID,
-                Constants.Swerve.Mod3.angleMotorID, Constants.Swerve.Mod3.canCoderID,
-                Constants.Swerve.Mod3.angleOffset)};
 
         swerveOdometry = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics,
             getGyroYaw(), getModulePositions(), new Pose2d());
@@ -132,7 +123,7 @@ public class Swerve extends SubsystemBase {
      */
     public void setModuleStates(SwerveModuleState[] desiredStates) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.Swerve.maxSpeed);
-
+        Logger.recordOutput("/Swerve/DesiredStates", desiredStates);
         for (SwerveModule mod : swerveMods) {
             mod.setDesiredState(desiredStates[mod.moduleNumber], false);
         }
@@ -202,6 +193,7 @@ public class Swerve extends SubsystemBase {
      */
     public void resetOdometry(Pose2d pose) {
         swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), pose);
+        this.swerveIO.setPose(pose);
     }
 
     /**
@@ -326,8 +318,11 @@ public class Swerve extends SubsystemBase {
         Robot.profiler.swap("simple");
         SmartDashboard.putBoolean("Has Initialized", hasInitialized);
         SmartDashboard.putNumber("Gyro Yaw", getGyroYaw().getDegrees());
+        Logger.recordOutput("/Swerve/ActualStates", getModuleStates());
         Robot.profiler.pop();
         Robot.profiler.pop();
+        Robot.profiler.swap("viz");
+        viz.setPose(getPose());
         Robot.profiler.pop();
     }
 

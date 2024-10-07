@@ -161,6 +161,8 @@ public class Robot extends LoggedRobot {
         if (gcTimer.advanceIfElapsed(5)) {
             System.gc();
         }
+        profiler.swap("viz");
+        robotContainer.updateViz();
         profiler.pop();
         profiler.pop();
     }
@@ -234,6 +236,11 @@ public class Robot extends LoggedRobot {
     /** This function is called periodically during test mode. */
     @Override
     public void testPeriodic() {}
+
+    @Override
+    public void simulationPeriodic() {
+        robotContainer.updateSimulation();
+    }
 
 
     private static final String environmentVariable = "AKIT_LOG_PATH";

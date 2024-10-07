@@ -1,9 +1,11 @@
 package frc.robot;
 
 import java.util.Map;
+import org.littletonrobotics.junction.LoggedRobot;
 import choreo.auto.AutoLoop;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -12,16 +14,23 @@ import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.lib.sim.SimulatedArena;
+import frc.lib.sim.SimulatedPumbaa;
 import frc.lib.util.FieldConstants;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonReal;
+import frc.lib.viz.PumbaaViz;
 import frc.robot.Robot.RobotRunType;
 import frc.robot.commands.AutoCommandFactory;
 import frc.robot.commands.CommandFactory;
@@ -33,16 +42,20 @@ import frc.robot.commands.TurnToAngle;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
 import frc.robot.subsystems.elevator_wrist.ElevatorWristIO;
+import frc.robot.subsystems.elevator_wrist.ElevatorWristIOSim;
 import frc.robot.subsystems.elevator_wrist.ElevatorWristReal;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOFalcon;
+import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
+import frc.robot.subsystems.shooter.ShooterSim;
 import frc.robot.subsystems.shooter.ShooterVortex;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.SwerveIO;
 import frc.robot.subsystems.swerve.SwerveReal;
+import frc.robot.subsystems.swerve.SwerveSim;
 
 
 /**
@@ -52,6 +65,16 @@ import frc.robot.subsystems.swerve.SwerveReal;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+    public static Mechanism2d mech =
+        new Mechanism2d(Constants.Swerve.trackWidth, Constants.Swerve.wheelBase);
+    public static MechanismRoot2d root =
+        mech.getRoot("climber", Units.inchesToMeters(12), Constants.Swerve.wheelBase / 2);
+    public static MechanismLigament2d m_elevator = root.append(new MechanismLigament2d("elevator",
+        Units.inchesToMeters(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT), 90));
+    public static MechanismLigament2d m_wrist = m_elevator.append(new MechanismLigament2d("wrist",
+        0.5, Constants.ElevatorWristConstants.SetPoints.MIN_ANGLE.getRadians(), 6,
+        new Color8Bit(Color.kPurple)));
+
     /* Shuffleboard */
     public static ShuffleboardTab mainDriverTab = Shuffleboard.getTab("Main Driver");
 
@@ -116,9 +139,20 @@ public class RobotContainer {
         .debounce(0.25, Debouncer.DebounceType.kRising);
     public AutoLoop autotest;
 
+    /** Viz */
+    private final PumbaaViz viz;
+
+    /** Simulation */
+    private final SimulatedArena arena;
+
     /**
      */
     public RobotContainer(RobotRunType runtimeType) {
+        if (runtimeType == RobotRunType.kSimulation) {
+            arena = new SimulatedArena();
+        } else {
+            arena = null;
+        }
         numNoteChooser.setDefaultOption("0", 0);
         for (int i = 0; i < 7; i++) {
             numNoteChooser.addOption(String.valueOf(i), i);
@@ -147,22 +181,26 @@ public class RobotContainer {
 
         switch (runtimeType) {
             case kReal:
+                viz = new PumbaaViz("Viz", null);
                 shooter = new Shooter(new ShooterVortex());
-                intake = new Intake(new IntakeIOFalcon());
-                s_Swerve = new Swerve(new SwerveReal(), cameras);
-                elevatorWrist = new ElevatorWrist(new ElevatorWristReal(), operator);
+                intake = new Intake(new IntakeIOFalcon(), viz);
+                s_Swerve = new Swerve(new SwerveReal(), cameras, viz);
+                elevatorWrist = new ElevatorWrist(new ElevatorWristReal(), operator, viz);
                 break;
             case kSimulation:
-                s_Swerve = new Swerve(new SwerveIO() {}, cameras);
-                shooter = new Shooter(new ShooterIO() {});
-                intake = new Intake(new IntakeIO() {});
-                elevatorWrist = new ElevatorWrist(new ElevatorWristIO() {}, operator);
+                SimulatedPumbaa pumbaa = arena.newPumbaa();
+                viz = new PumbaaViz("Viz", pumbaa);
+                s_Swerve = new Swerve(new SwerveSim(pumbaa), cameras, viz);
+                shooter = new Shooter(new ShooterSim(pumbaa));
+                intake = new Intake(new IntakeIOSim(pumbaa), viz);
+                elevatorWrist = new ElevatorWrist(new ElevatorWristIOSim(pumbaa), operator, viz);
                 break;
             default:
-                s_Swerve = new Swerve(new SwerveIO() {}, cameras);
+                viz = new PumbaaViz("Viz", null);
+                s_Swerve = new Swerve(new SwerveIO() {}, cameras, viz);
                 shooter = new Shooter(new ShooterIO() {});
-                intake = new Intake(new IntakeIO() {});
-                elevatorWrist = new ElevatorWrist(new ElevatorWristIO() {}, operator);
+                intake = new Intake(new IntakeIO() {}, viz);
+                elevatorWrist = new ElevatorWrist(new ElevatorWristIO() {}, operator, viz);
         }
 
         AutoLoop autotest = AutoCommandFactory.fivePieceAutoTriggerSeg(s_Swerve.test, s_Swerve,
@@ -303,6 +341,22 @@ public class RobotContainer {
         OperatorState.setState(OperatorState.State.kShootWhileMove);
         AutoLoop autocommand = autoChooser.getSelected();
         return autocommand;
+    }
+
+    /**
+     * Update viz
+     */
+    public void updateViz() {
+        this.viz.update();
+    }
+
+    /**
+     * Update simulation
+     */
+    public void updateSimulation() {
+        if (this.arena != null) {
+            this.arena.update(LoggedRobot.defaultPeriodSecs);
+        }
     }
 
 }
