@@ -51,7 +51,6 @@ public final class LoggingProfiler implements Profiler {
             value.children = new HashMap<>();
             jsons.put(entry.getKey(), value);
         }
-
         for (var entry : jsons.entrySet()) {
             String key = entry.getKey();
             String[] parts = key.split("\\" + SPLIT_CHAR);

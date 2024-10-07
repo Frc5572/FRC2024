@@ -279,7 +279,7 @@ public final class Constants {
             public static final int angleMotorID = 51;
             public static final int canCoderID = 4;
             // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(183.955078125);
-            public static final Rotation2d angleOffset = Rotation2d.fromRotations(-0.004395 + 0.5);
+            public static final Rotation2d angleOffset = Rotation2d.fromRotations(-0.496826);
 
         }
 
@@ -291,7 +291,7 @@ public final class Constants {
             public static final int angleMotorID = 40;
             public static final int canCoderID = 2;
             // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(325.01953125);
-            public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.415527 + 0.5);
+            public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.405518 + 0.5);
 
         }
 
@@ -303,7 +303,7 @@ public final class Constants {
             public static final int angleMotorID = 9;
             public static final int canCoderID = 1;
             // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(124.62890625);
-            public static final Rotation2d angleOffset = Rotation2d.fromRotations(-0.145264 + 0.5);
+            public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.348145);
 
         }
 
@@ -315,7 +315,7 @@ public final class Constants {
             public static final int angleMotorID = 8;
             public static final int canCoderID = 10;
             // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(295.400390625);
-            public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.323730 + 0.5);
+            public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.317627 + 0.5);
         }
 
         public static final HolonomicPathFollowerConfig pathFollowerConfig =
@@ -370,10 +370,8 @@ public final class Constants {
      */
     public static final class ElevatorWristConstants {
 
-        public static final Rotation2d WRIST_REF_1_ANGLE_MEASURED =
-            Rotation2d.fromRotations(0.6225);
-        public static final Rotation2d WRIST_REF_2_ANGLE_MEASURED =
-            Rotation2d.fromRotations(0.7434);
+        public static final Rotation2d WRIST_REF_1_ANGLE_MEASURED = Rotation2d.fromRotations(0.454);
+        public static final Rotation2d WRIST_REF_2_ANGLE_MEASURED = Rotation2d.fromRotations(0.585);
         public static final Rotation2d WRIST_REF_1_ANGLE_ACTUAL = Rotation2d.fromDegrees(0.0);
         public static final Rotation2d WRIST_REF_2_ANGLE_ACTUAL = Rotation2d.fromDegrees(45.0);
 
@@ -450,7 +448,7 @@ public final class Constants {
             public static final Rotation2d HOME_ANGLE = Rotation2d.fromDegrees(5);
             // public static final double AMP_HEIGHT = Units.inchesToMeters(34);
             public static final double AMP_HEIGHT = 43.5;
-            public static final Rotation2d AMP_ANGLE = Rotation2d.fromDegrees(-38);
+            public static final Rotation2d AMP_ANGLE = Rotation2d.fromDegrees(-29.95);
             // public static final double TRAP_HEIGHT = Units.inchesToMeters(40);
             public static final double TRAP_HEIGHT = 44;
             public static final Rotation2d TRAP_ANGLE = Rotation2d.fromDegrees(-10);
