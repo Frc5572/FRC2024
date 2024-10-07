@@ -7,7 +7,10 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.PathPlannerLogging;
+import choreo.Choreo;
 import choreo.auto.AutoFactory;
+import choreo.auto.AutoFactory.ChoreoAutoBindings;
+import choreo.trajectory.SwerveSample;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -50,7 +53,9 @@ public class Swerve extends SubsystemBase {
         .withProperties(Map.of("Color when true", "green", "Color when false", "red"))
         .withPosition(11, 0).withSize(2, 2).getEntry();
 
-    public AutoFactory test = new AutoFactory(null, null, null, null, this, null, null);
+    public AutoFactory test = Choreo.createAutoFactory(this, this::getPose,
+        (Pose2d pose, SwerveSample sample) -> new ChassisSpeeds(sample.vx, sample.vy, sample.omega),
+        this::setModuleStates, () -> shouldFlipPath(), new ChoreoAutoBindings());
 
     /**
      * Swerve Subsystem
