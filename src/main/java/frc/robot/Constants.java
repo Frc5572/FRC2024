@@ -21,7 +21,6 @@ import frc.lib.util.FieldConstants;
  * Constants file.
  */
 public final class Constants {
-
     /**
      * Stick Deadband
      */

@@ -18,8 +18,8 @@ public interface IntakeIO {
         // public double indexerMotorVoltage;
         // public double intakeAmps;
         // public double indexerAmps;
-        // public double intakeRPM;
-        // public double indexerRPM;
+        public double intakeRPM;
+        public double indexerRPM;
         public boolean indexerBeamBrake;
         public boolean intakeBeamBrake;
     }

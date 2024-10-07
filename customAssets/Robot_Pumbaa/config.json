@@ -1,0 +1,70 @@
+{
+    "name": "Pumbaa",
+    "sourceUrl": "",
+    "rotations": [
+        {
+            "axis": "x",
+            "degrees": 90.0
+        }
+    ],
+    "position": [
+        0.0,
+        0.0,
+        0.0
+    ],
+    "cameras": [],
+    "components": [
+        {
+            "zeroedRotations": [
+                {
+                    "axis": "x",
+                    "degrees": 90.0
+                }
+            ],
+            "zeroedPosition": [
+                0.0,
+                0.0,
+                0.0
+            ]
+        },
+        {
+            "zeroedRotations": [
+                {
+                    "axis": "x",
+                    "degrees": 90.0
+                }
+            ],
+            "zeroedPosition": [
+                0.0,
+                0.0,
+                0.0
+            ]
+        },
+        {
+            "zeroedRotations": [
+                {
+                    "axis": "x",
+                    "degrees": 90.0
+                }
+            ],
+            "zeroedPosition": [
+                0.0,
+                0.0,
+                0.0
+            ]
+        },
+        {
+            "zeroedRotations": [
+                {
+                    "axis": "x",
+                    "degrees": 90.0
+                }
+            ],
+            "zeroedPosition": [
+                0.0,
+                0.0,
+                0.0
+            ]
+        }
+    ]
+}

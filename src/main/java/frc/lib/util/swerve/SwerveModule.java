@@ -1,13 +1,10 @@
 package frc.lib.util.swerve;
 
 import org.littletonrobotics.junction.Logger;
-import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.VelocityVoltage;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lib.math.Conversions;
 import frc.robot.Constants;
 import frc.robot.Robot;
@@ -23,27 +20,13 @@ public class SwerveModule {
     private SwerveModuleIO io;
     private SwerveModuleInputsAutoLogged inputs = new SwerveModuleInputsAutoLogged();
 
-    private final SimpleMotorFeedforward driveFeedForward = new SimpleMotorFeedforward(
-        Constants.Swerve.driveKS, Constants.Swerve.driveKV, Constants.Swerve.driveKA);
-
-    /* drive motor control requests */
-    private final DutyCycleOut driveDutyCycle = new DutyCycleOut(0);
-    private final VelocityVoltage driveVelocity = new VelocityVoltage(0);
-
-    /* angle motor control requests */
-    private final PositionVoltage anglePosition = new PositionVoltage(0);
-
     /**
      * Swerve Module
      *
      * @param moduleNumber Module Number
-     * @param driveMotorID CAN ID of the Drive Motor
-     * @param angleMotorID CAN ID of the Angle Motor
-     * @param cancoderID CAN ID of the CANCoder
      * @param angleOffset Angle Offset of the CANCoder to align the wheels
      */
-    public SwerveModule(int moduleNumber, int driveMotorID, int angleMotorID, int cancoderID,
-        Rotation2d angleOffset, SwerveModuleIO io) {
+    public SwerveModule(int moduleNumber, Rotation2d angleOffset, SwerveModuleIO io) {
         this.io = io;
 
         this.moduleNumber = moduleNumber;
@@ -75,8 +58,12 @@ public class SwerveModule {
      */
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
         desiredState = SwerveModuleState.optimize(desiredState, getState().angle);
-        io.setAngleMotor(anglePosition.withPosition(desiredState.angle.getRotations()));
+        io.setAngleMotor(desiredState.angle.getRotations());
         setSpeed(desiredState, isOpenLoop);
+        SmartDashboard.putNumber("desired state speed/" + moduleNumber,
+            desiredState.speedMetersPerSecond);
+        SmartDashboard.putNumber("desired state angle/" + moduleNumber,
+            desiredState.angle.getDegrees());
     }
 
     /**
@@ -87,16 +74,10 @@ public class SwerveModule {
      */
     private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop) {
         if (isOpenLoop) {
-            driveDutyCycle.Output = desiredState.speedMetersPerSecond / Constants.Swerve.maxSpeed;
-            io.setDriveMotor(driveDutyCycle);
-            inputs.driveMotorSelectedSensorVelocity = driveDutyCycle.Output;
+            double power = desiredState.speedMetersPerSecond / Constants.Swerve.maxSpeed;
+            io.setDriveMotorPower(power);
         } else {
-            driveVelocity.Velocity = Conversions.metersPerSecondToRotationPerSecond(
-                desiredState.speedMetersPerSecond, Constants.Swerve.wheelCircumference);
-            driveVelocity.FeedForward =
-                driveFeedForward.calculate(desiredState.speedMetersPerSecond);
-            io.setDriveMotor(driveVelocity);
-            inputs.driveMotorSelectedSensorVelocity = driveDutyCycle.Output;
+            io.setDriveMotor(desiredState.speedMetersPerSecond);
         }
     }
 
