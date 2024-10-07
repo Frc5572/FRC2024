@@ -10,7 +10,7 @@ import java.util.function.LongSupplier;
 import org.littletonrobotics.junction.Logger;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
-import frc.lib.util.LongArrayList;
+import frc.lib.types.LongArrayList;
 
 /**
  * This logger saves runtime performance metrics to memory. These metrics are subsequently written
@@ -51,13 +51,6 @@ public final class LoggingProfiler implements Profiler {
             value.children = new HashMap<>();
             jsons.put(entry.getKey(), value);
         }
-
-        System.out.println("----");
-        for (var entry : jsons.entrySet()) {
-            System.out.println(entry.getKey());
-        }
-        System.out.println("----");
-
         for (var entry : jsons.entrySet()) {
             String key = entry.getKey();
             String[] parts = key.split("\\" + SPLIT_CHAR);
@@ -70,7 +63,6 @@ public final class LoggingProfiler implements Profiler {
                 parent.append(SPLIT_CHAR);
             }
             parent.append(parts[parts.length - 2]);
-            System.out.println(parent.toString());
             jsons.get(parent.toString()).children.put(parts[parts.length - 1], entry.getValue());
         }
 
