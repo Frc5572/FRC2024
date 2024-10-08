@@ -105,8 +105,7 @@ public class Robot extends LoggedRobot {
             case kReal -> profiler =
                 new LoggingProfiler(() -> Logger.getRealTimestamp(), 1000000.0);
             case kReplay -> profiler = EmptyProfiler.INSTANCE;
-            case kSimulation -> profiler =
-                new LoggingProfiler(() -> Logger.getRealTimestamp(), 1000000.0);
+            case kSimulation -> profiler = EmptyProfiler.INSTANCE;
             default -> {
             }
         }

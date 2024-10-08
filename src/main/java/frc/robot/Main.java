@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.RobotBase;
+import frc.lib.sim.SimulatedVortex;
 
 /**
  * Do NOT add any static variables to this class, or any initialization at all. Unless you know what
@@ -23,6 +24,8 @@ public final class Main {
      * @param args String args
      */
     public static void main(String... args) {
+        new SimulatedVortex(13, 1);
+        new SimulatedVortex(15, 1);
         RobotBase.startRobot(Robot::new);
     }
 }

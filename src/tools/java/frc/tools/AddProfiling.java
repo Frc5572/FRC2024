@@ -67,6 +67,7 @@ public class AddProfiling {
                 if (reader.getClassName().startsWith("frc/lib/profiling")
                     || reader.getClassName().startsWith("frc/lib/types")
                     || reader.getClassName().startsWith("frc/lib/math")
+                    || reader.getClassName().startsWith("frc/lib/sim")
                     || reader.getClassName().equals("frc/robot/Main")
                     || reader.getClassName().equals("frc/robot/Robot")
                     || reader.getClassName().equals("frc/robot/RobotContainer")) {

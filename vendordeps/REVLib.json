@@ -7,7 +7,7 @@
     "mavenUrls": [
         "https://maven.revrobotics.com/"
     ],
-    "jsonUrl": "https://software-metadata.revrobotics.com/REVLib-2024.json",
+    "jsonUrl": "",
     "javaDependencies": [
         {
             "groupId": "com.revrobotics.frc",
@@ -17,19 +17,14 @@
     ],
     "jniDependencies": [
         {
-            "groupId": "com.revrobotics.frc",
-            "artifactId": "REVLib-driver",
+            "groupId": "org.frc5572",
+            "artifactId": "revsim",
             "version": "2024.2.4",
             "skipInvalidPlatforms": true,
             "isJar": false,
             "validPlatforms": [
                 "windowsx86-64",
-                "windowsx86",
-                "linuxarm64",
-                "linuxx86-64",
-                "linuxathena",
-                "linuxarm32",
-                "osxuniversal"
+                "linuxx86-64"
             ]
         }
     ],

@@ -155,7 +155,7 @@ public class RobotContainer {
                 break;
             case kSimulation:
                 s_Swerve = new Swerve(new SwerveIO() {}, cameras);
-                shooter = new Shooter(new ShooterIO() {});
+                shooter = new Shooter(new ShooterVortex());
                 intake = new Intake(new IntakeIO() {});
                 elevatorWrist = new ElevatorWrist(new ElevatorWristIO() {}, operator);
                 break;
