@@ -66,6 +66,14 @@ repositories {
             password = "\u0067\u0068\u0070\u005f\u006e\u0056\u0051\u006a\u0055\u004f\u004c\u0061\u0079\u0066\u006e\u0078\u006e\u0037\u0051\u0049\u0054\u0042\u0032\u004c\u004a\u006d\u0055\u0070\u0073\u0031\u006d\u0037\u004c\u005a\u0030\u0076\u0062\u0070\u0063\u0051"
         }
     }
+    maven {
+        url = uri("https://maven.pkg.github.com/wilsonwatson/frc-vendor-stubs")
+        credentials {
+            username = "wilsonwatson"
+            password = "\u0067\u0068\u0070\u005f\u0059\u0062\u004f\u004c\u004a\u0051\u005a\u0032\u0064\u0057\u0063\u0078\u0074\u0053\u006a\u005a\u0071\u0045\u0069\u0079\u0057\u0064\u0038\u0072\u006f\u0043\u0069\u0065\u0077\u0031\u0032\u006e\u0041\u0053\u0062\u0038"
+        }
+    }
+    mavenCentral()
     mavenLocal()
     maven { url 'https://jitpack.io' }
 }
@@ -79,6 +87,13 @@ task(checkAkitInstall, dependsOn: "classes", type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 }
 compileJava.finalizedBy checkAkitInstall
+
+sourceSets {
+    tools {
+        compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
+        runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output
+    }
+}
 
 dependencies {
     def akitJson = new groovy.json.JsonSlurper().parseText(new File(projectDir.getAbsolutePath() + "/vendordeps/AdvantageKit.json").text)
@@ -104,6 +119,8 @@ dependencies {
 
     implementation 'org.apache.httpcomponents:httpclient:4.5.14'
     implementation 'org.apache.httpcomponents:httpmime:4.5.14'
+
+    toolsImplementation 'org.ow2.asm:asm:9.7'
 }
 
 // Simulation configuration (e.g. environment variables).
@@ -118,6 +135,7 @@ jar {
     from sourceSets.main.allSource
     manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    finalizedBy("addProfiling")
 }
 
 // Configure jar and deploy tasks
@@ -150,3 +168,10 @@ gversion {
     timeZone     = "America/New_York"
     indent       = "  "
 }
+
+task(addProfiling, dependsOn: "jar", type: JavaExec) {
+    mainClass = "frc.tools.AddProfiling"
+    classpath = sourceSets.tools.runtimeClasspath
+    systemProperties["java.library.path"] = new File(project.projectDir, "build/jni/release")
+}
+

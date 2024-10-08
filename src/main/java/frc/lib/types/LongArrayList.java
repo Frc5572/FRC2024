@@ -1,4 +1,4 @@
-package frc.lib.util;
+package frc.lib.types;
 
 import java.util.List;
 import java.util.Objects;
@@ -13,8 +13,7 @@ import frc.lib.profiling.LoggingProfiler;
  * Current interface is limited to the methods used by {@link LoggingProfiler}, though its interface
  * may expand in the future to match the full {@link List} interface.
  */
-public class LongArrayList implements RandomAccess, Cloneable, java.io.Serializable {
-    private static final long serialVersionUID = -7046029254386353130L;
+public class LongArrayList implements RandomAccess, Cloneable {
 
     /**
      * During list creation, many reallocations at low capacities may be common, so we jump from 0

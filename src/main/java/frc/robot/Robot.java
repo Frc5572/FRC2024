@@ -105,8 +105,7 @@ public class Robot extends LoggedRobot {
             case kReal -> profiler =
                 new LoggingProfiler(() -> Logger.getRealTimestamp(), 1000000.0);
             case kReplay -> profiler = EmptyProfiler.INSTANCE;
-            case kSimulation -> profiler =
-                new LoggingProfiler(() -> Logger.getRealTimestamp(), 1000000.0);
+            case kSimulation -> profiler = EmptyProfiler.INSTANCE;
             default -> {
             }
         }
@@ -115,7 +114,13 @@ public class Robot extends LoggedRobot {
 
         // Instantiate our RobotContainer. This will perform all our button bindings,
         // and put our autonomous chooser on the dashboard.
+        profiler.startTick();
+        profiler.push("startup");
         robotContainer = new RobotContainer(robotRunType);
+        profiler.pop();
+        profiler.endTick();
+        profileTimer.start();
+        gcTimer.start();
     }
 
     /**
@@ -129,6 +134,21 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void robotPeriodic() {
+        if (hasStarted) {
+            profiler.endTick();
+            if (profileTimer.advanceIfElapsed(1)) {
+                if (hasDoneSomething) {
+                    System.out.println("Saving!");
+                    profiler.save();
+                    profiler.reset();
+                }
+            }
+        } else {
+            hasStarted = true;
+        }
+        profiler.startTick();
+        profiler.push("robotPeriodic()");
+        profiler.push("draw_state_to_shuffleboard");
         if (hasStarted) {
             profiler.endTick();
             if (profileTimer.advanceIfElapsed(1)) {
@@ -158,6 +178,7 @@ public class Robot extends LoggedRobot {
         CommandScheduler.getInstance().run();
         profiler.swap("manual-gc");
         if (gcTimer.advanceIfElapsed(5)) {
+            profiler.swap("manual-gc");
             System.gc();
         }
         profiler.pop();
