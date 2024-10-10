@@ -1,8 +1,8 @@
 package frc.lib.util.photon;
 
 import java.util.Optional;
-import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -16,17 +16,14 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.lib.util.photon.PhotonIO.PhotonInputs;
 import frc.robot.Constants;
 
 /**
  * PhotonCamera-based Pose Estimator.
  */
 public class PhotonCameraWrapper {
-    public PhotonIO io;
-    public PhotonInputs inputs = new PhotonInputs();
-    public PhotonIOPoseEstimator photonPoseEstimator;
-    private double resetTimer = 0;
+    public LoggedPhotonCamera camera;
+    private PhotonPoseEstimator photonPoseEstimator;
 
     /**
      * PhotonCamera-based Pose Estimator.
@@ -34,49 +31,31 @@ public class PhotonCameraWrapper {
      * @param io Camera IO.
      * @param robotToCam transform from robot body coordinates to camera coordinates.
      */
-    public PhotonCameraWrapper(PhotonIO io, Transform3d robotToCam) {
-        this.io = io;
+    public PhotonCameraWrapper(String name, String cameraIP, Transform3d robotToCam) {
+        this.camera = new LoggedPhotonCamera(name, cameraIP);
 
         // Attempt to load the AprilTagFieldLayout that will tell us where the tags are on the
         // field.
         AprilTagFieldLayout fieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
         // Create pose estimator
-        photonPoseEstimator = new PhotonIOPoseEstimator(fieldLayout,
-            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, this.inputs, robotToCam);
+        photonPoseEstimator = new PhotonPoseEstimator(fieldLayout,
+            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, this.camera, robotToCam);
         photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.CLOSEST_TO_REFERENCE_POSE);
-
-        // SmartDashboard.putNumber("rx", 0);
-        // SmartDashboard.putNumber("ry", 0);
-        // SmartDashboard.putNumber("rz", 0);
-        // SmartDashboard.putNumber("tx", 0);
-        // SmartDashboard.putNumber("ty", 0);
-        // SmartDashboard.putNumber("tz", 0);
-
     }
 
     /**
      * Update inputs and such.
      */
     public void periodic() {
-        this.io.updateInputs(this.inputs);
-        Logger.processInputs("PhotonVision/" + inputs.name, inputs);
-        // if (this.inputs.distCoeffs.length == 0 && Timer.getFPGATimestamp() - resetTimer > 5) {
-        // resetTimer = Timer.getFPGATimestamp();
-        // try {
-        // this.io.uploadSettings(this.io.ip + ":5800",
-        // new File(Filesystem.getDeployDirectory().getAbsoluteFile(),
-        // "photon-configs/" + inputs.name + ".zip"));
-        // } catch (IOException e) {
-        // e.printStackTrace();
-        // }
-        // }
+        this.camera.periodic();
     }
 
     /**
      * Gets if photonvision can see a target.
      */
     public boolean seesTarget() {
-        return inputs.result != null && inputs.result.hasTargets();
+        var result = this.camera.getLatestResult();
+        return result != null && result.hasTargets();
     }
 
     /** A PhotonVision tag solve. */
@@ -99,8 +78,8 @@ public class PhotonCameraWrapper {
      * @return an estimated Pose2d based solely on apriltags
      */
     public Optional<VisionObservation> getInitialPose() {
-        var res = inputs.result;
-        if (res == null || inputs.timeSinceLastHeartbeat > 0.5) {
+        var res = this.camera.getLatestResult();
+        if (res == null || Timer.getFPGATimestamp() - res.getTimestampSeconds() > 0.5) {
             SmartDashboard.putString("reason", "res is null or heartbeat too long");
             return Optional.empty();
         }
@@ -129,7 +108,7 @@ public class PhotonCameraWrapper {
     }
 
     public double latency() {
-        var res = inputs.result;
+        var res = this.camera.getLatestResult();
         return Timer.getFPGATimestamp() - res.getTimestampSeconds();
     }
 
@@ -140,7 +119,7 @@ public class PhotonCameraWrapper {
      *         create the estimate
      */
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
-        var res = inputs.result;
+        var res = this.camera.getLatestResult();
 
         // photonPoseEstimator.setRobotToCameraTransform(new Transform3d(
         // new Translation3d(Units.inchesToMeters(SmartDashboard.getNumber("tx", 0)),
