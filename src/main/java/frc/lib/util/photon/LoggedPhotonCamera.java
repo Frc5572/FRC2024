@@ -27,8 +27,10 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+/** PhotonCamera modified to work with AdvantageKit */
 public class LoggedPhotonCamera extends PhotonCamera {
 
+    /** Inputs for LoggedPhotonCamera */
     public static class PhotonCameraInputs implements LoggableInputs, Cloneable {
         public PhotonPipelineResult result = null;
         public Optional<Matrix<N3, N3>> cameraMatrix = Optional.empty();
@@ -86,6 +88,7 @@ public class LoggedPhotonCamera extends PhotonCamera {
 
     private final PhotonCameraInputs inputs = new PhotonCameraInputs();
 
+    /** Create PhotonCamera with a given name and IP. */
     public LoggedPhotonCamera(String cameraName, String cameraIP) {
         super(cameraName);
         inputs.name = cameraName;
@@ -106,6 +109,7 @@ public class LoggedPhotonCamera extends PhotonCamera {
         }).start();
     }
 
+    /** Update inputs for this camera. */
     public void periodic() {
         this.inputs.result = super.getLatestResult();
         this.inputs.cameraMatrix = super.getCameraMatrix();

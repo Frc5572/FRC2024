@@ -28,7 +28,6 @@ public class PhotonCameraWrapper {
     /**
      * PhotonCamera-based Pose Estimator.
      *
-     * @param io Camera IO.
      * @param robotToCam transform from robot body coordinates to camera coordinates.
      */
     public PhotonCameraWrapper(String name, String cameraIP, Transform3d robotToCam) {
