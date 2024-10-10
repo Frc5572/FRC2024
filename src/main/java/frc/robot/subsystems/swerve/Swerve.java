@@ -268,7 +268,6 @@ public class Swerve extends SubsystemBase {
         if (!hasInitialized && !DriverStation.isAutonomous()) {
             Robot.profiler.push("init");
             for (int i = 0; i < cameras.length; i++) {
-                Robot.profiler.push(cameras[i].inputs.name);
                 var robotPose = cameras[i].getInitialPose();
                 Logger.recordOutput("/Swerve/hasInitialPose[" + i + "]", robotPose.isPresent());
 
@@ -276,30 +275,24 @@ public class Swerve extends SubsystemBase {
                     swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(),
                         robotPose.get().robotPose);
                     hasInitialized = true;
-                    Robot.profiler.pop();
                     break;
                 }
-                Robot.profiler.pop();
             }
             Robot.profiler.pop();
         } else {
             Robot.profiler.push("update");
             for (int i = 0; i < cameras.length; i++) {
-                Robot.profiler.push(cameras[i].inputs.name);
                 var result = cameras[i].getEstimatedGlobalPose(getPose());
                 if (result.isPresent()) {
                     if (DriverStation.isAutonomous() && result.get().targetsUsed.size() < 2) {
-                        Robot.profiler.pop();
                         continue;
                     } else if (result.get().targetsUsed.size() == 1
                         && result.get().targetsUsed.get(0).getPoseAmbiguity() > 0.1) {
-                        Robot.profiler.pop();
                         continue;
                     }
                     swerveOdometry.addVisionMeasurement(result.get().estimatedPose.toPose2d(),
                         Timer.getFPGATimestamp() - cameras[i].latency());
                 }
-                Robot.profiler.pop();
             }
             Robot.profiler.pop();
         }

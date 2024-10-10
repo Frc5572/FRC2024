@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.util.FieldConstants;
 import frc.lib.util.photon.PhotonCameraWrapper;
-import frc.lib.util.photon.PhotonReal;
 import frc.robot.Robot.RobotRunType;
 import frc.robot.autos.JustShoot1;
 import frc.robot.autos.P123;
@@ -135,8 +134,8 @@ public class RobotContainer {
                 // Constants.CameraConstants.FrontLeftFacingCamera.CAMERA_IP),
                 // Constants.CameraConstants.FrontLeftFacingCamera.KCAMERA_TO_ROBOT),
                 new PhotonCameraWrapper(
-                    new PhotonReal(Constants.CameraConstants.FrontRightFacingCamera.CAMERA_NAME,
-                        Constants.CameraConstants.FrontRightFacingCamera.CAMERA_IP),
+                    Constants.CameraConstants.FrontRightFacingCamera.CAMERA_NAME,
+                    Constants.CameraConstants.FrontRightFacingCamera.CAMERA_IP,
                     Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT),
             // new PhotonCameraWrapper(
             // new PhotonReal(Constants.CameraConstants.BackLeftFacingCamera.CAMERA_NAME,
