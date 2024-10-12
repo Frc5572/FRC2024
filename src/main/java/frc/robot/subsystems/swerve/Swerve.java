@@ -4,13 +4,16 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import choreo.Choreo;
 import choreo.auto.AutoFactory;
-import choreo.auto.AutoFactory.ChoreoAutoBindings;
+import choreo.auto.AutoFactory.AutoBindings;
 import choreo.trajectory.SwerveSample;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -19,6 +22,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -54,15 +58,25 @@ public class Swerve extends SubsystemBase {
         .withProperties(Map.of("Color when true", "green", "Color when false", "red"))
         .withPosition(11, 0).withSize(2, 2).getEntry();
 
-    public AutoFactory test = Choreo.createAutoFactory(this, this::getPose,
-        (Pose2d pose, SwerveSample sample) -> new ChassisSpeeds(sample.vx, sample.vy, sample.omega),
-        this::setModuleStates, () -> shouldFlipPath(), new ChoreoAutoBindings());
+
+    private PIDController xController = new PIDController(5, 0, 0);
+    private PIDController yController = new PIDController(5, 0, 0);
+    private ProfiledPIDController rotationController =
+        new ProfiledPIDController(Constants.Swerve.AUTO_ROTATION_KP,
+            Constants.Swerve.AUTO_ROTATION_KI, Constants.Swerve.AUTO_ROTATION_KD,
+            new TrapezoidProfile.Constraints(0, 0), LoggedRobot.defaultPeriodSecs);
+
+
+
+    public AutoFactory choreAutoFactory = Choreo.createAutoFactory(this, this::getPose,
+        this::choreoController, () -> shouldFlipPath(), new AutoBindings());
     private final PumbaaViz viz;
 
     /**
      * Swerve Subsystem
      */
     public Swerve(SwerveIO swerveIO, PhotonCameraWrapper[] cameras, PumbaaViz viz) {
+        rotationController.enableContinuousInput(-Math.PI, Math.PI);
         this.swerveIO = swerveIO;
         this.cameras = cameras;
         this.viz = viz;
@@ -94,6 +108,17 @@ public class Swerve extends SubsystemBase {
             // Do whatever you want with the poses here
             field.getObject("path").setPoses(poses);
         });
+    }
+
+
+    public void choreoController(Pose2d curPose, SwerveSample sample) {
+        ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+            new ChassisSpeeds(xController.calculate(curPose.getX(), sample.x) + sample.vx,
+                yController.calculate(curPose.getY(), sample.y) + sample.vy,
+                rotationController.calculate(curPose.getRotation().getRadians(), sample.heading)
+                    + sample.omega),
+            curPose.getRotation());
+        setModuleStates(speeds);
     }
 
     /**

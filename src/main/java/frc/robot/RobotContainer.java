@@ -203,13 +203,16 @@ public class RobotContainer {
                 elevatorWrist = new ElevatorWrist(new ElevatorWristIO() {}, operator, viz);
         }
 
-        AutoLoop autotest = AutoCommandFactory.fivePieceAutoTriggerSeg(s_Swerve.test, s_Swerve,
-            intake, shooter, elevatorWrist);
-        AutoLoop p8765 =
-            AutoCommandFactory.p8765(s_Swerve.test, s_Swerve, intake, shooter, elevatorWrist);
+        AutoLoop autotest = AutoCommandFactory.fivePieceAutoTriggerSeg(s_Swerve.choreAutoFactory,
+            s_Swerve, intake, shooter, elevatorWrist);
+        AutoLoop p8765 = AutoCommandFactory.p8765(s_Swerve.choreAutoFactory, s_Swerve, intake,
+            shooter, elevatorWrist);
+        AutoLoop p123 = AutoCommandFactory.p123(s_Swerve.choreAutoFactory, s_Swerve, intake,
+            shooter, elevatorWrist);
 
-        autoChooser.setDefaultOption("Nothing", AutoCommandFactory.none(s_Swerve.test));
+        autoChooser.setDefaultOption("Nothing", AutoCommandFactory.none(s_Swerve.choreAutoFactory));
         autoChooser.addOption("P8765", p8765);
+        autoChooser.addOption("P123", p123);
         // autoChooser.addOption("P123", new P123(s_Swerve, elevatorWrist, intake, shooter));
         // autoChooser.addOption("P321", new P321(s_Swerve, elevatorWrist, intake, shooter));
         // autoChooser.addOption("P8765", new P8765(s_Swerve, elevatorWrist, intake, shooter));

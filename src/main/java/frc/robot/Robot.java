@@ -30,7 +30,6 @@ import frc.lib.profiling.Profiler;
 public class Robot extends LoggedRobot {
     private RobotContainer robotContainer;
     private AutoLoop autoChooser;
-    private AutoLoop autoloop;
 
     public static Profiler profiler;
 
@@ -117,6 +116,8 @@ public class Robot extends LoggedRobot {
         // Instantiate our RobotContainer. This will perform all our button bindings,
         // and put our autonomous chooser on the dashboard.
         robotContainer = new RobotContainer(robotRunType);
+        // CommandScheduler.getInstance().onCommandInitialize(
+        // command -> System.out.println(command.getName() + " is scheduled"));
     }
 
     /**
@@ -187,6 +188,7 @@ public class Robot extends LoggedRobot {
 
         // schedule the autonomous command (example)
         if (autoChooser != null) {
+            autoChooser.reset();
             autoChooser.cmd().schedule();
         }
         profiler.pop();
@@ -194,19 +196,8 @@ public class Robot extends LoggedRobot {
 
     /** This function is called periodically during autonomous. */
     @Override
-    public void autonomousPeriodic() {
-        if (autoChooser != null) {
-            autoChooser.poll();
-        }
-    }
+    public void autonomousPeriodic() {}
 
-    @Override
-    public void autonomousExit() {
-        if (autoChooser != null) {
-            autoChooser.kill();
-            autoChooser.cmd().cancel();
-        }
-    }
 
     @Override
     public void teleopInit() {

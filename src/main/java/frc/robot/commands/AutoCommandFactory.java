@@ -17,9 +17,57 @@ import frc.robot.subsystems.swerve.Swerve;
 
 public class AutoCommandFactory {
 
-    public static AutoLoop p8765(AutoFactory factory, Swerve swerve, Intake intake, Shooter shooter,
+    public static AutoLoop p123(AutoFactory factory, Swerve swerve, Intake intake, Shooter shooter,
         ElevatorWrist elevatorWrist) {
         final AutoLoop loop = factory.newLoop("P123");
+
+        Trigger noteInIndexer = new Trigger(() -> intake.getIndexerBeamBrakeStatus()).debounce(0.25,
+            Debouncer.DebounceType.kRising);
+        Trigger noteInIntake = new Trigger(() -> intake.getintakeBeamBrakeStatus()).debounce(0.25,
+            Debouncer.DebounceType.kRising);
+        Trigger abort = noteInIndexer.negate().and(noteInIntake.negate());
+        Trigger dumpOrNot =
+            new Trigger(() -> RobotContainer.dumpNotes.getEntry().getBoolean(false));
+
+        double elevatorHeight = 28.1;
+
+        final AutoTrajectory startToS0 = factory.trajectory("P123", 0, loop);
+        final AutoTrajectory S0toS1 = factory.trajectory("P123", 1, loop);
+        final AutoTrajectory S1toS2 = factory.trajectory("P123", 2, loop);
+        final AutoTrajectory S2toS3 = factory.trajectory("P123", 3, loop);
+
+        loop.enabled().whileTrue(shooter.shootSpeaker().withName("Run Shooter always"));
+        loop.enabled().onTrue(
+            Commands.runOnce(() -> swerve.resetOdometry(startToS0.getInitialPose().orElseGet(() -> {
+                loop.kill();
+                return new Pose2d();
+            }))).andThen(startToS0.cmd().asProxy()).withName("P123 entry point"));
+
+        startToS0.active()
+            .onTrue(elevatorWrist
+                .goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
+                    Rotation2d.fromDegrees(36.5))
+                .withTimeout(1.0).withName("Move Elevator and Wrist into Position 1"));
+        startToS0.done().onTrue(
+            Commands.sequence(Commands.waitSeconds(.1), CommandFactory.Auto.runIndexer(intake),
+                S0toS1.cmd().asProxy()).withName("Shoot Note and Move S0 to S1"));
+
+        S0toS1.active()
+            .onTrue(
+                CommandFactory.intakeNote(intake).withName("Run intake always when not have note"))
+            .onTrue(elevatorWrist.goToPosition(elevatorHeight, Rotation2d.fromDegrees(38.5))
+                .withTimeout(.5).withName("Move Elevator and Wrist into Position 2"));
+        S0toS1.done().onTrue(
+            Commands.sequence(Commands.waitSeconds(.1), CommandFactory.Auto.runIndexer(intake),
+                S1toS2.cmd().asProxy()).withName("Shoot Note and Move S1 to S2"));
+        // S0toS1.done().onTrue(S1toS2.cmd());
+        // S1toS2.done().onTrue(S2toS3.cmd());
+        return loop;
+    }
+
+    public static AutoLoop p8765(AutoFactory factory, Swerve swerve, Intake intake, Shooter shooter,
+        ElevatorWrist elevatorWrist) {
+        final AutoLoop loop = factory.newLoop("P8765");
 
         Trigger noteInIndexer = new Trigger(() -> intake.getIndexerBeamBrakeStatus()).debounce(0.25,
             Debouncer.DebounceType.kRising);

@@ -75,7 +75,7 @@ public class SimulatedArena {
             Logger.recordOutput("Viz/Robot" + robot.id, robot.getPose());
             robot.advanceNote(dt, this);
             if (robot.couldIntake()) {
-                System.out.println("checking");
+                // System.out.println("checking");
                 for (int i = 0; i < notes.size(); i++) {
                     double distance = notes.get(i).toPose2d().getTranslation()
                         .minus(robot.getPose().getTranslation()).getNorm();
