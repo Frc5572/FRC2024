@@ -518,6 +518,7 @@ public final class Constants {
         public static final Color INTAKE_COLOR = Color.kGreen;
         public static final Color INDEXER_COLOR = Color.kPurple;
         public static final Color ALERT_COLOR = Color.kWhite;
+        public static final Color NO_NOTE_COLOR = Color.kBlack;
     }
 
 }

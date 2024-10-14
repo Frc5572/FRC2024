@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.util.FieldConstants;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.swerve.SwerveModule;
@@ -48,6 +49,9 @@ public class Swerve extends SubsystemBase {
         .withWidget(BuiltInWidgets.kBooleanBox)
         .withProperties(Map.of("Color when true", "green", "Color when false", "red"))
         .withPosition(11, 0).withSize(2, 2).getEntry();
+
+    public Trigger seeAprilTag =
+        new Trigger(() -> Arrays.asList(cameraSeesTarget).stream().anyMatch(val -> val == true));
 
     /**
      * Swerve Subsystem
@@ -307,8 +311,7 @@ public class Swerve extends SubsystemBase {
         Robot.profiler.push("field");
         field.setRobotPose(getPose());
         Robot.profiler.swap("apriltag");
-        aprilTagTarget
-            .setBoolean(Arrays.asList(cameraSeesTarget).stream().anyMatch(val -> val == true));
+        aprilTagTarget.setBoolean(seeAprilTag.getAsBoolean());
 
         Robot.profiler.swap("dist-to-speaker");
         SmartDashboard.putNumber("Distance to Speaker",

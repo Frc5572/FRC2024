@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.util.ReconfigurableSimpleMotorFeedforward;
 import frc.robot.Constants;
 
@@ -30,6 +31,8 @@ public class Shooter extends SubsystemBase {
 
     private double topValue;
     private double bottomValue;
+
+    public Trigger isShooting = new Trigger(() -> inputs.topShooterVelocityRotPerMin > 0);
 
     /**
      * Shooter Subsystem
