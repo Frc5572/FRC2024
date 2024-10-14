@@ -3,7 +3,6 @@ package frc.robot.subsystems.intake;
 import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -20,9 +19,13 @@ public class Intake extends SubsystemBase {
 
     public Trigger noteInIntake = new Trigger(() -> getintakeBeamBrakeStatus()).debounce(0.25,
         Debouncer.DebounceType.kRising);
+    public Trigger noteInIndexer = new Trigger(() -> getIndexerBeamBrakeStatus()).debounce(0.25,
+        Debouncer.DebounceType.kRising);
+    public Trigger noteNotInIndexer = new Trigger(() -> !getIndexerBeamBrakeStatus());
     public Trigger intakeActive = new Trigger(() -> getIntakeRPM() > 0);
-    private String noNote = Color.kBlack.toHexString();
-    private GenericEntry haveNote = RobotContainer.mainDriverTab.add("Have Note", noNote)
+
+    public GenericEntry haveNote = RobotContainer.mainDriverTab
+        .add("Have Note", Constants.LEDConstants.NO_NOTE_COLOR.toHexString())
         .withWidget("Single Color View").withPosition(9, 4).withSize(3, 2).getEntry();
 
     public Intake(IntakeIO io) {
@@ -34,15 +37,15 @@ public class Intake extends SubsystemBase {
     public void periodic() {
         io.updateInputs(intakeAutoLogged);
         Logger.processInputs("Intake", intakeAutoLogged);
-        if (getIndexerBeamBrakeStatus() && getintakeBeamBrakeStatus()) {
-            haveNote.setString(Constants.LEDConstants.ALERT_COLOR.toHexString());
-        } else if (getIndexerBeamBrakeStatus()) {
-            haveNote.setString(Constants.LEDConstants.INDEXER_COLOR.toHexString());
-        } else if (getintakeBeamBrakeStatus()) {
-            haveNote.setString(Constants.LEDConstants.INTAKE_COLOR.toHexString());
-        } else {
-            haveNote.setString(noNote);
-        }
+        // if (getIndexerBeamBrakeStatus() && getintakeBeamBrakeStatus()) {
+        // haveNote.setString(Constants.LEDConstants.ALERT_COLOR.toHexString());
+        // } else if (getIndexerBeamBrakeStatus()) {
+        // haveNote.setString(Constants.LEDConstants.INDEXER_COLOR.toHexString());
+        // } else if (getintakeBeamBrakeStatus()) {
+        // haveNote.setString(Constants.LEDConstants.INTAKE_COLOR.toHexString());
+        // } else {
+        // haveNote.setString(noNote);
+        // }
     }
 
     /**
@@ -67,6 +70,7 @@ public class Intake extends SubsystemBase {
 
     public double getIntakeRPM() {
         return intakeAutoLogged.intakeRPM;
+    }
 
     /**
      * Get the status of the indexer beam brake.

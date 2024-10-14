@@ -38,6 +38,7 @@ import frc.robot.subsystems.elevator_wrist.ElevatorWristReal;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOFalcon;
+import frc.robot.subsystems.intake.IntakeSim;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterVortex;
@@ -98,9 +99,9 @@ public class RobotContainer {
         RobotContainer.mainDriverTab.add("Auto - Dump Notes", false).withWidget("Toggle Switch")
             .withProperties(Map.of()).withPosition(7, 7).withSize(3, 1);
 
-    private String noNote = Color.kBlack.toHexString();
-    private GenericEntry haveNote = RobotContainer.mainDriverTab.add("Have Note", noNote)
-        .withWidget("Single Color View").withPosition(9, 4).withSize(3, 2).getEntry();
+    // private String noNote = Color.kBlack.toHexString();
+    // private GenericEntry haveNote = RobotContainer.mainDriverTab.add("Have Note", noNote)
+    // .withWidget("Single Color View").withPosition(9, 4).withSize(3, 2).getEntry();
 
     /* Controllers */
     public final CommandXboxController driver = new CommandXboxController(Constants.DRIVER_ID);
@@ -141,7 +142,7 @@ public class RobotContainer {
             case kSimulation:
                 s_Swerve = new Swerve(new SwerveIO() {}, cameras);
                 shooter = new Shooter(new ShooterIO() {});
-                intake = new Intake(new IntakeIO() {});
+                intake = new Intake(new IntakeSim());
                 elevatorWrist = new ElevatorWrist(new ElevatorWristIO() {}, operator);
                 break;
             default:
@@ -173,37 +174,40 @@ public class RobotContainer {
      * Configure Trigger Bindings
      */
     private void configureTiggerBindings() {
-        this.indexer.noteInIndexer.negate().and(this.intake.noteInIntake.negate())
-            .onTrue(Commands.runOnce(() -> this.haveNote.setString(noNote)).ignoringDisable(true));
+        // No Note
+        this.intake.noteInIndexer.negate().and(this.intake.noteInIntake.negate())
+            .onTrue(Commands.runOnce(
+                () -> intake.haveNote.setString(Constants.LEDConstants.NO_NOTE_COLOR.toHexString()))
+                .ignoringDisable(true));
         // Flash LEDs Purple when note in indexer
-        this.indexer.noteInIndexer.and(this.intake.noteInIntake.negate())
+        this.intake.noteInIndexer.and(this.intake.noteInIntake.negate())
             .onTrue(new FlashingLEDColor(leds, Constants.LEDConstants.INDEXER_COLOR).withTimeout(3))
             .onTrue(Commands.runOnce(() -> {
-                this.haveNote.setString(Constants.LEDConstants.INDEXER_COLOR.toHexString());
+                intake.haveNote.setString(Constants.LEDConstants.INDEXER_COLOR.toHexString());
             }).ignoringDisable(true));
         // Flash LEDs Green when note in Intake
-        this.intake.noteInIntake.and(this.indexer.noteInIndexer.negate())
+        this.intake.noteInIntake.and(this.intake.noteInIndexer.negate())
             .onTrue(new FlashingLEDColor(leds, Constants.LEDConstants.INTAKE_COLOR).withTimeout(3))
             .onTrue(Commands.runOnce(() -> {
-                this.haveNote.setString(Constants.LEDConstants.INTAKE_COLOR.toHexString());
+                intake.haveNote.setString(Constants.LEDConstants.INTAKE_COLOR.toHexString());
             }).ignoringDisable(true));
         // Flash LEDs White when note in indexer AND intake at the same time
-        this.intake.noteInIntake.and(this.indexer.noteInIndexer)
+        this.intake.noteInIntake.and(this.intake.noteInIndexer)
             .whileTrue(new FlashingLEDColor(leds, Constants.LEDConstants.ALERT_COLOR))
             .onTrue(Commands.runOnce(() -> {
-                this.haveNote.setString(Constants.LEDConstants.ALERT_COLOR.toHexString());
+                intake.haveNote.setString(Constants.LEDConstants.ALERT_COLOR.toHexString());
             }).ignoringDisable(true));
         // Automatically move elevator and wrist to home position after note is spit in AMP mode
         OperatorState.isAmpMode.and(OperatorState.isManualMode.negate())
-            .and(this.indexer.noteInIndexer.negate().debounce(1))
+            .and(this.intake.noteInIndexer.negate().debounce(1))
             .onTrue(elevatorWrist.homePosition());
         // Automatically move elevator and wrist to home position when intaking and don't have a
         // note
-        this.intake.intakeActive.and(this.indexer.noteInIndexer.negate())
+        this.intake.intakeActive.and(this.intake.noteInIndexer.negate())
             .and(this.elevatorWrist.elevatorAtHome.negate()).onTrue(elevatorWrist.homePosition());
 
-        RobotModeTriggers.autonomous().and(indexer.noteInIndexer.negate())
-            .and(shooter.isShooting.negate()).whileTrue(CommandFactory.intakeNote(intake, indexer));
+        RobotModeTriggers.autonomous().and(intake.noteInIndexer.negate())
+            .and(shooter.isShooting.negate()).whileTrue(CommandFactory.intakeNote(intake));
     }
 
     /**
@@ -221,7 +225,7 @@ public class RobotContainer {
         driver.rightTrigger().whileTrue(CommandFactory.newIntakeCommand(intake, elevatorWrist));
         // intake backward
         driver.leftTrigger().and(elevatorWrist.wristReverseOutakeLimit)
-            .whileTrue(CommandFactory.runIntakeMotorNonStop(intake, -1, -.20));
+            .whileTrue(intake.runIntakeMotorNonStop(-1, -.20));
 
         /* Operator Buttons */
         // spit note currently in robot through shooter
@@ -245,7 +249,7 @@ public class RobotContainer {
         // set shooter to home preset position
         operator.y().onTrue(elevatorWrist.homePosition());
         operator.y().and(elevatorWrist.elevatorAtAmp).and(intake.noteInIndexer)
-            .onTrue(CommandFactory.runIntakeMotorNonStop(intake, 0, -0.2).withTimeout(2.0)
+            .onTrue(intake.runIntakeMotorNonStop(0, -0.2).withTimeout(2.0)
                 .until(intake.noteNotInIndexer.debounce(.5)));
 
         // increment once through states list to next state
@@ -260,7 +264,7 @@ public class RobotContainer {
             .onTrue(elevatorWrist.homePosition());
         // run action based on current state as incremented through operator states list
         operator.a().and(OperatorState.isSpeakerMode).whileTrue(elevatorWrist.speakerPreset());
-        operator.a().and(OperatorState.isAmpMode).and(this.indexer.noteInIndexer)
+        operator.a().and(OperatorState.isAmpMode).and(this.intake.noteInIndexer)
             .whileTrue(elevatorWrist.ampPosition());
         operator.a().and(OperatorState.isShootWhileMoveMode).and(s_Swerve.seeAprilTag)
             .whileTrue(new ShootWhileMoving(s_Swerve, driver, () -> s_Swerve.getPose(),
