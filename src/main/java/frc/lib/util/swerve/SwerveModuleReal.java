@@ -35,6 +35,8 @@ public class SwerveModuleReal implements SwerveModuleIO {
         mDriveMotor = new TalonFX(driveMotorID, "canivore");
         mAngleMotor = new TalonFX(angleMotorID, "canivore");
 
+        System.out.println(mDriveMotor.getClass().getCanonicalName());
+
         configAngleEncoder();
         configAngleMotor();
         configDriveMotor();

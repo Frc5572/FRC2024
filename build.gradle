@@ -2,6 +2,7 @@ plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2024.3.2"
     id "com.peterabeles.gversion" version "1.10"
+    id "com.dorongold.task-tree" version "4.0.0"
 }
 
 java {
@@ -127,7 +128,6 @@ jar {
     from sourceSets.main.allSource
     manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    finalizedBy("addProfiling")
 }
 
 // Configure jar and deploy tasks
@@ -161,8 +161,12 @@ gversion {
     indent       = "  "
 }
 
-task(addProfiling, dependsOn: "jar", type: JavaExec) {
-    mainClass = "frc.tools.AddProfiling"
+classes {
+    finalizedBy("addProfiling")
+}
+
+task(addProfiling, dependsOn: "classes", type: JavaExec) {
+    mainClass = "frc.tools.ModifyClasses"
     classpath = sourceSets.tools.runtimeClasspath
     systemProperties["java.library.path"] = new File(project.projectDir, "build/jni/release")
 }

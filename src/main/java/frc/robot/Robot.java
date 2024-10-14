@@ -150,20 +150,6 @@ public class Robot extends LoggedRobot {
         profiler.startTick();
         profiler.push("robotPeriodic()");
         profiler.push("draw_state_to_shuffleboard");
-        if (hasStarted) {
-            profiler.endTick();
-            if (profileTimer.advanceIfElapsed(1)) {
-                if (hasDoneSomething) {
-                    profiler.save();
-                    profiler.reset();
-                }
-            }
-        } else {
-            hasStarted = true;
-        }
-        profiler.startTick();
-        profiler.push("robotPeriodic()");
-        profiler.push("draw_state_to_shuffleboard");
         robotContainer.operatorState.setString(OperatorState.getCurrentState().displayName);
         robotContainer.operatorManualMode.setBoolean(OperatorState.manualModeEnabled());
         robotContainer.matchTime.setDouble(Timer.getMatchTime());
