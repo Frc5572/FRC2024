@@ -70,7 +70,10 @@ public class ElevatorWrist extends SubsystemBase {
 
     private double estimatedWristAngle = 0;
 
+    public Trigger elevatorAtHome = new Trigger(() -> elevatorAtHome());
     public Trigger elevatorAtAmp = new Trigger(() -> elevatorAtAmp());
+    public Trigger wristReverseOutakeLimit =
+        new Trigger(() -> getWristAngle().getDegrees() <= 24.0);
 
     /**
      * Create new ElevatorWrist.

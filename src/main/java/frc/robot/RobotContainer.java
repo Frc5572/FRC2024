@@ -1,7 +1,6 @@
 package frc.robot;
 
 import java.util.Map;
-import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -16,9 +15,8 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.lib.util.FieldConstants;
 import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonReal;
@@ -99,6 +97,11 @@ public class RobotContainer {
     public static SimpleWidget dumpNotes =
         RobotContainer.mainDriverTab.add("Auto - Dump Notes", false).withWidget("Toggle Switch")
             .withProperties(Map.of()).withPosition(7, 7).withSize(3, 1);
+
+    private String noNote = Color.kBlack.toHexString();
+    private GenericEntry haveNote = RobotContainer.mainDriverTab.add("Have Note", noNote)
+        .withWidget("Single Color View").withPosition(9, 4).withSize(3, 2).getEntry();
+
     /* Controllers */
     public final CommandXboxController driver = new CommandXboxController(Constants.DRIVER_ID);
     private final CommandXboxController operator = new CommandXboxController(Constants.OPERATOR_ID);
@@ -112,40 +115,21 @@ public class RobotContainer {
     private LEDs leds = new LEDs(Constants.LEDConstants.LED_COUNT, Constants.LEDConstants.PWM_PORT);
     // private PhotonCamera backLeftCamera = new PhotonCamera("back-left");
 
-
-    private Trigger noteInIndexer = new Trigger(() -> this.intake.getIndexerBeamBrakeStatus())
-        .debounce(0.25, Debouncer.DebounceType.kRising);
-    private Trigger noteInIntake = new Trigger(() -> this.intake.getintakeBeamBrakeStatus())
-        .debounce(0.25, Debouncer.DebounceType.kRising);
-
     /**
+     * Robot Container
      */
     public RobotContainer(RobotRunType runtimeType) {
         numNoteChooser.setDefaultOption("0", 0);
         for (int i = 0; i < 7; i++) {
             numNoteChooser.addOption(String.valueOf(i), i);
         }
-        cameras =
-            /*
-             * Camera Order: 0 - Front Left 1 - Front RIght 2 - Back Left 3 - Back Right
-             */
-            new PhotonCameraWrapper[] {
-                // new PhotonCameraWrapper(
-                // new PhotonReal(Constants.CameraConstants.FrontLeftFacingCamera.CAMERA_NAME,
-                // Constants.CameraConstants.FrontLeftFacingCamera.CAMERA_IP),
-                // Constants.CameraConstants.FrontLeftFacingCamera.KCAMERA_TO_ROBOT),
-                new PhotonCameraWrapper(
-                    new PhotonReal(Constants.CameraConstants.FrontRightFacingCamera.CAMERA_NAME,
-                        Constants.CameraConstants.FrontRightFacingCamera.CAMERA_IP),
-                    Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT),
-            // new PhotonCameraWrapper(
-            // new PhotonReal(Constants.CameraConstants.BackLeftFacingCamera.CAMERA_NAME,
-            // Constants.CameraConstants.BackLeftFacingCamera.CAMERA_IP),
-            // Constants.CameraConstants.BackLeftFacingCamera.KCAMERA_TO_ROBOT)
-            };
-        // new PhotonCameraWrapper(
-        // new PhotonReal(Constants.CameraConstants.BackRightFacingCamera.CAMERA_NAME),
-        // Constants.CameraConstants.BackRightFacingCamera.KCAMERA_TO_ROBOT)};
+        /*
+         * Camera Order: 0 - Front Left 1 - Front RIght 2 - Back Left 3 - Back Right
+         */
+        cameras = new PhotonCameraWrapper[] {new PhotonCameraWrapper(
+            new PhotonReal(Constants.CameraConstants.FrontRightFacingCamera.CAMERA_NAME,
+                Constants.CameraConstants.FrontRightFacingCamera.CAMERA_IP),
+            Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT)};
 
         switch (runtimeType) {
             case kReal:
@@ -182,6 +166,44 @@ public class RobotContainer {
         leds.setDefaultCommand(new MovingColorLEDs(leds, Color.kRed, 4, false));
         // Configure the button bindings
         configureButtonBindings();
+        configureTiggerBindings();
+    }
+
+    /*
+     * Configure Trigger Bindings
+     */
+    private void configureTiggerBindings() {
+        this.indexer.noteInIndexer.negate().and(this.intake.noteInIntake.negate())
+            .onTrue(Commands.runOnce(() -> this.haveNote.setString(noNote)).ignoringDisable(true));
+        // Flash LEDs Purple when note in indexer
+        this.indexer.noteInIndexer.and(this.intake.noteInIntake.negate())
+            .onTrue(new FlashingLEDColor(leds, Constants.LEDConstants.INDEXER_COLOR).withTimeout(3))
+            .onTrue(Commands.runOnce(() -> {
+                this.haveNote.setString(Constants.LEDConstants.INDEXER_COLOR.toHexString());
+            }).ignoringDisable(true));
+        // Flash LEDs Green when note in Intake
+        this.intake.noteInIntake.and(this.indexer.noteInIndexer.negate())
+            .onTrue(new FlashingLEDColor(leds, Constants.LEDConstants.INTAKE_COLOR).withTimeout(3))
+            .onTrue(Commands.runOnce(() -> {
+                this.haveNote.setString(Constants.LEDConstants.INTAKE_COLOR.toHexString());
+            }).ignoringDisable(true));
+        // Flash LEDs White when note in indexer AND intake at the same time
+        this.intake.noteInIntake.and(this.indexer.noteInIndexer)
+            .whileTrue(new FlashingLEDColor(leds, Constants.LEDConstants.ALERT_COLOR))
+            .onTrue(Commands.runOnce(() -> {
+                this.haveNote.setString(Constants.LEDConstants.ALERT_COLOR.toHexString());
+            }).ignoringDisable(true));
+        // Automatically move elevator and wrist to home position after note is spit in AMP mode
+        OperatorState.isAmpMode.and(OperatorState.isManualMode.negate())
+            .and(this.indexer.noteInIndexer.negate().debounce(1))
+            .onTrue(elevatorWrist.homePosition());
+        // Automatically move elevator and wrist to home position when intaking and don't have a
+        // note
+        this.intake.intakeActive.and(this.indexer.noteInIndexer.negate())
+            .and(this.elevatorWrist.elevatorAtHome.negate()).onTrue(elevatorWrist.homePosition());
+
+        RobotModeTriggers.autonomous().and(indexer.noteInIndexer.negate())
+            .and(shooter.isShooting.negate()).whileTrue(CommandFactory.intakeNote(intake, indexer));
     }
 
     /**
@@ -191,14 +213,6 @@ public class RobotContainer {
      * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
-        noteInIndexer.and(noteInIntake.negate()).onTrue(
-            new FlashingLEDColor(leds, Constants.LEDConstants.INDEXER_COLOR).withTimeout(3));
-        noteInIntake.and(noteInIndexer.negate())
-            .onTrue(new FlashingLEDColor(leds, Constants.LEDConstants.INTAKE_COLOR).withTimeout(3));
-        noteInIntake.and(noteInIndexer)
-            .whileTrue(new FlashingLEDColor(leds, Constants.LEDConstants.ALERT_COLOR));
-
-
         /* Driver Buttons */
         driver.y().onTrue(new InstantCommand(() -> s_Swerve.resetFieldRelativeOffset()));
         driver.start().onTrue(
@@ -206,8 +220,8 @@ public class RobotContainer {
         // intake forward
         driver.rightTrigger().whileTrue(CommandFactory.newIntakeCommand(intake, elevatorWrist));
         // intake backward
-        driver.leftTrigger().and(() -> elevatorWrist.getWristAngle().getDegrees() <= 24.0)
-            .whileTrue(intake.runIntakeMotorNonStop(-1, -.20));
+        driver.leftTrigger().and(elevatorWrist.wristReverseOutakeLimit)
+            .whileTrue(CommandFactory.runIntakeMotorNonStop(intake, -1, -.20));
 
         /* Operator Buttons */
         // spit note currently in robot through shooter
@@ -230,9 +244,9 @@ public class RobotContainer {
         operator.rightTrigger().and(operator.leftTrigger()).whileTrue(intake.runIndexerMotor(1));
         // set shooter to home preset position
         operator.y().onTrue(elevatorWrist.homePosition());
-        operator.y().and(elevatorWrist.elevatorAtAmp).and(noteInIndexer)
-            .onTrue(intake.runIntakeMotorNonStop(0, -0.2).withTimeout(2.0)
-                .until(new Trigger(() -> !this.intake.getIndexerBeamBrakeStatus()).debounce(.5)));
+        operator.y().and(elevatorWrist.elevatorAtAmp).and(intake.noteInIndexer)
+            .onTrue(CommandFactory.runIntakeMotorNonStop(intake, 0, -0.2).withTimeout(2.0)
+                .until(intake.noteNotInIndexer.debounce(.5)));
 
         // increment once through states list to next state
         operator.povRight().onTrue(Commands.runOnce(() -> {
@@ -242,43 +256,26 @@ public class RobotContainer {
         operator.povLeft().onTrue(Commands.runOnce(() -> {
             OperatorState.decrement();
         }).ignoringDisable(true));
-        new Trigger(() -> OperatorState.getCurrentState() == OperatorState.State.kAmp)
-            .and(new Trigger(() -> !this.intake.getIndexerBeamBrakeStatus()).debounce(1.0))
+        OperatorState.isAmpMode.and(intake.noteNotInIndexer.debounce(1.0))
             .onTrue(elevatorWrist.homePosition());
         // run action based on current state as incremented through operator states list
-        operator.a().whileTrue(new SelectCommand<OperatorState.State>(Map.of(
-            //
-            OperatorState.State.kSpeaker,
-            elevatorWrist.speakerPreset()
-                .alongWith(new TeleopSwerve(s_Swerve, driver, Constants.Swerve.isFieldRelative,
-                    Constants.Swerve.isOpenLoop)),
-            //
-            OperatorState.State.kAmp,
-            Commands.either(elevatorWrist.ampPosition(), Commands.none(), noteInIndexer)
-                .alongWith(new TeleopSwerve(s_Swerve, driver, Constants.Swerve.isFieldRelative,
-                    Constants.Swerve.isOpenLoop)),
-            //
-            OperatorState.State.kShootWhileMove,
-            new ShootWhileMoving(s_Swerve, driver, () -> s_Swerve.getPose(),
+        operator.a().and(OperatorState.isSpeakerMode).whileTrue(elevatorWrist.speakerPreset());
+        operator.a().and(OperatorState.isAmpMode).and(this.indexer.noteInIndexer)
+            .whileTrue(elevatorWrist.ampPosition());
+        operator.a().and(OperatorState.isShootWhileMoveMode).and(s_Swerve.seeAprilTag)
+            .whileTrue(new ShootWhileMoving(s_Swerve, driver, () -> s_Swerve.getPose(),
                 () -> FieldConstants.allianceFlip(FieldConstants.Speaker.centerSpeakerOpening)
                     .getTranslation())
                         .alongWith(elevatorWrist.followPosition(
                             () -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
                             () -> elevatorWrist.getAngleFromDistance(s_Swerve.getPose())
-                                .plus(Rotation2d.fromDegrees(0.0)))),
-            //
-            OperatorState.State.kPost,
-            new TurnToAngle(s_Swerve, Rotation2d.fromDegrees(25)).alongWith(elevatorWrist
+                                .plus(Rotation2d.fromDegrees(0.0)))));
+        operator.a().and(OperatorState.isPostMode)
+            .whileTrue(new TurnToAngle(s_Swerve, Rotation2d.fromDegrees(25)).alongWith(elevatorWrist
                 .followPosition(() -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-                    () -> Constants.ElevatorWristConstants.SetPoints.PODIUM_ANGLE)),
-            //
-            OperatorState.State.kClimb,
-            Commands
-                .sequence(elevatorWrist.ampPosition(),
-                    Commands.runOnce(() -> OperatorState.enableManualMode()))
-                .alongWith(new TeleopSwerve(s_Swerve, driver, Constants.Swerve.isFieldRelative,
-                    Constants.Swerve.isOpenLoop))),
-            OperatorState::getCurrentState));
+                    () -> Constants.ElevatorWristConstants.SetPoints.PODIUM_ANGLE)));
+        operator.a().and(OperatorState.isClimbMode).whileTrue(Commands.sequence(
+            elevatorWrist.ampPosition(), Commands.runOnce(() -> OperatorState.enableManualMode())));
 
         // Toggle manual mode
         operator.start().onTrue(Commands.runOnce(() -> {

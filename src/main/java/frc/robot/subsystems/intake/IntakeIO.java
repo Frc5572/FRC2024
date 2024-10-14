@@ -22,6 +22,8 @@ public interface IntakeIO {
         // public double indexerRPM;
         public boolean indexerBeamBrake;
         public boolean intakeBeamBrake;
+        public double intakeRPM;
+        public double indexerRPM;
     }
 
     public default void updateInputs(IntakeInputs inputs) {}

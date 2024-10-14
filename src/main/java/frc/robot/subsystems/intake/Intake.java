@@ -1,11 +1,13 @@
 package frc.robot.subsystems.intake;
 
 import org.littletonrobotics.junction.Logger;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
@@ -16,9 +18,9 @@ public class Intake extends SubsystemBase {
     private IntakeIO io;
     private IntakeInputsAutoLogged intakeAutoLogged = new IntakeInputsAutoLogged();
 
-    // private GenericEntry beamBrake = RobotContainer.mainDriverTab.add("Have Note", false)
-    // .withWidget(BuiltInWidgets.kBooleanBox).withPosition(9, 4).withSize(3, 2).getEntry();
-
+    public Trigger noteInIntake = new Trigger(() -> getintakeBeamBrakeStatus()).debounce(0.25,
+        Debouncer.DebounceType.kRising);
+    public Trigger intakeActive = new Trigger(() -> getIntakeRPM() > 0);
     private String noNote = Color.kBlack.toHexString();
     private GenericEntry haveNote = RobotContainer.mainDriverTab.add("Have Note", noNote)
         .withWidget("Single Color View").withPosition(9, 4).withSize(3, 2).getEntry();
@@ -62,6 +64,9 @@ public class Intake extends SubsystemBase {
         Logger.recordOutput("/Intake/Indexer Percentage", percentage);
         io.setIndexerMotorPercentage(percentage);
     }
+
+    public double getIntakeRPM() {
+        return intakeAutoLogged.intakeRPM;
 
     /**
      * Get the status of the indexer beam brake.

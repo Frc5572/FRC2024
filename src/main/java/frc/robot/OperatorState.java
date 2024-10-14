@@ -1,5 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+
 /** Singleton tracker for operator state. */
 public class OperatorState {
 
@@ -37,6 +39,14 @@ public class OperatorState {
 
     private static State currentState = State.kShootWhileMove;
     private static boolean manualMode = false;
+
+    public static Trigger isManualMode = new Trigger(() -> manualModeEnabled());
+    public static Trigger isAmpMode = new Trigger(() -> getCurrentState() == State.kAmp);
+    public static Trigger isSpeakerMode = new Trigger(() -> getCurrentState() == State.kSpeaker);
+    public static Trigger isShootWhileMoveMode =
+        new Trigger(() -> getCurrentState() == State.kShootWhileMove);
+    public static Trigger isPostMode = new Trigger(() -> getCurrentState() == State.kPost);
+    public static Trigger isClimbMode = new Trigger(() -> getCurrentState() == State.kClimb);
 
     /** Get whether or not operator should be able to control wrist and elevator manually. */
     public static boolean manualModeEnabled() {
