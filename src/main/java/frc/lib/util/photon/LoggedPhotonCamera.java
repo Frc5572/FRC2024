@@ -20,6 +20,7 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.common.dataflow.structures.Packet;
 import org.photonvision.targeting.PhotonPipelineResult;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.numbers.N5;
@@ -88,10 +89,19 @@ public class LoggedPhotonCamera extends PhotonCamera {
 
     private final PhotonCameraInputs inputs = new PhotonCameraInputs();
 
+    /** Transform from camera to robot */
+    public final Transform3d cameraToRobot;
+
+    /** Multiplier for standard deviation. Lower means more trust. */
+    public final double stdDevFactor;
+
     /** Create PhotonCamera with a given name and IP. */
-    public LoggedPhotonCamera(String cameraName, String cameraIP) {
+    public LoggedPhotonCamera(String cameraName, String cameraIP, Transform3d cameraToRobot,
+        double stdDevFactor) {
         super(cameraName);
         inputs.name = cameraName;
+        this.cameraToRobot = cameraToRobot;
+        this.stdDevFactor = stdDevFactor;
         new Thread(() -> {
             Timer timer = new Timer();
             while (true) {

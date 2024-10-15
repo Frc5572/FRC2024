@@ -123,7 +123,7 @@ public final class Constants {
 
             public static final String CAMERA_NAME = "front-left";
             public static final String CAMERA_IP = "10.55.72.12";
-            public static final double LARGEST_DISTANCE = 0.1;
+            public static final double STDDEV_FACTOR = 1.0;
         }
 
         /**
@@ -140,7 +140,7 @@ public final class Constants {
 
             public static final String CAMERA_NAME = "front-right";
             public static final String CAMERA_IP = "10.55.72.10";
-            public static final double LARGEST_DISTANCE = 0.1;
+            public static final double STDDEV_FACTOR = 1.0;
         }
 
         /**
@@ -157,7 +157,7 @@ public final class Constants {
 
             public static final String CAMERA_NAME = "back-left";
             public static final String CAMERA_IP = "10.55.72.13";
-            public static final double LARGEST_DISTANCE = 0.1;
+            public static final double STDDEV_FACTOR = 1.0;
         }
 
         // /**

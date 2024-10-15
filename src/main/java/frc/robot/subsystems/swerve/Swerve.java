@@ -9,6 +9,7 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -24,6 +25,7 @@ import frc.lib.util.swerve.SwerveModule;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
+import frc.robot.RobotState;
 
 /**
  * Swerve Subsystem
@@ -227,6 +229,11 @@ public class Swerve extends SubsystemBase {
         }
     }
 
+    @AutoLogOutput(key = "Swerve/MeasuredSpeeds")
+    private ChassisSpeeds getSpeeds() {
+        return Constants.Swerve.swerveKinematics.toChassisSpeeds(getModuleStates());
+    }
+
     @Override
     public void periodic() {
         Robot.profiler.push("swerve_periodic");
@@ -238,6 +245,12 @@ public class Swerve extends SubsystemBase {
         }
         Robot.profiler.swap("update_swerve_odometry");
         swerveOdometry.update(getGyroYaw(), getModulePositions());
+        // Update current velocities use gyro when possible
+        ChassisSpeeds robotRelativeVelocity = getSpeeds();
+        RobotState.getInstance()
+            .addVelocityData(new Twist2d(robotRelativeVelocity.vxMetersPerSecond,
+                robotRelativeVelocity.vyMetersPerSecond,
+                robotRelativeVelocity.omegaRadiansPerSecond));
         Robot.profiler.swap("process_inputs");
         Logger.processInputs("Swerve", inputs);
         Robot.profiler.swap("update_shuffleboard");
