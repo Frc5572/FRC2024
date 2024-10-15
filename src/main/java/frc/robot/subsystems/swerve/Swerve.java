@@ -1,7 +1,5 @@
 package frc.robot.subsystems.swerve;
 
-import java.util.Arrays;
-import java.util.Map;
 import java.util.Optional;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -15,16 +13,13 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.FieldConstants;
-import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.swerve.SwerveModule;
 import frc.robot.Constants;
 import frc.robot.Robot;
@@ -40,21 +35,12 @@ public class Swerve extends SubsystemBase {
     private double fieldOffset;
     private SwerveInputsAutoLogged inputs = new SwerveInputsAutoLogged();
     private SwerveIO swerveIO;
-    private boolean hasInitialized = false;
-    private PhotonCameraWrapper[] cameras;
-    private Boolean[] cameraSeesTarget = {false, false, false, false};
-
-    private GenericEntry aprilTagTarget = RobotContainer.mainDriverTab.add("See April Tag", false)
-        .withWidget(BuiltInWidgets.kBooleanBox)
-        .withProperties(Map.of("Color when true", "green", "Color when false", "red"))
-        .withPosition(11, 0).withSize(2, 2).getEntry();
 
     /**
      * Swerve Subsystem
      */
-    public Swerve(SwerveIO swerveIO, PhotonCameraWrapper[] cameras) {
+    public Swerve(SwerveIO swerveIO) {
         this.swerveIO = swerveIO;
-        this.cameras = cameras;
         fieldOffset = getGyroYaw().getDegrees();
         swerveMods = new SwerveModule[] {
             swerveIO.createSwerveModule(0, Constants.Swerve.Mod0.driveMotorID,
@@ -241,10 +227,6 @@ public class Swerve extends SubsystemBase {
         }
     }
 
-    public void resetPvInitialization() {
-        hasInitialized = false;
-    }
-
     @Override
     public void periodic() {
         Robot.profiler.push("swerve_periodic");
@@ -258,57 +240,14 @@ public class Swerve extends SubsystemBase {
         swerveOdometry.update(getGyroYaw(), getModulePositions());
         Robot.profiler.swap("process_inputs");
         Logger.processInputs("Swerve", inputs);
-        Robot.profiler.swap("process_cameras");
-        for (int i = 0; i < cameras.length; i++) {
-            cameras[i].periodic();
-            cameraSeesTarget[i] = cameras[i].seesTarget();
-        }
-        Robot.profiler.swap("do_camera_stuff");
-        Logger.recordOutput("/Swerve/hasInitialized", hasInitialized);
-        if (!hasInitialized && !DriverStation.isAutonomous()) {
-            Robot.profiler.push("init");
-            for (int i = 0; i < cameras.length; i++) {
-                var robotPose = cameras[i].getInitialPose();
-                Logger.recordOutput("/Swerve/hasInitialPose[" + i + "]", robotPose.isPresent());
-
-                if (robotPose.isPresent()) {
-                    swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(),
-                        robotPose.get().robotPose);
-                    hasInitialized = true;
-                    break;
-                }
-            }
-            Robot.profiler.pop();
-        } else {
-            Robot.profiler.push("update");
-            for (int i = 0; i < cameras.length; i++) {
-                var result = cameras[i].getEstimatedGlobalPose(getPose());
-                if (result.isPresent()) {
-                    if (DriverStation.isAutonomous() && result.get().targetsUsed.size() < 2) {
-                        continue;
-                    } else if (result.get().targetsUsed.size() == 1
-                        && result.get().targetsUsed.get(0).getPoseAmbiguity() > 0.1) {
-                        continue;
-                    }
-                    swerveOdometry.addVisionMeasurement(result.get().estimatedPose.toPose2d(),
-                        Timer.getFPGATimestamp() - cameras[i].latency());
-                }
-            }
-            Robot.profiler.pop();
-        }
         Robot.profiler.swap("update_shuffleboard");
         Robot.profiler.push("field");
         field.setRobotPose(getPose());
-        Robot.profiler.swap("apriltag");
-        aprilTagTarget
-            .setBoolean(Arrays.asList(cameraSeesTarget).stream().anyMatch(val -> val == true));
-
         Robot.profiler.swap("dist-to-speaker");
         SmartDashboard.putNumber("Distance to Speaker",
             FieldConstants.allianceFlip(FieldConstants.Speaker.centerSpeakerOpening)
                 .getTranslation().minus(getPose().getTranslation()).getNorm());
         Robot.profiler.swap("simple");
-        SmartDashboard.putBoolean("Has Initialized", hasInitialized);
         SmartDashboard.putNumber("Gyro Yaw", getGyroYaw().getDegrees());
         Robot.profiler.pop();
         Robot.profiler.pop();

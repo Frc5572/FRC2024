@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.util.FieldConstants;
-import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.robot.Robot.RobotRunType;
 import frc.robot.autos.JustShoot1;
 import frc.robot.autos.P123;
@@ -45,6 +44,7 @@ import frc.robot.subsystems.shooter.ShooterVortex;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.SwerveIO;
 import frc.robot.subsystems.swerve.SwerveReal;
+import frc.robot.subsystems.vision.Vision;
 
 
 /**
@@ -106,9 +106,9 @@ public class RobotContainer {
     private Swerve s_Swerve;
     private Shooter shooter;
     private Intake intake;
-    private PhotonCameraWrapper[] cameras;
     private ElevatorWrist elevatorWrist;
     private LEDs leds = new LEDs(Constants.LEDConstants.LED_COUNT, Constants.LEDConstants.PWM_PORT);
+    private Vision vision;
     // private PhotonCamera backLeftCamera = new PhotonCamera("back-left");
 
 
@@ -124,43 +124,26 @@ public class RobotContainer {
         for (int i = 0; i < 7; i++) {
             numNoteChooser.addOption(String.valueOf(i), i);
         }
-        cameras =
-            /*
-             * Camera Order: 0 - Front Left 1 - Front RIght 2 - Back Left 3 - Back Right
-             */
-            new PhotonCameraWrapper[] {
-                // new PhotonCameraWrapper(
-                // new PhotonReal(Constants.CameraConstants.FrontLeftFacingCamera.CAMERA_NAME,
-                // Constants.CameraConstants.FrontLeftFacingCamera.CAMERA_IP),
-                // Constants.CameraConstants.FrontLeftFacingCamera.KCAMERA_TO_ROBOT),
-                new PhotonCameraWrapper(
-                    Constants.CameraConstants.FrontRightFacingCamera.CAMERA_NAME,
-                    Constants.CameraConstants.FrontRightFacingCamera.CAMERA_IP,
-                    Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT),
-            // new PhotonCameraWrapper(
-            // new PhotonReal(Constants.CameraConstants.BackLeftFacingCamera.CAMERA_NAME,
-            // Constants.CameraConstants.BackLeftFacingCamera.CAMERA_IP),
-            // Constants.CameraConstants.BackLeftFacingCamera.KCAMERA_TO_ROBOT)
-            };
         // new PhotonCameraWrapper(
         // new PhotonReal(Constants.CameraConstants.BackRightFacingCamera.CAMERA_NAME),
         // Constants.CameraConstants.BackRightFacingCamera.KCAMERA_TO_ROBOT)};
 
+        vision = new Vision(runtimeType == Robot.RobotRunType.kSimulation);
         switch (runtimeType) {
             case kReal:
                 shooter = new Shooter(new ShooterVortex());
                 intake = new Intake(new IntakeIOFalcon());
-                s_Swerve = new Swerve(new SwerveReal(), cameras);
+                s_Swerve = new Swerve(new SwerveReal());
                 elevatorWrist = new ElevatorWrist(new ElevatorWristReal(), operator);
                 break;
             case kSimulation:
-                s_Swerve = new Swerve(new SwerveIO() {}, cameras);
+                s_Swerve = new Swerve(new SwerveIO() {});
                 shooter = new Shooter(new ShooterIO() {});
                 intake = new Intake(new IntakeIO() {});
                 elevatorWrist = new ElevatorWrist(new ElevatorWristIO() {}, operator);
                 break;
             default:
-                s_Swerve = new Swerve(new SwerveIO() {}, cameras);
+                s_Swerve = new Swerve(new SwerveIO() {});
                 shooter = new Shooter(new ShooterIO() {});
                 intake = new Intake(new IntakeIO() {});
                 elevatorWrist = new ElevatorWrist(new ElevatorWristIO() {}, operator);
@@ -200,8 +183,6 @@ public class RobotContainer {
 
         /* Driver Buttons */
         driver.y().onTrue(new InstantCommand(() -> s_Swerve.resetFieldRelativeOffset()));
-        driver.start().onTrue(
-            new InstantCommand(() -> s_Swerve.resetPvInitialization()).ignoringDisable(true));
         // intake forward
         driver.rightTrigger().whileTrue(CommandFactory.newIntakeCommand(intake, elevatorWrist));
         // intake backward
@@ -211,8 +192,6 @@ public class RobotContainer {
         /* Operator Buttons */
         // spit note currently in robot through shooter
         operator.x().whileTrue(CommandFactory.spit(shooter, intake));
-        // reset apriltag vision
-        operator.b().onTrue(new InstantCommand(() -> s_Swerve.resetPvInitialization()));
         // spin up shooter
         operator.leftTrigger().whileTrue(shooter.shootSpeaker());
         // operator.leftTrigger()
