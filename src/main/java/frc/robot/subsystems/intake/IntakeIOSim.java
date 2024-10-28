@@ -21,7 +21,7 @@ public class IntakeIOSim implements IntakeIO {
 
     /**
      * Intake IO Layer with simulated motors and sensors
-     * 
+     *
      * @param pumbaa Simulated Robot Viz
      */
     public IntakeIOSim(SimulatedPumbaa pumbaa) {

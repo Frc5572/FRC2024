@@ -31,7 +31,7 @@ public class Intake extends SubsystemBase {
      * Intake Subsystem
      *
      * @param io IO Layer
-     * @param viz Sim Vizualization
+     * @param viz Sim Visualization
      */
     public Intake(IntakeIO io, PumbaaViz viz) {
         this.io = io;

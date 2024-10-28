@@ -70,6 +70,11 @@ public class SimulatedPumbaa {
         this.hasNote = true;
     }
 
+    /**
+     * Get Shot Pose
+     *
+     * @return Pose shooting from
+     */
     public Pose3d getShootFrom() {
         Translation3d t = new Translation3d(
             this.getPose().getX() + SHOOTER_FRONT * this.getPose().getRotation().getCos(),
@@ -80,6 +85,12 @@ public class SimulatedPumbaa {
         return new Pose3d(t, r);
     }
 
+    /**
+     * Advance Note
+     *
+     * @param dt Change in time
+     * @param arena Simulated Arena
+     */
     public void advanceNote(double dt, SimulatedArena arena) {
         Rotation2d yaw = this.getPose().getRotation();
         Rotation2d pitch = this.wristAngle;

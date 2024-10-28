@@ -96,8 +96,9 @@ public class PumbaaViz {
      * Set Note Location
      */
     public void setNoteLocation(NoteLocation location) {
-        if (sim != null)
+        if (sim != null) {
             return;
+        }
         switch (location) {
             case Intake:
                 this.notePose = intake_pose;
@@ -116,7 +117,7 @@ public class PumbaaViz {
     /**
      * Get Shotting Position
      *
-     * @return
+     * @return Shooting Pose
      */
     public Pose3d getShootFrom() {
         Translation3d t = new Translation3d(

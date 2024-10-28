@@ -32,10 +32,10 @@ public class SimulatedArena {
         /**
          * Shooting Note
          *
-         * @param startPose
-         * @param yaw
-         * @param pitch
-         * @param velocity
+         * @param startPose Starting Pose
+         * @param yaw Yaw
+         * @param pitch Pitch
+         * @param velocity Velocity
          */
         public ShotNote(Pose3d startPose, Rotation2d yaw, Rotation2d pitch, double velocity) {
             this.pose = startPose;
@@ -81,6 +81,11 @@ public class SimulatedArena {
         .collect(Collectors.toList());
     public List<ShotNote> shotNotes = new ArrayList<>();
 
+    /**
+     * Create a new simulated robot
+     *
+     * @return Simulated Robot
+     */
     public SimulatedPumbaa newPumbaa() {
         SimulatedPumbaa dt = new SimulatedPumbaa(this.id++);
         robots.add(dt);
@@ -90,7 +95,7 @@ public class SimulatedArena {
     /**
      * Update Viz
      *
-     * @param dt
+     * @param dt Chnage in time
      */
     public void update(double dt) {
         robots: for (SimulatedPumbaa robot : this.robots) {
@@ -127,10 +132,10 @@ public class SimulatedArena {
     /**
      * Shoot note
      *
-     * @param pose
-     * @param yaw
-     * @param pitch
-     * @param velocity
+     * @param pose Shooting Pose
+     * @param yaw Shooting Yaw
+     * @param pitch Shooting Pitch
+     * @param velocity Shooting Velocity
      */
     void shootNote(Pose3d pose, Rotation2d yaw, Rotation2d pitch, double velocity) {
         this.shotNotes.add(new ShotNote(pose, yaw, pitch, velocity));
