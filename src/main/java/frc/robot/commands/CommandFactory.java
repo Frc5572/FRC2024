@@ -129,9 +129,11 @@ public class CommandFactory {
          * @return Command
          */
         public static Command runIndexer(Intake intake) {
-            return Commands.waitUntil(() -> !intake.getIndexerBeamBrakeStatus())
-                .andThen(Commands.waitSeconds(.25)).deadlineWith(intake.runIndexerMotor(1))
-                .withTimeout(5);
+            // return Commands.waitUntil(() -> !intake.getIndexerBeamBrakeStatus())
+            // .andThen(Commands.waitSeconds(.25)).deadlineWith(intake.runIndexerMotor(1))
+            // .withTimeout(5);
+            return intake.runIndexerMotor(1)
+                .until(new Trigger(() -> !intake.getIndexerBeamBrakeStatus()).debounce(.25));
         }
 
         /**

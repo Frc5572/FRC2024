@@ -6,6 +6,7 @@ import choreo.auto.AutoTrajectory;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
@@ -16,6 +17,8 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.Swerve;
 
 public class AutoCommandFactory {
+
+    static boolean a = false;
 
     public static AutoLoop p123(AutoFactory factory, Swerve swerve, Intake intake, Shooter shooter,
         ElevatorWrist elevatorWrist) {
@@ -29,39 +32,51 @@ public class AutoCommandFactory {
         Trigger dumpOrNot =
             new Trigger(() -> RobotContainer.dumpNotes.getEntry().getBoolean(false));
 
+        Trigger enableIntake = new Trigger(() -> intake.getCurrentCommand() == null).debounce(.25);
+
         double elevatorHeight = 28.1;
 
+        Command b = Commands.runOnce(() -> a = true);
         final AutoTrajectory startToS0 = factory.trajectory("P123", 0, loop);
         final AutoTrajectory S0toS1 = factory.trajectory("P123", 1, loop);
         final AutoTrajectory S1toS2 = factory.trajectory("P123", 2, loop);
         final AutoTrajectory S2toS3 = factory.trajectory("P123", 3, loop);
 
         loop.enabled().whileTrue(shooter.shootSpeaker().withName("Run Shooter always"));
+        loop.enabled().and(enableIntake).onTrue(CommandFactory.intakeNote(intake).repeatedly()
+            .withName("Run intake always when not have note"));
         loop.enabled().onTrue(
             Commands.runOnce(() -> swerve.resetOdometry(startToS0.getInitialPose().orElseGet(() -> {
                 loop.kill();
                 return new Pose2d();
-            }))).andThen(startToS0.cmd().asProxy()).withName("P123 entry point"));
+            }))).andThen(Commands.waitSeconds(5), startToS0.cmd()).withName("P123 entry point"));
 
         startToS0.active()
             .onTrue(elevatorWrist
                 .goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
                     Rotation2d.fromDegrees(36.5))
                 .withTimeout(1.0).withName("Move Elevator and Wrist into Position 1"));
-        startToS0.done().onTrue(
-            Commands.sequence(Commands.waitSeconds(.1), CommandFactory.Auto.runIndexer(intake),
-                S0toS1.cmd().asProxy()).withName("Shoot Note and Move S0 to S1"));
-
+        startToS0.done()
+            .onTrue(Commands
+                .sequence(Commands.waitSeconds(.1),
+                    CommandFactory.Auto.runIndexer(intake).asProxy(), S0toS1.cmd())
+                .withName("Shoot Note and Move S0 to S1"));
         S0toS1.active()
-            .onTrue(
-                CommandFactory.intakeNote(intake).withName("Run intake always when not have note"))
             .onTrue(elevatorWrist.goToPosition(elevatorHeight, Rotation2d.fromDegrees(38.5))
                 .withTimeout(.5).withName("Move Elevator and Wrist into Position 2"));
-        S0toS1.done().onTrue(
-            Commands.sequence(Commands.waitSeconds(.1), CommandFactory.Auto.runIndexer(intake),
-                S1toS2.cmd().asProxy()).withName("Shoot Note and Move S1 to S2"));
-        // S0toS1.done().onTrue(S1toS2.cmd());
-        // S1toS2.done().onTrue(S2toS3.cmd());
+        S0toS1.done()
+            .onTrue(Commands
+                .sequence(Commands.waitSeconds(.1),
+                    CommandFactory.Auto.runIndexer(intake).asProxy(), S1toS2.cmd())
+                .withName("Shoot Note and Move S1 to S2"));
+        S1toS2.done()
+            .onTrue(Commands
+                .sequence(Commands.waitSeconds(.1),
+                    CommandFactory.Auto.runIndexer(intake).asProxy(), S2toS3.cmd())
+                .withName("Shoot Note and Move S2 to S3"));
+        S2toS3.done().onTrue(Commands
+            .sequence(Commands.waitSeconds(.1), CommandFactory.Auto.runIndexer(intake).asProxy())
+            .withName("Shoot Note"));
         return loop;
     }
 
@@ -99,23 +114,19 @@ public class AutoCommandFactory {
         startToS0.done().and(abort).and(dumpOrNot).onTrue(s0P8Dump.cmd());
         startToS0.done().and(abort).and(dumpOrNot.negate()).onTrue(s0ToP8.cmd());
 
-        dumpOrNot.and(s0P8Dump.active()).onTrue(elevatorWrist.homePosition())
-            .whileTrue(CommandFactory.intakeNote(intake));
+        dumpOrNot.and(s0P8Dump.active()).onTrue(elevatorWrist.homePosition());
         dumpOrNot.and(s0P8Dump.done()).and(abort).onTrue(p8p7Dump.cmd());
         dumpOrNot.and(s0P8Dump.done()).and(abort.negate())
             .onTrue(CommandFactory.Auto.runIndexer(intake));
 
-        dumpOrNot.and(p8p7Dump.active()).whileTrue(CommandFactory.intakeNote(intake));
         dumpOrNot.and(p8p7Dump.done()).and(abort).onTrue(p7p6Dump.cmd());
         dumpOrNot.and(p8p7Dump.done()).and(abort.negate())
             .onTrue(CommandFactory.Auto.runIndexer(intake));
 
-        dumpOrNot.and(p7p6Dump.active()).whileTrue(CommandFactory.intakeNote(intake));
         dumpOrNot.and(p7p6Dump.done()).and(abort).onTrue(p6p5Dump.cmd());
         dumpOrNot.and(p7p6Dump.done()).and(abort.negate())
             .onTrue(CommandFactory.Auto.runIndexer(intake));
 
-        dumpOrNot.and(p6p5Dump.active()).whileTrue(CommandFactory.intakeNote(intake));
         dumpOrNot.and(p6p5Dump.done()).and(abort).onTrue(p8p7Dump.cmd());
         dumpOrNot.and(p6p5Dump.done()).and(abort.negate())
             .onTrue(CommandFactory.Auto.runIndexer(intake));
