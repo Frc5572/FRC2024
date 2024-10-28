@@ -6,10 +6,16 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import frc.lib.sim.SimulatedPumbaa;
 
+/**
+ * Elevator Wrist IO Sim
+ */
 public class ElevatorWristIOSim implements ElevatorWristIO {
 
     private final SimulatedPumbaa sim;
 
+    /**
+     * Elevator Wrist IO Sim
+     */
     public ElevatorWristIOSim(SimulatedPumbaa sim) {
         this.sim = sim;
     }

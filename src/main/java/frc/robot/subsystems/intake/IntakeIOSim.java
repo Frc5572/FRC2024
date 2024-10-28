@@ -6,6 +6,9 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import frc.lib.sim.SimulatedPumbaa;
 
+/**
+ * Intake IO Sim
+ */
 public class IntakeIOSim implements IntakeIO {
 
     private FlywheelSim intakeSim = new FlywheelSim(DCMotor.getNEO(2), 1, 0.025);
@@ -18,6 +21,8 @@ public class IntakeIOSim implements IntakeIO {
 
     /**
      * Intake IO Layer with simulated motors and sensors
+     * 
+     * @param pumbaa Simulated Robot Viz
      */
     public IntakeIOSim(SimulatedPumbaa pumbaa) {
         this.pumbaa = pumbaa;

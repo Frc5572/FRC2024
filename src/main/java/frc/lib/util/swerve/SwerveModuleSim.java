@@ -12,6 +12,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lib.math.Conversions;
 import frc.robot.Constants;
 
+/**
+ * Swerve Module Sim
+ */
 public class SwerveModuleSim implements SwerveModuleIO {
     public int moduleNumber;
 
@@ -25,9 +28,10 @@ public class SwerveModuleSim implements SwerveModuleIO {
     private SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(0.0, 0.13);
     private PIDController driveFeedback = new PIDController(0.5, 0.0, 0.0);
 
-    public SwerveModuleSim() {
-
-    }
+    /**
+     * Swerve Module Sim
+     */
+    public SwerveModuleSim() {}
 
     @Override
     public void setModNumber(int number) {
@@ -48,6 +52,11 @@ public class SwerveModuleSim implements SwerveModuleIO {
         inputs.odometryTimestamps = new double[] {Timer.getFPGATimestamp()};
     }
 
+    /**
+     * Set drive motor in Meter per Sec
+     *
+     * @param mps Meters per Second
+     */
     public void setDriveMotor(double mps) {
         double rpm = Conversions.metersPerSecondToRotationPerSecond(mps,
             Constants.Swerve.wheelCircumference);
@@ -62,10 +71,20 @@ public class SwerveModuleSim implements SwerveModuleIO {
         setDriveVoltage(volts);
     }
 
+    /**
+     * Set Angle for steering motor
+     *
+     * @param angle Angle to set
+     */
     public void setAngleMotor(double angle) {
         this.angle = angle;
     }
 
+    /**
+     * Set Drive Voltage
+     *
+     * @param volts Voltage
+     */
     public void setDriveVoltage(double volts) {
         driveAppliedVolts = MathUtil.clamp(volts, -12.0, 12.0);
         driveSim.setInputVoltage(driveAppliedVolts);

@@ -7,10 +7,16 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 
+/**
+ * Simulated Pumbaa
+ */
 public class SimulatedPumbaa {
 
     public final int id;
 
+    /**
+     * Simulated Pumbaa
+     */
     SimulatedPumbaa(int id) {
         this.id = id;
     }

@@ -13,6 +13,9 @@ import edu.wpi.first.math.util.Units;
 import frc.lib.sim.SimulatedPumbaa;
 import frc.robot.Constants;
 
+/**
+ * Pumbaa Viz
+ */
 public class PumbaaViz {
 
     private final String prefix;
@@ -26,19 +29,25 @@ public class PumbaaViz {
     private double height;
     private Pose2d robotPose = new Pose2d();
 
-    private final Rotation3d NO_ROT = new Rotation3d();
-    private final Pose3d NO_NOTE_POSE = new Pose3d(0, 0, -100.0, NO_ROT);
-    private final Rotation3d INTAKE_ROTATION =
+    private final Rotation3d no_rot = new Rotation3d();
+    private final Pose3d no_note_pose = new Pose3d(0, 0, -100.0, no_rot);
+    private final Rotation3d intake_rotation =
         new Rotation3d(0.0, Units.degreesToRadians(-73.2153), 0.0);
-    private final Pose3d INTAKE_POSE = new Pose3d(-0.342037, 0.0, 0.205429,
+    private final Pose3d intake_pose = new Pose3d(-0.342037, 0.0, 0.205429,
         new Rotation3d(0.0, Units.degreesToRadians(-73.2153), 0.0));
-    private final Translation3d INTAKE_TOP_POSE = new Translation3d(-0.295609, 0.0, 0.376448);
-    private final Translation3d INTAKE_BOTTOM_POSE = new Translation3d(-0.380825, 0.0, 0.071435);
-    private final Translation3d INTAKE_DIR = INTAKE_TOP_POSE.minus(INTAKE_BOTTOM_POSE);
+    private final Translation3d intake_top_pose = new Translation3d(-0.295609, 0.0, 0.376448);
+    private final Translation3d intake_bottom_pose = new Translation3d(-0.380825, 0.0, 0.071435);
+    private final Translation3d intake_dir = intake_top_pose.minus(intake_bottom_pose);
 
     private final double shooterHeight = 0.538339;
     private final double indexerBack = 0.150388;
 
+    /**
+     * Pumba Viz
+     *
+     * @param prefix Prefix
+     * @param sim Simulation
+     */
     public PumbaaViz(String prefix, SimulatedPumbaa sim) {
         this.prefix = prefix;
         this.sim = sim;
@@ -46,6 +55,12 @@ public class PumbaaViz {
         this.elevatorTopPose = new Pose3d();
     }
 
+    /**
+     * Set Elevator and Wrist Position
+     *
+     * @param height Height of elevator
+     * @param wristAngle Wrist angle
+     */
     public void setElevatorWrist(double height, Rotation2d wristAngle) {
         this.height = height;
         height =
@@ -53,33 +68,44 @@ public class PumbaaViz {
         this.wristAngle = wristAngle;
         shooterPose = new Pose3d(new Translation3d(0.0, 0.0, shooterHeight + height),
             new Rotation3d(0.0, -wristAngle.getRadians(), 0.0));
-        elevatorBottomPose = new Pose3d(0, 0, height / 2.0, NO_ROT);
-        elevatorTopPose = new Pose3d(0, 0, height, NO_ROT);
+        elevatorBottomPose = new Pose3d(0, 0, height / 2.0, no_rot);
+        elevatorTopPose = new Pose3d(0, 0, height, no_rot);
         if (noteLocation == NoteLocation.Shooter) {
             double indexerBackX = indexerBack * wristAngle.getCos();
-            notePose = shooterPose.plus(new Transform3d(-indexerBackX, 0, 0, NO_ROT));
+            notePose = shooterPose.plus(new Transform3d(-indexerBackX, 0, 0, no_rot));
         }
     }
 
+    /**
+     * Set Robot Pose
+     *
+     * @param pose Position of robot
+     */
     public void setPose(Pose2d pose) {
         this.robotPose = pose;
     }
 
+    /**
+     * Note Location
+     */
     public static enum NoteLocation {
         Intake, Shooter, None
     }
 
+    /**
+     * Set Note Location
+     */
     public void setNoteLocation(NoteLocation location) {
         if (sim != null)
             return;
         switch (location) {
             case Intake:
-                this.notePose = INTAKE_POSE;
+                this.notePose = intake_pose;
                 break;
             case Shooter:
                 break;
             default:
-                this.notePose = NO_NOTE_POSE;
+                this.notePose = no_note_pose;
                 break;
         }
         this.noteLocation = location;
@@ -87,6 +113,11 @@ public class PumbaaViz {
 
     private static final double SHOOTER_FRONT = 0.271162;
 
+    /**
+     * Get Shotting Position
+     *
+     * @return
+     */
     public Pose3d getShootFrom() {
         Translation3d t = new Translation3d(
             this.robotPose.getX() + SHOOTER_FRONT * this.robotPose.getRotation().getCos(),
@@ -99,6 +130,9 @@ public class PumbaaViz {
 
     ArrayList<Pose3d> trajectory = new ArrayList<>();
 
+    /**
+     * Update Viz
+     */
     public void update() {
         if (this.sim != null) {
             if (this.sim.hasNote()) {
@@ -106,22 +140,22 @@ public class PumbaaViz {
                 if (notePosition < 0.8) {
                     double notePositionPercent = notePosition / 0.85;
                     notePose =
-                        new Pose3d(INTAKE_BOTTOM_POSE.plus(INTAKE_DIR.times(notePositionPercent)),
-                            INTAKE_ROTATION);
+                        new Pose3d(intake_bottom_pose.plus(intake_dir.times(notePositionPercent)),
+                            intake_rotation);
                 } else if (notePosition < 0.9) {
                     double notePositionPercent = (notePosition - 0.8) / 0.1;
                     double indexerBackX = indexerBack * wristAngle.getCos();
-                    Pose3d topPose = shooterPose.plus(new Transform3d(-indexerBackX, 0, 0, NO_ROT));
-                    Pose3d bottomPose = new Pose3d(INTAKE_TOP_POSE, INTAKE_ROTATION);
+                    Pose3d topPose = shooterPose.plus(new Transform3d(-indexerBackX, 0, 0, no_rot));
+                    Pose3d bottomPose = new Pose3d(intake_top_pose, intake_rotation);
                     notePose = bottomPose.interpolate(topPose, notePositionPercent);
                 } else {
                     double notePositionPercent = (notePosition - 0.9) / 0.1;
                     double indexerBackX =
                         indexerBack * -(notePositionPercent * 2.0 - 1.0) * wristAngle.getCos();
-                    notePose = shooterPose.plus(new Transform3d(-indexerBackX, 0, 0, NO_ROT));
+                    notePose = shooterPose.plus(new Transform3d(-indexerBackX, 0, 0, no_rot));
                 }
             } else {
-                this.notePose = NO_NOTE_POSE;
+                this.notePose = no_note_pose;
             }
         }
         recalculateTrajectory();

@@ -27,6 +27,12 @@ public class Intake extends SubsystemBase {
 
     private final PumbaaViz viz;
 
+    /**
+     * Intake Subsystem
+     *
+     * @param io IO Layer
+     * @param viz Sim Vizualization
+     */
     public Intake(IntakeIO io, PumbaaViz viz) {
         this.io = io;
         this.viz = viz;

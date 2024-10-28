@@ -159,27 +159,13 @@ public class RobotContainer {
         for (int i = 0; i < 7; i++) {
             numNoteChooser.addOption(String.valueOf(i), i);
         }
-        cameras =
-            /*
-             * Camera Order: 0 - Front Left 1 - Front RIght 2 - Back Left 3 - Back Right
-             */
-            new PhotonCameraWrapper[] {
-                // new PhotonCameraWrapper(
-                // new PhotonReal(Constants.CameraConstants.FrontLeftFacingCamera.CAMERA_NAME,
-                // Constants.CameraConstants.FrontLeftFacingCamera.CAMERA_IP),
-                // Constants.CameraConstants.FrontLeftFacingCamera.KCAMERA_TO_ROBOT),
-                new PhotonCameraWrapper(
-                    new PhotonReal(Constants.CameraConstants.FrontRightFacingCamera.CAMERA_NAME,
-                        Constants.CameraConstants.FrontRightFacingCamera.CAMERA_IP),
-                    Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT),
-            // new PhotonCameraWrapper(
-            // new PhotonReal(Constants.CameraConstants.BackLeftFacingCamera.CAMERA_NAME,
-            // Constants.CameraConstants.BackLeftFacingCamera.CAMERA_IP),
-            // Constants.CameraConstants.BackLeftFacingCamera.KCAMERA_TO_ROBOT)
-            };
-        // new PhotonCameraWrapper(
-        // new PhotonReal(Constants.CameraConstants.BackRightFacingCamera.CAMERA_NAME),
-        // Constants.CameraConstants.BackRightFacingCamera.KCAMERA_TO_ROBOT)};
+        /*
+         * Camera Order: 0 - Front Left 1 - Front RIght 2 - Back Left 3 - Back Right
+         */
+        cameras = new PhotonCameraWrapper[] {new PhotonCameraWrapper(
+            new PhotonReal(Constants.CameraConstants.FrontRightFacingCamera.CAMERA_NAME,
+                Constants.CameraConstants.FrontRightFacingCamera.CAMERA_IP),
+            Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT)};
 
         switch (runtimeType) {
             case kReal:

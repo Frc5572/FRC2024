@@ -16,13 +16,27 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import frc.lib.util.FieldConstants;
 
+/**
+ * Simulated Arena
+ */
 public class SimulatedArena {
 
+    /**
+     * Shooting Note
+     */
     private static class ShotNote {
         public Pose3d pose;
         ArrayList<Pose3d> trajectory = new ArrayList<>();
         double t = 0.0;
 
+        /**
+         * Shooting Note
+         *
+         * @param startPose
+         * @param yaw
+         * @param pitch
+         * @param velocity
+         */
         public ShotNote(Pose3d startPose, Rotation2d yaw, Rotation2d pitch, double velocity) {
             this.pose = startPose;
             double vz = pitch.getSin() * velocity;
@@ -38,6 +52,9 @@ public class SimulatedArena {
             }
         }
 
+        /**
+         * Update Viz
+         */
         public void update(double dt) {
             int index = (int) Math.floor(t / LoggedRobot.defaultPeriodSecs);
             if (index >= trajectory.size()) {
@@ -70,6 +87,11 @@ public class SimulatedArena {
         return dt;
     }
 
+    /**
+     * Update Viz
+     *
+     * @param dt
+     */
     public void update(double dt) {
         robots: for (SimulatedPumbaa robot : this.robots) {
             Logger.recordOutput("Viz/Robot" + robot.id, robot.getPose());
@@ -102,6 +124,14 @@ public class SimulatedArena {
             this.shotNotes.stream().map((shotNote) -> shotNote.pose).toArray(Pose3d[]::new));
     }
 
+    /**
+     * Shoot note
+     *
+     * @param pose
+     * @param yaw
+     * @param pitch
+     * @param velocity
+     */
     void shootNote(Pose3d pose, Rotation2d yaw, Rotation2d pitch, double velocity) {
         this.shotNotes.add(new ShotNote(pose, yaw, pitch, velocity));
     }

@@ -11,7 +11,9 @@ import frc.lib.util.swerve.SwerveModule;
 import frc.lib.util.swerve.SwerveModuleSim;
 import frc.robot.Constants;
 
-/** Real Class for Swerve */
+/**
+ * Real Class for Swerve
+ */
 public class SwerveSim implements SwerveIO {
 
     private SwerveModule[] swerveMods;
@@ -27,7 +29,9 @@ public class SwerveSim implements SwerveIO {
     private Pose2d currentPose = new Pose2d();
     private final SimulatedPumbaa pumbaa;
 
-    /** Real Swerve Initializer */
+    /**
+     * Real Swerve Initializer
+     */
     public SwerveSim(SimulatedPumbaa pumbaa) {
         this.pumbaa = pumbaa;
     }
@@ -45,6 +49,12 @@ public class SwerveSim implements SwerveIO {
 
     }
 
+    /**
+     * Create Swerve Module
+     *
+     * @param moduleNumber Module Number
+     * @return Swerve Module
+     */
     public SwerveModule createSwerveModule(int moduleNumber) {
         SwerveModuleSim modIO = new SwerveModuleSim();
         modIO.setModNumber(moduleNumber);
@@ -60,6 +70,11 @@ public class SwerveSim implements SwerveIO {
         return swerveMods;
     }
 
+    /**
+     * Get Heading
+     *
+     * @return Get robot heading
+     */
     private Rotation2d getHeading() {
         for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
             modulePositions[moduleIndex] = swerveMods[moduleIndex].getPosition();
