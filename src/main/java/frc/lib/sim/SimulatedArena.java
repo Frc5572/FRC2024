@@ -95,7 +95,7 @@ public class SimulatedArena {
     /**
      * Update Viz
      *
-     * @param dt Chnage in time
+     * @param dt Change in time
      */
     public void update(double dt) {
         robots: for (SimulatedPumbaa robot : this.robots) {
