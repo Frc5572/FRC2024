@@ -93,6 +93,12 @@ public abstract class PhotonIO {
     protected final String name;
     protected final String ip;
 
+    /**
+     * Photon IO
+     *
+     * @param name Camera Name
+     * @param ip Camera IP
+     */
     public PhotonIO(String name, String ip) {
         this.name = name;
         this.ip = ip;

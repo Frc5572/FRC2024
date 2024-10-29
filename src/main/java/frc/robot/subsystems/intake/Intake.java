@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.viz.PumbaaViz;
+import frc.lib.viz.PumbaaViz.NoteLocation;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
@@ -23,8 +25,17 @@ public class Intake extends SubsystemBase {
     private GenericEntry haveNote = RobotContainer.mainDriverTab.add("Have Note", noNote)
         .withWidget("Single Color View").withPosition(9, 4).withSize(3, 2).getEntry();
 
-    public Intake(IntakeIO io) {
+    private final PumbaaViz viz;
+
+    /**
+     * Intake Subsystem
+     *
+     * @param io IO Layer
+     * @param viz Sim Visualization
+     */
+    public Intake(IntakeIO io, PumbaaViz viz) {
         this.io = io;
+        this.viz = viz;
         io.updateInputs(intakeAutoLogged);
     }
 
@@ -40,6 +51,13 @@ public class Intake extends SubsystemBase {
             haveNote.setString(Constants.LEDConstants.INTAKE_COLOR.toHexString());
         } else {
             haveNote.setString(noNote);
+        }
+        if (getintakeBeamBrakeStatus()) {
+            viz.setNoteLocation(NoteLocation.Intake);
+        } else if (getIndexerBeamBrakeStatus()) {
+            viz.setNoteLocation(NoteLocation.Shooter);
+        } else {
+            viz.setNoteLocation(NoteLocation.None);
         }
     }
 

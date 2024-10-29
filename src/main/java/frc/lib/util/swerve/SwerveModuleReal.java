@@ -4,10 +4,12 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.ControlRequest;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.math.geometry.Rotation2d;
+import frc.lib.math.Conversions;
 import frc.robot.Constants;
 
 /**
@@ -27,9 +29,15 @@ public class SwerveModuleReal implements SwerveModuleIO {
     private StatusSignal<Double> angleMotorSelectedPosition;
     private StatusSignal<Double> absolutePositionAngleEncoder;
 
+    /* drive motor control requests */
+    private final DutyCycleOut driveDutyCycle = new DutyCycleOut(0);
+    private final VelocityVoltage driveVelocity = new VelocityVoltage(0);
+
+    /* angle motor control requests */
+    private final PositionVoltage anglePosition = new PositionVoltage(0);
+
     /** Instantiating motors and Encoders */
-    public SwerveModuleReal(int moduleNumber, int driveMotorID, int angleMotorID, int cancoderID,
-        Rotation2d angleOffset) {
+    public SwerveModuleReal(int driveMotorID, int angleMotorID, int cancoderID) {
 
         angleEncoder = new CANcoder(cancoderID, "canivore");
         mDriveMotor = new TalonFX(driveMotorID, "canivore");
@@ -94,6 +102,9 @@ public class SwerveModuleReal implements SwerveModuleIO {
         swerveDriveFXConfig.Slot0.kP = Constants.Swerve.driveKP;
         swerveDriveFXConfig.Slot0.kI = Constants.Swerve.driveKI;
         swerveDriveFXConfig.Slot0.kD = Constants.Swerve.driveKD;
+        swerveDriveFXConfig.Slot0.kS = Constants.Swerve.driveKS;
+        swerveDriveFXConfig.Slot0.kV = Constants.Swerve.driveKV;
+        swerveDriveFXConfig.Slot0.kA = Constants.Swerve.driveKA;
 
         /* Open and Closed Loop Ramping */
         swerveDriveFXConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod =
@@ -117,13 +128,17 @@ public class SwerveModuleReal implements SwerveModuleIO {
     }
 
     @Override
-    public void setAngleMotor(ControlRequest request) {
-        mAngleMotor.setControl(request);
+    public void setAngleMotor(double angle) {
+        mAngleMotor.setControl(anglePosition.withPosition(angle));
     }
 
     @Override
-    public void setDriveMotor(ControlRequest request) {
-        mDriveMotor.setControl(request);
+    public void setDriveMotor(double mps) {
+        // driveVelocity.FeedForward = feedforward;
+        double driveRPS = Conversions.metersPerSecondToRotationPerSecond(mps,
+            Constants.Swerve.wheelCircumference);
+        driveVelocity.Velocity = driveRPS;
+        mDriveMotor.setControl(driveVelocity);
     }
 
     @Override
