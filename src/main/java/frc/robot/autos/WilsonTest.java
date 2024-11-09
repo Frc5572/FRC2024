@@ -1,9 +1,11 @@
 package frc.robot.autos;
 
+import org.littletonrobotics.junction.Logger;
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoTrajectory;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.swerve.Swerve;
 
 public class WilsonTest {
@@ -13,9 +15,11 @@ public class WilsonTest {
         var loop = factory.newLoop("myAuto");
         AutoTrajectory trajectory = factory.trajectory("WilsonTest", loop);
         Pose2d initialPose = trajectory.getInitialPose().get();
-        Command resetPose = swerve.run(() -> swerve.resetOdometry(initialPose));
+        Command resetPose = swerve.runOnce(() -> swerve.resetOdometry(initialPose));
         loop.enabled().onTrue(trajectory.cmd());
-        return resetPose.andThen(loop.cmd());
+        return Commands.sequence(Commands.runOnce(() -> Logger.recordOutput("AutoState", 1)),
+            resetPose, Commands.runOnce(() -> Logger.recordOutput("AutoState", 2)), loop.cmd(),
+            Commands.runOnce(() -> Logger.recordOutput("AutoState", 3)));
     }
 
 }

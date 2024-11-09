@@ -11,7 +11,6 @@ import choreo.Choreo;
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoFactory.AutoBindings;
 import choreo.trajectory.SwerveSample;
-import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -53,15 +52,18 @@ public class Swerve extends SubsystemBase {
     private PhotonCameraWrapper[] cameras;
     private Boolean[] cameraSeesTarget = {false, false, false, false};
     private AutoFactory factory;
-    private HolonomicDriveController holonomicDriveController = new HolonomicDriveController(
+
+    private final PIDController xController =
         new PIDController(Constants.SwerveTransformPID.PID_XKP,
-            Constants.SwerveTransformPID.PID_XKI, Constants.SwerveTransformPID.PID_XKD),
+            Constants.SwerveTransformPID.PID_XKI, Constants.SwerveTransformPID.PID_XKD);
+    private final PIDController yController =
         new PIDController(Constants.SwerveTransformPID.PID_YKP,
-            Constants.SwerveTransformPID.PID_YKI, Constants.SwerveTransformPID.PID_YKD),
+            Constants.SwerveTransformPID.PID_YKI, Constants.SwerveTransformPID.PID_YKD);
+    private final ProfiledPIDController thetaController =
         new ProfiledPIDController(Constants.SwerveTransformPID.PID_TKP,
             Constants.SwerveTransformPID.PID_TKI, Constants.SwerveTransformPID.PID_TKD,
             new TrapezoidProfile.Constraints(Constants.SwerveTransformPID.MAX_ANGULAR_VELOCITY,
-                Constants.SwerveTransformPID.MAX_ANGULAR_ACCELERATION)));
+                Constants.SwerveTransformPID.MAX_ANGULAR_ACCELERATION));
 
     private GenericEntry aprilTagTarget = RobotContainer.mainDriverTab.add("See April Tag", false)
         .withWidget(BuiltInWidgets.kBooleanBox)
@@ -396,11 +398,12 @@ public class Swerve extends SubsystemBase {
     }
 
     private void choreoController(Pose2d curPose, SwerveSample sample) {
-        System.out.println(curPose);
-        System.out.println(sample.getPose());
-        ChassisSpeeds speeds = holonomicDriveController.calculate(curPose, sample.getPose(),
-            Math.sqrt(sample.vx * sample.vx + sample.vy * sample.vy),
-            Rotation2d.fromRadians(sample.heading));
+        ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+            new ChassisSpeeds(xController.calculate(curPose.getX(), sample.x) + sample.vx,
+                yController.calculate(curPose.getY(), sample.y) + sample.vy,
+                thetaController.calculate(curPose.getRotation().getRadians(), sample.heading)
+                    + sample.omega),
+            curPose.getRotation());
         this.setModuleStates(speeds);
     }
 
