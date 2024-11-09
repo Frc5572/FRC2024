@@ -7,6 +7,13 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.PathPlannerLogging;
+import choreo.Choreo;
+import choreo.auto.AutoFactory;
+import choreo.auto.AutoFactory.AutoBindings;
+import choreo.trajectory.SwerveSample;
+import edu.wpi.first.math.controller.HolonomicDriveController;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -15,6 +22,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -44,6 +52,16 @@ public class Swerve extends SubsystemBase {
     private boolean hasInitialized = false;
     private PhotonCameraWrapper[] cameras;
     private Boolean[] cameraSeesTarget = {false, false, false, false};
+    private AutoFactory factory;
+    private HolonomicDriveController holonomicDriveController = new HolonomicDriveController(
+        new PIDController(Constants.SwerveTransformPID.PID_XKP,
+            Constants.SwerveTransformPID.PID_XKI, Constants.SwerveTransformPID.PID_XKD),
+        new PIDController(Constants.SwerveTransformPID.PID_YKP,
+            Constants.SwerveTransformPID.PID_YKI, Constants.SwerveTransformPID.PID_YKD),
+        new ProfiledPIDController(Constants.SwerveTransformPID.PID_TKP,
+            Constants.SwerveTransformPID.PID_TKI, Constants.SwerveTransformPID.PID_TKD,
+            new TrapezoidProfile.Constraints(Constants.SwerveTransformPID.MAX_ANGULAR_VELOCITY,
+                Constants.SwerveTransformPID.MAX_ANGULAR_ACCELERATION)));
 
     private GenericEntry aprilTagTarget = RobotContainer.mainDriverTab.add("See April Tag", false)
         .withWidget(BuiltInWidgets.kBooleanBox)
@@ -59,6 +77,8 @@ public class Swerve extends SubsystemBase {
         this.swerveIO = swerveIO;
         this.cameras = cameras;
         this.viz = viz;
+        this.factory = Choreo.createAutoFactory(this, this::getPose, this::choreoController,
+            () -> true, new AutoBindings());
         swerveMods = swerveIO.createModules();
         fieldOffset = getGyroYaw().getDegrees();
 
@@ -373,5 +393,18 @@ public class Swerve extends SubsystemBase {
                 FieldConstants.allianceFlip(FieldConstants.Speaker.centerSpeakerOpening).getX()
                     - getPose().getX());
         return distance;
+    }
+
+    private void choreoController(Pose2d curPose, SwerveSample sample) {
+        System.out.println(curPose);
+        System.out.println(sample.getPose());
+        ChassisSpeeds speeds = holonomicDriveController.calculate(curPose, sample.getPose(),
+            Math.sqrt(sample.vx * sample.vx + sample.vy * sample.vy),
+            Rotation2d.fromRadians(sample.heading));
+        this.setModuleStates(speeds);
+    }
+
+    public AutoFactory getFactory() {
+        return factory;
     }
 }
