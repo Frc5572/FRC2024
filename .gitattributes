@@ -1,10 +1,2 @@
 # Auto detect text files and perform LF normalization
 * text=auto
-src/main/deploy/photon-configs/front-right.zip filter=lfs diff=lfs merge=lfs -text
-src/main/deploy/photon-configs/back-left.zip filter=lfs diff=lfs merge=lfs -text
-src/main/deploy/photon-configs/front-left.zip filter=lfs diff=lfs merge=lfs -text
-customAssets/Robot_Pumbaa/model_0.glb filter=lfs diff=lfs merge=lfs -text
-customAssets/Robot_Pumbaa/model_1.glb filter=lfs diff=lfs merge=lfs -text
-customAssets/Robot_Pumbaa/model_2.glb filter=lfs diff=lfs merge=lfs -text
-customAssets/Robot_Pumbaa/model_3.glb filter=lfs diff=lfs merge=lfs -text
-customAssets/Robot_Pumbaa/model.glb filter=lfs diff=lfs merge=lfs -text
