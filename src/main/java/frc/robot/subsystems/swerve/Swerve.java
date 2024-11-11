@@ -7,9 +7,6 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.PathPlannerLogging;
-import choreo.Choreo;
-import choreo.auto.AutoFactory;
-import choreo.auto.AutoFactory.AutoBindings;
 import choreo.trajectory.SwerveSample;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -22,6 +19,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -51,7 +49,6 @@ public class Swerve extends SubsystemBase {
     private boolean hasInitialized = false;
     private PhotonCameraWrapper[] cameras;
     private Boolean[] cameraSeesTarget = {false, false, false, false};
-    private AutoFactory factory;
 
     private final PIDController xController =
         new PIDController(Constants.SwerveTransformPID.PID_XKP,
@@ -79,8 +76,7 @@ public class Swerve extends SubsystemBase {
         this.swerveIO = swerveIO;
         this.cameras = cameras;
         this.viz = viz;
-        this.factory = Choreo.createAutoFactory(this, this::getPose, this::choreoController,
-            () -> true, new AutoBindings());
+        thetaController.enableContinuousInput(0, Units.degreesToRadians(360.0));
         swerveMods = swerveIO.createModules();
         fieldOffset = getGyroYaw().getDegrees();
 
@@ -397,17 +393,13 @@ public class Swerve extends SubsystemBase {
         return distance;
     }
 
-    private void choreoController(Pose2d curPose, SwerveSample sample) {
+    public void choreoController(Pose2d curPose, SwerveSample sample) {
         ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
             new ChassisSpeeds(xController.calculate(curPose.getX(), sample.x) + sample.vx,
                 yController.calculate(curPose.getY(), sample.y) + sample.vy,
                 thetaController.calculate(curPose.getRotation().getRadians(), sample.heading)
                     + sample.omega),
-            curPose.getRotation());
+            getHeading());
         this.setModuleStates(speeds);
-    }
-
-    public AutoFactory getFactory() {
-        return factory;
     }
 }
