@@ -36,6 +36,7 @@ import frc.robot.autos.JustShoot1;
 import frc.robot.autos.P123;
 import frc.robot.autos.P321;
 import frc.robot.autos.P8765;
+import frc.robot.autos.WilsonTest;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.FlashingLEDColor;
 import frc.robot.commands.MovingColorLEDs;
@@ -191,7 +192,11 @@ public class RobotContainer {
                 elevatorWrist = new ElevatorWrist(new ElevatorWristIO() {}, operator, viz);
         }
 
+        WilsonTest wt = new WilsonTest(s_Swerve, elevatorWrist, shooter, intake);
         autoChooser.setDefaultOption("Nothing", Commands.none());
+        autoChooser.addOption("short", wt.cmd());
+        autoChooser.addOption("testtoo", wt.cmd2());
+        autoChooser.addOption("testtree", wt.cmd3());
         autoChooser.addOption("P123", new P123(s_Swerve, elevatorWrist, intake, shooter));
         autoChooser.addOption("P321", new P321(s_Swerve, elevatorWrist, intake, shooter));
         autoChooser.addOption("P8765", new P8765(s_Swerve, elevatorWrist, intake, shooter));
