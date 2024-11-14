@@ -1,5 +1,5 @@
 {
- "name":"test_wilson",
+ "name":"Everett",
  "version":"v2025.0.0",
  "type":"Swerve",
  "variables":{
@@ -36,20 +36,20 @@
    "val":6.0
   },
   "gearing":{
-   "exp":"6.5",
-   "val":6.5
+   "exp":"8.14",
+   "val":8.14
   },
   "radius":{
-   "exp":"2 in",
-   "val":0.0508
+   "exp":"1.8 in",
+   "val":0.04572
   },
   "vmax":{
-   "exp":"6000 RPM",
-   "val":628.3185307179587
+   "exp":"534.4896301307434 rad / s",
+   "val":534.4896301307434
   },
   "tmax":{
-   "exp":"1.2 N * m",
-   "val":1.2
+   "exp":"1.0949416342412452 N m",
+   "val":1.0949416342412452
   },
   "bumper":{
    "front":{

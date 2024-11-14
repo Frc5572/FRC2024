@@ -41,7 +41,7 @@ public class WilsonTest {
 
     public Command cmd2() {
         var loop = factory.newLoop("myAuto2");
-        AutoTrajectory trajectory = factory.trajectory("testtoo", loop);
+        AutoTrajectory trajectory = factory.trajectory("simple", loop);
         Pose2d initialPose = trajectory.getInitialPose().get();
         Command resetPose = swerve.runOnce(() -> swerve.resetOdometry(initialPose));
         loop.enabled().onTrue(trajectory.cmd());
