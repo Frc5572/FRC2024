@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.lib.math.StateEstimator;
 import frc.lib.util.FieldConstants;
 import frc.robot.Constants;
 import frc.robot.commands.CommandFactory;
@@ -34,7 +35,8 @@ public class P675 extends SequentialCommandGroup {
      * @param intake Intake Subsystem
      * @param shooter Shooter Subsystem
      */
-    public P675(Swerve swerveDrive, ElevatorWrist elevatorWrist, Intake intake, Shooter shooter) {
+    public P675(Swerve swerveDrive, StateEstimator estimator, ElevatorWrist elevatorWrist,
+        Intake intake, Shooter shooter) {
         this.swerveDrive = swerveDrive;
         this.elevatorWrist = elevatorWrist;
         this.intake = intake;
@@ -47,7 +49,7 @@ public class P675 extends SequentialCommandGroup {
 
         // Command wait = Commands.waitSeconds(1);
         // Command followPath0 = AutoBuilder.followPath(path0);
-        Command followPath0 = new MoveToPos(swerveDrive,
+        Command followPath0 = new MoveToPos(swerveDrive, estimator,
             () -> new Pose2d(1.997119665145874, 4.1, new Rotation2d(2.475019180161885)), true);
         Command followPath1 = AutoBuilder.followPath(path1);
         Command followPath2 = AutoBuilder.followPath(path2);

@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.lib.math.StateEstimator;
 import frc.lib.util.FieldConstants;
 import frc.robot.RobotContainer;
 import frc.robot.commands.CommandFactory;
@@ -33,8 +34,8 @@ public class Resnick3 extends SequentialCommandGroup {
      * @param intake Intake Subsystem
      * @param shooter Shooter Subsystem
      */
-    public Resnick3(Swerve swerveDrive, ElevatorWrist elevatorWrist, Intake intake,
-        Shooter shooter) {
+    public Resnick3(Swerve swerveDrive, StateEstimator estimator, ElevatorWrist elevatorWrist,
+        Intake intake, Shooter shooter) {
         this.swerveDrive = swerveDrive;
         this.elevatorWrist = elevatorWrist;
         this.intake = intake;
@@ -90,7 +91,7 @@ public class Resnick3 extends SequentialCommandGroup {
         SequentialCommandGroup followPaths = part0.andThen(runPart1).andThen(runPart2)
             .andThen(runPart3).andThen(runPart4).andThen(runPart5).andThen(runPart6);
 
-        Command autoAlignWrist = CommandFactory.autoAngleWristSpeaker(elevatorWrist, swerveDrive);
+        Command autoAlignWrist = CommandFactory.autoAngleWristSpeaker(elevatorWrist, estimator);
         Command shootCommand = shooter.shootSpeaker();
 
         addCommands(resetPosition, followPaths.alongWith(autoAlignWrist, shootCommand));

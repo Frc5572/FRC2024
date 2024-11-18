@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.lib.math.StateEstimator;
 import frc.lib.util.FieldConstants;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
@@ -38,7 +39,8 @@ public class P8765 extends SequentialCommandGroup {
      * @param intake Intake Subsystem
      * @param shooter Shooter Subsystem
      */
-    public P8765(Swerve swerveDrive, ElevatorWrist elevatorWrist, Intake intake, Shooter shooter) {
+    public P8765(Swerve swerveDrive, StateEstimator estimator, ElevatorWrist elevatorWrist,
+        Intake intake, Shooter shooter) {
         this.swerveDrive = swerveDrive;
         this.elevatorWrist = elevatorWrist;
         this.intake = intake;
@@ -81,22 +83,34 @@ public class P8765 extends SequentialCommandGroup {
             .andThen(Commands.waitSeconds(.1)).andThen(CommandFactory.Auto.runIndexer(intake));
         // .andThen(Commands.either(elevatorWrist.homePosition().withTimeout(.5), Commands.none(),
         // dumpOrNot));
-        Command part1 = followPath1.deadlineWith(CommandFactory.intakeNote(intake),
-            elevatorWrist.homePosition().withTimeout(1.0))
-            .andThen(Commands.either(Commands.none(),
-                Commands.sequence(CommandFactory.intakeNote(intake).alongWith(elevatorWrist
-                    .followPosition(() -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-                        () -> elevatorWrist.getAngleFromDistance(swerveDrive.getPose()))
-                    .withTimeout(1.5)), CommandFactory.Auto.runIndexer(intake)),
-                abort));
-        Command part2 = followPath2.deadlineWith(CommandFactory.intakeNote(intake),
-            elevatorWrist.homePosition().withTimeout(1.0))
-            .andThen(Commands.either(Commands.none(),
-                Commands.sequence(CommandFactory.intakeNote(intake).alongWith(elevatorWrist
-                    .followPosition(() -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-                        () -> elevatorWrist.getAngleFromDistance(swerveDrive.getPose()))
-                    .withTimeout(1.5)), CommandFactory.Auto.runIndexer(intake)),
-                abort));
+        Command part1 =
+            followPath1
+                .deadlineWith(CommandFactory.intakeNote(intake),
+                    elevatorWrist.homePosition().withTimeout(1.0))
+                .andThen(Commands.either(Commands.none(),
+                    Commands.sequence(CommandFactory.intakeNote(intake)
+                        .alongWith(elevatorWrist
+                            .followPosition(
+                                () -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
+                                () -> elevatorWrist
+                                    .getAngleFromDistance(estimator.getPoseEstimate()))
+                            .withTimeout(1.5)),
+                        CommandFactory.Auto.runIndexer(intake)),
+                    abort));
+        Command part2 =
+            followPath2
+                .deadlineWith(CommandFactory.intakeNote(intake),
+                    elevatorWrist.homePosition().withTimeout(1.0))
+                .andThen(Commands.either(Commands.none(),
+                    Commands.sequence(CommandFactory.intakeNote(intake)
+                        .alongWith(elevatorWrist
+                            .followPosition(
+                                () -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
+                                () -> elevatorWrist
+                                    .getAngleFromDistance(estimator.getPoseEstimate()))
+                            .withTimeout(1.5)),
+                        CommandFactory.Auto.runIndexer(intake)),
+                    abort));
         Command part3 = followPath3.alongWith(CommandFactory.intakeNote(intake))
             .andThen(
                 elevatorWrist.goToPosition(Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,

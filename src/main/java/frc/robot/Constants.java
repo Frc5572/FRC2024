@@ -1,5 +1,7 @@
 package frc.robot;
 
+import java.util.ArrayList;
+import java.util.List;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
@@ -16,6 +18,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.lib.util.FieldConstants;
+import frc.robot.subsystems.vision.CameraConstants;
 
 /**
  * Constants file.
@@ -103,7 +106,7 @@ public final class Constants {
     /**
      * Camera offset constants.
      */
-    public static class CameraConstants {
+    public static class Camera {
 
         public static double XY_STD_DEV_COEFF = 0.005;
         public static double THETA_STD_DEV_COEFF = 0.01;
@@ -115,7 +118,7 @@ public final class Constants {
             public static final double ROLL = 0.0;
             public static final double PITCH = Math.toRadians(0);
             public static final double YAW = Math.toRadians(12.0);
-            public static final Transform3d KCAMERA_TO_ROBOT = new Transform3d(
+            public static final Transform3d TRANSFORM = new Transform3d(
                 new Translation3d(Units.inchesToMeters(17), Units.inchesToMeters(4.0),
                     Units.inchesToMeters(15)),
                 new Rotation3d(ROLL, PITCH, YAW));
@@ -123,6 +126,11 @@ public final class Constants {
             public static final String CAMERA_NAME = "front-left";
             public static final String CAMERA_IP = "10.55.72.12";
             public static final double LARGEST_DISTANCE = 0.1;
+
+            public static final CameraConstants CONSTANTS =
+                new CameraConstants(CAMERA_NAME, CAMERA_IP, TRANSFORM, 1280, 800, 60);
+
+            public static final boolean ENABLED = false;
         }
 
         /**
@@ -132,7 +140,7 @@ public final class Constants {
             public static final double ROLL = Math.toRadians(180);
             public static final double PITCH = Math.toRadians(0);
             public static final double YAW = Math.toRadians(-6);
-            public static final Transform3d KCAMERA_TO_ROBOT = new Transform3d(
+            public static final Transform3d TRANSFORM = new Transform3d(
                 new Translation3d(Units.inchesToMeters(17), Units.inchesToMeters(-5),
                     Units.inchesToMeters(15)),
                 new Rotation3d(ROLL, PITCH, YAW));
@@ -140,6 +148,11 @@ public final class Constants {
             public static final String CAMERA_NAME = "front-right";
             public static final String CAMERA_IP = "10.55.72.10";
             public static final double LARGEST_DISTANCE = 0.1;
+
+            public static final CameraConstants CONSTANTS =
+                new CameraConstants(CAMERA_NAME, CAMERA_IP, TRANSFORM, 1280, 800, 60);
+
+            public static final boolean ENABLED = false;
         }
 
         /**
@@ -149,7 +162,7 @@ public final class Constants {
             public static final double ROLL = 0.0;
             public static final double PITCH = Math.toRadians(0);
             public static final double YAW = Math.toRadians(184);
-            public static final Transform3d KCAMERA_TO_ROBOT = new Transform3d(
+            public static final Transform3d TRANSFORM = new Transform3d(
                 new Translation3d(Units.inchesToMeters(-13.0), Units.inchesToMeters(14),
                     Units.inchesToMeters(0)),
                 new Rotation3d(ROLL, PITCH, YAW));
@@ -157,25 +170,28 @@ public final class Constants {
             public static final String CAMERA_NAME = "back-left";
             public static final String CAMERA_IP = "10.55.72.13";
             public static final double LARGEST_DISTANCE = 0.1;
+
+            public static final CameraConstants CONSTANTS =
+                new CameraConstants(CAMERA_NAME, CAMERA_IP, TRANSFORM, 1280, 800, 60);
+
+            public static final boolean ENABLED = false;
         }
 
-        // /**
-        // * Constants for Back Right Camera
-        // */
-        // public static class BackRightFacingCamera {
-        // public static final double ROLL = 0.0;
-        // public static final double PITCH = Math.toRadians(0);
-        // public static final double YAW = Math.toRadians(180);
-        // public static final Transform3d KCAMERA_TO_ROBOT =
-        // new Transform3d(new Translation3d(Units.inchesToMeters(12.831),
-        // Units.inchesToMeters(-8.56), Units.inchesToMeters(17.85)),
-        // new Rotation3d(ROLL, PITCH, YAW)).inverse();
+        public static final CameraConstants[] CONSTANTS;
 
-        // public static final String CAMERA_NAME = "back-right";
-        // // public static final String CAMERA_IP = "10.55.72.10";
-        // public static final double LARGEST_DISTANCE = 0.1;
-        // }
-
+        static {
+            List<CameraConstants> constants = new ArrayList<>();
+            if (FrontLeftFacingCamera.ENABLED) {
+                constants.add(FrontLeftFacingCamera.CONSTANTS);
+            }
+            if (FrontRightFacingCamera.ENABLED) {
+                constants.add(FrontRightFacingCamera.CONSTANTS);
+            }
+            if (BackLeftFacingCamera.ENABLED) {
+                constants.add(BackLeftFacingCamera.CONSTANTS);
+            }
+            CONSTANTS = constants.toArray(CameraConstants[]::new);
+        }
     }
 
     /**
@@ -200,15 +216,18 @@ public final class Constants {
         public static final Translation2d MOD0_MODOFFSET =
             new Translation2d(wheelBase / 2.0, trackWidth / 2.0);
 
+        public static final Translation2d[] moduleTranslations =
+            new Translation2d[] {new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
+                new Translation2d(wheelBase / 2.0, -trackWidth / 2.0),
+                new Translation2d(-wheelBase / 2.0, trackWidth / 2.0),
+                new Translation2d(-wheelBase / 2.0, -trackWidth / 2.0)};
+
         /*
          * Swerve Kinematics No need to ever change this unless you are not doing a traditional
          * rectangular/square 4 module swerve
          */
         public static final SwerveDriveKinematics swerveKinematics =
-            new SwerveDriveKinematics(new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
-                new Translation2d(wheelBase / 2.0, -trackWidth / 2.0),
-                new Translation2d(-wheelBase / 2.0, trackWidth / 2.0),
-                new Translation2d(-wheelBase / 2.0, -trackWidth / 2.0));
+            new SwerveDriveKinematics(moduleTranslations);
 
         /* Module Gear Ratios */
         public static final double driveGearRatio = (8.14 / 1.0); // MK4i L1

@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.profiling.EmptyProfiler;
-import frc.lib.profiling.LoggingProfiler;
 import frc.lib.profiling.Profiler;
 
 /**
@@ -101,15 +100,7 @@ public class Robot extends LoggedRobot {
             }
         }
         Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values
-        switch (robotRunType) {
-            case kReal -> profiler =
-                new LoggingProfiler(() -> Logger.getRealTimestamp(), 1000000.0);
-            case kReplay -> profiler = EmptyProfiler.INSTANCE;
-            case kSimulation -> profiler =
-                new LoggingProfiler(() -> Logger.getRealTimestamp(), 1000000.0);
-            default -> {
-            }
-        }
+        profiler = EmptyProfiler.INSTANCE;
         // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in the
         // "Understanding Data Flow" page
 
@@ -141,7 +132,7 @@ public class Robot extends LoggedRobot {
             hasStarted = true;
         }
         profiler.startTick();
-        profiler.push("robotPeriodic()");
+        profiler.push("robot_periodic");
         profiler.push("draw_state_to_shuffleboard");
         robotContainer.operatorState.setString(OperatorState.getCurrentState().displayName);
         robotContainer.operatorManualMode.setBoolean(OperatorState.manualModeEnabled());
@@ -156,7 +147,9 @@ public class Robot extends LoggedRobot {
         // anything in the Command-based framework to work.
         profiler.swap("command_scheduler");
         CommandScheduler.getInstance().run();
-        profiler.swap("manual-gc");
+        profiler.swap("estimator_collision_update");
+        robotContainer.estimator.collisionUpdate();
+        profiler.swap("manual_gc");
         if (gcTimer.advanceIfElapsed(5)) {
             System.gc();
         }

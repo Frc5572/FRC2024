@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.lib.math.StateEstimator;
 import frc.lib.util.FieldConstants;
 import frc.robot.Constants;
 import frc.robot.commands.CommandFactory;
@@ -34,8 +35,8 @@ public class JustShoot1 extends SequentialCommandGroup {
      * @param intake Intake Subsystem
      * @param shooter Shooter Subsystem
      */
-    public JustShoot1(Swerve swerveDrive, ElevatorWrist elevatorWrist, Intake intake,
-        Shooter shooter) {
+    public JustShoot1(Swerve swerveDrive, StateEstimator estimator, ElevatorWrist elevatorWrist,
+        Intake intake, Shooter shooter) {
         this.swerveDrive = swerveDrive;
         this.elevatorWrist = elevatorWrist;
         this.intake = intake;
@@ -59,7 +60,7 @@ public class JustShoot1 extends SequentialCommandGroup {
         Command shootCommand = shooter.shootSpeaker();
         Command autoTarget = elevatorWrist.followPosition(
             () -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-            () -> elevatorWrist.getAngleFromDistance(swerveDrive.getPose()));
+            () -> elevatorWrist.getAngleFromDistance(estimator.getPoseEstimate()));
 
         addCommands(resetPosition, wait, followPaths.alongWith(shootCommand, autoTarget));
     }

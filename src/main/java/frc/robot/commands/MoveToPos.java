@@ -11,6 +11,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.lib.math.StateEstimator;
 import frc.lib.util.FieldConstants;
 import frc.robot.Constants;
 import frc.robot.subsystems.swerve.Swerve;
@@ -22,6 +23,7 @@ public class MoveToPos extends Command {
 
     public Swerve swerve;
     public Pose2d pose2d;
+    private final StateEstimator estimator;
     public Supplier<Pose2d> pose2dSupplier;
     private boolean flipForRed = true;
 
@@ -42,9 +44,10 @@ public class MoveToPos extends Command {
      * @param pose2dSupplier Supplier of Pose2d
      * @param flipForRed Flip the Pose2d relative to the Red Alliance
      */
-    public MoveToPos(Swerve swerve, Supplier<Pose2d> pose2dSupplier, boolean flipForRed,
-        double tol) {
-        this(swerve, pose2dSupplier, flipForRed, tol, Constants.SwerveTransformPID.PID_TKP);
+    public MoveToPos(Swerve swerve, StateEstimator estimator, Supplier<Pose2d> pose2dSupplier,
+        boolean flipForRed, double tol) {
+        this(swerve, estimator, pose2dSupplier, flipForRed, tol,
+            Constants.SwerveTransformPID.PID_TKP);
     }
 
     /**
@@ -54,11 +57,12 @@ public class MoveToPos extends Command {
      * @param pose2dSupplier Supplier of Pose2d
      * @param flipForRed Flip the Pose2d relative to the Red Alliance
      */
-    public MoveToPos(Swerve swerve, Supplier<Pose2d> pose2dSupplier, boolean flipForRed, double tol,
-        double turnP) {
+    public MoveToPos(Swerve swerve, StateEstimator estimator, Supplier<Pose2d> pose2dSupplier,
+        boolean flipForRed, double tol, double turnP) {
         this.swerve = swerve;
         this.pose2dSupplier = pose2dSupplier;
         this.flipForRed = flipForRed;
+        this.estimator = estimator;
         this.addRequirements(swerve);
         holonomicDriveController.getThetaController().setP(turnP);
         holonomicDriveController.setTolerance(new Pose2d(tol, tol, Rotation2d.fromDegrees(1)));
@@ -71,8 +75,9 @@ public class MoveToPos extends Command {
      * @param pose2dSupplier Supplier of Pose2d
      * @param flipForRed Flip the Pose2d relative to the Red Alliance
      */
-    public MoveToPos(Swerve swerve, Supplier<Pose2d> pose2dSupplier, boolean flipForRed) {
-        this(swerve, pose2dSupplier, flipForRed, 0.05);
+    public MoveToPos(Swerve swerve, StateEstimator estimator, Supplier<Pose2d> pose2dSupplier,
+        boolean flipForRed) {
+        this(swerve, estimator, pose2dSupplier, flipForRed, 0.05);
     }
 
 
@@ -82,8 +87,8 @@ public class MoveToPos extends Command {
      * @param swerve Swerve Drive Subsystem
      * @param pose2dSupplier Supplier of Pose2d
      */
-    public MoveToPos(Swerve swerve, Supplier<Pose2d> pose2dSupplier) {
-        this(swerve, pose2dSupplier, true);
+    public MoveToPos(Swerve swerve, StateEstimator estimator, Supplier<Pose2d> pose2dSupplier) {
+        this(swerve, estimator, pose2dSupplier, true);
     }
 
     /**
@@ -91,8 +96,8 @@ public class MoveToPos extends Command {
      *
      * @param swerve Swerve Drive Subsystem
      */
-    public MoveToPos(Swerve swerve) {
-        this(swerve, () -> new Pose2d());
+    public MoveToPos(Swerve swerve, StateEstimator estimator) {
+        this(swerve, estimator, () -> new Pose2d());
     }
 
     @Override
@@ -105,8 +110,8 @@ public class MoveToPos extends Command {
 
     @Override
     public void execute() {
-        ChassisSpeeds ctrlEffort =
-            holonomicDriveController.calculate(swerve.getPose(), pose2d, 0, pose2d.getRotation());
+        ChassisSpeeds ctrlEffort = holonomicDriveController.calculate(estimator.getPoseEstimate(),
+            pose2d, 0, pose2d.getRotation());
         swerve.setModuleStates(ctrlEffort);
     }
 

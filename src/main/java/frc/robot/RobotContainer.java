@@ -25,11 +25,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.lib.math.StandardStateEstimator;
+import frc.lib.math.StateEstimator;
 import frc.lib.sim.SimulatedArena;
 import frc.lib.sim.SimulatedPumbaa;
 import frc.lib.util.FieldConstants;
-import frc.lib.util.photon.PhotonCameraWrapper;
-import frc.lib.util.photon.PhotonReal;
 import frc.lib.viz.PumbaaViz;
 import frc.robot.Robot.RobotRunType;
 import frc.robot.autos.JustShoot1;
@@ -59,6 +59,10 @@ import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.swerve.SwerveIO;
 import frc.robot.subsystems.swerve.SwerveReal;
 import frc.robot.subsystems.swerve.SwerveSim;
+import frc.robot.subsystems.vision.CameraIO;
+import frc.robot.subsystems.vision.CameraReal;
+import frc.robot.subsystems.vision.CameraSimPhoton;
+import frc.robot.subsystems.vision.Vision;
 
 
 /**
@@ -130,22 +134,25 @@ public class RobotContainer {
     private Swerve s_Swerve;
     private Shooter shooter;
     private Intake intake;
-    private PhotonCameraWrapper[] cameras;
     private ElevatorWrist elevatorWrist;
     private LEDs leds = new LEDs(Constants.LEDConstants.LED_COUNT, Constants.LEDConstants.PWM_PORT);
-    // private PhotonCamera backLeftCamera = new PhotonCamera("back-left");
-
+    @SuppressWarnings("unused")
+    private Vision vision;
 
     private Trigger noteInIndexer = new Trigger(() -> this.intake.getIndexerBeamBrakeStatus())
         .debounce(0.25, Debouncer.DebounceType.kRising);
     private Trigger noteInIntake = new Trigger(() -> this.intake.getintakeBeamBrakeStatus())
         .debounce(0.25, Debouncer.DebounceType.kRising);
 
+    /** State Estimator */
+    public final StateEstimator estimator = new StandardStateEstimator();
+
     /** Viz */
     private final PumbaaViz viz;
 
     /** Simulation */
     private final SimulatedArena arena;
+    private final SimulatedPumbaa pumbaaSim;
 
     /**
      */
@@ -159,44 +166,44 @@ public class RobotContainer {
         for (int i = 0; i < 7; i++) {
             numNoteChooser.addOption(String.valueOf(i), i);
         }
-        /*
-         * Camera Order: 0 - Front Left 1 - Front RIght 2 - Back Left 3 - Back Right
-         */
-        cameras = new PhotonCameraWrapper[] {new PhotonCameraWrapper(
-            new PhotonReal(Constants.CameraConstants.FrontRightFacingCamera.CAMERA_NAME,
-                Constants.CameraConstants.FrontRightFacingCamera.CAMERA_IP),
-            Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT)};
 
         switch (runtimeType) {
             case kReal:
+                pumbaaSim = null;
                 viz = new PumbaaViz("Viz", null);
                 shooter = new Shooter(new ShooterVortex());
                 intake = new Intake(new IntakeIOFalcon(), viz);
-                s_Swerve = new Swerve(new SwerveReal(), cameras, viz);
+                s_Swerve = new Swerve(new SwerveReal(), estimator);
                 elevatorWrist = new ElevatorWrist(new ElevatorWristReal(), operator, viz);
+                vision = new Vision(CameraReal::new, estimator);
                 break;
             case kSimulation:
-                SimulatedPumbaa pumbaa = arena.newPumbaa();
-                viz = new PumbaaViz("Viz", pumbaa);
-                s_Swerve = new Swerve(new SwerveSim(pumbaa), cameras, viz);
-                shooter = new Shooter(new ShooterSim(pumbaa));
-                intake = new Intake(new IntakeIOSim(pumbaa), viz);
-                elevatorWrist = new ElevatorWrist(new ElevatorWristIOSim(pumbaa), operator, viz);
+                pumbaaSim = arena.newPumbaa();
+                viz = new PumbaaViz("Viz", pumbaaSim);
+                s_Swerve = new Swerve(new SwerveSim(pumbaaSim), estimator);
+                shooter = new Shooter(new ShooterSim(pumbaaSim));
+                intake = new Intake(new IntakeIOSim(pumbaaSim), viz);
+                elevatorWrist = new ElevatorWrist(new ElevatorWristIOSim(pumbaaSim), operator, viz);
+                vision = new Vision(CameraSimPhoton::new, estimator);
                 break;
             default:
+                pumbaaSim = null;
                 viz = new PumbaaViz("Viz", null);
-                s_Swerve = new Swerve(new SwerveIO() {}, cameras, viz);
+                s_Swerve = new Swerve(new SwerveIO() {}, estimator);
                 shooter = new Shooter(new ShooterIO() {});
                 intake = new Intake(new IntakeIO() {}, viz);
                 elevatorWrist = new ElevatorWrist(new ElevatorWristIO() {}, operator, viz);
+                vision = new Vision(CameraIO.Empty::new, estimator);
+                break;
         }
 
         autoChooser.setDefaultOption("Nothing", Commands.none());
         autoChooser.addOption("P123", new P123(s_Swerve, elevatorWrist, intake, shooter));
         autoChooser.addOption("P321", new P321(s_Swerve, elevatorWrist, intake, shooter));
-        autoChooser.addOption("P8765", new P8765(s_Swerve, elevatorWrist, intake, shooter));
+        autoChooser.addOption("P8765",
+            new P8765(s_Swerve, estimator, elevatorWrist, intake, shooter));
         autoChooser.addOption("Just Shoot 1",
-            new JustShoot1(s_Swerve, elevatorWrist, intake, shooter));
+            new JustShoot1(s_Swerve, estimator, elevatorWrist, intake, shooter));
         // autoChooser.addOption("P32", new P32(s_Swerve, elevatorWrist, intake, shooter));
         // autoChooser.addOption("P675", new P675(s_Swerve, elevatorWrist, intake, shooter));
         // autoChooser.addOption("P3675", new P3675(s_Swerve, elevatorWrist, intake, shooter));
@@ -225,8 +232,6 @@ public class RobotContainer {
 
         /* Driver Buttons */
         driver.y().onTrue(new InstantCommand(() -> s_Swerve.resetFieldRelativeOffset()));
-        driver.start().onTrue(
-            new InstantCommand(() -> s_Swerve.resetPvInitialization()).ignoringDisable(true));
         // intake forward
         driver.rightTrigger().whileTrue(CommandFactory.newIntakeCommand(intake, elevatorWrist));
         // intake backward
@@ -236,8 +241,6 @@ public class RobotContainer {
         /* Operator Buttons */
         // spit note currently in robot through shooter
         operator.x().whileTrue(CommandFactory.spit(shooter, intake));
-        // reset apriltag vision
-        operator.b().onTrue(new InstantCommand(() -> s_Swerve.resetPvInitialization()));
         // spin up shooter
         operator.leftTrigger().whileTrue(shooter.shootSpeaker());
         // operator.leftTrigger()
@@ -283,12 +286,12 @@ public class RobotContainer {
                     Constants.Swerve.isOpenLoop)),
             //
             OperatorState.State.kShootWhileMove,
-            new ShootWhileMoving(s_Swerve, driver, () -> s_Swerve.getPose(),
+            new ShootWhileMoving(s_Swerve, driver, () -> estimator.getPoseEstimate(),
                 () -> FieldConstants.allianceFlip(FieldConstants.Speaker.centerSpeakerOpening)
                     .getTranslation())
                         .alongWith(elevatorWrist.followPosition(
                             () -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-                            () -> elevatorWrist.getAngleFromDistance(s_Swerve.getPose())
+                            () -> elevatorWrist.getAngleFromDistance(estimator.getPoseEstimate())
                                 .plus(Rotation2d.fromDegrees(0.0)))),
             //
             OperatorState.State.kPost,
@@ -336,6 +339,9 @@ public class RobotContainer {
      * Update simulation
      */
     public void updateSimulation() {
+        if (pumbaaSim != null) {
+            CameraSimPhoton.updateSimPosition(pumbaaSim.getPose());
+        }
         if (this.arena != null) {
             this.arena.update(LoggedRobot.defaultPeriodSecs);
         }

@@ -5,11 +5,11 @@ import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.lib.math.StateEstimator;
 import frc.robot.Constants;
 import frc.robot.subsystems.elevator_wrist.ElevatorWrist;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.subsystems.swerve.Swerve;
 
 /**
  * File to create commands using factories
@@ -90,10 +90,11 @@ public class CommandFactory {
      * @param swerveDrive Swerve Drive Subsystem
      * @return Command
      */
-    public static Command autoAngleWristSpeaker(ElevatorWrist elevatorWrist, Swerve swerveDrive) {
+    public static Command autoAngleWristSpeaker(ElevatorWrist elevatorWrist,
+        StateEstimator estimator) {
         return elevatorWrist.followPosition(
             () -> Constants.ElevatorWristConstants.SetPoints.HOME_HEIGHT,
-            () -> elevatorWrist.getAngleFromDistance(swerveDrive.getPose()));
+            () -> elevatorWrist.getAngleFromDistance(estimator.getPoseEstimate()));
     }
 
     /**
