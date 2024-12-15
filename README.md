@@ -1,12 +1,13 @@
 # FRC2024
+
 [![CI](https://github.com/Frc5572/FRC2024/actions/workflows/main.yml/badge.svg)](https://github.com/Frc5572/FRC2024/actions/workflows/main.yml) [![Java Docs](https://img.shields.io/badge/docs-2024-blue)](https://frc5572.github.io/FRC2024/)
 
 Code for our 2024 robot
 
-
 ## CAN IDs
 
 ### Swerve
+
 Front Left Drive Motor - 10  
 Front Left Angle Motor - 8  
 Front Left canCoder - 10  
@@ -21,6 +22,7 @@ Back Right Angle Motor - 51
 Back Right canCoder - 4  
 
 ### Other
+
 Shooter Top - 13  
 Shooter Bottom - 15  
 Elevator - 57  
@@ -30,14 +32,12 @@ Indexer - 32
 Climber Left - 60  
 Climber Right - 48  
 
-
 ## PDH Ports
 
 ### Swerve
 
-
-
 ### Other
+
 0 - Wrist  
 1 - Left Climber  
 2 - Elevator  

@@ -9,6 +9,9 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import edu.wpi.first.math.geometry.Rotation2d;
 import frc.lib.math.Conversions;
 import frc.robot.Constants;
 
@@ -35,9 +38,13 @@ public class SwerveModuleReal implements SwerveModuleIO {
 
     /* angle motor control requests */
     private final PositionVoltage anglePosition = new PositionVoltage(0);
+    private final Rotation2d angleOffset;
 
     /** Instantiating motors and Encoders */
-    public SwerveModuleReal(int driveMotorID, int angleMotorID, int cancoderID) {
+    public SwerveModuleReal(int driveMotorID, int angleMotorID, int cancoderID,
+        Rotation2d cancoderOffset) {
+
+        this.angleOffset = cancoderOffset;
 
         angleEncoder = new CANcoder(cancoderID, "canivore");
         mDriveMotor = new TalonFX(driveMotorID, "canivore");
@@ -60,7 +67,10 @@ public class SwerveModuleReal implements SwerveModuleIO {
         swerveAngleFXConfig.MotorOutput.NeutralMode = Constants.Swerve.angleNeutralMode;
 
         /* Gear Ratio and Wrapping Config */
-        swerveAngleFXConfig.Feedback.SensorToMechanismRatio = Constants.Swerve.angleGearRatio;
+        swerveAngleFXConfig.Feedback.FeedbackRemoteSensorID = angleEncoder.getDeviceID();
+        swerveAngleFXConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+        swerveAngleFXConfig.Feedback.SensorToMechanismRatio = 1.0;
+        swerveAngleFXConfig.Feedback.RotorToSensorRatio = Constants.Swerve.angleGearRatio;
         swerveAngleFXConfig.ClosedLoopGeneral.ContinuousWrap = true;
 
         /* Current Limiting */
@@ -123,6 +133,9 @@ public class SwerveModuleReal implements SwerveModuleIO {
     private void configAngleEncoder() {
         /* Angle Encoder Config */
         swerveCANcoderConfig.MagnetSensor.SensorDirection = Constants.Swerve.cancoderInvert;
+        swerveCANcoderConfig.MagnetSensor.AbsoluteSensorRange =
+            AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
+        swerveCANcoderConfig.MagnetSensor.MagnetOffset = -angleOffset.getRotations();
 
         angleEncoder.getConfigurator().apply(swerveCANcoderConfig);
     }

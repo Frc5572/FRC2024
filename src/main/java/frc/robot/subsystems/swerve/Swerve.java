@@ -225,15 +225,6 @@ public class Swerve extends SubsystemBase {
         fieldOffset = getGyroYaw().getDegrees() + 180;
     }
 
-    /**
-     * Reset all modules to their front facing position
-     */
-    public void resetModulesToAbsolute() {
-        for (SwerveModule mod : swerveMods) {
-            mod.resetToAbsolute();
-        }
-    }
-
     public void resetPvInitialization() {
         hasInitialized = false;
     }

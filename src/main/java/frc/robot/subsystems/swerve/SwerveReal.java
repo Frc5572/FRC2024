@@ -25,7 +25,7 @@ public class SwerveReal implements SwerveIO {
     public SwerveModule createSwerveModule(int moduleNumber, int driveMotorID, int angleMotorID,
         int cancoderID, Rotation2d angleOffset) {
         return new SwerveModule(moduleNumber, angleOffset,
-            new SwerveModuleReal(driveMotorID, angleMotorID, cancoderID));
+            new SwerveModuleReal(driveMotorID, angleMotorID, cancoderID, angleOffset));
     }
 
     @Override
