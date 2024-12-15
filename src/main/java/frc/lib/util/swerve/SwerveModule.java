@@ -35,7 +35,6 @@ public class SwerveModule {
 
         // lastAngle = getState().angle.getDegrees();
         io.updateInputs(inputs);
-        resetToAbsolute();
         Logger.processInputs("SwerveModule" + moduleNumber, inputs);
     }
 
@@ -88,15 +87,6 @@ public class SwerveModule {
      */
     public Rotation2d getCANcoder() {
         return Rotation2d.fromRotations(inputs.absolutePositionAngleEncoder);
-    }
-
-    /**
-     * Reset the Swerve Module angle to face forward
-     */
-    public void resetToAbsolute() {
-        double absolutePosition = getCANcoder().getRotations() - angleOffset.getRotations();
-        io.setPositionAngleMotor(absolutePosition);
-        inputs.angleMotorSelectedPosition = absolutePosition;
     }
 
     /**
