@@ -20,6 +20,7 @@ public class LEDs extends SubsystemBase {
      * @param port port ID for PWM
      */
     public LEDs(int length, int port) {
+        super("LEDs");
         controLedBuffer = new AddressableLEDBuffer(length);
         addressableLED = new AddressableLED(port);
 
