@@ -16,4 +16,6 @@ public interface SwerveModuleDriveIO {
 
     public void updateDriveInputs(SwerveModuleDriveInputs inputs);
 
+    public void setDrivePID(double p, double i, double d);
+
 }

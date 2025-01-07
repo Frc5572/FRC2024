@@ -26,8 +26,8 @@ import frc.robot.subsystems.swerve.mod.SwerveModuleSim;
 public class RobotContainer {
 
     /* Controllers */
-    public final CommandXboxController driver = new CommandXboxController(Constants.DRIVER_ID);
-    private final CommandXboxController operator = new CommandXboxController(Constants.OPERATOR_ID);
+    public final CommandXboxController driver = new CommandXboxController(Constants.driverId);
+    private final CommandXboxController operator = new CommandXboxController(Constants.operatorId);
 
     /* Subsystems */
     private Swerve s_Swerve;
@@ -45,8 +45,9 @@ public class RobotContainer {
                 // s_Swerve = new Swerve(new SwerveReal(), cameras, viz);
                 break;
             case kSimulation:
-                var driveSimulation = new SwerveDriveSimulation(Constants.Swerve.mapleSimConfig,
-                    new Pose2d(3, 3, Rotation2d.kZero));
+                var driveSimulation =
+                    new SwerveDriveSimulation(Constants.Swerve.config.getMapleConfig(),
+                        new Pose2d(3, 3, Rotation2d.kZero));
                 SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
                 s_Swerve = new Swerve(new SwerveSim(driveSimulation.getGyroSimulation()),
                     Constants.Swerve.config.modules(), (i, config) -> {

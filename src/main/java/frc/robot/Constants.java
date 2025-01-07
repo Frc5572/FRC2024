@@ -1,67 +1,109 @@
 package frc.robot;
 
-import org.ironmaple.simulation.drivesims.COTS;
-import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
-import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
+import static edu.wpi.first.units.Units.*;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.Mass;
-import edu.wpi.first.units.measure.MomentOfInertia;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.subsystems.swerve.drive.SwerveConfig;
+import frc.robot.subsystems.swerve.mod.ModuleConfig;
+import frc.robot.subsystems.swerve.mod.ModuleConstants;
 
 /**
  * Constants file.
  */
 public final class Constants {
+
+    public static final boolean tuningMode = false;
+
     /**
      * Stick Deadband
      */
-    public static final double STICK_DEADBAND = 0.1;
+    public static final double stickDeadband = 0.1;
 
     /**
      * Driver ID
      */
-    public static final int DRIVER_ID = 0;
+    public static final int driverId = 0;
 
     /**
      * Operator ID
      */
-    public static final int OPERATOR_ID = 1;
+    public static final int operatorId = 1;
 
     /**
      * Swerve Constants
      */
     public static final class Swerve {
+
         public static final double odometryFrequency = 250;
 
-        public static final SwerveConfig config = new SwerveConfig();
+        public static final SwerveConfig config = SwerveConfig.builder()
+            .moduleConstants(
+                ModuleConstants.builder()
+                    .ffkS(5.0)
+                    .ffkV(0.0)
+                    .ffkT(1.0 / DCMotor.getKrakenX60(1).KtNMPerAmp)
+                    .drivekP(35.0)
+                    .drivekD(0.0)
+                    .anglekP(4000.0)
+                    .anglekD(50.0)
+                    .driveReduction(Mk4iReductions.L3.reduction)
+                    .angleReduction(Mk4iReductions.TURN.reduction)
+                    .driveMotor(DCMotor.getKrakenX60(1))
+                    .angleMotor(DCMotor.getFalcon500(1))
+                    .driveFrictionVoltage(Volts.of(0))
+                    .angleFrictionVoltage(Volts.of(0))
+                    .wheelCoeffFriction(1.0)
+                    .angleMomentOfInertia(KilogramSquareMeters.of(0.2))
+                    .wheelRadius(Inches.of(1.8))
+                    .slipCurrent(Amps.of(40.0))
+                    .build())
+            .robotMass(Pounds.of(150.0))
+            .robotMomentOfInertia(KilogramSquareMeters.of(6.8))
+            .frontLeft(ModuleConfig.builder()
+                .moduleNumber(0)
+                .driveId(0)
+                .angleId(0)
+                .absoluteEncoderId(0)
+                .absoluteEncoderOffset(Rotation2d.fromRotations(0.0))
+                .angleMotorInverted(false)
+                .build())
+            .frontRight(ModuleConfig.builder()
+                .moduleNumber(0)
+                .driveId(0)
+                .angleId(0)
+                .absoluteEncoderId(0)
+                .absoluteEncoderOffset(Rotation2d.fromRotations(0.0))
+                .angleMotorInverted(false)
+                .build())
+            .backLeft(ModuleConfig.builder()
+                .moduleNumber(0)
+                .driveId(0)
+                .angleId(0)
+                .absoluteEncoderId(0)
+                .absoluteEncoderOffset(Rotation2d.fromRotations(0.0))
+                .angleMotorInverted(false)
+                .build())
+            .backRight(ModuleConfig.builder()
+                .moduleNumber(0)
+                .driveId(0)
+                .angleId(0)
+                .absoluteEncoderId(0)
+                .absoluteEncoderOffset(Rotation2d.fromRotations(0.0))
+                .angleMotorInverted(false)
+                .build())
+            .build();
 
-        public static final Mass robotMass = Units.Pounds.of(140);
-        public static final MomentOfInertia robotMomentOfInertia =
-            Units.KilogramSquareMeters.of(6.88);
-        public static final double wheelCoeffFriction = 1.0;
+        private enum Mk4iReductions {
+            L2((50.0 / 14.0) * (17.0 / 27.0) * (45.0 / 15.0)), L3(
+                (50.0 / 14.0) * (16.0 / 28.0) * (45.0 / 15.0)), TURN((150.0 / 7.0));
 
-        public static final double driveGearRatio = 1.0;
-        public static final Voltage driveFrictionVoltage = Units.Volts.of(1.0);
+            final double reduction;
 
-        public static final double angleGearRatio = 1.0;
-        public static final Voltage angleFrictionVoltage = Units.Volts.of(1.0);
-        public static final MomentOfInertia angleMomentOfInertia =
-            Units.KilogramSquareMeters.of(0.0);
-
-        public static final Distance wheelRadius = Units.Inches.of(1.8);
-
-        public static final Current slipCurrent = Units.Amp.of(0.0);
-
-        public static final DriveTrainSimulationConfig mapleSimConfig =
-            DriveTrainSimulationConfig.Default().withRobotMass(robotMass).withGyro(COTS.ofNav2X())
-                .withSwerveModule(new SwerveModuleSimulationConfig(DCMotor.getKrakenX60(1),
-                    DCMotor.getFalcon500(1), driveGearRatio, angleGearRatio, driveFrictionVoltage,
-                    angleFrictionVoltage, wheelRadius, angleMomentOfInertia, wheelCoeffFriction));
+            Mk4iReductions(double reduction) {
+                this.reduction = reduction;
+            }
+        }
     }
 
     /**

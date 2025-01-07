@@ -8,4 +8,10 @@ public class SwerveModuleTalonAngle implements SwerveModuleAngleIO {
         throw new UnsupportedOperationException("Unimplemented method 'updateAngleInputs'");
     }
 
+    @Override
+    public void setAnglePID(double p, double i, double d) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setAnglePID'");
+    }
+
 }

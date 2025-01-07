@@ -24,7 +24,7 @@ public class SwerveModuleSim implements SwerveModuleAngleIO, SwerveModuleDriveIO
     public SwerveModuleSim(ModuleConfig config, SwerveModuleSimulation moduleSimulation) {
         this.moduleSimulation = moduleSimulation;
         this.driveMotor = moduleSimulation.useGenericMotorControllerForDrive()
-            .withCurrentLimit(Constants.Swerve.slipCurrent);
+            .withCurrentLimit(Constants.Swerve.config.moduleConstants.slipCurrent);
         this.turnMotor =
             moduleSimulation.useGenericControllerForSteer().withCurrentLimit(Units.Amps.of(20));
 
@@ -55,7 +55,9 @@ public class SwerveModuleSim implements SwerveModuleAngleIO, SwerveModuleDriveIO
         inputs.supplyCurrentAmps =
             Math.abs(moduleSimulation.getDriveMotorStatorCurrent().in(Units.Amps));
         inputs.odometryDrivePositionsMeters =
-            new double[] {inputs.positionRads * Constants.Swerve.wheelRadius.in(Units.Meters)};
+            new double[] {
+                inputs.positionRads
+                    * Constants.Swerve.config.moduleConstants.wheelRadius.in(Units.Meters) };
     }
 
     @Override
@@ -78,7 +80,17 @@ public class SwerveModuleSim implements SwerveModuleAngleIO, SwerveModuleDriveIO
         inputs.appliedVolts = turnAppliedVolts;
         inputs.supplyCurrentAmps =
             Math.abs(moduleSimulation.getSteerMotorStatorCurrent().in(Units.Amps));
-        inputs.odometryTurnPositions = new Rotation2d[] {inputs.position};
+        inputs.odometryTurnPositions = new Rotation2d[] { inputs.position };
+    }
+
+    @Override
+    public void setDrivePID(double p, double i, double d) {
+
+    }
+
+    @Override
+    public void setAnglePID(double p, double i, double d) {
+
     }
 
 }

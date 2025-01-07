@@ -18,9 +18,11 @@
     {
       "name": "WPIlibUnitTests",
       "workingDirectory": "${workspaceFolder}/build/jni/release",
-      "vmargs": [ "-Djava.library.path=${workspaceFolder}/build/jni/release" ],
+      "vmargs": [
+        "-Djava.library.path=${workspaceFolder}/build/jni/release"
+      ],
       "env": {
-        "LD_LIBRARY_PATH": "${workspaceFolder}/build/jni/release" ,
+        "LD_LIBRARY_PATH": "${workspaceFolder}/build/jni/release",
         "DYLD_LIBRARY_PATH": "${workspaceFolder}/build/jni/release"
       }
     },
@@ -28,6 +30,7 @@
   "java.test.defaultConfig": "WPIlibUnitTests",
   "java.format.settings.url": "formatter.xml",
   "java.format.settings.profile": "GoogleStyle",
+  "java.sources.organizeImports.staticStarThreshold": 1,
   "[java]": {
     "editor.defaultFormatter": "redhat.java",
   },

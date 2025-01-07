@@ -19,4 +19,6 @@ public interface SwerveModuleAngleIO {
 
     public void updateAngleInputs(SwerveModuleAngleInputs inputs);
 
+    public void setAnglePID(double p, double i, double d);
+
 }
