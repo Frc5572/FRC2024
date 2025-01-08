@@ -63,7 +63,7 @@ public final class Constants {
             .trackWidthX(Inches.of(23.75))
             .trackWidthY(Inches.of(17.75))
             .maxLinearSpeed(MetersPerSecond.of(10.0))
-            .scrubLimit(MetersPerSecond.of(0.25))
+            .scrubLimit(MetersPerSecond.of(0.1))
             .robotMass(Pounds.of(150.0))
             .robotMomentOfInertia(KilogramSquareMeters.of(6.8))
             .frontLeft(ModuleConfig.builder()
