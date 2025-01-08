@@ -14,5 +14,23 @@ public class SwerveModuleTalonDrive implements SwerveModuleDriveIO {
         throw new UnsupportedOperationException("Unimplemented method 'setDrivePID'");
     }
 
+    @Override
+    public void runDriveOpenLoop(double output) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'runDriveOpenLoop'");
+    }
+
+    @Override
+    public void runDriveVelocity(double velocityRadPerSec, double feedforward) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'runDriveVelocity'");
+    }
+
+    @Override
+    public void setBrakeMode(boolean enabled) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setBrakeMode'");
+    }
+
 
 }

@@ -1,8 +1,10 @@
 package frc.robot.subsystems.swerve.mod;
 
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Voltage;
 import lombok.Builder;
@@ -28,5 +30,8 @@ public class ModuleConstants {
     public final MomentOfInertia angleMomentOfInertia;
     public final Distance wheelRadius;
     public final Current slipCurrent;
+
+    public final AngularVelocity maxSteerRate;
+    public final LinearAcceleration maxDriveRate;
 
 }

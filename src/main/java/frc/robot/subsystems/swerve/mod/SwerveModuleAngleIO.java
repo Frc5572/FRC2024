@@ -21,4 +21,8 @@ public interface SwerveModuleAngleIO {
 
     public void setAnglePID(double p, double i, double d);
 
+    public void runAngleOpenLoop(double output);
+
+    public void runAnglePosition(Rotation2d rotation);
+
 }

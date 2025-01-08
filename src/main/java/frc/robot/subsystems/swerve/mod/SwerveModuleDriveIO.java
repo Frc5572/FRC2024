@@ -18,4 +18,10 @@ public interface SwerveModuleDriveIO {
 
     public void setDrivePID(double p, double i, double d);
 
+    public void runDriveOpenLoop(double output);
+
+    public void runDriveVelocity(double velocityRadPerSec, double feedforward);
+
+    public void setBrakeMode(boolean enabled);
+
 }

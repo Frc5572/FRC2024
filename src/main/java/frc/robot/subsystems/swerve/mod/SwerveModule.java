@@ -1,5 +1,6 @@
 package frc.robot.subsystems.swerve.mod;
 
+import static edu.wpi.first.units.Units.*;
 import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -81,7 +82,7 @@ public final class SwerveModule {
         Logger.processInputs(driveKey, driveInputs);
     }
 
-    public void periodic() {
+    public void periodic(int sampleCount) {
         // Update tunable numbers
         if (drivekS.hasChanged(hashCode()) || drivekV.hasChanged(hashCode())) {
             ffModel = new SimpleMotorFeedforward(drivekS.get(), drivekV.get());
@@ -94,7 +95,13 @@ public final class SwerveModule {
         }
 
         // Calculate positions for odometry
-        // TODO
+        odometryPositions = new SwerveModulePosition[sampleCount];
+        for (int i = 0; i < sampleCount; i++) {
+            double positionMeters = driveInputs.odometryDrivePositionsMeters[i]
+                * Constants.Swerve.config.moduleConstants.wheelRadius.in(Meters);
+            Rotation2d angle = angleInputs.odometryTurnPositions[i];
+            odometryPositions[i] = new SwerveModulePosition(positionMeters, angle);
+        }
 
         // Update alerts
         driveDisconnectedAlert.set(!driveInputs.motorConnected);
@@ -104,16 +111,7 @@ public final class SwerveModule {
 
     /** Runs the module with the specified setpoint state. Mutates the state to optimize it. */
     public void runSetpoint(SwerveModuleState state) {
-        // Optimize velocity setpoint
-        state.optimize(getAngle());
-        state.cosineScale(angleInputs.position);
-
-        // Apply setpoints
-        double speedRadPerSec =
-            state.speedMetersPerSecond / Constants.Swerve.config.moduleConstants.wheelRadius
-                .in(edu.wpi.first.units.Units.Meters);
-        // io.runDriveVelocity(speedRadPerSec, ffModel.calculate(speedRadPerSec));
-        // io.runTurnPosition(state.angle);
+        runSetpoint(state, 0);
     }
 
     /**
@@ -129,23 +127,21 @@ public final class SwerveModule {
         double speedRadPerSec =
             state.speedMetersPerSecond / Constants.Swerve.config.moduleConstants.wheelRadius
                 .in(edu.wpi.first.units.Units.Meters);
-        // io.runDriveVelocity(
-        // speedRadPerSec, ffModel.calculate(speedRadPerSec) + wheelTorqueNm * drivekT.get());
-        // io.runTurnPosition(state.angle);
+        driveIO.runDriveVelocity(
+            speedRadPerSec, ffModel.calculate(speedRadPerSec) + wheelTorqueNm * drivekT.get());
+        angleIO.runAnglePosition(state.angle);
     }
 
     /** Runs the module with the specified output while controlling to zero degrees. */
     public void runCharacterization(double output) {
-        // TODO
-        // io.runDriveOpenLoop(output);
-        // io.runTurnPosition(Rotation2d.kZero);
+        driveIO.runDriveOpenLoop(output);
+        angleIO.runAnglePosition(Rotation2d.kZero);
     }
 
     /** Disables all outputs to motors. */
     public void stop() {
-        // TODO
-        // io.runDriveOpenLoop(0.0);
-        // io.runTurnOpenLoop(0.0);
+        driveIO.runDriveOpenLoop(0.0);
+        angleIO.runAngleOpenLoop(0.0);
     }
 
     /** Returns the current turn angle of the module. */

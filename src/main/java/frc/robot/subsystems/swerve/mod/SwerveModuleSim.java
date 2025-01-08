@@ -28,7 +28,7 @@ public class SwerveModuleSim implements SwerveModuleAngleIO, SwerveModuleDriveIO
         this.turnMotor =
             moduleSimulation.useGenericControllerForSteer().withCurrentLimit(Units.Amps.of(20));
 
-        this.driveController = new PIDController(0.05, 0.0, 0.0);
+        this.driveController = new PIDController(0.5, 0.0, 0.0);
         this.turnController = new PIDController(8.0, 0.0, 0.0);
 
         // Enable wrapping for turn PID
@@ -85,12 +85,46 @@ public class SwerveModuleSim implements SwerveModuleAngleIO, SwerveModuleDriveIO
 
     @Override
     public void setDrivePID(double p, double i, double d) {
-
+        driveController.setP(p);
+        driveController.setI(i);
+        driveController.setD(d);
     }
 
     @Override
     public void setAnglePID(double p, double i, double d) {
+        turnController.setP(p);
+        turnController.setI(i);
+        turnController.setD(d);
+    }
 
+    @Override
+    public void runDriveOpenLoop(double output) {
+        driveClosedLoop = false;
+        driveAppliedVolts = output;
+    }
+
+    @Override
+    public void runDriveVelocity(double velocityRadPerSec, double feedforward) {
+        driveClosedLoop = true;
+        driveFFVolts = feedforward;
+        driveController.setSetpoint(velocityRadPerSec);
+    }
+
+    @Override
+    public void setBrakeMode(boolean enabled) {
+
+    }
+
+    @Override
+    public void runAngleOpenLoop(double output) {
+        turnClosedLoop = false;
+        turnAppliedVolts = output;
+    }
+
+    @Override
+    public void runAnglePosition(Rotation2d rotation) {
+        turnClosedLoop = true;
+        turnController.setSetpoint(rotation.getRadians());
     }
 
 }
