@@ -36,17 +36,16 @@ public final class SwerveModule {
         new LoggedTunableNumber("Drive/Module/AnglekD",
             Constants.Swerve.config.moduleConstants.anglekD);
 
-    private final ModuleConfig config;
     private final SwerveModuleAngleIO angleIO;
     private final SwerveModuleDriveIO driveIO;
 
     private final String angleKey;
     private final String driveKey;
 
-    private final SwerveModuleAngleInputsAutoLogged angleInputs =
+    public final SwerveModuleAngleInputsAutoLogged angleInputs =
         new SwerveModuleAngleInputsAutoLogged();
 
-    private final SwerveModuleDriveInputsAutoLogged driveInputs =
+    public final SwerveModuleDriveInputsAutoLogged driveInputs =
         new SwerveModuleDriveInputsAutoLogged();
 
     private SimpleMotorFeedforward ffModel;
@@ -58,7 +57,6 @@ public final class SwerveModule {
 
     public SwerveModule(ModuleConfig config, SwerveModuleAngleIO angleIO,
         SwerveModuleDriveIO driveIO) {
-        this.config = config;
         this.angleIO = angleIO;
         this.driveIO = driveIO;
         int index = config.moduleNumber;
@@ -82,7 +80,7 @@ public final class SwerveModule {
         Logger.processInputs(driveKey, driveInputs);
     }
 
-    public void periodic(int sampleCount) {
+    public void periodic() {
         // Update tunable numbers
         if (drivekS.hasChanged(hashCode()) || drivekV.hasChanged(hashCode())) {
             ffModel = new SimpleMotorFeedforward(drivekS.get(), drivekV.get());
@@ -93,7 +91,7 @@ public final class SwerveModule {
         if (anglekP.hasChanged(hashCode()) || anglekD.hasChanged(hashCode())) {
             driveIO.setDrivePID(anglekP.get(), 0, anglekD.get());
         }
-
+        int sampleCount = driveInputs.odometryTimestamps.length;
         // Calculate positions for odometry
         odometryPositions = new SwerveModulePosition[sampleCount];
         for (int i = 0; i < sampleCount; i++) {

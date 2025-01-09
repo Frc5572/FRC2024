@@ -42,6 +42,7 @@ public final class Constants {
                 ModuleConstants.builder()
                     .ffkS(0.32)
                     .ffkV(1.51)
+                    .ffkA(0.27)
                     .ffkT(1.0 / DCMotor.getKrakenX60(1).KtNMPerAmp)
                     .drivekP(0.12)
                     .drivekD(0.0)
@@ -59,6 +60,9 @@ public final class Constants {
                     .slipCurrent(Amps.of(40.0))
                     .maxDriveRate(MetersPerSecondPerSecond.of(50.0))
                     .maxSteerRate(RotationsPerSecond.of(4.0))
+                    .supplyCurrentLimit(Amps.of(35.0))
+                    .supplyCurrentLowerLimit(Amps.of(60.0))
+                    .supplyCurrentLowerTimeThreshold(Seconds.of(0.1))
                     .build())
             .trackWidthX(Inches.of(23.75))
             .trackWidthY(Inches.of(17.75))
@@ -98,6 +102,7 @@ public final class Constants {
                 .absoluteEncoderOffset(Rotation2d.fromRotations(0.317627 + 0.5))
                 .angleMotorInverted(false)
                 .build())
+            .gyroId(0)
             .build();
 
         private enum Mk4iReductions {

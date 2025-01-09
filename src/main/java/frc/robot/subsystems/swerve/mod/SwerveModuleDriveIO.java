@@ -12,6 +12,7 @@ public interface SwerveModuleDriveIO {
         public double appliedVolts;
         public double supplyCurrentAmps;
         public double[] odometryDrivePositionsMeters = new double[] {};
+        public double[] odometryTimestamps = new double[] {};
     }
 
     public void updateDriveInputs(SwerveModuleDriveInputs inputs);

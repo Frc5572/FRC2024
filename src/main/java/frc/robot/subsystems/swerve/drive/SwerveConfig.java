@@ -16,6 +16,8 @@ import lombok.Builder;
 @Builder
 public class SwerveConfig {
 
+    public final int gyroId;
+
     public final ModuleConfig frontLeft;
     public final ModuleConfig frontRight;
     public final ModuleConfig backLeft;

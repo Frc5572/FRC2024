@@ -17,10 +17,12 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.util.Deadzone;
 import frc.robot.Robot.RobotRunType;
-import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.swerve.drive.Swerve;
+import frc.robot.subsystems.swerve.drive.SwerveNavX;
 import frc.robot.subsystems.swerve.drive.SwerveSim;
 import frc.robot.subsystems.swerve.mod.SwerveModuleSim;
+import frc.robot.subsystems.swerve.mod.SwerveModuleTalonAngle;
+import frc.robot.subsystems.swerve.mod.SwerveModuleTalonDrive;
 
 
 /**
@@ -33,13 +35,11 @@ public class RobotContainer {
 
     /* Controllers */
     public final CommandXboxController driver = new CommandXboxController(Constants.driverId);
-    private final CommandXboxController operator = new CommandXboxController(Constants.operatorId);
 
     private SwerveDriveSimulation driveSimulation;
 
     /* Subsystems */
     private Swerve s_Swerve;
-    private LEDs leds = new LEDs(Constants.LEDConstants.LED_COUNT, Constants.LEDConstants.PWM_PORT);
 
     /**
      */
@@ -50,7 +50,8 @@ public class RobotContainer {
 
         switch (runtimeType) {
             case kReal:
-                // s_Swerve = new Swerve(new SwerveReal(), cameras, viz);
+                s_Swerve = new Swerve(new SwerveNavX(), SwerveModuleTalonAngle::new,
+                    SwerveModuleTalonDrive::new);
                 break;
             case kSimulation:
                 driveSimulation =
@@ -58,7 +59,7 @@ public class RobotContainer {
                         new Pose2d(3, 3, Rotation2d.kZero));
                 SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
                 s_Swerve = new Swerve(new SwerveSim(driveSimulation.getGyroSimulation()),
-                    Constants.Swerve.config.modules(), (i, config) -> {
+                    (i, config) -> {
                         var sim = new SwerveModuleSim(config, driveSimulation.getModules()[i]);
                         return Pair.of(sim, sim);
                     });

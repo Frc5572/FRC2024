@@ -67,10 +67,11 @@ public final class Swerve extends SubsystemBase {
     private Rotation2d fieldOffset = new Rotation2d();
 
     /** Swerve Subsystem */
-    public Swerve(SwerveIO io, ModuleConfig[] modules,
+    public Swerve(SwerveIO io,
         BiFunction<Integer, ModuleConfig, Pair<SwerveModuleAngleIO, SwerveModuleDriveIO>> modFunc) {
         super("Swerve");
         this.io = io;
+        var modules = Constants.Swerve.config.modules();
         this.modules = new SwerveModule[modules.length];
         for (int i = 0; i < modules.length; i++) {
             var modIO = modFunc.apply(i, modules[i]);
@@ -82,10 +83,10 @@ public final class Swerve extends SubsystemBase {
         PhoenixOdometryThread.getInstance().start();
     }
 
-    public Swerve(SwerveIO io, ModuleConfig[] modules,
+    public Swerve(SwerveIO io,
         BiFunction<Integer, ModuleConfig, SwerveModuleAngleIO> angleFunc,
         BiFunction<Integer, ModuleConfig, SwerveModuleDriveIO> driveFunc) {
-        this(io, modules, (i, conf) -> Pair.of(angleFunc.apply(i, conf), driveFunc.apply(i, conf)));
+        this(io, (i, conf) -> Pair.of(angleFunc.apply(i, conf), driveFunc.apply(i, conf)));
     }
 
     @Override
@@ -99,7 +100,7 @@ public final class Swerve extends SubsystemBase {
         odometryLock.unlock();
 
         for (var module : modules) {
-            module.periodic(inputs.odometryYawTimestamps.length);
+            module.periodic();
         }
 
         if (DriverStation.isDisabled()) {
@@ -112,7 +113,7 @@ public final class Swerve extends SubsystemBase {
         }
 
         double[] sampleTimestamps =
-            inputs.odometryYawTimestamps; // All signals are sampled together
+            modules[0].driveInputs.odometryTimestamps; // All signals are sampled together
         int sampleCount = sampleTimestamps.length;
         for (int i = 0; i < sampleCount; i++) {
             // Read wheel positions and deltas from each module
@@ -128,20 +129,17 @@ public final class Swerve extends SubsystemBase {
                 lastModulePositions[moduleIndex] = modulePositions[moduleIndex];
             }
 
-            // Update gyro angle
-            if (inputs.connected) {
-                // Use the real gyro angle
-                rawGyroRotation = inputs.odometryYawPositions[i];
-            } else {
-                // Use the angle delta from the kinematics and module deltas
-                Twist2d twist = kinematics.toTwist2d(moduleDeltas);
-                rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
-            }
+            // Use the angle delta from the kinematics and module deltas
+            Twist2d twist = kinematics.toTwist2d(moduleDeltas);
+            rawGyroRotation = rawGyroRotation.plus(new Rotation2d(twist.dtheta));
 
             // Apply update
             poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
         }
 
+        if (inputs.connected) {
+            poseEstimator.resetRotation(inputs.yawPosition);
+        }
         // Update gyro alert
         gyroDisconnectedAlert.set(!inputs.connected);
     }

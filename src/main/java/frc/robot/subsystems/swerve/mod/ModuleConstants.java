@@ -6,6 +6,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.MomentOfInertia;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Voltage;
 import lombok.Builder;
 
@@ -15,6 +16,7 @@ public class ModuleConstants {
     public final double ffkS;
     public final double ffkV;
     public final double ffkT;
+    public final double ffkA;
     public final double drivekP;
     public final double drivekD;
     public final double anglekP;
@@ -30,6 +32,9 @@ public class ModuleConstants {
     public final MomentOfInertia angleMomentOfInertia;
     public final Distance wheelRadius;
     public final Current slipCurrent;
+    public final Current supplyCurrentLimit;
+    public final Current supplyCurrentLowerLimit;
+    public final Time supplyCurrentLowerTimeThreshold;
 
     public final AngularVelocity maxSteerRate;
     public final LinearAcceleration maxDriveRate;
