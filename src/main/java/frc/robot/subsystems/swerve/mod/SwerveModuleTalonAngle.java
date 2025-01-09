@@ -60,7 +60,7 @@ public class SwerveModuleTalonAngle implements SwerveModuleAngleIO {
             angleMotorAppliedVolts,
             angleMotorCurrent,
             angleAbsolutePosition);
-        ParentDevice.optimizeBusUtilizationForAll(angleMotor);
+        ParentDevice.optimizeBusUtilizationForAll(angleMotor, encoder);
 
         angleFXConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         angleFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
