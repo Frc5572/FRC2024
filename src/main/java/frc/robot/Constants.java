@@ -324,7 +324,7 @@ public final class Constants {
     //             new PIDConstants(AUTO_ROTATION_KP, AUTO_ROTATION_KI, AUTO_ROTATION_KD),
     //             // Drive base radius (distance from center to furthest module)
     //             AUTO_MAX_SPEED, MOD0_MODOFFSET.getNorm(), new ReplanningConfig());
-    // }
+    }
 
     /**
      * Climber constants
