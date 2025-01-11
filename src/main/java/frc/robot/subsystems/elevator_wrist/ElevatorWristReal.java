@@ -26,11 +26,11 @@ public class ElevatorWristReal implements ElevatorWristIO {
     public final SparkMax wristMotor =
         new SparkMax(Constants.Motors.ElevatorWrist.WRIST_NEO_ID, MotorType.kBrushless);
 
-    public final AbsoluteEncoder wristAbsoluteEnc = wristMotor.getAbsoluteEncoder(Type.kdutycycle);
+    public final AbsoluteEncoder wristAbsoluteEnc = wristMotor.getAbsoluteEncoder();
     public final RelativeEncoder leftElevatorRelativeEnc =
-        leftElevatorMotor.getEncoder(SparkRelativeEncoder.Type.kHallSensor, 42);
+        leftElevatorMotor.getEncoder();
     public final RelativeEncoder rightElevatorRelativeEnc =
-        rightElevatorMotor.getEncoder(SparkRelativeEncoder.Type.kHallSensor, 42);
+        rightElevatorMotor.getEncoder();
     public final SparkMaxConfig leftELIConfig = new SparkMaxConfig();
     public final SparkMaxConfig rightELIConfig = new SparkMaxConfig();
     public final SparkMaxConfig wristConfig = new SparkMaxConfig();
