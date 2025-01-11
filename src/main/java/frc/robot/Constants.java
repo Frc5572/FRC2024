@@ -3,9 +3,10 @@ package frc.robot;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.PIDConstants;
-import com.pathplanner.lib.util.ReplanningConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.studica.frc.AHRS.NavXComType;
+
+import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -14,6 +15,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.lib.util.FieldConstants;
 
@@ -186,8 +188,7 @@ public final class Constants {
         public static final double AUTO_ROTATION_KI = 0.0;
         public static final double AUTO_ROTATION_KD = 0.0;
 
-        public static final edu.wpi.first.wpilibj.SPI.Port navXID =
-            edu.wpi.first.wpilibj.SPI.Port.kMXP;
+        public static final NavXComType navXID = NavXComType.kMXP_SPI;
         public static final boolean invertGyro = true;
         public static final boolean isFieldRelative = true;
         public static final boolean isOpenLoop = false;
@@ -317,11 +318,12 @@ public final class Constants {
             public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.317627 + 0.5);
         }
 
-        public static final HolonomicPathFollowerConfig pathFollowerConfig =
-            new HolonomicPathFollowerConfig(new PIDConstants(5.0, 0, 0),
-                new PIDConstants(AUTO_ROTATION_KP, AUTO_ROTATION_KI, AUTO_ROTATION_KD),
-                // Drive base radius (distance from center to furthest module)
-                AUTO_MAX_SPEED, MOD0_MODOFFSET.getNorm(), new ReplanningConfig());
+
+    //     public static final HolonomicPathFollowerConfig pathFollowerConfig =
+    //         new HolonomicPathFollowerConfig(new PIDConstants(5.0, 0, 0),
+    //             new PIDConstants(AUTO_ROTATION_KP, AUTO_ROTATION_KI, AUTO_ROTATION_KD),
+    //             // Drive base radius (distance from center to furthest module)
+    //             AUTO_MAX_SPEED, MOD0_MODOFFSET.getNorm(), new ReplanningConfig());
     }
 
     /**
