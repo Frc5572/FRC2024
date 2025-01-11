@@ -1,6 +1,8 @@
 package frc.robot.subsystems.swerve;
 
-import com.kauailabs.navx.frc.AHRS;
+
+import com.studica.frc.AHRS;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.lib.util.swerve.SwerveModule;
 import frc.lib.util.swerve.SwerveModuleReal;
