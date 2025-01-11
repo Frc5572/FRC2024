@@ -41,7 +41,7 @@ public class IntakeIOFalcon implements IntakeIO {
     public IntakeIOFalcon() {
         // SparkMaxConfig config = new SparkMaxConfig();
         // config.signals.primaryEncoderPositionPeriodMs(5);
-        LeftConfig.inverted(Constants.IntakeConstants.INTAKE_MOTOR_INVERTED).idleMode(IdleMode.kCoast)
+        LeftConfig.inverted(Constants.IntakeConstants.INTAKE_MOTOR_INVERTED).idleMode(IdleMode.kCoast) // HERE IT IS
                 .smartCurrentLimit(40);
         RightConfig.inverted(false).idleMode(IdleMode.kCoast).smartCurrentLimit(40);
         intakeMotorLeft.configure(LeftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);

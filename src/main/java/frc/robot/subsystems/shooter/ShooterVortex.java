@@ -1,8 +1,11 @@
 package frc.robot.subsystems.shooter;
 
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkFlex;
-import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import frc.robot.Constants;
 
@@ -10,10 +13,10 @@ import frc.robot.Constants;
  * Class for ShooterVortex
  */
 public class ShooterVortex implements ShooterIO {
-    public final CANSparkFlex topShooterMotor =
-        new CANSparkFlex(Constants.Motors.Shooter.SHOOTER_TOP_ID, MotorType.kBrushless);
-    public final CANSparkFlex bottomShooterMotor =
-        new CANSparkFlex(Constants.Motors.Shooter.SHOOTER_BOTTOM_ID, MotorType.kBrushless);
+    public final SparkFlex topShooterMotor =
+        new SparkFlex(Constants.Motors.Shooter.SHOOTER_TOP_ID, MotorType.kBrushless);
+    public final SparkFlex bottomShooterMotor =
+        new SparkFlex(Constants.Motors.Shooter.SHOOTER_BOTTOM_ID, MotorType.kBrushless);
     private RelativeEncoder topEncoder = topShooterMotor.getEncoder();
     private RelativeEncoder bottomEncoder = bottomShooterMotor.getEncoder();
 
@@ -21,23 +24,26 @@ public class ShooterVortex implements ShooterIO {
      * Constructor Shooter Subsystem - sets motor and encoder preferences
      */
     public ShooterVortex() {
-        topShooterMotor.restoreFactoryDefaults();
-        bottomShooterMotor.restoreFactoryDefaults();
-        topShooterMotor.setIdleMode(IdleMode.kCoast);
-        bottomShooterMotor.setIdleMode(IdleMode.kCoast);
-        topShooterMotor.setInverted(false);
-        bottomShooterMotor.setInverted(true);
+         SparkMaxConfig TopConfig = new SparkMaxConfig();
+         SparkMaxConfig BottomConfig = new SparkMaxConfig();
+
+        TopConfig.inverted(Constants.IntakeConstants.INTAKE_MOTOR_INVERTED).idleMode(IdleMode.kCoast) // HERE IT IS
+                .smartCurrentLimit(40);
+        BottomConfig.inverted(false).idleMode(IdleMode.kCoast).smartCurrentLimit(40);
+        topShooterMotor.configure(TopConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        bottomShooterMotor.configure(BottomConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
         // topShooterMotor.setSmartCurrentLimit(20);
         // bottomShooterMotor.setSmartCurrentLimit(20);
         // topShooterMotor.enableVoltageCompensation(12);
         // bottomShooterMotor.enableVoltageCompensation(12);
         // gear ratio 31:16
-        topEncoder.setPositionConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
-        topEncoder.setVelocityConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
-        bottomEncoder.setPositionConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
-        bottomEncoder.setVelocityConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
-        bottomShooterMotor.burnFlash();
-        topShooterMotor.burnFlash();
+        TopConfig.encoder.positionConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
+        TopConfig.encoder.velocityConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
+        BottomConfig.encoder.positionConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
+        BottomConfig.encoder.velocityConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
+       // bottomShooterMotor.burnFlash();
+       // topShooterMotor.burnFlash();
 
         // thread.start();
     }
