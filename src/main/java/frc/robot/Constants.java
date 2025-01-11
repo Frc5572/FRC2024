@@ -485,7 +485,7 @@ public final class Constants {
         public static final double KS = 0;
         public static final double TOP_KV = 6.18e-4;
         public static final double BOTTOM_KV = 6.18e-4;
-        public static final double GEAR_RATIO = 3;
+        public static final double GEAR_RATIO = 3;//gear ratio
         public static final double HEIGHT_FROM_LOWEST_POS = Units.inchesToMeters(32.0);
         public static final double HEIGHT_FROM_SPEAKER =
             FieldConstants.centerSpeaker - HEIGHT_FROM_LOWEST_POS;
