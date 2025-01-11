@@ -1,5 +1,7 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Inches;
+
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
@@ -13,8 +15,10 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.lib.util.FieldConstants;
@@ -196,8 +200,8 @@ public final class Constants {
         /* Drivetrain Constants */
         public static final double trackWidth = Units.inchesToMeters(23.75);
         public static final double wheelBase = Units.inchesToMeters(17.75);
-        public static final double wheelDiameter = Units.inchesToMeters(3.8);
-        public static final double wheelCircumference = wheelDiameter * Math.PI;
+        public static final Distance wheelDiameter = Inches.of(3.8);
+        public static final Distance wheelCircumference = wheelDiameter.times(Math.PI);
         public static final Translation2d MOD0_MODOFFSET =
             new Translation2d(wheelBase / 2.0, trackWidth / 2.0);
 

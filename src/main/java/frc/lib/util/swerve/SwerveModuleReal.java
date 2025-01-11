@@ -9,9 +9,11 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
+// import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import frc.lib.math.Conversions;
 import frc.robot.Constants;
 
@@ -27,10 +29,10 @@ public class SwerveModuleReal implements SwerveModuleIO {
     private TalonFXConfiguration swerveDriveFXConfig = new TalonFXConfiguration();
     private CANcoderConfiguration swerveCANcoderConfig = new CANcoderConfiguration();
 
-    private StatusSignal<Double> driveMotorSelectedPosition;
-    private StatusSignal<Double> driveMotorSelectedSensorVelocity;
-    private StatusSignal<Double> angleMotorSelectedPosition;
-    private StatusSignal<Double> absolutePositionAngleEncoder;
+    private StatusSignal<Angle> driveMotorSelectedPosition;
+    private StatusSignal<AngularVelocity> driveMotorSelectedSensorVelocity;
+    private StatusSignal<Angle> angleMotorSelectedPosition;
+    private StatusSignal<Angle> absolutePositionAngleEncoder;
 
     /* drive motor control requests */
     private final DutyCycleOut driveDutyCycle = new DutyCycleOut(0);
@@ -77,9 +79,9 @@ public class SwerveModuleReal implements SwerveModuleIO {
         swerveAngleFXConfig.CurrentLimits.SupplyCurrentLimitEnable =
             Constants.Swerve.angleEnableCurrentLimit;
         swerveAngleFXConfig.CurrentLimits.SupplyCurrentLimit = Constants.Swerve.angleCurrentLimit;
-        swerveAngleFXConfig.CurrentLimits.SupplyCurrentThreshold =
+        swerveAngleFXConfig.CurrentLimits.SupplyCurrentLowerLimit =
             Constants.Swerve.angleCurrentThreshold;
-        swerveAngleFXConfig.CurrentLimits.SupplyTimeThreshold =
+        swerveAngleFXConfig.CurrentLimits.SupplyCurrentLowerTime =
             Constants.Swerve.angleCurrentThresholdTime;
 
         /* PID Config */
@@ -103,9 +105,9 @@ public class SwerveModuleReal implements SwerveModuleIO {
         swerveDriveFXConfig.CurrentLimits.SupplyCurrentLimitEnable =
             Constants.Swerve.driveEnableCurrentLimit;
         swerveDriveFXConfig.CurrentLimits.SupplyCurrentLimit = Constants.Swerve.driveCurrentLimit;
-        swerveDriveFXConfig.CurrentLimits.SupplyCurrentThreshold =
+        swerveDriveFXConfig.CurrentLimits.SupplyCurrentLowerLimit =
             Constants.Swerve.driveCurrentThreshold;
-        swerveDriveFXConfig.CurrentLimits.SupplyTimeThreshold =
+        swerveDriveFXConfig.CurrentLimits.SupplyCurrentLowerTime =
             Constants.Swerve.driveCurrentThresholdTime;
 
         /* PID Config */
@@ -133,8 +135,7 @@ public class SwerveModuleReal implements SwerveModuleIO {
     private void configAngleEncoder() {
         /* Angle Encoder Config */
         swerveCANcoderConfig.MagnetSensor.SensorDirection = Constants.Swerve.cancoderInvert;
-        swerveCANcoderConfig.MagnetSensor.AbsoluteSensorRange =
-            AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
+        swerveCANcoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
         swerveCANcoderConfig.MagnetSensor.MagnetOffset = -angleOffset.getRotations();
 
         angleEncoder.getConfigurator().apply(swerveCANcoderConfig);

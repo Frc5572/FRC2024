@@ -32,10 +32,10 @@ import frc.lib.util.photon.PhotonCameraWrapper;
 import frc.lib.util.photon.PhotonReal;
 import frc.lib.viz.PumbaaViz;
 import frc.robot.Robot.RobotRunType;
-import frc.robot.autos.JustShoot1;
-import frc.robot.autos.P123;
-import frc.robot.autos.P321;
-import frc.robot.autos.P8765;
+// import frc.robot.autos.JustShoot1;
+// import frc.robot.autos.P123;
+// import frc.robot.autos.P321;
+// import frc.robot.autos.P8765;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.FlashingLEDColor;
 import frc.robot.commands.MovingColorLEDs;
@@ -191,13 +191,13 @@ public class RobotContainer {
                 elevatorWrist = new ElevatorWrist(new ElevatorWristIO() {}, operator, viz);
         }
 
-        autoChooser.setDefaultOption("Nothing", Commands.none());
-        autoChooser.addOption("P123", new P123(s_Swerve, elevatorWrist, intake, shooter));
-        autoChooser.addOption("P321", new P321(s_Swerve, elevatorWrist, intake, shooter));
-        autoChooser.addOption("P8765", new P8765(s_Swerve, elevatorWrist, intake, shooter));
-        autoChooser.addOption("Just Shoot 1",
-            new JustShoot1(s_Swerve, elevatorWrist, intake, shooter));
-        // autoChooser.addOption("P32", new P32(s_Swerve, elevatorWrist, intake, shooter));
+        // ?autoChooser.setDefaultOption("Nothing", Commands.none());
+        // autoChooser.addOption("P123", new P123(s_Swerve, elevatorWrist, intake, shooter));
+        // autoChooser.addOption("P321", new P321(s_Swerve, elevatorWrist, intake, shooter));
+        // autoChooser.addOption("P8765", new P8765(s_Swerve, elevatorWrist, intake, shooter));
+        // autoChooser.addOption("Just Shoot 1",
+        //     new JustShoot1(s_Swerve, elevatorWrist, intake, shooter));
+        // // autoChooser.addOption("P32", new P32(s_Swerve, elevatorWrist, intake, shooter));
         // autoChooser.addOption("P675", new P675(s_Swerve, elevatorWrist, intake, shooter));
         // autoChooser.addOption("P3675", new P3675(s_Swerve, elevatorWrist, intake, shooter));
 
