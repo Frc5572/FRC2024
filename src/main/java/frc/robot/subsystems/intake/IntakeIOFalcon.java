@@ -5,11 +5,13 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkRelativeEncoder;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants;
 
@@ -18,33 +20,32 @@ import frc.robot.Constants;
  */
 public class IntakeIOFalcon implements IntakeIO {
 
-    private final CANSparkMax intakeMotorLeft =
-        new CANSparkMax(Constants.Motors.Intake.INTAKE_MOTOR_ID_LEFT, MotorType.kBrushless);
-    private final CANSparkMax intakeMotorRight =
-        new CANSparkMax(Constants.Motors.Intake.INTAKE_MOTOR_ID_RIGHT, MotorType.kBrushless);
-    public final RelativeEncoder intakeRelativeEnc =
-        intakeMotorLeft.getEncoder(SparkRelativeEncoder.Type.kHallSensor, 42);
+    private final SparkMax intakeMotorLeft = new SparkMax(Constants.Motors.Intake.INTAKE_MOTOR_ID_LEFT,
+            MotorType.kBrushless);
+    private final SparkMax intakeMotorRight = new SparkMax(Constants.Motors.Intake.INTAKE_MOTOR_ID_RIGHT,
+            MotorType.kBrushless);
+    public final RelativeEncoder intakeRelativeEnc = intakeMotorLeft.getEncoder();
     private final TalonFX indexerMotor = new TalonFX(Constants.Motors.Intake.INDEXER_MOTOR_ID);
 
     private final DutyCycleOut indexerDutyCycleOut = new DutyCycleOut(0);
     private final TalonFXConfiguration indexerConfig = new TalonFXConfiguration();
-    private final DigitalInput indexerBeamBrake =
-        new DigitalInput(Constants.IntakeConstants.INDEXER_BEAM_BRAKE_DIO_PORT);
-    private final DigitalInput intakeBeamBrake =
-        new DigitalInput(Constants.IntakeConstants.INTAKE_BEAM_BRAKE_DIO_PORT);
+    private final DigitalInput indexerBeamBrake = new DigitalInput(
+            Constants.IntakeConstants.INDEXER_BEAM_BRAKE_DIO_PORT);
+    private final DigitalInput intakeBeamBrake = new DigitalInput(Constants.IntakeConstants.INTAKE_BEAM_BRAKE_DIO_PORT);
+    SparkMaxConfig LeftConfig = new SparkMaxConfig();
+    SparkMaxConfig RightConfig = new SparkMaxConfig();
 
     /**
      * Intake IO Layer with real motors and sensors
      */
     public IntakeIOFalcon() {
-        intakeMotorLeft.restoreFactoryDefaults();
-        intakeMotorRight.restoreFactoryDefaults();
-        intakeMotorLeft.setInverted(Constants.IntakeConstants.INTAKE_MOTOR_INVERTED);
-        intakeMotorRight.setInverted(false);
-        intakeMotorLeft.setIdleMode(IdleMode.kCoast);
-        intakeMotorRight.setIdleMode(IdleMode.kCoast);
-        intakeMotorLeft.setSmartCurrentLimit(40);
-        intakeMotorRight.setSmartCurrentLimit(40);
+        // SparkMaxConfig config = new SparkMaxConfig();
+        // config.signals.primaryEncoderPositionPeriodMs(5);
+        LeftConfig.inverted(Constants.IntakeConstants.INTAKE_MOTOR_INVERTED).idleMode(IdleMode.kCoast)
+                .smartCurrentLimit(40);
+        RightConfig.inverted(false).idleMode(IdleMode.kCoast).smartCurrentLimit(40);
+        intakeMotorLeft.configure(LeftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        intakeMotorRight.configure(RightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         indexerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         indexerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         indexerMotor.getConfigurator().apply(indexerConfig);
@@ -55,8 +56,10 @@ public class IntakeIOFalcon implements IntakeIO {
         // inputs.intakeSupplyVoltage = intakeMotorLeft.getBusVoltage();
         // inputs.intakeAmps = intakeMotorLeft.getOutputCurrent();
         // inputs.intakeRPM = intakeRelativeEnc.getVelocity();
-        // inputs.indexerSupplyVoltage = indexerMotor.getSupplyVoltage().getValueAsDouble();
-        // inputs.indexerMotorVoltage = indexerMotor.getMotorVoltage().getValueAsDouble();
+        // inputs.indexerSupplyVoltage =
+        // indexerMotor.getSupplyVoltage().getValueAsDouble();
+        // inputs.indexerMotorVoltage =
+        // indexerMotor.getMotorVoltage().getValueAsDouble();
         // inputs.indexerAmps = indexerMotor.getSupplyCurrent().getValueAsDouble();
         // inputs.indexerRPM = indexerMotor.getVelocity().getValueAsDouble();
         inputs.indexerBeamBrake = !indexerBeamBrake.get(); // true == game piece
