@@ -28,8 +28,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.sim.SimulatedArena;
 import frc.lib.sim.SimulatedPumbaa;
 import frc.lib.util.FieldConstants;
-import frc.lib.util.photon.PhotonCameraWrapper;
-import frc.lib.util.photon.PhotonReal;
+// import frc.lib.util.photon.PhotonCameraWrapper;
+// import frc.lib.util.photon.PhotonReal;
 import frc.lib.viz.PumbaaViz;
 import frc.robot.Robot.RobotRunType;
 // import frc.robot.autos.JustShoot1;
@@ -130,7 +130,7 @@ public class RobotContainer {
     private Swerve s_Swerve;
     private Shooter shooter;
     private Intake intake;
-    private PhotonCameraWrapper[] cameras;
+    // private PhotonCameraWrapper[] cameras;
     private ElevatorWrist elevatorWrist;
     private LEDs leds = new LEDs(Constants.LEDConstants.LED_COUNT, Constants.LEDConstants.PWM_PORT);
     // private PhotonCamera backLeftCamera = new PhotonCamera("back-left");
@@ -161,31 +161,31 @@ public class RobotContainer {
         }
         /*
          * Camera Order: 0 - Front Left 1 - Front RIght 2 - Back Left 3 - Back Right
-         */
-        cameras = new PhotonCameraWrapper[] {new PhotonCameraWrapper(
-            new PhotonReal(Constants.CameraConstants.FrontRightFacingCamera.CAMERA_NAME,
-                Constants.CameraConstants.FrontRightFacingCamera.CAMERA_IP),
-            Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT)};
+        //  */
+        // cameras = new PhotonCameraWrapper[] {new PhotonCameraWrapper(
+        //     new PhotonReal(Constants.CameraConstants.FrontRightFacingCamera.CAMERA_NAME,
+        //         Constants.CameraConstants.FrontRightFacingCamera.CAMERA_IP),
+        //     Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT)};
 
         switch (runtimeType) {
             case kReal:
                 viz = new PumbaaViz("Viz", null);
                 shooter = new Shooter(new ShooterVortex());
                 intake = new Intake(new IntakeIOFalcon(), viz);
-                s_Swerve = new Swerve(new SwerveReal(), cameras, viz);
+                s_Swerve = new Swerve(new SwerveReal(), viz);
                 elevatorWrist = new ElevatorWrist(new ElevatorWristReal(), operator, viz);
                 break;
             case kSimulation:
                 SimulatedPumbaa pumbaa = arena.newPumbaa();
                 viz = new PumbaaViz("Viz", pumbaa);
-                s_Swerve = new Swerve(new SwerveSim(pumbaa), cameras, viz);
+                s_Swerve = new Swerve(new SwerveSim(pumbaa), viz);
                 shooter = new Shooter(new ShooterSim(pumbaa));
                 intake = new Intake(new IntakeIOSim(pumbaa), viz);
                 elevatorWrist = new ElevatorWrist(new ElevatorWristIOSim(pumbaa), operator, viz);
                 break;
             default:
                 viz = new PumbaaViz("Viz", null);
-                s_Swerve = new Swerve(new SwerveIO() {}, cameras, viz);
+                s_Swerve = new Swerve(new SwerveIO() {}, viz);
                 shooter = new Shooter(new ShooterIO() {});
                 intake = new Intake(new IntakeIO() {}, viz);
                 elevatorWrist = new ElevatorWrist(new ElevatorWristIO() {}, operator, viz);

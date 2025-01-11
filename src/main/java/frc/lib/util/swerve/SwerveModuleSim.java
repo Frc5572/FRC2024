@@ -1,5 +1,6 @@
 package frc.lib.util.swerve;
 
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
@@ -29,8 +30,8 @@ public class SwerveModuleSim implements SwerveModuleIO {
     private FlywheelSim driveSim =
         new FlywheelSim(LinearSystemId.createFlywheelSystem(DCMotor.getFalcon500(1), Constants.Swerve.driveGearRatio, 0.025),DCMotor.getFalcon500(1));
 
-    private Angle angle;
-    private Angle distance;
+    private Angle angle = Rotations.of(0);
+    private Angle distance = Rotations.of(0);
 
     private double driveAppliedVolts = 0.0;
     private SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(0.0, 0.13);
@@ -67,7 +68,7 @@ public class SwerveModuleSim implements SwerveModuleIO {
      */
     public void setDriveMotor(double mps) {
         double rpm = Conversions.metersPerSecondToRotationPerSecond(mps,
-            Constants.Swerve.wheelCircumference);
+            Constants.Swerve.wheelCircumference.in(Meters));
         driveFeedback.setSetpoint(rpm);
         double driveFF = driveFeedforward.calculate(mps);
         SmartDashboard.putNumber("ff/" + moduleNumber, driveFF);
