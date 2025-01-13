@@ -210,6 +210,13 @@ public final class Swerve extends SubsystemBase {
         });
     }
 
+    public Command overridePose(Supplier<Pose2d> poseSupplier) {
+        return this.runOnce(() -> {
+            // TODO reset odometry setup
+            io.overridePose(poseSupplier.get());
+        });
+    }
+
     @AutoLogOutput(key = "Swerve/Heading")
     private Rotation2d getFieldRelativeHeading() {
         return inputs.yawPosition.minus(fieldOffset);

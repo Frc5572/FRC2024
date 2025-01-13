@@ -1,6 +1,7 @@
 package frc.robot.subsystems.swerve.drive;
 
 import com.reduxrobotics.sensors.canandgyro.Canandgyro;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Constants;
 
@@ -16,5 +17,8 @@ public class SwerveBoron implements SwerveIO {
         inputs.yawVelocityRadPerSec = Units.rotationsToRadians(gyro.getAngularVelocityYaw());
         inputs.connected = true;
     }
+
+    @Override
+    public void overridePose(Pose2d pose) {}
 
 }

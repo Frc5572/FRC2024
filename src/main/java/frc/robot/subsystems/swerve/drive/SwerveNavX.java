@@ -2,6 +2,7 @@ package frc.robot.subsystems.swerve.drive;
 
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
@@ -16,5 +17,8 @@ public class SwerveNavX implements SwerveIO {
         inputs.connected = true;
         inputs.yawVelocityRadPerSec = Units.degreesToRadians(gyro.getRate());
     }
+
+    @Override
+    public void overridePose(Pose2d pose) {}
 
 }

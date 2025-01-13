@@ -58,7 +58,7 @@ public class RobotContainer {
                     new SwerveDriveSimulation(Constants.Swerve.getMapleConfig(),
                         new Pose2d(3, 3, Rotation2d.kZero));
                 SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
-                s_Swerve = new Swerve(new SwerveSim(driveSimulation.getGyroSimulation()),
+                s_Swerve = new Swerve(new SwerveSim(driveSimulation),
                     (i, config) -> {
                         var sim = new SwerveModuleSim(config, driveSimulation.getModules()[i]);
                         return Pair.of(sim, sim);
