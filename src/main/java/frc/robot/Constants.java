@@ -49,6 +49,7 @@ public final class Constants {
 
         public static final double odometryFrequency = 250;
 
+        /** Swerve Module constants shared across all modules. */
         public static class ModuleConstants {
 
             public static final DCMotor driveMotor = DCMotor.getKrakenX60(1);
@@ -124,10 +125,12 @@ public final class Constants {
         public static final LinearVelocity scrubLimit = MetersPerSecond.of(0.1);
         public static final LinearVelocity maxLinearSpeed = MetersPerSecond.of(10.0);
 
+        /** Get Modules as an array. */
         public static ModuleConfig[] modules() {
             return new ModuleConfig[] { frontLeft, frontRight, backLeft, backRight };
         }
 
+        /** Get translations of each module. */
         public static Translation2d[] getModuleTranslations() {
             return new Translation2d[] {
                 new Translation2d(trackWidthX.in(Units.Meters) / 2,
@@ -141,12 +144,14 @@ public final class Constants {
             };
         }
 
+        /** Get rough radius of the drivetrain. */
         public static Distance getDriveBaseRadius() {
             return Units.Meters
                 .of(Math.hypot(trackWidthX.in(Units.Meters) / 2.0,
                     trackWidthY.in(Units.Meters) / 2.0));
         }
 
+        /** Get config for Maple-Sim. */
         public static DriveTrainSimulationConfig getMapleConfig() {
             return DriveTrainSimulationConfig.Default()
                 .withRobotMass(robotMass)

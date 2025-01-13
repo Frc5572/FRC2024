@@ -3,6 +3,7 @@ plugins {
     id "edu.wpi.first.GradleRIO" version "2025.1.1"
     id "com.peterabeles.gversion" version "1.10"
     id "io.freefair.lombok" version "8.4"
+    id 'checkstyle'
 }
 
 java {
@@ -137,5 +138,10 @@ gversion {
     className    = "BuildConstants"
     dateFormat   = "yyyy-MM-dd HH:mm:ss z"
     timeZone     = "America/New_York"
-    indent       = "  "
+    indent       = "    "
+}
+
+checkstyle {
+    toolVersion = "10.12.4"
+    config = resources.text.fromFile(new File(project.projectDir, "checks.xml"))
 }

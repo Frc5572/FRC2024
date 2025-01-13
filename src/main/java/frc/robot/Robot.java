@@ -192,6 +192,7 @@ public class Robot extends LoggedRobot {
         try (Scanner fileScanner = new Scanner(advantageScopeTempPath)) {
             advantageScopeLogPath = fileScanner.nextLine();
         } catch (IOException e) {
+            // Intentionally do nothing.
         }
         if (advantageScopeLogPath != null) {
             System.out.println("Using log from AdvantageScope - \"" + advantageScopeLogPath + "\"");

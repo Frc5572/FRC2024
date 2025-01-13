@@ -202,6 +202,7 @@ public class SwerveSetpointGenerator {
         return new SwerveModuleState(targetSpeed, new Rotation2d(targetAngle));
     }
 
+    /** Setpoint for swerve modules. */
     public static class SwerveSetpoint {
         public final ChassisSpeeds chassisSpeeds;
         public SwerveModuleState[] moduleStates;

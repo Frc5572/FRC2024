@@ -23,11 +23,13 @@ import frc.robot.subsystems.swerve.drive.Swerve;
  * This also allows Phoenix Pro users to benefit from lower latency between devices using CANivore
  * time synchronization.
  * 
+ * <p>
  * Created by FRC Team 6328. Their license is included in the base directory of this repo.
  */
 public class PhoenixOdometryThread extends Thread {
-    private final Lock signalsLock = new ReentrantLock(); // Prevents conflicts when registering
-                                                          // signals
+    /** Prevents conflicts when registering signals */
+    private final Lock signalsLock = new ReentrantLock();
+
     private BaseStatusSignal[] phoenixSignals = new BaseStatusSignal[0];
     private final List<DoubleSupplier> genericSignals = new ArrayList<>();
     private final List<Queue<Double>> phoenixQueues = new ArrayList<>();
@@ -37,6 +39,7 @@ public class PhoenixOdometryThread extends Thread {
     private static boolean isCANFD = new CANBus("*").isNetworkFD();
     private static PhoenixOdometryThread instance = null;
 
+    /** Get the currently running thread (or start it if none is running yet). */
     public static PhoenixOdometryThread getInstance() {
         if (instance == null) {
             instance = new PhoenixOdometryThread();
@@ -115,8 +118,9 @@ public class PhoenixOdometryThread extends Thread {
                     // that is not CAN FD, regardless of Pro licensing. No reasoning for this
                     // behavior is provided by the documentation.
                     Thread.sleep((long) (1000.0 / Constants.Swerve.odometryFrequency));
-                    if (phoenixSignals.length > 0)
+                    if (phoenixSignals.length > 0) {
                         BaseStatusSignal.refreshAll(phoenixSignals);
+                    }
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();

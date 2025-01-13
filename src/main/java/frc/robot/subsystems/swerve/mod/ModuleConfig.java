@@ -3,8 +3,8 @@ package frc.robot.subsystems.swerve.mod;
 import edu.wpi.first.math.geometry.Rotation2d;
 import lombok.Builder;
 
-@Builder
 /** Constants for an individual module. */
+@Builder
 public class ModuleConfig {
 
     /** Which module is this? */
