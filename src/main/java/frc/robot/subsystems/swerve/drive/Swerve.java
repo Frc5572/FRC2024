@@ -210,6 +210,7 @@ public final class Swerve extends SubsystemBase {
         });
     }
 
+    /** Override current pose. */
     public Command overridePose(Supplier<Pose2d> poseSupplier) {
         return this.runOnce(() -> {
             // TODO reset odometry setup
