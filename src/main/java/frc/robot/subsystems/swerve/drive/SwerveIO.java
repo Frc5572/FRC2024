@@ -14,6 +14,7 @@ public interface SwerveIO {
         public double yawVelocityRadPerSec = 0.0;
     }
 
+    /** Update the inputs */
     public void updateInputs(SwerveInputs inputs);
 
 }

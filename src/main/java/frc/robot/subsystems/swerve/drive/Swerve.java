@@ -83,6 +83,7 @@ public final class Swerve extends SubsystemBase {
         PhoenixOdometryThread.getInstance().start();
     }
 
+    /** Constructor where angle and drive functions are independent. */
     public Swerve(SwerveIO io,
         BiFunction<Integer, ModuleConfig, SwerveModuleAngleIO> angleFunc,
         BiFunction<Integer, ModuleConfig, SwerveModuleDriveIO> driveFunc) {
@@ -202,6 +203,7 @@ public final class Swerve extends SubsystemBase {
         });
     }
 
+    /** Set "forward" to the current orientation. */
     public Command resetFieldRelativeOffset() {
         return this.runOnce(() -> {
             fieldOffset = inputs.yawPosition;

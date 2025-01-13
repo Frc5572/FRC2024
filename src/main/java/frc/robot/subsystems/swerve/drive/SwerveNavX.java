@@ -5,6 +5,7 @@ import com.studica.frc.AHRS.NavXComType;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
+/** Gyro implementation for the NavX2 */
 public class SwerveNavX implements SwerveIO {
 
     private AHRS gyro = new AHRS(NavXComType.kMXP_SPI);

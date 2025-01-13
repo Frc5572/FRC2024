@@ -5,6 +5,7 @@ package frc.lib.util;
  */
 public interface SwervePath {
 
+    /** Get raw string path. */
     public String getPath();
 
 }

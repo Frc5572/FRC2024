@@ -3,10 +3,12 @@ package frc.robot.subsystems.swerve.drive;
 import org.ironmaple.simulation.drivesims.GyroSimulation;
 import edu.wpi.first.units.Units;
 
+/** Gyro implementation for Maple-Sim */
 public class SwerveSim implements SwerveIO {
 
     private final GyroSimulation simulation;
 
+    /** Create new sim drivetrain */
     public SwerveSim(GyroSimulation simulation) {
         this.simulation = simulation;
     }

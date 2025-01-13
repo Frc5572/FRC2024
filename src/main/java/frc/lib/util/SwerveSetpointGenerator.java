@@ -21,6 +21,14 @@ public class SwerveSetpointGenerator {
     private final double m_maxSpeedDiff; // m/s/s
     private final double m_maxAngleDiff; // rad/s
 
+    /**
+     * Swerve setpoint generator based on a version created by FRC team 254.
+     *
+     * <p>
+     * Takes a prior setpoint, a desired setpoint, and outputs a new setpoint that respects all the
+     * kinematic constraints on module rotation and wheel velocity/torque, as well as preventing any
+     * forces acting on a module's wheel from exceeding the force of friction.
+     */
     public SwerveSetpointGenerator(
         final SwerveDriveKinematics kinematics,
         final double maxDriveSpeed,

@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import frc.lib.util.LoggedTunableNumber;
 import frc.robot.Constants;
 
+/** Swerve Module Subsystem */
 public final class SwerveModule {
 
     private static final LoggedTunableNumber drivekP =
@@ -42,9 +43,11 @@ public final class SwerveModule {
     private final String angleKey;
     private final String driveKey;
 
+    /** Inputs from the angle motor */
     public final SwerveModuleAngleInputsAutoLogged angleInputs =
         new SwerveModuleAngleInputsAutoLogged();
 
+    /** Inputs from the drive motor */
     public final SwerveModuleDriveInputsAutoLogged driveInputs =
         new SwerveModuleDriveInputsAutoLogged();
 
@@ -55,6 +58,7 @@ public final class SwerveModule {
     private final Alert angleEncoderDisconnectedAlert;
     private SwerveModulePosition[] odometryPositions = new SwerveModulePosition[] {};
 
+    /** Swerve Module */
     public SwerveModule(ModuleConfig config, SwerveModuleAngleIO angleIO,
         SwerveModuleDriveIO driveIO) {
         this.angleIO = angleIO;
@@ -73,6 +77,9 @@ public final class SwerveModule {
             new Alert("Disconnected angle encoder on module " + index + ".", AlertType.kError);
     }
 
+    /**
+     * Update inputs for a Swerve Module. Run while the odometryLock is held.
+     */
     public void updateInputs() {
         angleIO.updateAngleInputs(angleInputs);
         driveIO.updateDriveInputs(driveInputs);
@@ -80,6 +87,9 @@ public final class SwerveModule {
         Logger.processInputs(driveKey, driveInputs);
     }
 
+    /**
+     * Periodic function. Run while the odometryLock is not held.
+     */
     public void periodic() {
         // Update tunable numbers
         if (drivekS.hasChanged(hashCode()) || drivekV.hasChanged(hashCode())) {

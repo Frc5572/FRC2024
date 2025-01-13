@@ -22,6 +22,7 @@ import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
 import frc.robot.subsystems.swerve.PhoenixOdometryThread;
 
+/** Implementation of an angle motors using a TalonFX and CANCoder. */
 public class SwerveModuleTalonAngle implements SwerveModuleAngleIO {
 
     private CANcoder encoder;
@@ -38,6 +39,7 @@ public class SwerveModuleTalonAngle implements SwerveModuleAngleIO {
 
     private final Rotation2d encoderOffset;
 
+    /** Implementation of an angle motors using a TalonFX and CANCoder. */
     public SwerveModuleTalonAngle(int _id, ModuleConfig config) {
         angleMotor = new TalonFX(config.angleId, "canivore");
         encoder = new CANcoder(config.absoluteEncoderId, "canivore");

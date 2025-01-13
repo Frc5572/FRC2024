@@ -19,6 +19,7 @@ import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
 import frc.robot.subsystems.swerve.PhoenixOdometryThread;
 
+/** Implementation of an drive motors using a TalonFX. */
 public class SwerveModuleTalonDrive implements SwerveModuleDriveIO {
 
     private TalonFX driveMotor;
@@ -31,6 +32,7 @@ public class SwerveModuleTalonDrive implements SwerveModuleDriveIO {
     private StatusSignal<Voltage> driveMotorAppliedVolts;
     private StatusSignal<Current> driveMotorCurrent;
 
+    /** Implementation of an drive motors using a TalonFX. */
     public SwerveModuleTalonDrive(int _id, ModuleConfig config) {
         driveMotor = new TalonFX(config.driveId, "canivore");
 

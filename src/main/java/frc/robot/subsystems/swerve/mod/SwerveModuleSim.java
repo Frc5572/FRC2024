@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.Units;
 import frc.robot.Constants;
 
+/** Implementation for drive and angle motors using Maple-Sim. */
 public class SwerveModuleSim implements SwerveModuleAngleIO, SwerveModuleDriveIO {
 
     private final SwerveModuleSimulation moduleSimulation;
@@ -21,6 +22,7 @@ public class SwerveModuleSim implements SwerveModuleAngleIO, SwerveModuleDriveIO
     private double driveAppliedVolts = 0.0;
     private double turnAppliedVolts = 0.0;
 
+    /** Implementation for drive and angle motors using Maple-Sim. */
     public SwerveModuleSim(ModuleConfig config, SwerveModuleSimulation moduleSimulation) {
         this.moduleSimulation = moduleSimulation;
         this.driveMotor = moduleSimulation.useGenericMotorControllerForDrive()
