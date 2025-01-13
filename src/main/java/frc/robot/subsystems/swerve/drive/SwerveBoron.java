@@ -6,7 +6,7 @@ import frc.robot.Constants;
 
 public class SwerveBoron implements SwerveIO {
 
-    public Canandgyro gyro = new Canandgyro(Constants.Swerve.config.gyroId);
+    public Canandgyro gyro = new Canandgyro(Constants.Swerve.gyroId);
 
     @Override
     public void updateInputs(SwerveInputs inputs) {

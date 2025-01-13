@@ -65,14 +65,14 @@ public class SwerveModuleTalonAngle implements SwerveModuleAngleIO {
         angleFXConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         angleFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         angleFXConfig.Feedback.SensorToMechanismRatio =
-            Constants.Swerve.config.moduleConstants.angleReduction;
+            Constants.Swerve.ModuleConstants.angleReduction;
         angleFXConfig.ClosedLoopGeneral.ContinuousWrap = true;
         angleFXConfig.MotorOutput.Inverted =
             config.angleMotorInverted ? InvertedValue.Clockwise_Positive
                 : InvertedValue.CounterClockwise_Positive;
-        angleFXConfig.Slot0.kP = Constants.Swerve.config.moduleConstants.anglekP;
+        angleFXConfig.Slot0.kP = Constants.Swerve.ModuleConstants.anglekP;
         angleFXConfig.Slot0.kI = 0.0;
-        angleFXConfig.Slot0.kD = Constants.Swerve.config.moduleConstants.anglekD;
+        angleFXConfig.Slot0.kD = Constants.Swerve.ModuleConstants.anglekD;
 
         angleMotor.getConfigurator().apply(angleFXConfig);
         angleMotor.getConfigurator().setPosition(Rotations.of(0.0));

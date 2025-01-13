@@ -47,7 +47,7 @@ public final class Swerve extends SubsystemBase {
         new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
 
     private SwerveDriveKinematics kinematics =
-        new SwerveDriveKinematics(Constants.Swerve.config.getModuleTranslations());
+        new SwerveDriveKinematics(Constants.Swerve.getModuleTranslations());
     private Rotation2d rawGyroRotation = new Rotation2d();
     private SwerveModulePosition[] lastModulePositions = new SwerveModulePosition[] {
         new SwerveModulePosition(),
@@ -60,8 +60,8 @@ public final class Swerve extends SubsystemBase {
 
     private SwerveSetpointGenerator setpointGenerator = new SwerveSetpointGenerator(kinematics,
         getMaxLinearSpeedMetersPerSec(),
-        Constants.Swerve.config.moduleConstants.maxDriveRate.in(Units.MetersPerSecondPerSecond),
-        Constants.Swerve.config.moduleConstants.maxSteerRate.in(Units.RadiansPerSecond));
+        Constants.Swerve.ModuleConstants.maxDriveRate.in(Units.MetersPerSecondPerSecond),
+        Constants.Swerve.ModuleConstants.maxSteerRate.in(Units.RadiansPerSecond));
     private SwerveSetpoint prevSetpoint;
 
     private Rotation2d fieldOffset = new Rotation2d();
@@ -71,7 +71,7 @@ public final class Swerve extends SubsystemBase {
         BiFunction<Integer, ModuleConfig, Pair<SwerveModuleAngleIO, SwerveModuleDriveIO>> modFunc) {
         super("Swerve");
         this.io = io;
-        var modules = Constants.Swerve.config.modules();
+        var modules = Constants.Swerve.modules();
         this.modules = new SwerveModule[modules.length];
         for (int i = 0; i < modules.length; i++) {
             var modIO = modFunc.apply(i, modules[i]);
@@ -152,7 +152,7 @@ public final class Swerve extends SubsystemBase {
         SwerveModuleState[] setpointStates;
         if (useSetpointGenerator) {
             prevSetpoint = setpointGenerator.getFeasibleSetpoint(prevSetpoint, discreteSpeeds,
-                Constants.Swerve.config.scrubLimit.in(Units.MetersPerSecond));
+                Constants.Swerve.scrubLimit.in(Units.MetersPerSecond));
             setpointStates = prevSetpoint.moduleStates;
         } else {
             setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
@@ -283,12 +283,12 @@ public final class Swerve extends SubsystemBase {
 
     /** Returns the maximum linear speed in meters per sec. */
     public double getMaxLinearSpeedMetersPerSec() {
-        return Constants.Swerve.config.maxLinearSpeed.in(Units.MetersPerSecond);
+        return Constants.Swerve.maxLinearSpeed.in(Units.MetersPerSecond);
     }
 
     /** Returns the maximum angular speed in radians per sec. */
     public double getMaxAngularSpeedRadPerSec() {
         return getMaxLinearSpeedMetersPerSec()
-            / Constants.Swerve.config.getDriveBaseRadius().in(Units.Meters);
+            / Constants.Swerve.getDriveBaseRadius().in(Units.Meters);
     }
 }

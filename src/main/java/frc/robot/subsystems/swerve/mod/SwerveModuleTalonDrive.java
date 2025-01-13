@@ -56,21 +56,21 @@ public class SwerveModuleTalonDrive implements SwerveModuleDriveIO {
         driveFXConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         driveFXConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         driveFXConfig.Feedback.SensorToMechanismRatio =
-            Constants.Swerve.config.moduleConstants.driveReduction;
+            Constants.Swerve.ModuleConstants.driveReduction;
         driveFXConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         driveFXConfig.CurrentLimits.SupplyCurrentLimit =
-            Constants.Swerve.config.moduleConstants.slipCurrent.in(Amps);
+            Constants.Swerve.ModuleConstants.slipCurrent.in(Amps);
         driveFXConfig.CurrentLimits.SupplyCurrentLowerLimit =
-            Constants.Swerve.config.moduleConstants.supplyCurrentLowerLimit.in(Amps);
+            Constants.Swerve.ModuleConstants.supplyCurrentLowerLimit.in(Amps);
         driveFXConfig.CurrentLimits.SupplyCurrentLowerTime =
-            Constants.Swerve.config.moduleConstants.supplyCurrentLowerTimeThreshold.in(Seconds);
+            Constants.Swerve.ModuleConstants.supplyCurrentLowerTimeThreshold.in(Seconds);
 
-        driveFXConfig.Slot0.kP = Constants.Swerve.config.moduleConstants.drivekP;
+        driveFXConfig.Slot0.kP = Constants.Swerve.ModuleConstants.drivekP;
         driveFXConfig.Slot0.kI = 0.0;
-        driveFXConfig.Slot0.kD = Constants.Swerve.config.moduleConstants.drivekD;
-        driveFXConfig.Slot0.kS = Constants.Swerve.config.moduleConstants.ffkS;
-        driveFXConfig.Slot0.kV = Constants.Swerve.config.moduleConstants.ffkV;
-        driveFXConfig.Slot0.kA = Constants.Swerve.config.moduleConstants.ffkA;
+        driveFXConfig.Slot0.kD = Constants.Swerve.ModuleConstants.drivekD;
+        driveFXConfig.Slot0.kS = Constants.Swerve.ModuleConstants.ffkS;
+        driveFXConfig.Slot0.kV = Constants.Swerve.ModuleConstants.ffkV;
+        driveFXConfig.Slot0.kA = Constants.Swerve.ModuleConstants.ffkA;
 
         driveMotor.getConfigurator().apply(driveFXConfig);
         driveMotor.getConfigurator().setPosition(Rotations.of(0.0));
@@ -90,7 +90,7 @@ public class SwerveModuleTalonDrive implements SwerveModuleDriveIO {
             timestampQueue.stream().mapToDouble((Double value) -> value).toArray();
         inputs.odometryDrivePositionsMeters =
             driveMotorPositionQueue.stream().mapToDouble(Units::rotationsToRadians)
-                .map((x) -> x * Constants.Swerve.config.moduleConstants.wheelRadius.in(Meters))
+                .map((x) -> x * Constants.Swerve.ModuleConstants.wheelRadius.in(Meters))
                 .toArray();
     }
 

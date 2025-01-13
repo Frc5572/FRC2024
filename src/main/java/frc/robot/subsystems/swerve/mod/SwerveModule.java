@@ -16,25 +16,25 @@ public final class SwerveModule {
 
     private static final LoggedTunableNumber drivekP =
         new LoggedTunableNumber("Drive/Module/DrivekP",
-            Constants.Swerve.config.moduleConstants.drivekP);
+            Constants.Swerve.ModuleConstants.drivekP);
     private static final LoggedTunableNumber drivekD =
         new LoggedTunableNumber("Drive/Module/DrivekD",
-            Constants.Swerve.config.moduleConstants.drivekD);
+            Constants.Swerve.ModuleConstants.drivekD);
     private static final LoggedTunableNumber drivekS =
         new LoggedTunableNumber("Drive/Module/DrivekS",
-            Constants.Swerve.config.moduleConstants.ffkS);
+            Constants.Swerve.ModuleConstants.ffkS);
     private static final LoggedTunableNumber drivekV =
         new LoggedTunableNumber("Drive/Module/DrivekV",
-            Constants.Swerve.config.moduleConstants.ffkV);
+            Constants.Swerve.ModuleConstants.ffkV);
     private static final LoggedTunableNumber drivekT =
         new LoggedTunableNumber("Drive/Module/DrivekT",
-            Constants.Swerve.config.moduleConstants.ffkT);
+            Constants.Swerve.ModuleConstants.ffkT);
     private static final LoggedTunableNumber anglekP =
         new LoggedTunableNumber("Drive/Module/AnglekP",
-            Constants.Swerve.config.moduleConstants.anglekP);
+            Constants.Swerve.ModuleConstants.anglekP);
     private static final LoggedTunableNumber anglekD =
         new LoggedTunableNumber("Drive/Module/AnglekD",
-            Constants.Swerve.config.moduleConstants.anglekD);
+            Constants.Swerve.ModuleConstants.anglekD);
 
     private final SwerveModuleAngleIO angleIO;
     private final SwerveModuleDriveIO driveIO;
@@ -96,7 +96,7 @@ public final class SwerveModule {
         odometryPositions = new SwerveModulePosition[sampleCount];
         for (int i = 0; i < sampleCount; i++) {
             double positionMeters = driveInputs.odometryDrivePositionsMeters[i]
-                * Constants.Swerve.config.moduleConstants.wheelRadius.in(Meters);
+                * Constants.Swerve.ModuleConstants.wheelRadius.in(Meters);
             Rotation2d angle = angleInputs.odometryTurnPositions[i];
             odometryPositions[i] = new SwerveModulePosition(positionMeters, angle);
         }
@@ -123,7 +123,7 @@ public final class SwerveModule {
 
         // Apply setpoints
         double speedRadPerSec =
-            state.speedMetersPerSecond / Constants.Swerve.config.moduleConstants.wheelRadius
+            state.speedMetersPerSecond / Constants.Swerve.ModuleConstants.wheelRadius
                 .in(edu.wpi.first.units.Units.Meters);
         driveIO.runDriveVelocity(
             speedRadPerSec, ffModel.calculate(speedRadPerSec) + wheelTorqueNm * drivekT.get());
@@ -149,13 +149,13 @@ public final class SwerveModule {
 
     /** Returns the current drive position of the module in meters. */
     public double getPositionMeters() {
-        return driveInputs.positionRads * Constants.Swerve.config.moduleConstants.wheelRadius
+        return driveInputs.positionRads * Constants.Swerve.ModuleConstants.wheelRadius
             .in(edu.wpi.first.units.Units.Meters);
     }
 
     /** Returns the current drive velocity of the module in meters per second. */
     public double getVelocityMetersPerSec() {
-        return driveInputs.velocityRadsPerSec * Constants.Swerve.config.moduleConstants.wheelRadius
+        return driveInputs.velocityRadsPerSec * Constants.Swerve.ModuleConstants.wheelRadius
             .in(edu.wpi.first.units.Units.Meters);
     }
 

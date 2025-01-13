@@ -55,7 +55,7 @@ public class RobotContainer {
                 break;
             case kSimulation:
                 driveSimulation =
-                    new SwerveDriveSimulation(Constants.Swerve.config.getMapleConfig(),
+                    new SwerveDriveSimulation(Constants.Swerve.getMapleConfig(),
                         new Pose2d(3, 3, Rotation2d.kZero));
                 SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
                 s_Swerve = new Swerve(new SwerveSim(driveSimulation.getGyroSimulation()),
@@ -68,7 +68,7 @@ public class RobotContainer {
                 // s_Swerve = new Swerve(new SwerveIO() {}, cameras, viz);
         }
 
-        double maxSpeed = Constants.Swerve.config.maxLinearSpeed.in(Units.MetersPerSecond);
+        double maxSpeed = Constants.Swerve.maxLinearSpeed.in(Units.MetersPerSecond);
 
         s_Swerve.setDefaultCommand(s_Swerve.drive(() -> {
             double forwardNormalized = -driver.getLeftY();

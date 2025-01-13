@@ -24,7 +24,7 @@ public class SwerveModuleSim implements SwerveModuleAngleIO, SwerveModuleDriveIO
     public SwerveModuleSim(ModuleConfig config, SwerveModuleSimulation moduleSimulation) {
         this.moduleSimulation = moduleSimulation;
         this.driveMotor = moduleSimulation.useGenericMotorControllerForDrive()
-            .withCurrentLimit(Constants.Swerve.config.moduleConstants.slipCurrent);
+            .withCurrentLimit(Constants.Swerve.ModuleConstants.slipCurrent);
         this.turnMotor =
             moduleSimulation.useGenericControllerForSteer().withCurrentLimit(Units.Amps.of(20));
 
@@ -57,7 +57,7 @@ public class SwerveModuleSim implements SwerveModuleAngleIO, SwerveModuleDriveIO
         inputs.odometryDrivePositionsMeters =
             new double[] {
                 inputs.positionRads
-                    * Constants.Swerve.config.moduleConstants.wheelRadius.in(Units.Meters) };
+                    * Constants.Swerve.ModuleConstants.wheelRadius.in(Units.Meters) };
     }
 
     @Override
