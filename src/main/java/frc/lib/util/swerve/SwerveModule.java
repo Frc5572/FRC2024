@@ -1,20 +1,14 @@
 package frc.lib.util.swerve;
 
-import static edu.wpi.first.units.Units.Meter;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
-
 import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.lib.math.Conversions;
 import frc.robot.Constants;
-import frc.robot.Robot;
 
 /**
  * Swerve Module Subsystem
@@ -49,11 +43,11 @@ public class SwerveModule {
      * Update inputs for a Swerve Module.
      */
     public void periodic() {
-        Robot.profiler.push("updateInputs");
+        // Robot.profiler.push("updateInputs");
         io.updateInputs(inputs);
-        Robot.profiler.swap("processInputs");
+        // Robot.profiler.swap("processInputs");
         Logger.processInputs("SwerveModule" + moduleNumber, inputs);
-        Robot.profiler.pop();
+        // Robot.profiler.pop();
     }
 
     /**
@@ -63,7 +57,7 @@ public class SwerveModule {
      * @param isOpenLoop Whether the state should be open or closed loop controlled
      */
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
-        desiredState = SwerveModuleState.optimize(desiredState, getState().angle);
+        desiredState.optimize(getState().angle);
         io.setAngleMotor(desiredState.angle.getRotations());
         setSpeed(desiredState, isOpenLoop);
         SmartDashboard.putNumber("desired state speed/" + moduleNumber,
@@ -102,7 +96,9 @@ public class SwerveModule {
      * @return The current {@link SwerveModuleState}
      */
     public SwerveModuleState getState() {
-        return new SwerveModuleState(inputs.driveMotorSelectedSensorVelocity.in(RotationsPerSecond) * Constants.Swerve.wheelCircumference.in(Meters),
+        return new SwerveModuleState(
+            inputs.driveMotorSelectedSensorVelocity.in(RotationsPerSecond)
+                * Constants.Swerve.wheelCircumference.in(Meters),
             Rotation2d.fromRotations(inputs.angleMotorSelectedPosition.in(Rotations)));
     }
 
@@ -112,7 +108,9 @@ public class SwerveModule {
      * @return The current {@link SwerveModulePosition}
      */
     public SwerveModulePosition getPosition() {
-        return new SwerveModulePosition(inputs.driveMotorSelectedPosition.in(Rotations) * Constants.Swerve.wheelCircumference.in(Meters),
-        Rotation2d.fromRotations(inputs.angleMotorSelectedPosition.in(Rotations)));
+        return new SwerveModulePosition(
+            inputs.driveMotorSelectedPosition.in(Rotations)
+                * Constants.Swerve.wheelCircumference.in(Meters),
+            Rotation2d.fromRotations(inputs.angleMotorSelectedPosition.in(Rotations)));
     }
 }

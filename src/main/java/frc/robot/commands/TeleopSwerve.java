@@ -4,7 +4,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
-import frc.robot.Robot;
 import frc.robot.subsystems.swerve.Swerve;
 
 /**
@@ -50,7 +49,7 @@ public class TeleopSwerve extends Command {
 
     @Override
     public void execute() {
-        Robot.profiler.push("teleop_swerve");
+        // Robot.profiler.push("teleop_swerve");
         double yaxis = -controller.getLeftY() * speedMultiplier;
         double xaxis = -controller.getLeftX() * speedMultiplier;
         double raxis = -controller.getRightX() * speedMultiplier;
@@ -69,6 +68,6 @@ public class TeleopSwerve extends Command {
             new Translation2d(yaxis, xaxis).times(Constants.Swerve.maxSpeed);
         double rotation = raxis * Constants.Swerve.maxAngularVelocity;
         swerveDrive.drive(translation, rotation, fieldRelative, openLoop);
-        Robot.profiler.pop();
+        // Robot.profiler.pop();
     }
 }

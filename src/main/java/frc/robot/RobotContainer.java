@@ -160,12 +160,12 @@ public class RobotContainer {
             numNoteChooser.addOption(String.valueOf(i), i);
         }
         /*
-         * Camera Order: 0 - Front Left 1 - Front RIght 2 - Back Left 3 - Back Right
-        //  */
+         * Camera Order: 0 - Front Left 1 - Front RIght 2 - Back Left 3 - Back Right //
+         */
         // cameras = new PhotonCameraWrapper[] {new PhotonCameraWrapper(
-        //     new PhotonReal(Constants.CameraConstants.FrontRightFacingCamera.CAMERA_NAME,
-        //         Constants.CameraConstants.FrontRightFacingCamera.CAMERA_IP),
-        //     Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT)};
+        // new PhotonReal(Constants.CameraConstants.FrontRightFacingCamera.CAMERA_NAME,
+        // Constants.CameraConstants.FrontRightFacingCamera.CAMERA_IP),
+        // Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT)};
 
         switch (runtimeType) {
             case kReal:
@@ -196,7 +196,7 @@ public class RobotContainer {
         // autoChooser.addOption("P321", new P321(s_Swerve, elevatorWrist, intake, shooter));
         // autoChooser.addOption("P8765", new P8765(s_Swerve, elevatorWrist, intake, shooter));
         // autoChooser.addOption("Just Shoot 1",
-        //     new JustShoot1(s_Swerve, elevatorWrist, intake, shooter));
+        // new JustShoot1(s_Swerve, elevatorWrist, intake, shooter));
         // // autoChooser.addOption("P32", new P32(s_Swerve, elevatorWrist, intake, shooter));
         // autoChooser.addOption("P675", new P675(s_Swerve, elevatorWrist, intake, shooter));
         // autoChooser.addOption("P3675", new P3675(s_Swerve, elevatorWrist, intake, shooter));
@@ -225,8 +225,8 @@ public class RobotContainer {
 
         /* Driver Buttons */
         driver.y().onTrue(new InstantCommand(() -> s_Swerve.resetFieldRelativeOffset()));
-        driver.start().onTrue(
-            new InstantCommand(() -> s_Swerve.resetPvInitialization()).ignoringDisable(true));
+        // driver.start().onTrue(
+        // new InstantCommand(() -> s_Swerve.resetPvInitialization()).ignoringDisable(true));
         // intake forward
         driver.rightTrigger().whileTrue(CommandFactory.newIntakeCommand(intake, elevatorWrist));
         // intake backward
@@ -237,7 +237,7 @@ public class RobotContainer {
         // spit note currently in robot through shooter
         operator.x().whileTrue(CommandFactory.spit(shooter, intake));
         // reset apriltag vision
-        operator.b().onTrue(new InstantCommand(() -> s_Swerve.resetPvInitialization()));
+        // operator.b().onTrue(new InstantCommand(() -> s_Swerve.resetPvInitialization()));
         // spin up shooter
         operator.leftTrigger().whileTrue(shooter.shootSpeaker());
         // operator.leftTrigger()

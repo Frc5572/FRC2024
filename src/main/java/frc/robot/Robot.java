@@ -20,9 +20,6 @@ import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.lib.profiling.EmptyProfiler;
-import frc.lib.profiling.LoggingProfiler;
-import frc.lib.profiling.Profiler;
 
 /**
  * Runs tasks on Roborio in this file.
@@ -31,7 +28,7 @@ public class Robot extends LoggedRobot {
     private RobotContainer robotContainer;
     private Command autoChooser;
 
-    public static Profiler profiler;
+    // public static Profiler profiler;
 
     /**
      * Robot Run type
@@ -101,15 +98,15 @@ public class Robot extends LoggedRobot {
             }
         }
         Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values
-        switch (robotRunType) {
-            case kReal -> profiler =
-                new LoggingProfiler(() -> Logger.getRealTimestamp(), 1000000.0);
-            case kReplay -> profiler = EmptyProfiler.INSTANCE;
-            case kSimulation -> profiler =
-                new LoggingProfiler(() -> Logger.getRealTimestamp(), 1000000.0);
-            default -> {
-            }
-        }
+        // switch (robotRunType) {
+        // // case kReal -> profiler =
+        // new LoggingProfiler(() -> Logger.getRealTimestamp(), 1000000.0);
+        // case kReplay -> profiler = EmptyProfiler.INSTANCE;
+        // case kSimulation -> profiler =
+        // new LoggingProfiler(() -> Logger.getRealTimestamp(), 1000000.0);
+        // default -> {
+        // }
+        // }
         // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in the
         // "Understanding Data Flow" page
 
@@ -130,19 +127,19 @@ public class Robot extends LoggedRobot {
     @Override
     public void robotPeriodic() {
         if (hasStarted) {
-            profiler.endTick();
+            // profiler.endTick();
             if (profileTimer.advanceIfElapsed(1)) {
                 if (hasDoneSomething) {
-                    profiler.save();
-                    profiler.reset();
+                    // profiler.save();
+                    // profiler.reset();
                 }
             }
         } else {
             hasStarted = true;
         }
-        profiler.startTick();
-        profiler.push("robotPeriodic()");
-        profiler.push("draw_state_to_shuffleboard");
+        // profiler.startTick();
+        // profiler.push("robotPeriodic()");
+        // profiler.push("draw_state_to_shuffleboard");
         robotContainer.operatorState.setString(OperatorState.getCurrentState().displayName);
         robotContainer.operatorManualMode.setBoolean(OperatorState.manualModeEnabled());
         robotContainer.matchTime.setDouble(Timer.getMatchTime());
@@ -154,16 +151,16 @@ public class Robot extends LoggedRobot {
         // subsystem periodic() methods. This must be called from the robot's periodic block in
         // order for
         // anything in the Command-based framework to work.
-        profiler.swap("command_scheduler");
+        // profiler.swap("command_scheduler");
         CommandScheduler.getInstance().run();
-        profiler.swap("manual-gc");
+        // profiler.swap("manual-gc");
         if (gcTimer.advanceIfElapsed(5)) {
             System.gc();
         }
-        profiler.swap("viz");
+        // profiler.swap("viz");
         robotContainer.updateViz();
-        profiler.pop();
-        profiler.pop();
+        // profiler.pop();
+        // profiler.pop();
     }
 
     @Override
@@ -178,7 +175,7 @@ public class Robot extends LoggedRobot {
     @Override
     public void autonomousInit() {
         hasDoneSomething = true;
-        profiler.push("autonomousInit()");
+        // profiler.push("autonomousInit()");
         inAuto = true;
         OperatorState.disableManualMode();
 
@@ -189,7 +186,7 @@ public class Robot extends LoggedRobot {
         if (autoChooser != null) {
             autoChooser.schedule();
         }
-        profiler.pop();
+        // profiler.pop();
     }
 
     /** This function is called periodically during autonomous. */
@@ -199,12 +196,12 @@ public class Robot extends LoggedRobot {
     @Override
     public void teleopInit() {
         hasDoneSomething = true;
-        profiler.push("teleopInit()");
+        // profiler.push("teleopInit()");
         inAuto = false;
         if (autoChooser != null) {
             autoChooser.cancel();
         }
-        profiler.pop();
+        // profiler.pop();
     }
 
     /** This function is called periodically during operator control. */

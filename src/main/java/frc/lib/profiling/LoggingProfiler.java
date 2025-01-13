@@ -109,6 +109,7 @@ public final class LoggingProfiler implements Profiler {
         if (!this.tickStarted) {
             throw new RuntimeException("Profiler tick already ended. Missing startTick()?");
         } else {
+            this.push(fullPath);
             this.pop();
             this.tickStarted = false;
             if (!this.fullPath.isEmpty()) {

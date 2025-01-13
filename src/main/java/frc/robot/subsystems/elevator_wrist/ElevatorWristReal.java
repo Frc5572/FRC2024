@@ -1,18 +1,14 @@
 package frc.robot.subsystems.elevator_wrist;
 
 
-import java.util.ResourceBundle.Control;
-import javax.imageio.plugins.tiff.ExifTIFFTagSet;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkRelativeEncoder;
-import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.robot.Constants;
 
 /**
@@ -27,10 +23,8 @@ public class ElevatorWristReal implements ElevatorWristIO {
         new SparkMax(Constants.Motors.ElevatorWrist.WRIST_NEO_ID, MotorType.kBrushless);
 
     public final AbsoluteEncoder wristAbsoluteEnc = wristMotor.getAbsoluteEncoder();
-    public final RelativeEncoder leftElevatorRelativeEnc =
-        leftElevatorMotor.getEncoder();
-    public final RelativeEncoder rightElevatorRelativeEnc =
-        rightElevatorMotor.getEncoder();
+    public final RelativeEncoder leftElevatorRelativeEnc = leftElevatorMotor.getEncoder();
+    public final RelativeEncoder rightElevatorRelativeEnc = rightElevatorMotor.getEncoder();
     public final SparkMaxConfig leftELIConfig = new SparkMaxConfig();
     public final SparkMaxConfig rightELIConfig = new SparkMaxConfig();
     public final SparkMaxConfig wristConfig = new SparkMaxConfig();
@@ -46,19 +40,22 @@ public class ElevatorWristReal implements ElevatorWristIO {
          */
         leftELIConfig.inverted(true).idleMode(IdleMode.kBrake);
         leftELIConfig.encoder.positionConversionFactor(60);
-        leftElevatorMotor.configure(leftELIConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        leftElevatorMotor.configure(leftELIConfig, ResetMode.kResetSafeParameters,
+            PersistMode.kPersistParameters);
 
         /**
          * right motor config
          */
         rightELIConfig.inverted(true).idleMode(IdleMode.kBrake);
         rightELIConfig.encoder.positionConversionFactor(60);
-        rightElevatorMotor.configure(rightELIConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        rightElevatorMotor.configure(rightELIConfig, ResetMode.kResetSafeParameters,
+            PersistMode.kPersistParameters);
 
-        /**wrist config */
+        /** wrist config */
         wristConfig.inverted(false).idleMode(IdleMode.kBrake);
         wristConfig.encoder.positionConversionFactor(1);
-        wristMotor.configure(wristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        wristMotor.configure(wristConfig, ResetMode.kResetSafeParameters,
+            PersistMode.kPersistParameters);
 
 
         /**
