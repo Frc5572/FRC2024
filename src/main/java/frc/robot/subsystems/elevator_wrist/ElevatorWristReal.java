@@ -46,7 +46,7 @@ public class ElevatorWristReal implements ElevatorWristIO {
         /**
          * right motor config
          */
-        rightELIConfig.inverted(true).idleMode(IdleMode.kBrake);
+        rightELIConfig.inverted(false).idleMode(IdleMode.kBrake);
         rightELIConfig.encoder.positionConversionFactor(60);
         rightElevatorMotor.configure(rightELIConfig, ResetMode.kResetSafeParameters,
             PersistMode.kPersistParameters);
@@ -56,25 +56,6 @@ public class ElevatorWristReal implements ElevatorWristIO {
         wristConfig.encoder.positionConversionFactor(1);
         wristMotor.configure(wristConfig, ResetMode.kResetSafeParameters,
             PersistMode.kPersistParameters);
-
-
-        /**
-         * old stuff
-         */
-        // rightElevatorMotor.restoreFactoryDefaults();
-        // rightElevatorRelativeEnc.setPositionConversionFactor(60);
-        // rightElevatorMotor.setIdleMode(IdleMode.kBrake);
-        // rightElevatorMotor.configAccessor.getInverted();
-        // leftElevatorMotor.restoreFactoryDefaults();
-        // leftElevatorRelativeEnc.setPositionConversionFactor(60);
-        // leftElevatorMotor.setIdleMode(IdleMode.kBrake);
-        // leftElevatorMotor.configAccessor.getInverted();
-        // wristAbsoluteEnc.setPositionConversionFactor(1);
-        // wristMotor.setIdleMode(IdleMode.kBrake);
-        // wristMotor.setInverted(false);
-
-        // leftElevatorMotor.burnFlash();
-        // rightElevatorMotor.burnFlash();
     }
 
 
