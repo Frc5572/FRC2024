@@ -5,13 +5,13 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants;
 
@@ -20,18 +20,19 @@ import frc.robot.Constants;
  */
 public class IntakeIOFalcon implements IntakeIO {
 
-    private final SparkMax intakeMotorLeft = new SparkMax(Constants.Motors.Intake.INTAKE_MOTOR_ID_LEFT,
-            MotorType.kBrushless);
-    private final SparkMax intakeMotorRight = new SparkMax(Constants.Motors.Intake.INTAKE_MOTOR_ID_RIGHT,
-            MotorType.kBrushless);
+    private final SparkMax intakeMotorLeft =
+        new SparkMax(Constants.Motors.Intake.INTAKE_MOTOR_ID_LEFT, MotorType.kBrushless);
+    private final SparkMax intakeMotorRight =
+        new SparkMax(Constants.Motors.Intake.INTAKE_MOTOR_ID_RIGHT, MotorType.kBrushless);
     public final RelativeEncoder intakeRelativeEnc = intakeMotorLeft.getEncoder();
     private final TalonFX indexerMotor = new TalonFX(Constants.Motors.Intake.INDEXER_MOTOR_ID);
 
     private final DutyCycleOut indexerDutyCycleOut = new DutyCycleOut(0);
     private final TalonFXConfiguration indexerConfig = new TalonFXConfiguration();
-    private final DigitalInput indexerBeamBrake = new DigitalInput(
-            Constants.IntakeConstants.INDEXER_BEAM_BRAKE_DIO_PORT);
-    private final DigitalInput intakeBeamBrake = new DigitalInput(Constants.IntakeConstants.INTAKE_BEAM_BRAKE_DIO_PORT);
+    private final DigitalInput indexerBeamBrake =
+        new DigitalInput(Constants.IntakeConstants.INDEXER_BEAM_BRAKE_DIO_PORT);
+    private final DigitalInput intakeBeamBrake =
+        new DigitalInput(Constants.IntakeConstants.INTAKE_BEAM_BRAKE_DIO_PORT);
     SparkMaxConfig LeftConfig = new SparkMaxConfig();
     SparkMaxConfig RightConfig = new SparkMaxConfig();
 
@@ -41,11 +42,15 @@ public class IntakeIOFalcon implements IntakeIO {
     public IntakeIOFalcon() {
         // SparkMaxConfig config = new SparkMaxConfig();
         // config.signals.primaryEncoderPositionPeriodMs(5);
-        LeftConfig.inverted(Constants.IntakeConstants.INTAKE_MOTOR_INVERTED).idleMode(IdleMode.kCoast) // HERE IT IS
-                .smartCurrentLimit(40);
-        RightConfig.inverted(false).idleMode(IdleMode.kCoast).smartCurrentLimit(40);
-        intakeMotorLeft.configure(LeftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        intakeMotorRight.configure(RightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        LeftConfig.inverted(Constants.IntakeConstants.INTAKE_MOTOR_INVERTED)
+            .idleMode(IdleMode.kCoast) // HERE IT IS
+            .smartCurrentLimit(40).voltageCompensation(12);
+        RightConfig.inverted(false).idleMode(IdleMode.kCoast).smartCurrentLimit(40)
+            .voltageCompensation(12);
+        intakeMotorLeft.configure(LeftConfig, ResetMode.kResetSafeParameters,
+            PersistMode.kPersistParameters);
+        intakeMotorRight.configure(RightConfig, ResetMode.kResetSafeParameters,
+            PersistMode.kPersistParameters);
         indexerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         indexerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         indexerMotor.getConfigurator().apply(indexerConfig);

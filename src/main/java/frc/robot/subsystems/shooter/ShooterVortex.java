@@ -27,8 +27,10 @@ public class ShooterVortex implements ShooterIO {
     public ShooterVortex() {
         SparkBaseConfig TopConfig = new SparkFlexConfig();
         SparkBaseConfig BottomConfig = new SparkFlexConfig();
-        BottomConfig.inverted(true).idleMode(IdleMode.kCoast).voltageCompensation(12);
-        TopConfig.inverted(false).idleMode(IdleMode.kCoast).voltageCompensation(12);
+        BottomConfig.inverted(true).idleMode(IdleMode.kCoast).voltageCompensation(12)
+            .voltageCompensation(12).smartCurrentLimit(20);
+        TopConfig.inverted(false).idleMode(IdleMode.kCoast).voltageCompensation(12)
+            .voltageCompensation(12).smartCurrentLimit(20);
 
 
         TopConfig.encoder.positionConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
@@ -43,9 +45,11 @@ public class ShooterVortex implements ShooterIO {
 
         // topShooterMotor.setSmartCurrentLimit(20);
         // bottomShooterMotor.setSmartCurrentLimit(20);
-        // topShooterMotor.enableVoltageCompensation(12);
-        // bottomShooterMotor.enableVoltageCompensation(12);
+
+        // topShooterMotor.voltageCompensation(12);
+        // bottomShooterMotor.voltageCompensation(12);
         // gear ratio 31:16
+
         // bottomShooterMotor.burnFlash();
         // topShooterMotor.burnFlash();
 
