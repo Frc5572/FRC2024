@@ -187,9 +187,7 @@ compile_commands.json
 .factorypath
 
 BuildConstants.java
-networktables.json
 simgui-ds.json
-simgui.json
 /*.wpilog
 /*-profile.json
 !src/main/deploy/photon-configs/*.zip
