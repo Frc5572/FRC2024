@@ -35,23 +35,19 @@ public class ElevatorWristReal implements ElevatorWristIO {
      * Constructor for elevator wrist real class
      */
     public ElevatorWristReal() {
-        /**
-         * left elevator motor config
-         */
+        // left elevator motor config
         leftELIConfig.inverted(true).idleMode(IdleMode.kBrake);
         leftELIConfig.encoder.positionConversionFactor(60);
         leftElevatorMotor.configure(leftELIConfig, ResetMode.kResetSafeParameters,
             PersistMode.kPersistParameters);
 
-        /**
-         * right motor config
-         */
+        // right elevator motor config
         rightELIConfig.inverted(false).idleMode(IdleMode.kBrake);
         rightELIConfig.encoder.positionConversionFactor(60);
         rightElevatorMotor.configure(rightELIConfig, ResetMode.kResetSafeParameters,
             PersistMode.kPersistParameters);
 
-        /** wrist config */
+        // wrist motor config
         wristConfig.inverted(false).idleMode(IdleMode.kBrake);
         wristConfig.encoder.positionConversionFactor(1);
         wristMotor.configure(wristConfig, ResetMode.kResetSafeParameters,

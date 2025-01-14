@@ -33,8 +33,8 @@ public class IntakeIOFalcon implements IntakeIO {
         new DigitalInput(Constants.IntakeConstants.INDEXER_BEAM_BRAKE_DIO_PORT);
     private final DigitalInput intakeBeamBrake =
         new DigitalInput(Constants.IntakeConstants.INTAKE_BEAM_BRAKE_DIO_PORT);
-    SparkMaxConfig LeftConfig = new SparkMaxConfig();
-    SparkMaxConfig RightConfig = new SparkMaxConfig();
+    SparkMaxConfig leftConfig = new SparkMaxConfig();
+    SparkMaxConfig rightConfig = new SparkMaxConfig();
 
     /**
      * Intake IO Layer with real motors and sensors
@@ -42,14 +42,14 @@ public class IntakeIOFalcon implements IntakeIO {
     public IntakeIOFalcon() {
         // SparkMaxConfig config = new SparkMaxConfig();
         // config.signals.primaryEncoderPositionPeriodMs(5);
-        LeftConfig.inverted(Constants.IntakeConstants.INTAKE_MOTOR_INVERTED)
+        leftConfig.inverted(Constants.IntakeConstants.INTAKE_MOTOR_INVERTED)
             .idleMode(IdleMode.kCoast) // HERE IT IS
             .smartCurrentLimit(40).voltageCompensation(12);
-        RightConfig.inverted(false).idleMode(IdleMode.kCoast).smartCurrentLimit(40)
+        rightConfig.inverted(false).idleMode(IdleMode.kCoast).smartCurrentLimit(40)
             .voltageCompensation(12);
-        intakeMotorLeft.configure(LeftConfig, ResetMode.kResetSafeParameters,
+        intakeMotorLeft.configure(leftConfig, ResetMode.kResetSafeParameters,
             PersistMode.kPersistParameters);
-        intakeMotorRight.configure(RightConfig, ResetMode.kResetSafeParameters,
+        intakeMotorRight.configure(rightConfig, ResetMode.kResetSafeParameters,
             PersistMode.kPersistParameters);
         indexerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         indexerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;

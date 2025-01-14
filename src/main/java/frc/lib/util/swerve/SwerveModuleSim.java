@@ -56,7 +56,6 @@ public class SwerveModuleSim implements SwerveModuleIO {
         this.distance = driveSpeed.times(Seconds.of(LoggedRobot.defaultPeriodSecs)).plus(distance);
         inputs.driveMotorSelectedPosition = this.distance;
         inputs.driveMotorSelectedSensorVelocity = driveSpeed;
-
         inputs.angleMotorSelectedPosition = angle;
 
         inputs.absolutePositionAngleEncoder = angle;
