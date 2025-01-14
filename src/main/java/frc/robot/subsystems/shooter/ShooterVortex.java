@@ -1,12 +1,13 @@
 package frc.robot.subsystems.shooter;
 
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.config.SparkBaseConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import frc.robot.Constants;
 
 /**
@@ -24,26 +25,29 @@ public class ShooterVortex implements ShooterIO {
      * Constructor Shooter Subsystem - sets motor and encoder preferences
      */
     public ShooterVortex() {
-         SparkMaxConfig TopConfig = new SparkMaxConfig();
-         SparkMaxConfig BottomConfig = new SparkMaxConfig();
+        SparkBaseConfig TopConfig = new SparkFlexConfig();
+        SparkBaseConfig BottomConfig = new SparkFlexConfig();
+        BottomConfig.inverted(true).idleMode(IdleMode.kCoast).voltageCompensation(12);
+        TopConfig.inverted(false).idleMode(IdleMode.kCoast).voltageCompensation(12);
 
-        TopConfig.inverted(Constants.IntakeConstants.INTAKE_MOTOR_INVERTED).idleMode(IdleMode.kCoast) // HERE IT IS
-                .smartCurrentLimit(40);
-        BottomConfig.inverted(false).idleMode(IdleMode.kCoast).smartCurrentLimit(40);
-        topShooterMotor.configure(TopConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        bottomShooterMotor.configure(BottomConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+        TopConfig.encoder.positionConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
+        TopConfig.encoder.velocityConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
+        BottomConfig.encoder.positionConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
+        BottomConfig.encoder.velocityConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
+
+        topShooterMotor.configure(TopConfig, ResetMode.kResetSafeParameters,
+            PersistMode.kPersistParameters);
+        bottomShooterMotor.configure(BottomConfig, ResetMode.kResetSafeParameters,
+            PersistMode.kPersistParameters);
 
         // topShooterMotor.setSmartCurrentLimit(20);
         // bottomShooterMotor.setSmartCurrentLimit(20);
         // topShooterMotor.enableVoltageCompensation(12);
         // bottomShooterMotor.enableVoltageCompensation(12);
         // gear ratio 31:16
-        TopConfig.encoder.positionConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
-        TopConfig.encoder.velocityConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
-        BottomConfig.encoder.positionConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
-        BottomConfig.encoder.velocityConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
-       // bottomShooterMotor.burnFlash();
-       // topShooterMotor.burnFlash();
+        // bottomShooterMotor.burnFlash();
+        // topShooterMotor.burnFlash();
 
         // thread.start();
     }
