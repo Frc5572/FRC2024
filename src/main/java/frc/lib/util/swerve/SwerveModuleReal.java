@@ -15,6 +15,7 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import frc.lib.math.Conversions;
 import frc.robot.Constants;
 
 /**
@@ -149,7 +150,8 @@ public class SwerveModuleReal implements SwerveModuleIO {
     @Override
     public void setDriveMotor(double mps) {
         // driveVelocity.FeedForward = feedforward;
-        double driveRPS = mps / Constants.Swerve.wheelCircumference.in(Meter);
+        double driveRPS = Conversions.metersPerSecondToRotationPerSecond(mps,
+            Constants.Swerve.wheelCircumference.in(Meter));
         driveVelocity.Velocity = driveRPS;
         mDriveMotor.setControl(driveVelocity);
     }
