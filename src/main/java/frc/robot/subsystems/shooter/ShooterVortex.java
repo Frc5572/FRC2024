@@ -25,22 +25,22 @@ public class ShooterVortex implements ShooterIO {
      * Constructor Shooter Subsystem - sets motor and encoder preferences
      */
     public ShooterVortex() {
-        SparkBaseConfig TopConfig = new SparkFlexConfig();
-        SparkBaseConfig BottomConfig = new SparkFlexConfig();
-        BottomConfig.inverted(true).idleMode(IdleMode.kCoast).voltageCompensation(12)
+        SparkBaseConfig topConfig = new SparkFlexConfig();
+        SparkBaseConfig bottomConfig = new SparkFlexConfig();
+        bottomConfig.inverted(true).idleMode(IdleMode.kCoast).voltageCompensation(12)
             .voltageCompensation(12).smartCurrentLimit(20);
-        TopConfig.inverted(false).idleMode(IdleMode.kCoast).voltageCompensation(12)
+        topConfig.inverted(false).idleMode(IdleMode.kCoast).voltageCompensation(12)
             .voltageCompensation(12).smartCurrentLimit(20);
 
 
-        TopConfig.encoder.positionConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
-        TopConfig.encoder.velocityConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
-        BottomConfig.encoder.positionConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
-        BottomConfig.encoder.velocityConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
+        topConfig.encoder.positionConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
+        topConfig.encoder.velocityConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
+        bottomConfig.encoder.positionConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
+        bottomConfig.encoder.velocityConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
 
-        topShooterMotor.configure(TopConfig, ResetMode.kResetSafeParameters,
+        topShooterMotor.configure(topConfig, ResetMode.kResetSafeParameters,
             PersistMode.kPersistParameters);
-        bottomShooterMotor.configure(BottomConfig, ResetMode.kResetSafeParameters,
+        bottomShooterMotor.configure(bottomConfig, ResetMode.kResetSafeParameters,
             PersistMode.kPersistParameters);
 
         // topShooterMotor.setSmartCurrentLimit(20);
