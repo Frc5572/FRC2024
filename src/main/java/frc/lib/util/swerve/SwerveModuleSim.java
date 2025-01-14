@@ -1,6 +1,7 @@
 package frc.lib.util.swerve;
 
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
@@ -50,7 +51,8 @@ public class SwerveModuleSim implements SwerveModuleIO {
     public void updateInputs(SwerveModuleInputs inputs) {
         driveSim.update(LoggedRobot.defaultPeriodSecs);
         AngularVelocity driveSpeed =
-            RotationsPerSecond.of(Units.radiansToRotations(driveSim.getAngularVelocityRadPerSec()));
+            RadiansPerSecond.of(driveSim.getAngularAccelerationRadPerSecSq());
+        RotationsPerSecond.of(Units.radiansToRotations(driveSim.getAngularVelocityRadPerSec()));
         this.distance = driveSpeed.times(Seconds.of(LoggedRobot.defaultPeriodSecs)).plus(distance);
         inputs.driveMotorSelectedPosition = this.distance;
         inputs.driveMotorSelectedSensorVelocity = driveSpeed;
