@@ -42,18 +42,6 @@ public class ShooterVortex implements ShooterIO {
             PersistMode.kPersistParameters);
         bottomShooterMotor.configure(bottomConfig, ResetMode.kResetSafeParameters,
             PersistMode.kPersistParameters);
-
-        // topShooterMotor.setSmartCurrentLimit(20);
-        // bottomShooterMotor.setSmartCurrentLimit(20);
-
-        // topShooterMotor.voltageCompensation(12);
-        // bottomShooterMotor.voltageCompensation(12);
-        // gear ratio 31:16
-
-        // bottomShooterMotor.burnFlash();
-        // topShooterMotor.burnFlash();
-
-        // thread.start();
     }
 
     public void setTopMotor(double power) {

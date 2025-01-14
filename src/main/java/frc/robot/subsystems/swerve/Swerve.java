@@ -42,15 +42,14 @@ public class Swerve extends SubsystemBase {
     // .withProperties(Map.of("Color when true", "green", "Color when false", "red"))
     // .withPosition(11, 0).withSize(2, 2).getEntry();
 
-    // private final PumbaaViz viz;
+    private final PumbaaViz viz;
 
     /**
      * Swerve Subsystem
      */
     public Swerve(SwerveIO swerveIO, PumbaaViz viz) {
         this.swerveIO = swerveIO;
-        // this.cameras = camer
-        // this.viz = viz;
+        this.viz = viz;
         swerveMods = swerveIO.createModules();
         fieldOffset = getGyroYaw().getDegrees();
 
