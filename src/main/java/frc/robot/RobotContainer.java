@@ -233,6 +233,9 @@ public class RobotContainer {
         driver.leftTrigger().and(() -> elevatorWrist.getWristAngle().getDegrees() <= 24.0)
             .whileTrue(intake.runIntakeMotorNonStop(-1, -.20));
 
+        driver.x().whileTrue(CommandFactory.spit(shooter, intake));
+
+
         /* Operator Buttons */
         // spit note currently in robot through shooter
         operator.x().whileTrue(CommandFactory.spit(shooter, intake));
