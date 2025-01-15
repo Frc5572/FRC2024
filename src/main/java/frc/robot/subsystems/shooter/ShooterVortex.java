@@ -28,9 +28,11 @@ public class ShooterVortex implements ShooterIO {
      */
     public ShooterVortex() {
         topConfig.inverted(false).idleMode(IdleMode.kCoast).voltageCompensation(12)
-            .voltageCompensation(12).smartCurrentLimit(20);
+            .voltageCompensation(12);
+        // .smartCurrentLimit(20);
         bottomConfig.inverted(true).idleMode(IdleMode.kCoast).voltageCompensation(12)
-            .voltageCompensation(12).smartCurrentLimit(20);
+            .voltageCompensation(12);
+        // .smartCurrentLimit(20);
 
         topConfig.encoder.positionConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
         topConfig.encoder.velocityConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
