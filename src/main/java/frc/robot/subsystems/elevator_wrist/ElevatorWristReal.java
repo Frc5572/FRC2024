@@ -2,50 +2,56 @@ package frc.robot.subsystems.elevator_wrist;
 
 
 import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkAbsoluteEncoder.Type;
-import com.revrobotics.SparkRelativeEncoder;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.robot.Constants;
 
 /**
  * Elevator and wrist real robot class
  */
 public class ElevatorWristReal implements ElevatorWristIO {
-    public final CANSparkMax leftElevatorMotor =
-        new CANSparkMax(Constants.Motors.ElevatorWrist.ELEVATOR_LEFT_NEO_ID, MotorType.kBrushless);
-    public final CANSparkMax rightElevatorMotor =
-        new CANSparkMax(Constants.Motors.ElevatorWrist.ELEVATOR_RIGHT_NEO_ID, MotorType.kBrushless);
-    public final CANSparkMax wristMotor =
-        new CANSparkMax(Constants.Motors.ElevatorWrist.WRIST_NEO_ID, MotorType.kBrushless);
+    public final SparkMax leftElevatorMotor =
+        new SparkMax(Constants.Motors.ElevatorWrist.ELEVATOR_LEFT_NEO_ID, MotorType.kBrushless);
+    public final SparkMax rightElevatorMotor =
+        new SparkMax(Constants.Motors.ElevatorWrist.ELEVATOR_RIGHT_NEO_ID, MotorType.kBrushless);
+    public final SparkMax wristMotor =
+        new SparkMax(Constants.Motors.ElevatorWrist.WRIST_NEO_ID, MotorType.kBrushless);
 
-    public final AbsoluteEncoder wristAbsoluteEnc = wristMotor.getAbsoluteEncoder(Type.kDutyCycle);
-    public final RelativeEncoder leftElevatorRelativeEnc =
-        leftElevatorMotor.getEncoder(SparkRelativeEncoder.Type.kHallSensor, 42);
-    public final RelativeEncoder rightElevatorRelativeEnc =
-        rightElevatorMotor.getEncoder(SparkRelativeEncoder.Type.kHallSensor, 42);
+    public final AbsoluteEncoder wristAbsoluteEnc = wristMotor.getAbsoluteEncoder();
+    public final RelativeEncoder leftElevatorRelativeEnc = leftElevatorMotor.getEncoder();
+    public final RelativeEncoder rightElevatorRelativeEnc = rightElevatorMotor.getEncoder();
+    public final SparkMaxConfig leftELIConfig = new SparkMaxConfig();
+    public final SparkMaxConfig rightELIConfig = new SparkMaxConfig();
+    public final SparkMaxConfig wristConfig = new SparkMaxConfig();
+
 
 
     /**
      * Constructor for elevator wrist real class
      */
     public ElevatorWristReal() {
-        rightElevatorMotor.restoreFactoryDefaults();
-        rightElevatorRelativeEnc.setPositionConversionFactor(60);
-        rightElevatorMotor.setIdleMode(IdleMode.kBrake);
-        rightElevatorMotor.setInverted(true);
-        leftElevatorMotor.restoreFactoryDefaults();
-        leftElevatorRelativeEnc.setPositionConversionFactor(60);
-        leftElevatorMotor.setIdleMode(IdleMode.kBrake);
-        leftElevatorMotor.setInverted(false);
-        wristAbsoluteEnc.setPositionConversionFactor(1);
-        wristMotor.setIdleMode(IdleMode.kBrake);
-        wristMotor.setInverted(false);
+        // left elevator motor config
+        leftELIConfig.inverted(true).idleMode(IdleMode.kBrake);
+        leftELIConfig.encoder.positionConversionFactor(60);
+        leftElevatorMotor.configure(leftELIConfig, ResetMode.kResetSafeParameters,
+            PersistMode.kPersistParameters);
 
-        leftElevatorMotor.burnFlash();
-        rightElevatorMotor.burnFlash();
+        // right elevator motor config
+        rightELIConfig.inverted(false).idleMode(IdleMode.kBrake);
+        rightELIConfig.encoder.positionConversionFactor(60);
+        rightElevatorMotor.configure(rightELIConfig, ResetMode.kResetSafeParameters,
+            PersistMode.kPersistParameters);
+
+        // wrist motor config
+        wristConfig.inverted(false).idleMode(IdleMode.kBrake);
+        wristConfig.encoder.positionConversionFactor(1);
+        wristMotor.configure(wristConfig, ResetMode.kResetSafeParameters,
+            PersistMode.kPersistParameters);
     }
 
 

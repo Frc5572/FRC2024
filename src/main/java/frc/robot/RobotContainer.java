@@ -28,14 +28,14 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.sim.SimulatedArena;
 import frc.lib.sim.SimulatedPumbaa;
 import frc.lib.util.FieldConstants;
-import frc.lib.util.photon.PhotonCameraWrapper;
-import frc.lib.util.photon.PhotonReal;
+// import frc.lib.util.photon.PhotonCameraWrapper;
+// import frc.lib.util.photon.PhotonReal;
 import frc.lib.viz.PumbaaViz;
 import frc.robot.Robot.RobotRunType;
-import frc.robot.autos.JustShoot1;
-import frc.robot.autos.P123;
-import frc.robot.autos.P321;
-import frc.robot.autos.P8765;
+// import frc.robot.autos.JustShoot1;
+// import frc.robot.autos.P123;
+// import frc.robot.autos.P321;
+// import frc.robot.autos.P8765;
 import frc.robot.commands.CommandFactory;
 import frc.robot.commands.FlashingLEDColor;
 import frc.robot.commands.MovingColorLEDs;
@@ -130,7 +130,7 @@ public class RobotContainer {
     private Swerve s_Swerve;
     private Shooter shooter;
     private Intake intake;
-    private PhotonCameraWrapper[] cameras;
+    // private PhotonCameraWrapper[] cameras;
     private ElevatorWrist elevatorWrist;
     private LEDs leds = new LEDs(Constants.LEDConstants.LED_COUNT, Constants.LEDConstants.PWM_PORT);
     // private PhotonCamera backLeftCamera = new PhotonCamera("back-left");
@@ -160,44 +160,44 @@ public class RobotContainer {
             numNoteChooser.addOption(String.valueOf(i), i);
         }
         /*
-         * Camera Order: 0 - Front Left 1 - Front RIght 2 - Back Left 3 - Back Right
+         * Camera Order: 0 - Front Left 1 - Front RIght 2 - Back Left 3 - Back Right //
          */
-        cameras = new PhotonCameraWrapper[] {new PhotonCameraWrapper(
-            new PhotonReal(Constants.CameraConstants.FrontRightFacingCamera.CAMERA_NAME,
-                Constants.CameraConstants.FrontRightFacingCamera.CAMERA_IP),
-            Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT)};
+        // cameras = new PhotonCameraWrapper[] {new PhotonCameraWrapper(
+        // new PhotonReal(Constants.CameraConstants.FrontRightFacingCamera.CAMERA_NAME,
+        // Constants.CameraConstants.FrontRightFacingCamera.CAMERA_IP),
+        // Constants.CameraConstants.FrontRightFacingCamera.KCAMERA_TO_ROBOT)};
 
         switch (runtimeType) {
             case kReal:
                 viz = new PumbaaViz("Viz", null);
                 shooter = new Shooter(new ShooterVortex());
                 intake = new Intake(new IntakeIOFalcon(), viz);
-                s_Swerve = new Swerve(new SwerveReal(), cameras, viz);
+                s_Swerve = new Swerve(new SwerveReal(), viz);
                 elevatorWrist = new ElevatorWrist(new ElevatorWristReal(), operator, viz);
                 break;
             case kSimulation:
                 SimulatedPumbaa pumbaa = arena.newPumbaa();
                 viz = new PumbaaViz("Viz", pumbaa);
-                s_Swerve = new Swerve(new SwerveSim(pumbaa), cameras, viz);
+                s_Swerve = new Swerve(new SwerveSim(pumbaa), viz);
                 shooter = new Shooter(new ShooterSim(pumbaa));
                 intake = new Intake(new IntakeIOSim(pumbaa), viz);
                 elevatorWrist = new ElevatorWrist(new ElevatorWristIOSim(pumbaa), operator, viz);
                 break;
             default:
                 viz = new PumbaaViz("Viz", null);
-                s_Swerve = new Swerve(new SwerveIO() {}, cameras, viz);
+                s_Swerve = new Swerve(new SwerveIO() {}, viz);
                 shooter = new Shooter(new ShooterIO() {});
                 intake = new Intake(new IntakeIO() {}, viz);
                 elevatorWrist = new ElevatorWrist(new ElevatorWristIO() {}, operator, viz);
         }
 
-        autoChooser.setDefaultOption("Nothing", Commands.none());
-        autoChooser.addOption("P123", new P123(s_Swerve, elevatorWrist, intake, shooter));
-        autoChooser.addOption("P321", new P321(s_Swerve, elevatorWrist, intake, shooter));
-        autoChooser.addOption("P8765", new P8765(s_Swerve, elevatorWrist, intake, shooter));
-        autoChooser.addOption("Just Shoot 1",
-            new JustShoot1(s_Swerve, elevatorWrist, intake, shooter));
-        // autoChooser.addOption("P32", new P32(s_Swerve, elevatorWrist, intake, shooter));
+        // ?autoChooser.setDefaultOption("Nothing", Commands.none());
+        // autoChooser.addOption("P123", new P123(s_Swerve, elevatorWrist, intake, shooter));
+        // autoChooser.addOption("P321", new P321(s_Swerve, elevatorWrist, intake, shooter));
+        // autoChooser.addOption("P8765", new P8765(s_Swerve, elevatorWrist, intake, shooter));
+        // autoChooser.addOption("Just Shoot 1",
+        // new JustShoot1(s_Swerve, elevatorWrist, intake, shooter));
+        // // autoChooser.addOption("P32", new P32(s_Swerve, elevatorWrist, intake, shooter));
         // autoChooser.addOption("P675", new P675(s_Swerve, elevatorWrist, intake, shooter));
         // autoChooser.addOption("P3675", new P3675(s_Swerve, elevatorWrist, intake, shooter));
 
@@ -225,19 +225,22 @@ public class RobotContainer {
 
         /* Driver Buttons */
         driver.y().onTrue(new InstantCommand(() -> s_Swerve.resetFieldRelativeOffset()));
-        driver.start().onTrue(
-            new InstantCommand(() -> s_Swerve.resetPvInitialization()).ignoringDisable(true));
+        // driver.start().onTrue(
+        // new InstantCommand(() -> s_Swerve.resetPvInitialization()).ignoringDisable(true));
         // intake forward
         driver.rightTrigger().whileTrue(CommandFactory.newIntakeCommand(intake, elevatorWrist));
         // intake backward
         driver.leftTrigger().and(() -> elevatorWrist.getWristAngle().getDegrees() <= 24.0)
             .whileTrue(intake.runIntakeMotorNonStop(-1, -.20));
 
+        driver.x().whileTrue(CommandFactory.spit(shooter, intake));
+
+
         /* Operator Buttons */
         // spit note currently in robot through shooter
         operator.x().whileTrue(CommandFactory.spit(shooter, intake));
         // reset apriltag vision
-        operator.b().onTrue(new InstantCommand(() -> s_Swerve.resetPvInitialization()));
+        // operator.b().onTrue(new InstantCommand(() -> s_Swerve.resetPvInitialization()));
         // spin up shooter
         operator.leftTrigger().whileTrue(shooter.shootSpeaker());
         // operator.leftTrigger()

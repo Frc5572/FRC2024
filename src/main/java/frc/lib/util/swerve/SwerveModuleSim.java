@@ -1,11 +1,19 @@
 package frc.lib.util.swerve;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 import org.littletonrobotics.junction.LoggedRobot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,10 +27,11 @@ public class SwerveModuleSim implements SwerveModuleIO {
     public int moduleNumber;
 
     private FlywheelSim driveSim =
-        new FlywheelSim(DCMotor.getFalcon500(1), Constants.Swerve.driveGearRatio, 0.025);
+        new FlywheelSim(LinearSystemId.createFlywheelSystem(DCMotor.getFalcon500(1),
+            Constants.Swerve.driveGearRatio, 0.025), DCMotor.getFalcon500(1));
 
-    private double angle;
-    private double distance;
+    private Angle angle = Rotations.of(0);
+    private Angle distance = Rotations.of(0);
 
     private double driveAppliedVolts = 0.0;
     private SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(0.0, 0.13);
@@ -41,11 +50,12 @@ public class SwerveModuleSim implements SwerveModuleIO {
     @Override
     public void updateInputs(SwerveModuleInputs inputs) {
         driveSim.update(LoggedRobot.defaultPeriodSecs);
-        double driveSpeed = Units.radiansToRotations(driveSim.getAngularVelocityRadPerSec());
-        this.distance += driveSpeed * LoggedRobot.defaultPeriodSecs;
+        AngularVelocity driveSpeed =
+            RadiansPerSecond.of(driveSim.getAngularAccelerationRadPerSecSq());
+        RotationsPerSecond.of(Units.radiansToRotations(driveSim.getAngularVelocityRadPerSec()));
+        this.distance = driveSpeed.times(Seconds.of(LoggedRobot.defaultPeriodSecs)).plus(distance);
         inputs.driveMotorSelectedPosition = this.distance;
         inputs.driveMotorSelectedSensorVelocity = driveSpeed;
-
         inputs.angleMotorSelectedPosition = angle;
 
         inputs.absolutePositionAngleEncoder = angle;
@@ -59,7 +69,7 @@ public class SwerveModuleSim implements SwerveModuleIO {
      */
     public void setDriveMotor(double mps) {
         double rpm = Conversions.metersPerSecondToRotationPerSecond(mps,
-            Constants.Swerve.wheelCircumference);
+            Constants.Swerve.wheelCircumference.in(Meters));
         driveFeedback.setSetpoint(rpm);
         double driveFF = driveFeedforward.calculate(mps);
         SmartDashboard.putNumber("ff/" + moduleNumber, driveFF);
@@ -76,7 +86,7 @@ public class SwerveModuleSim implements SwerveModuleIO {
      *
      * @param angle Angle to set
      */
-    public void setAngleMotor(double angle) {
+    public void setAngleMotor(Angle angle) {
         this.angle = angle;
     }
 

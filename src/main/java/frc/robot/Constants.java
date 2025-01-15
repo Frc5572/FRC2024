@@ -1,11 +1,10 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Inches;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.PIDConstants;
-import com.pathplanner.lib.util.ReplanningConfig;
+import com.studica.frc.AHRS.NavXComType;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -14,6 +13,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.lib.util.FieldConstants;
 
@@ -186,8 +186,7 @@ public final class Constants {
         public static final double AUTO_ROTATION_KI = 0.0;
         public static final double AUTO_ROTATION_KD = 0.0;
 
-        public static final edu.wpi.first.wpilibj.SPI.Port navXID =
-            edu.wpi.first.wpilibj.SPI.Port.kMXP;
+        public static final NavXComType navXID = NavXComType.kMXP_SPI;
         public static final boolean invertGyro = true;
         public static final boolean isFieldRelative = true;
         public static final boolean isOpenLoop = false;
@@ -195,8 +194,8 @@ public final class Constants {
         /* Drivetrain Constants */
         public static final double trackWidth = Units.inchesToMeters(23.75);
         public static final double wheelBase = Units.inchesToMeters(17.75);
-        public static final double wheelDiameter = Units.inchesToMeters(3.8);
-        public static final double wheelCircumference = wheelDiameter * Math.PI;
+        public static final Distance wheelDiameter = Inches.of(3.8);
+        public static final Distance wheelCircumference = wheelDiameter.times(Math.PI);
         public static final Translation2d MOD0_MODOFFSET =
             new Translation2d(wheelBase / 2.0, trackWidth / 2.0);
 
@@ -259,10 +258,10 @@ public final class Constants {
 
         /* Swerve Profiling Values */
         /** Meters per Second */
-        public static final double maxSpeed = 10.0;
+        public static final double maxSpeed = 3.0;
         public static final double AUTO_MAX_SPEED = 3.0;
         /** Radians per Second */
-        public static final double maxAngularVelocity = 15.0;
+        public static final double maxAngularVelocity = 4.0;
 
         /* Neutral Modes */
         public static final NeutralModeValue angleNeutralMode = NeutralModeValue.Coast;
@@ -317,11 +316,12 @@ public final class Constants {
             public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.317627 + 0.5);
         }
 
-        public static final HolonomicPathFollowerConfig pathFollowerConfig =
-            new HolonomicPathFollowerConfig(new PIDConstants(5.0, 0, 0),
-                new PIDConstants(AUTO_ROTATION_KP, AUTO_ROTATION_KI, AUTO_ROTATION_KD),
-                // Drive base radius (distance from center to furthest module)
-                AUTO_MAX_SPEED, MOD0_MODOFFSET.getNorm(), new ReplanningConfig());
+
+        // public static final HolonomicPathFollowerConfig pathFollowerConfig =
+        // new HolonomicPathFollowerConfig(new PIDConstants(5.0, 0, 0),
+        // new PIDConstants(AUTO_ROTATION_KP, AUTO_ROTATION_KI, AUTO_ROTATION_KD),
+        // // Drive base radius (distance from center to furthest module)
+        // AUTO_MAX_SPEED, MOD0_MODOFFSET.getNorm(), new ReplanningConfig());
     }
 
     /**
@@ -485,7 +485,7 @@ public final class Constants {
         public static final double KS = 0;
         public static final double TOP_KV = 6.18e-4;
         public static final double BOTTOM_KV = 6.18e-4;
-        public static final double GEAR_RATIO = 3;
+        public static final double GEAR_RATIO = 3; // gear ratio
         public static final double HEIGHT_FROM_LOWEST_POS = Units.inchesToMeters(32.0);
         public static final double HEIGHT_FROM_SPEAKER =
             FieldConstants.centerSpeaker - HEIGHT_FROM_LOWEST_POS;

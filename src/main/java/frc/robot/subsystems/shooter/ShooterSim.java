@@ -3,6 +3,7 @@ package frc.robot.subsystems.shooter;
 import org.littletonrobotics.junction.LoggedRobot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import frc.lib.sim.SimulatedPumbaa;
 import frc.robot.Constants;
@@ -13,9 +14,14 @@ import frc.robot.Constants;
 public class ShooterSim implements ShooterIO {
 
     private FlywheelSim topShooterMotor =
-        new FlywheelSim(DCMotor.getNeoVortex(1), Constants.ShooterConstants.GEAR_RATIO, 0.01);
+        new FlywheelSim(LinearSystemId.createFlywheelSystem(DCMotor.getNeoVortex(2), 1,
+            Constants.ShooterConstants.GEAR_RATIO), DCMotor.getNeoVortex(2), 0.0);
+    // new FlywheelSim(DCMotor.getNeoVortex(1), Constants.ShooterConstants.GEAR_RATIO, 0.01);
     private FlywheelSim bottomShooterMotor =
-        new FlywheelSim(DCMotor.getNeoVortex(1), Constants.ShooterConstants.GEAR_RATIO, 0.01);
+        new FlywheelSim(LinearSystemId.createFlywheelSystem(DCMotor.getNeoVortex(1), 1,
+            Constants.ShooterConstants.GEAR_RATIO), DCMotor.getNeoVortex(1), 0.0);
+
+    // new FlywheelSim(DCMotor.getNeoVortex(1), Constants.ShooterConstants.GEAR_RATIO, 0.01);
 
     private double topAppliedVolts = 0.0;
     private double bottomAppliedVolts = 0.0;

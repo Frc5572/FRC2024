@@ -3,6 +3,7 @@ package frc.robot.subsystems.intake;
 import org.littletonrobotics.junction.LoggedRobot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import frc.lib.sim.SimulatedPumbaa;
 
@@ -11,8 +12,11 @@ import frc.lib.sim.SimulatedPumbaa;
  */
 public class IntakeIOSim implements IntakeIO {
 
-    private FlywheelSim intakeSim = new FlywheelSim(DCMotor.getNEO(2), 1, 0.025);
-    private FlywheelSim indexerSim = new FlywheelSim(DCMotor.getFalcon500(1), 1, 0.025);
+    private FlywheelSim intakeSim = new FlywheelSim(
+        LinearSystemId.createFlywheelSystem(DCMotor.getNEO(2), 1, 0.025), DCMotor.getNEO(2), 0.0);
+    private FlywheelSim indexerSim =
+        new FlywheelSim(LinearSystemId.createFlywheelSystem(DCMotor.getFalcon500(1), 1, 0.025),
+            DCMotor.getFalcon500(1), 0.0);
 
     private double intakeAppliedVolts = 0.0;
     private double indexerAppliedVolts = 0.0;
