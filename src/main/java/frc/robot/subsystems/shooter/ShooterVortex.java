@@ -20,18 +20,17 @@ public class ShooterVortex implements ShooterIO {
         new SparkFlex(Constants.Motors.Shooter.SHOOTER_BOTTOM_ID, MotorType.kBrushless);
     private RelativeEncoder topEncoder = topShooterMotor.getEncoder();
     private RelativeEncoder bottomEncoder = bottomShooterMotor.getEncoder();
+    SparkBaseConfig topConfig = new SparkFlexConfig();
+    SparkBaseConfig bottomConfig = new SparkFlexConfig();
 
     /**
      * Constructor Shooter Subsystem - sets motor and encoder preferences
      */
     public ShooterVortex() {
-        SparkBaseConfig topConfig = new SparkFlexConfig();
-        SparkBaseConfig bottomConfig = new SparkFlexConfig();
-        bottomConfig.inverted(true).idleMode(IdleMode.kCoast).voltageCompensation(12)
-            .voltageCompensation(12).smartCurrentLimit(20);
         topConfig.inverted(false).idleMode(IdleMode.kCoast).voltageCompensation(12)
             .voltageCompensation(12).smartCurrentLimit(20);
-
+        bottomConfig.inverted(true).idleMode(IdleMode.kCoast).voltageCompensation(12)
+            .voltageCompensation(12).smartCurrentLimit(20);
 
         topConfig.encoder.positionConversionFactor(Constants.ShooterConstants.GEAR_RATIO);
         topConfig.encoder.velocityConversionFactor(Constants.ShooterConstants.GEAR_RATIO);

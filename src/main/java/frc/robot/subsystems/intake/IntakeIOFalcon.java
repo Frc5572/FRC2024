@@ -43,17 +43,16 @@ public class IntakeIOFalcon implements IntakeIO {
         // SparkMaxConfig config = new SparkMaxConfig();
         // config.signals.primaryEncoderPositionPeriodMs(5);
         leftConfig.inverted(Constants.IntakeConstants.INTAKE_MOTOR_INVERTED)
-            .idleMode(IdleMode.kCoast) // HERE IT IS
-            .smartCurrentLimit(40).voltageCompensation(12);
+            .idleMode(IdleMode.kCoast).smartCurrentLimit(40).voltageCompensation(12);
         rightConfig.inverted(false).idleMode(IdleMode.kCoast).smartCurrentLimit(40)
             .voltageCompensation(12);
+        indexerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        indexerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        indexerMotor.getConfigurator().apply(indexerConfig);
         intakeMotorLeft.configure(leftConfig, ResetMode.kResetSafeParameters,
             PersistMode.kPersistParameters);
         intakeMotorRight.configure(rightConfig, ResetMode.kResetSafeParameters,
             PersistMode.kPersistParameters);
-        indexerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        indexerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-        indexerMotor.getConfigurator().apply(indexerConfig);
     }
 
     @Override
