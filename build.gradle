@@ -119,6 +119,11 @@ wpi.java.configureTestTasks(test)
 // Configure string concat to always inline compile
 tasks.withType(JavaCompile) {
     options.compilerArgs.add '-XDstringConcat=inline'
+    // only run in GH actions
+    // if (System.getenv("GITHUB_ACTOR") != null && !System.getenv("GITHUB_ACTOR").equals("")) {
+    //     options.compilerArgs << "-Xlint:all" << "-Xlint:-processing" << "-Xlint:-serial" << "-Werror"
+    //     outputs.upToDateWhen { false } // Force recompile, even if source file hasn't changed
+    // }
 }
 
 javadoc {
