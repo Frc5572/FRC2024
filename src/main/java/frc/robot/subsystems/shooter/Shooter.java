@@ -136,8 +136,8 @@ public class Shooter extends SubsystemBase {
      */
     public Command spit() {
         return Commands.run(() -> {
-            setTopMotor(2.0);
-            setBottomMotor(2.0);
+            setTopMotor(4.0);
+            setBottomMotor(4.0);
         }, this).finallyDo(() -> {
             setTopMotor(0.0);
             setBottomMotor(0.0);
