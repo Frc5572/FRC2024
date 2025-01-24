@@ -228,7 +228,7 @@ public class RobotContainer {
         // driver.start().onTrue(
         // new InstantCommand(() -> s_Swerve.resetPvInitialization()).ignoringDisable(true));
         // intake forward
-        driver.rightTrigger().whileTrue(CommandFactory.newIntakeCommand(intake, elevatorWrist));
+        operator.rightBumper().whileTrue(CommandFactory.newIntakeCommand(intake, elevatorWrist));
         // intake backward
         driver.leftTrigger().and(() -> elevatorWrist.getWristAngle().getDegrees() <= 24.0)
             .whileTrue(intake.runIntakeMotorNonStop(-1, -.20));
