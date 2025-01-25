@@ -55,9 +55,9 @@ def includeDesktopSupport = false
 repositories {
     mavenLocal()
     maven { url 'https://jitpack.io' }
-    maven { url 'https://maplesim.maven.frc5572.org/maple-sim/vendordep/repos/releases' }
-    maven { url 'https://choreo.maven.frc5572.org/dep' }
-    maven { url 'https://pathplanner.maven.frc5572.org/pathplannerlib/repo' }
+    if(System.getenv("GITHUB_ACTOR") == null || System.getenv("GITHUB_ACTOR").equals("")) {
+        maven { url 'https://maven-clone.frc5572.org/' }
+    }
 }
 
 task(replayWatch, type: JavaExec) {
